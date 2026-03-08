@@ -1,0 +1,80 @@
+# 🌿 Hidro Florestas Fullstack
+
+Bem-vindo ao repositório do **Hidro Florestas**, uma aplicação fullstack desenvolvida com **Next.js** e **Prisma**. Este guia ajudará você a configurar o ambiente de desenvolvimento local do zero.
+
+---
+
+## 🚀 Primeiros Passos
+
+Siga a ordem abaixo para garantir que o projeto e o banco de dados estejam sincronizados corretamente.
+
+### 1. Instalação de Dependências
+
+Após clonar o repositório, navegue até a pasta raiz e instale os pacotes necessários:
+
+**Bash**
+
+```
+npm install
+```
+
+### 2. Configuração do Banco de Dados (Prisma)
+
+O Prisma é o nosso ORM (Object-Relational Mapper). Você precisará rodar dois comandos fundamentais:
+
+#### **Gerar o Client do Prisma**
+
+Sempre que você clona o projeto pela primeira vez ou quando há mudanças no arquivo `schema.prisma` feitas por outros desenvolvedores, você deve rodar:
+
+**Bash**
+
+```
+npx prisma generate
+```
+
+> **Por que?** Este comando lê o arquivo de esquema e gera o código TypeScript/JavaScript necessário para que o seu editor (VS Code) entenda as tabelas do banco e ofereça o auto-complete (IntelliSense).
+
+#### **Sincronizar e Migrar o Banco**
+
+Para criar as tabelas no seu banco de dados local, utilize:
+
+**Bash**
+
+```
+npx prisma migrate dev --name init
+```
+
+> **Atenção ao `--name`:** > \* O nome `init` deve ser usado apenas na **primeira vez**.
+>
+> * Nas próximas vezes que você alterar o banco, substitua `init` por algo descritivo, como `add-user-table` ou `fix-product-relation`.
+> * **Importância:** Esse comando registra o "histórico" do banco. Se você não rodar isso, o seu código tentará salvar dados em tabelas que ainda não existem fisicamente no seu computador.
+
+---
+
+## 💻 Rodando o Projeto
+
+Com as dependências instaladas e o banco de dados configurado, inicie o servidor de desenvolvimento:
+
+**Bash**
+
+```
+npm run dev
+```
+
+Acesse [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) no seu navegador para visualizar a aplicação.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+* **Next.js** - Framework React para produção.
+* **Prisma** - ORM para interação com o banco de dados.
+* **Tailwind CSS** - Estilização moderna e responsiva.
+* **TypeScript** - Segurança de tipos para o código.
+
+---
+
+## 📝 Notas Adicionais
+
+* Certifique-se de ter um arquivo `.env` na raiz com a sua `DATABASE_URL` configurada antes de rodar os comandos do Prisma.
+* Para visualizar os dados do banco de forma gráfica, você pode usar o comando `npx prisma studio`.
