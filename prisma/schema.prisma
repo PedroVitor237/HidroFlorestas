@@ -13,11 +13,24 @@ model User {
   firstName String
   lastName  String
   password  String
+  role      UserRole   @default(USER)
   image     String     @default("")
   status    UserStatus @default(PENDING)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   isAdmin   Boolean    @default(false)
+
+  laboratoryRooms   LaboratoryRoom[]
+  researchersLinked ResearchersLinked[]
+  collectionAreas   CollectionArea[]
+  collectionData    CollectionData[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  DEVELOPER
+  MODERATOR
 }
 
 enum UserStatus {
@@ -25,4 +38,203 @@ enum UserStatus {
   INACTIVE
   PENDING
   BLOCKED
+}
+
+model Coordinates {
+  id        String @id @default(uuid())
+  latitude  String
+  longitude String
+
+  collectionAreas CollectionArea[]
+}
+
+model LaboratoryRoom {
+  id          String   @id @default(uuid())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  imageBanner String   @default("")
+  isActive    Boolean  @default(true)
+  accessCode  String
+
+  researchersLinked ResearchersLinked[]
+  collectionAreas   CollectionArea[]
+}
+
+model ResearchersLinked {
+  userId           String
+  laboratoryRoomId String
+
+  user           User           @relation(fields: [userId], references: [id])
+  laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id])
+
+  @@id([userId, laboratoryRoomId])
+}
+
+model CollectionArea {
+  id                  String   @id @default(uuid())
+  name                String
+  image               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  isActive            Boolean  @default(true)
+  userId              String
+  laboratoryRoomId    String
+  coordinatesId       String
+  municipality        String
+  state               String
+  cep                 String
+  landType            LandType
+  descriptionLandType String?
+
+  user           User           @relation(fields: [userId], references: [id])
+  coordinates    Coordinates    @relation(fields: [coordinatesId], references: [id])
+  laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id])
+
+  collectionData CollectionData[]
+}
+
+enum LandType {
+  FOREST
+  AGROFORESTRY
+  CROPLAND
+  PASTURE
+  DEGRADED_PASTURE
+  BARE_SOIL
+  URBAN
+  OTHERS
+}
+
+model CollectionData {
+  id               String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  collectionAreaId String
+  userId           String
+  observations     String?
+
+  user           User           @relation(fields: [userId], references: [id])
+  collectionArea CollectionArea @relation(fields: [collectionAreaId], references: [id])
+
+  waterData      WaterData[]
+  soilData       SoilData[]
+  vegetationData VegetationData[]
+  terrainData    TerrainData[]
+  diagnoses      IHFRDiagnosis[]
+}
+
+model IHFRDiagnosis {
+  id               String            @id @default(uuid())
+  collectionDataId String
+  ihfrScore        Float
+  ihfrClass        IHFRClass
+  waterScore       Float
+  soilScore        Float
+  vegetationScore  Float
+  territoryScore   Float
+  dataQuality      LevelBasicDefault
+  algorithmVersion String            @default("1.0.0")
+  explanationAI    String?
+
+  collectionData CollectionData @relation(fields: [collectionDataId], references: [id])
+}
+
+enum IHFRClass {
+  LOW
+  MODERATE
+  HIGH
+  CRITICAL
+}
+
+model WaterData {
+  id               String @id @default(uuid())
+  collectionDataId String @unique
+
+  waterSourceType   WaterSourceType
+  hasSpring         Boolean
+  wellDepth_m       Float?
+  waterAvailability WaterAvailability
+  salinityIndicator SalinityIndicator?
+
+  collectionData CollectionData @relation(fields: [collectionDataId], references: [id])
+}
+
+model SoilData {
+  id               String @id @default(uuid())
+  collectionDataId String @unique
+
+  soilTexture           SoilTexture
+  infiltrationRate_mm_h Float
+  compactionLevel       LevelBasicDefault
+  erosionSigns          ErosionSigns
+  soilExposedPercent    Float?
+
+  collectionData CollectionData @relation(fields: [collectionDataId], references: [id])
+}
+
+model VegetationData {
+  id               String @id @default(uuid())
+  collectionDataId String @unique
+
+  vegetationCoverPercent Float
+  fragmentationLevel     LevelBasicDefault
+  hasRiparian_app        Boolean?
+  landscapeDegradation   LevelBasicDefault
+
+  collectionData CollectionData @relation(fields: [collectionDataId], references: [id])
+}
+
+model TerrainData {
+  id               String @id @default(uuid())
+  collectionDataId String @unique
+
+  drainage_density Float?
+  elevation_m      Float?
+  slopePercent     Float?
+
+  collectionData CollectionData @relation(fields: [collectionDataId], references: [id])
+}
+
+// FALTA O ENTIDADE DE ALERTAS
+
+// ENUMS
+enum LevelBasicDefault {
+  LOW
+  MODERATE
+  HIGH
+}
+
+enum WaterSourceType {
+  RIVER_STREAM
+  SPRING
+  SHALLOW_WELL
+  TUBULA_WELL
+  CISTERN
+  OTHER
+}
+
+enum WaterAvailability {
+  PERMANENT
+  SEASONAL
+  SCARCE
+}
+
+enum SalinityIndicator {
+  NONE
+  SUSPERCTED
+  CONFIRMED
+}
+
+enum SoilTexture {
+  SANDY
+  MEDIUM
+  CLAYEY
+}
+
+enum ErosionSigns {
+  NONE
+  LAMINAR
+  RILLS_GUILLIES
 }
