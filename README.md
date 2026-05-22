@@ -78,3 +78,6 @@ Acesse [http://localhost:3000](https://www.google.com/search?q=http://localhost:
 
 * Certifique-se de ter um arquivo `.env` na raiz com a sua `DATABASE_URL` configurada antes de rodar os comandos do Prisma.
 * Para visualizar os dados do banco de forma gráfica, você pode usar o comando `npx prisma studio`.
+
+
+Pedir chaves de ambientes
