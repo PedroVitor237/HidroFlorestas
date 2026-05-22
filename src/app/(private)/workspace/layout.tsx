@@ -1,18 +1,12 @@
 'use client';
 
-import { useAuth } from "@/contexts/auth.context";
-import { useEffect } from "react";
+import TopBar from "@/components/top-bar";
 
 export default function LayoutPrivate({ children }: { children: React.ReactNode }) {
 
-    const { fetchUserData } = useAuth()
-
-    useEffect(() => {
-        fetchUserData();
-    }, [])
-
     return (
         <div className="w-full h-screen bg-[#F9FAFB]">
+            <TopBar showLinks showProfile />
             {children}
         </div>
     )

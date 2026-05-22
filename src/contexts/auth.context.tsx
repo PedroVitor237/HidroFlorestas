@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function signIn(data: SignInData) {
 
-        const promise = fetch("/api/auth/login", {
+        const promise = fetch("/api/auth/sign-in", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -105,9 +105,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             return true;
 
-        } catch {
+        } catch (error){
 
             toast.error("Erro ao conectar ao servidor", { id: "login" });
+            console.error("Erro ao fazer login");
+            console.error(error);
             return false;
 
         }
@@ -116,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function signUp(data: SignUpData) {
 
-        const promise = fetch("/api/auth/signup", {
+        const promise = fetch("/api/auth/sign-up", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -154,15 +156,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     }
 
-    function logout() {
-
-        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00";
-
+    async function logout() {
+    try {
+        // 1. Chama a API para limpar o cookie no servidor
+        await fetch("/api/auth/logout", { method: "POST" });
+        
+        // 2. Limpa o estado local
         setUser(null);
-
-        router.push("/login");
-
+        
+        // 3. Redireciona limpando o cache do Next.js
+        window.location.href = "/login";
+    } catch (error) {
+        console.error("Erro ao fazer logout:", error);
     }
+}
 
     return (
         <AuthContext.Provider
