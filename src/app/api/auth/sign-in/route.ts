@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
 
         return response;
     } catch (error) {
+        console.error("Erro ao processar a requisição de login");
+        console.error(error);
         return NextResponse.json(
             { success: false, message: "Ocorreu um erro inesperado em nossos servidores." },
             { status: 500 }

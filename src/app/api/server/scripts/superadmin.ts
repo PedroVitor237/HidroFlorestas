@@ -61,6 +61,7 @@ async function createSuperAdmin(): Promise<void> {
                 email,
                 isAdmin: true,
                 password: hashedPassword,
+                role: 'ADMIN',
                 status: 'ACTIVE',
             }
         });
