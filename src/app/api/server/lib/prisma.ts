@@ -1,21 +1,14 @@
-import { PrismaClient } from '@/generated/prisma/index.js';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { PrismaClient } from '@/generated/prisma/index.js'
+import { PrismaNeon } from '@prisma/adapter-neon'
+import { neonConfig } from '@neondatabase/serverless'
+import ws from 'ws'
 
-import { PrismaNeon } from '@prisma/adapter-neon';
-import { IS_PRODUCTION } from './env';
+neonConfig.webSocketConstructor = ws
 
-let adapter = null;
+const connectionString = process.env.DATABASE_URL!
 
-if (!IS_PRODUCTION) {
-  adapter = new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL || 'file:./prisma/dev.db',
-  });
-} else {
-  adapter = new PrismaNeon({
-    connectionString: process.env.DATABASE_URL,
-  });
-}
+const adapter = new PrismaNeon({ connectionString })
 
-
-export const prisma = new PrismaClient({ adapter });
-
+export const prisma = new PrismaClient({
+  adapter,
+})
