@@ -10,6 +10,7 @@ import {
 import UserProfile from "../user-profile";
 import { useAuth } from "@/contexts/auth.context";
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 const sidebarLinks = [
   { title: "Início", href: "/dashboard", Icon: HouseIcon },
@@ -64,7 +65,8 @@ function MobileTabBar() {
 
 export default function Sidebar() {
   // pegar nome da rota para destacar o link ativo
-  const urlParh = window.location.pathname;
+  const urlPath = usePathname();
+   const router = useRouter();
 
   return (
     <>
@@ -74,7 +76,7 @@ export default function Sidebar() {
             <li key={index}>
               <a
                 href={link.href}
-                className={`flex items-center flex-col text-gray-500 p-2 rounded-md ${urlParh === link.href ? "bg-green-600 text-white hover:text-green-500 hover:bg-green-700 " : "hover:text-green-600 hover:bg-green-600/6 "}`}
+                className={`flex items-center flex-col text-gray-500 p-2 rounded-md ${urlPath === link.href ? "bg-green-600 text-white hover:text-green-500 hover:bg-green-700 " : "hover:text-green-600 hover:bg-green-600/6 "}`}
               >
                 <link.Icon />
                 {link.title}
@@ -88,7 +90,7 @@ export default function Sidebar() {
           <button
             onClick={() => {
               if (confirm("Tem certeza que deseja sair?")) {
-                window.location.href = "/logout";
+                router.push("/logout");
               }
             }}
             className={`flex items-center flex-col hover:bg-amber-800 hover:text-amber-400 p-2 rounded-md cursor-pointer text-white bg-amber-700`}

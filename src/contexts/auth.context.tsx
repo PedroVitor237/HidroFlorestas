@@ -165,7 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         
         // 3. Redireciona limpando o cache do Next.js
-        window.location.href = "/login";
+        router.push("/login");
     } catch (error) {
         console.error("Erro ao fazer logout:", error);
     }
