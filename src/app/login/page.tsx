@@ -1,18 +1,228 @@
 'use client';
 
-import { useAuth } from "@/contexts/auth.context";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+
+import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
+
+import LogoHF from '@/assets/logo/logo-hf.png';
+import { useAuth } from '@/contexts/auth.context';
 
 export default function LoginPage() {
+  const { signIn } = useAuth();
 
-    const { signIn, user } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    return (
-        <div>
-            Login Page Aqui <br /><br />
-            
-            <button 
-            className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
-            onClick={() => signIn({email: 'admin@admin.com', password: 'admin1234'})}>Fazer Login Admin</button>
+  async function handleLogin() {
+    if (loading) return;
+
+    if (!email.trim() || !password.trim()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await signIn({
+        email,
+        password,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F9FAFB]">
+      {/* Header */}
+      <header className="h-[100px] border-b border-black/10 bg-white">
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
+          <Image
+            src={LogoHF}
+            alt="HidroFlorestas"
+            width={220}
+            priority
+          />
+
+          <div className="hidden md:flex items-center gap-8">
+            <Link
+              href="#"
+              className="text-[16px] font-medium text-[#3E3E3E] underline hover:text-[#0084DD]"
+            >
+              Sobre nós
+            </Link>
+
+            <Link
+              href="#"
+              className="text-[16px] font-medium text-[#3E3E3E] underline hover:text-[#0084DD]"
+            >
+              O que são laboratórios IHFR?
+            </Link>
+          </div>
         </div>
-    );
+      </header>
+
+      {/* Conteúdo */}
+      <main className="flex min-h-[calc(100vh-100px)] items-center justify-center p-6">
+        <div className="w-full max-w-[500px] rounded-[20px] bg-white p-8 shadow-[0px_4px_18px_-3px_rgba(0,0,0,0.25)] md:p-10">
+          {/* Logo */}
+          <div className="flex justify-center">
+            <Image
+              src={LogoHF}
+              alt="HidroFlorestas"
+              width={230}
+              priority
+            />
+          </div>
+
+          <hr className="my-6 border-black/20" />
+
+          {/* Título */}
+          <h1 className="text-center text-[25px] font-bold text-[#A1640B]">
+            FAÇA SEU LOGIN
+          </h1>
+
+          <p className="mt-2 text-center text-[18px] text-[#3E3E3E]">
+            Acesse sua conta para gerenciar seus projetos
+          </p>
+
+          {/* Email */}
+          <div className="mt-8">
+            <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+              E-mail
+            </label>
+
+            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+              <Mail size={24} className="text-[#858585]" />
+
+              <input
+                type="email"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-transparent text-[16px] text-[#3E3E3E] outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Senha */}
+          <div className="mt-6">
+            <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+              Senha
+            </label>
+
+            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+              <LockKeyhole size={24} className="text-[#858585]" />
+
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-transparent text-[16px] text-[#3E3E3E] outline-none"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="cursor-pointer text-[#858585]"
+              >
+                {showPassword ? (
+                  <EyeOff size={22} />
+                ) : (
+                  <Eye size={22} />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Mostrar senha / Esqueceu senha */}
+          <div className="mt-3 flex items-center justify-between">
+            <label className="flex cursor-pointer items-center gap-2">
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+                className="h-4 w-4"
+              />
+
+              <span className="text-sm text-[#858585]">
+                Mostrar senha
+              </span>
+            </label>
+
+            <Link
+              href="#"
+              className="text-sm font-medium text-[#A1640B] underline"
+            >
+              Esqueceu sua senha?
+            </Link>
+          </div>
+
+          {/* Botão */}
+          <button
+            type="button"
+            onClick={handleLogin}
+            disabled={loading}
+            className="
+              mt-8
+              w-full
+              cursor-pointer
+              rounded-[10px]
+              bg-[#489E02]
+              py-4
+              text-[22px]
+              font-bold
+              text-white
+              hover:opacity-90
+              disabled:cursor-not-allowed
+              disabled:opacity-70
+            "
+          >
+            {loading ? 'ENTRANDO...' : 'ENTRAR'}
+          </button>
+
+          {/* Cadastro */}
+          <div className="mt-8 text-center text-[16px] text-[#3E3E3E]">
+            Não tem uma conta?{' '}
+            <Link
+              href="/register"
+              className="font-semibold text-[#A1640B] underline"
+            >
+              Cadastrar-se
+            </Link>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
+
+
+
+
+
+
+// 'use client';
+
+// import { useAuth } from "@/contexts/auth.context";
+
+// export default function LoginPage() {
+
+//     const { signIn, user } = useAuth();
+
+//     return (
+//         <div>
+//             Login Page Aqui <br /><br />
+            
+//             <button 
+//             className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
+//             onClick={() => signIn({email: 'admin@admin.com', password: 'admin1234'})}>Fazer Login Admin</button>
+//         </div>
+//     );
+// }
+
