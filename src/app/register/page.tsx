@@ -7,6 +7,7 @@ import { Eye, EyeOff, LockKeyhole, Mail, User } from 'lucide-react';
 
 import LogoHF from '@/assets/logo/logo-hf.png';
 import Logo from '@/assets/logo/logo.png';
+import RegisterBackground from '@/assets/auth/register-background.png';
 
 import { useAuth } from '@/contexts/auth.context';
 
@@ -62,24 +63,39 @@ export default function RegisterPage() {
       </header>
 
       <main className="flex min-h-[calc(100vh-100px)] items-center justify-center p-6">
-        <div className="flex w-full max-w-[1220px] overflow-hidden rounded-[20px] bg-white shadow-[0px_4px_18px_-3px_rgba(0,0,0,0.25)]">
+        <div className="flex w-full max-w-[1400px] overflow-hidden rounded-[20px] bg-white shadow-[0px_4px_18px_-3px_rgba(0,0,0,0.25)]">
           {/* Painel esquerdo */}
-          <div className="hidden md:flex w-[55%] flex-col items-center justify-center bg-gradient-to-b from-[#F3FAFF] to-[#F4F4F4] p-12">
+          <div className="relative hidden md:flex w-[55%] flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#F3FAFF] to-[#F4F4F4] p-12">
             <Image
-              src={Logo}
-              alt="Logo HidroFlorestas"
-              width={260}
-              className="mb-8"
+              src={RegisterBackground}
+              alt="Background"
+              fill
+              priority
+             className="object-cover object-center"
             />
 
-            <h2 className="text-center text-6xl font-black">
-              <span className="text-[#0084DD]">HIDRO</span>
-              <span className="text-[#00B51A]">FLORESTAS</span>
-            </h2>
+            {/* Camada Translucida */}
+            <div className="absolute inset-0 bg-white/75" />
 
-            <p className="mt-20 text-center text-xl text-[#3E3E3E]">
-              STARTUP & INOVAÇÃO
-            </p>
+            {/* Conteúdo do painel esquerdo */}
+            <div className="relative z-10 flex h-full w-full flex-col items-center">
+              <Image
+                src={Logo}
+                alt="Logo HidroFlorestas"
+                width={260}
+                className="mb-8"
+              />
+
+              <h2 className="text-center text-6xl font-black">
+                <span className="text-[#0084DD]">HIDRO</span>
+                <span className="text-[#00B51A]">FLORESTAS</span>
+              </h2>
+
+              <p className="mt-auto pb-8 text-center text-xl text-[#3E3E3E]">
+                STARTUP & INOVAÇÃO
+              </p>
+            </div>
+            
           </div>
 
           {/* Formulário */}
@@ -108,7 +124,7 @@ export default function RegisterPage() {
                 Nome
               </label>
 
-              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
                 <User size={22} className="text-[#858585]" />
 
                 <input
@@ -116,7 +132,7 @@ export default function RegisterPage() {
                   placeholder="Seu nome"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full bg-transparent outline-none"
+                  className="w-full bg-transparent outline-none placeholder:text-[#858585]"
                 />
               </div>
             </div>
@@ -127,7 +143,7 @@ export default function RegisterPage() {
                 Sobrenome
               </label>
 
-              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
                 <User size={22} className="text-[#858585]" />
 
                 <input
@@ -135,7 +151,7 @@ export default function RegisterPage() {
                   placeholder="Seu sobrenome"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full bg-transparent outline-none"
+                  className="w-full bg-transparent outline-none placeholder:text-[#858585]"
                 />
               </div>
             </div>
@@ -146,7 +162,7 @@ export default function RegisterPage() {
                 E-mail
               </label>
 
-              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
                 <Mail size={22} className="text-[#858585]" />
 
                 <input
@@ -154,7 +170,7 @@ export default function RegisterPage() {
                   placeholder="seu@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-transparent outline-none"
+                  className="w-full bg-transparent outline-none placeholder:text-[#858585]"
                 />
               </div>
             </div>
@@ -165,7 +181,7 @@ export default function RegisterPage() {
                 Senha
               </label>
 
-              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+              <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
                 <LockKeyhole size={22} className="text-[#858585]" />
 
                 <input
@@ -173,7 +189,7 @@ export default function RegisterPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-transparent outline-none"
+                  className="w-full bg-transparent outline-none placeholder:text-[#858585]"
                 />
 
                 <button
@@ -222,6 +238,7 @@ export default function RegisterPage() {
                 cursor-pointer
                 hover:opacity-90
                 disabled:opacity-70
+                active:scale-[0.98]
               "
             >
               {loading ? 'CRIANDO...' : 'CRIAR CONTA'}

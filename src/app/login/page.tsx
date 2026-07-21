@@ -96,7 +96,7 @@ export default function LoginPage() {
               E-mail
             </label>
 
-            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
               <Mail size={24} className="text-[#858585]" />
 
               <input
@@ -104,7 +104,7 @@ export default function LoginPage() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent text-[16px] text-[#3E3E3E] outline-none"
+                className="w-full bg-transparent outline-none placeholder:text-[#858585]"
               />
             </div>
           </div>
@@ -115,7 +115,7 @@ export default function LoginPage() {
               Senha
             </label>
 
-            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4">
+            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
               <LockKeyhole size={24} className="text-[#858585]" />
 
               <input
@@ -123,7 +123,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent text-[16px] text-[#3E3E3E] outline-none"
+                className="w-full bg-transparent text-[16px] text-[#3E3E3E] outline-none placeholder:text-[#858585]"
               />
 
               <button
@@ -181,6 +181,7 @@ export default function LoginPage() {
               hover:opacity-90
               disabled:cursor-not-allowed
               disabled:opacity-70
+              active:scale-[0.98]
             "
           >
             {loading ? 'ENTRANDO...' : 'ENTRAR'}
