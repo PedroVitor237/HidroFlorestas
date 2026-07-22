@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
 * {
-  transition: .3s
+  transition: .3s;
+  font-family: var(--font-poppins);
 }

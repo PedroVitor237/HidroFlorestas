@@ -39,7 +39,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
       {/* Header */}
-      <header className="h-[100px] border-b border-black/10 bg-white">
+      <header className="h-25 border-b border-black/10 bg-white">
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
           <Image
             src={LogoHF}

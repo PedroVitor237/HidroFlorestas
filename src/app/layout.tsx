@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/contexts/auth.context";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
   title: "Hidro Florestas",
-  description: "Startup para geração e análise de de Índice HidroFlorestal de Riscos",
+  description:
+    "Startup para geração e análise de Índice HidroFlorestal de Riscos",
 };
 
 export default function RootLayout({
@@ -25,13 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+    <html lang="pt-BR">
+      <body className={`${poppins.variable} antialiased`}>
+        <AuthProvider>{children}</AuthProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>
