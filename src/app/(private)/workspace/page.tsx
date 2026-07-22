@@ -59,7 +59,7 @@ export default function Workspace() {
             </div>
 
             <div className="mt-10 grid gap-6 lg:grid-cols-2">
-              <button className="group rounded-3xl bg-green-600 p-5 text-white transition hover:-translate-y-2 hover:bg-green-700">
+              <button onClick={() => window.location.href = '/dashboard'} className="group rounded-3xl bg-green-600 p-5 text-white transition hover:-translate-y-2 hover:bg-green-700">
                 <UsersIcon className="mx-auto mb-5" size={45} />
 
                 <h3 className="text-2xl font-bold">Entrar em um laboratório</h3>
@@ -69,7 +69,7 @@ export default function Workspace() {
                 </p>
               </button>
 
-              <button className="group rounded-3xl bg-blue-600 p-5 text-white transition hover:-translate-y-2 hover:bg-blue-700">
+              <button onClick={() => setTemLab(!temLab)} className="group rounded-3xl bg-blue-600 p-5 text-white transition hover:-translate-y-2 hover:bg-blue-700">
                 <FlaskConicalIcon className="mx-auto mb-5" size={45} />
 
                 <h3 className="text-2xl font-bold">Criar laboratório</h3>
@@ -158,7 +158,7 @@ export default function Workspace() {
                 </button>
 
                 <Link
-                  href="/dashboard/laboratory"
+                  href="/dashboard"
                   className="flex items-center justify-center gap-3 rounded-2xl bg-linear-to-r from-green-600 to-green-500 px-8 py-4 font-bold text-white shadow-lg hover:scale-[1.02] transition"
                 >
                   ACESSAR LABORATÓRIO
