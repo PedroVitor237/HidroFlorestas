@@ -39,7 +39,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
       {/* Header */}
-      <header className="h-[100px] border-b border-black/10 bg-white">
+      <header className="h-25 border-b border-black/10 bg-white">
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
           <Image
             src={LogoHF}
@@ -82,7 +82,7 @@ export default function LoginPage() {
           <hr className="my-6 border-black/20" />
 
           {/* Título */}
-          <h1 className="text-center text-[25px] font-bold text-[#A1640B]">
+          <h1 className="text-center text-[25px] font-bold text-amber-700">
             FAÇA SEU LOGIN
           </h1>
 
@@ -92,11 +92,11 @@ export default function LoginPage() {
 
           {/* Email */}
           <div className="mt-8">
-            <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+            <label className="mb-2 block text-[18px] font-bold text-amber-700">
               E-mail
             </label>
 
-            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
+            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-amber-700text-amber-700">
               <Mail size={24} className="text-[#858585]" />
 
               <input
@@ -111,11 +111,11 @@ export default function LoginPage() {
 
           {/* Senha */}
           <div className="mt-6">
-            <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+            <label className="mb-2 block text-[18px] font-bold text-amber-700">
               Senha
             </label>
 
-            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-[#A1640B]">
+            <div className="flex items-center gap-3 rounded-[10px] bg-[#EFEFEF] px-4 py-4 focus-within:ring-2 focus-within:ring-amber-700text-amber-700">
               <LockKeyhole size={24} className="text-[#858585]" />
 
               <input
@@ -157,7 +157,7 @@ export default function LoginPage() {
 
             <Link
               href="#"
-              className="text-sm font-medium text-[#A1640B] underline"
+              className="text-sm font-medium text-amber-700 underline"
             >
               Esqueceu sua senha?
             </Link>
@@ -173,7 +173,7 @@ export default function LoginPage() {
               w-full
               cursor-pointer
               rounded-[10px]
-              bg-[#489E02]
+              bg-green-600
               py-4
               text-[22px]
               font-bold
@@ -192,7 +192,7 @@ export default function LoginPage() {
             Não tem uma conta?{' '}
             <Link
               href="/register"
-              className="font-semibold text-[#A1640B] underline"
+              className="font-semibold text-amber-700 underline"
             >
               Cadastrar-se
             </Link>

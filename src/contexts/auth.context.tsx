@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             await fetchUserData({ force: true });
 
-            router.push("/dashboard");
+            router.push("/workspace");
 
             return true;
 
@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             await fetchUserData({ force: true });
 
-            router.push("/dashboard");
+            router.push("/workspace");
 
             return true;
 
