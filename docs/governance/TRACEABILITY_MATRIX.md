@@ -82,6 +82,7 @@ Os nós reutilizam exclusivamente os identificadores de `DOCUMENT_REGISTER.md`. 
 
 | Camada | Documentos relacionados | Cobertura documental observada | Pendências de autoridade relacionadas | Auditoria futura | Observações |
 |---|---|---|---|---|---|
+| Escopo institucional | Não estabelecido entre os 13 nós históricos. | Nenhum dos 13 nós foi classificado no baseline como documento institucional aprovado. | `PD-001` | Etapa 8 — consolidação transversal, ou antes de qualquer atualização normativa que dependa do escopo institucional | A ausência de classificação no baseline não comprova que nenhum nó contenha material institucional e não autoriza nova auditoria nesta correção. |
 | Ciência fundamental e campo | `DOC-RAW-007`, `DOC-RAW-008`, `DOC-RAW-009`, `DOC-RAW-011` | Matriz de variáveis, modelos científico e conceitual e protocolo de coleta estão representados como documentos históricos. | `PD-002` | Etapa 4 | Descrição de presença documental; não avalia o conteúdo científico. |
 | Contrato matemático, calibração e algoritmo | `DOC-RAW-002`, `DOC-RAW-010`, `DOC-RAW-013` | Algoritmo operacional, modelo regional e contrato matemático estão representados. | `PD-002`; `PD-008` quando a auditoria alcançar eventual alternativa tecnológica, sem antecipá-la | Etapa 5 | A associação organiza a auditoria; não confirma fórmulas, calibração ou tecnologia. |
 | Produto e domínio implícito | `DOC-RAW-003`, `DOC-RAW-004` | Backlog e definição de requisitos registram perspectivas históricas de produto. | `PD-003`, `PD-014`, `PD-015`, `PD-016` | Etapas 6 e 7, conforme alocação primária | Não transforma backlog ou requisitos históricos em intenção aprovada. |
@@ -114,19 +115,20 @@ A alocação cobre `DOC-RAW-002` a `DOC-RAW-014` exatamente uma vez, sem omissã
 | `GAP-007` | `RELACAO_NAO_DECLARADA` | A busca controlada identificou duas ligações nomeadas entre documentos; as demais conexões registradas nesta matriz não foram declaradas como relações documentais pelas fontes. | `DOC-RAW-002` a `DOC-RAW-014` | Cabeçalhos, referências e busca direcionada pelos títulos e tipos dos 13 documentos. | `NAO_ESPECIFICADO` | As 14 conexões estruturais ou temáticas permanecem inferenciais e não podem sustentar dependência, precedência ou substituição. | não especificado | Etapas 4 a 7 | `AGUARDANDO_AUDITORIA` |
 | `GAP-008` | `ENTRADA_EXTERNA_PENDENTE` | Artefatos do Figma ainda precisam ser fornecidos ou registrados antes da auditoria aprofundada de produto, domínio e UX. | UX e produto; nenhum nó documental criado | Ausência informada na solicitação aprovada da Etapa 3. | `FATO_DOCUMENTADO` | A rastreabilidade de arquivos, páginas, frames, telas e fluxos do Figma ainda não pode ser estabelecida. | `PD-005`, `PD-017` | Etapa 6 | `AGUARDANDO_ENTRADA_EXTERNA` |
 | `GAP-009` | `DESTINO_NORMATIVO_NAO_DEFINIDO` | Os destinos normativos que receberão o conteúdo consolidado após as auditorias das camadas não estão especificados para todos os assuntos. | Ciência, produto, dados, UX e arquitetura | `PROJECT_CONTEXT.md`, `SOURCE_AUTHORITY.md` e destinos condicionais descritos em `PENDING_DECISIONS.md`. | `NAO_ESPECIFICADO` | Resultados futuros deverão aguardar autoridade e destino identificados antes de qualquer consolidação normativa. | `PD-002` a `PD-006` | Etapas 4 a 7 | `VINCULADA_A_PENDENCIA` |
+| `GAP-010` | `AUTORIDADE_PENDENTE` | A autoridade para confirmar a interpretação, a vigência e as mudanças no escopo institucional ainda depende de designação da equipe. | Escopo institucional; identidade e aplicabilidade da fonte institucional entre os nós históricos ainda não estabelecidas | `SOURCE_AUTHORITY.md`, `PENDING_DECISIONS.md` e ausência de um nó classificado no baseline como documento institucional aprovado. | `PENDENCIA_DE_DECISAO` | Limita o uso do escopo institucional como critério normativo na consolidação transversal, sem impedir o levantamento exploratório das camadas. | `PD-001` | Etapa 8 — consolidação transversal; confirmação necessária antes de atualizações normativas dependentes do escopo | `VINCULADA_A_PENDENCIA` |
 
 ### Síntese quantitativa das lacunas
 
 | Dimensão | Valor |
 |---|---:|
-| Lacunas totais | 9 |
+| Lacunas totais | 10 |
 | `METADADO_AUSENTE` | 1 |
-| `AUTORIDADE_PENDENTE` | 5 |
+| `AUTORIDADE_PENDENTE` | 6 |
 | `RELACAO_NAO_DECLARADA` | 1 |
 | `ENTRADA_EXTERNA_PENDENTE` | 1 |
 | `DESTINO_NORMATIVO_NAO_DEFINIDO` | 1 |
 | `AGUARDANDO_AUDITORIA` | 2 |
-| `VINCULADA_A_PENDENCIA` | 6 |
+| `VINCULADA_A_PENDENCIA` | 7 |
 | `AGUARDANDO_ENTRADA_EXTERNA` | 1 |
 | `PRELIMINAR` | 0 |
 

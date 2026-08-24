@@ -155,9 +155,9 @@ Responsável pela execução: agente mantenedor. Revisão e aprovação: equipe;
 - Relações totais: 16.
 - Relações por tipo: 1 `REFERENCIA_EXPLICITA`, 1 `DEPENDENCIA_EXPLICITA`, 0 `ENTRADA_SAIDA_EXPLICITA`, 10 `RELACAO_ESTRUTURAL_PRELIMINAR` e 4 `SOBREPOSICAO_TEMATICA_PRELIMINAR`.
 - Relações por classificação e estado: 2 `FATO_DOCUMENTADO` / `VERIFICADA_NA_FONTE` e 14 `INFERENCIA` / `PRELIMINAR_PENDENTE_DE_AUDITORIA`; 0 `NAO_ESTABELECIDA`.
-- Lacunas totais: 9.
-- Lacunas por tipo: 1 `METADADO_AUSENTE`, 5 `AUTORIDADE_PENDENTE`, 1 `RELACAO_NAO_DECLARADA`, 1 `ENTRADA_EXTERNA_PENDENTE` e 1 `DESTINO_NORMATIVO_NAO_DEFINIDO`.
-- Lacunas por estado: 2 `AGUARDANDO_AUDITORIA`, 6 `VINCULADA_A_PENDENCIA`, 1 `AGUARDANDO_ENTRADA_EXTERNA` e 0 `PRELIMINAR`.
+- Lacunas totais: 10.
+- Lacunas por tipo: 1 `METADADO_AUSENTE`, 6 `AUTORIDADE_PENDENTE`, 1 `RELACAO_NAO_DECLARADA`, 1 `ENTRADA_EXTERNA_PENDENTE` e 1 `DESTINO_NORMATIVO_NAO_DEFINIDO`.
+- Lacunas por estado: 2 `AGUARDANDO_AUDITORIA`, 7 `VINCULADA_A_PENDENCIA`, 1 `AGUARDANDO_ENTRADA_EXTERNA` e 0 `PRELIMINAR`.
 - Alocação primária: 13/13 documentos, 13 identificadores únicos, sem omissão ou duplicidade; Etapa 4 com 4, Etapa 5 com 3, Etapa 6 com 2 e Etapa 7 com 4.
 - Registro documental final: 24 identificadores em cada tabela complementar, com correspondência 24/24.
 
@@ -168,6 +168,8 @@ Responsável pela execução: agente mantenedor. Revisão e aprovação: equipe;
 - `GAP-007`: apenas duas ligações nomeadas foram localizadas; as outras 14 relações permanecem inferenciais e aguardam auditoria.
 - `GAP-008`: entrada externa do Figma pendente, vinculada a `PD-005` e `PD-017`.
 - `GAP-009`: destinos normativos futuros não especificados para todos os assuntos, vinculados a `PD-002` a `PD-006`.
+- `GAP-010`: autoridade sobre o escopo institucional pendente, vinculada a `PD-001`, sem impedir o levantamento exploratório das camadas.
+- Cobertura institucional: acrescentada sem atribuir nenhum dos 13 nós como documento institucional aprovado; encaminhamento para a consolidação transversal da Etapa 8 ou para momento anterior a qualquer atualização normativa dependente do escopo.
 - Candidatas novas a `PENDING_DECISIONS.md`: nenhuma claramente distinta de `PD-001` a `PD-017` foi identificada no escopo restrito; o registro vivo não foi alterado.
 
 ## Verificações executadas
@@ -177,8 +179,8 @@ Responsável pela execução: agente mantenedor. Revisão e aprovação: equipe;
 | Estado inicial e IDs livres | `git status --short`, `git rev-parse HEAD`, `git branch --show-current`, contagem e comparação por `awk`, `sort` e `cmp` | Aprovada; commit e branch registrados, duas modificações preexistentes preservadas, 22/22 IDs iniciais e `DOC-008`/`DOC-PLAN-002` livres. |
 | Encerramento da Etapa 2 | Testes de caminho e estado, `grep`, `sha256sum` e confronto com `DOC-PLAN-001` | Aprovada; origem ativa ausente, arquivo arquivado `CONCLUIDO`, aprovação registrada, estado `ARQUIVADO` e checksum coincidente. |
 | Leitura estrutural controlada | Enumeração de cabeçalhos e buscas direcionadas com `grep`; trechos mínimos com `sed` | Aprovada; 13 documentos percorridos, duas relações explícitas localizadas e nenhuma auditoria substantiva iniciada. |
-| Estrutura e classificação da matriz | Contagem seccional e validação por colunas com `awk` | Aprovada; 13 nós, 16 relações e 9 lacunas; somente tipos, classificações e estados permitidos. |
-| Unicidade e referências | Extração, ordenação, `comm`, `sort -u` e confronto com os registros canônicos | Aprovada; 16 IDs `TR-NNN` e 9 IDs `GAP-NNN` únicos; referências `DOC-RAW-NNN` e `PD-NNN` existentes. |
+| Estrutura e classificação da matriz | Contagem seccional e validação por colunas com `awk` | Aprovada; 13 nós, 16 relações e 10 lacunas; somente tipos, classificações e estados permitidos. |
+| Unicidade e referências | Extração, ordenação, `comm`, `sort -u` e confronto com os registros canônicos | Aprovada; 16 IDs `TR-NNN` e 10 IDs `GAP-NNN` únicos; referências `DOC-RAW-NNN` e `PD-NNN` existentes. |
 | Alocação primária | Extração dos IDs da tabela e comparação com a sequência esperada | Aprovada; 13/13, todos únicos e alocados uma vez. |
 | Registro documental | Extração independente das duas tabelas e `cmp` | Aprovada; correspondência 24/24; matriz e plano registrados como `EM_REVISAO`. |
 | Integridade final de `docs/raw/` | `find`, `stat`, `sha256sum -c` contra o baseline arquivado e `git diff -- docs/raw` | Aprovada; 13/13 caminhos, tipos, tamanhos, permissões, mtimes e SHA-256 coincidentes; diff vazio. |
@@ -201,6 +203,7 @@ Responsável pela execução: agente mantenedor. Revisão e aprovação: equipe;
 |---|---|---|
 | 2026-08-24 | `EM_ANDAMENTO` | Plano criado após a validação do estado inicial e a transição confirmada da Etapa 2; leitura estrutural controlada pendente. |
 | 2026-08-24 | `AGUARDANDO_REVISAO` | Matriz criada com 13 nós, relações explícitas separadas de inferências, alocação 13/13, lacunas e entrada futura do Figma; registro atualizado e verificações aplicáveis aprovadas. |
+| 2026-08-24 | `AGUARDANDO_REVISAO` | Revisão humana aprovou os 13 nós, as 16 relações e a alocação 13/13; identificou a omissão de `PD-001` na cobertura e nas lacunas e determinou a inclusão de `GAP-010`, sem iniciar nova auditoria. |
 
 ## Ponto de parada
 
