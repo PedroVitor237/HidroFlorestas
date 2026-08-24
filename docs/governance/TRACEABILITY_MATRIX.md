@@ -3,10 +3,11 @@
 ## Identificação, estado e limites
 
 - **Identificador documental:** `DOC-008`
-- **Estado:** `EM_REVISAO`
-- **Natureza:** matriz canônica candidata de governança documental
+- **Estado:** `CANONICO_ATUAL`
+- **Natureza:** matriz canônica de governança documental
 - **Data da leitura controlada:** 2026-08-24
-- **Plano de execução:** [`DOC-PLAN-002`](../plans/active/rastreabilidade-global-inicial.md)
+- **Plano de execução:** [`DOC-PLAN-002`](../plans/completed/rastreabilidade-global-inicial.md)
+- **Aprovação:** aprovação humana da Etapa 3 registrada na solicitação aprovada da Etapa 4, em 2026-08-24; responsável individual não especificado
 - **Registro de metadados e integridade:** [`DOCUMENT_REGISTER.md`](DOCUMENT_REGISTER.md)
 - **Política de autoridade:** [`SOURCE_AUTHORITY.md`](SOURCE_AUTHORITY.md)
 
@@ -22,6 +23,7 @@ Os nós reutilizam exclusivamente os identificadores de `DOCUMENT_REGISTER.md`. 
 - `INFERENCIA` identifica uma conexão derivada de função, título ou estrutura documental; não comprova dependência, aprovação, substituição ou vigência.
 - `VERIFICADA_NA_FONTE` valida a presença da declaração, não o mérito de seu conteúdo.
 - `PRELIMINAR_PENDENTE_DE_AUDITORIA` mantém a relação aberta à confirmação nas futuras Etapas 4 a 7.
+- `OPCIONAL_NAO_BLOQUEANTE` identifica lacuna de entrada suplementar que pode ser tratada futuramente sem impedir a auditoria ou a etapa relacionada.
 - A direção `origem → destino` representa apenas a leitura documental registrada na linha.
 - A alocação primária organiza o trabalho futuro e não altera autoridade ou estado documental.
 
@@ -113,7 +115,7 @@ A alocação cobre `DOC-RAW-002` a `DOC-RAW-014` exatamente uma vez, sem omissã
 | `GAP-005` | `AUTORIDADE_PENDENTE` | A autoridade para aprovar UX, fluxos e estados dos artefatos ainda depende de designação da equipe. | UX; `DOC-RAW-014`; futura entrada do Figma | `SOURCE_AUTHORITY.md` e `PENDING_DECISIONS.md`. | `PENDENCIA_DE_DECISAO` | Mantém wireframes e futuros artefatos sem aprovação presumida. | `PD-005`, `PD-016`, `PD-017` | Etapa 6 | `VINCULADA_A_PENDENCIA` |
 | `GAP-006` | `AUTORIDADE_PENDENTE` | A autoridade para confirmar arquitetura e aceitar ADRs ainda depende de designação da equipe. | Arquitetura; `DOC-RAW-006`, `DOC-RAW-012` | `SOURCE_AUTHORITY.md`, `PENDING_DECISIONS.md` e alternativas registradas em `TECH_DECISIONS.md`. | `PENDENCIA_DE_DECISAO` | Mantém especificação, roadmap e alternativas separados de arquitetura normativa atual. | `PD-006` a `PD-013` | Etapa 7 | `VINCULADA_A_PENDENCIA` |
 | `GAP-007` | `RELACAO_NAO_DECLARADA` | A busca controlada identificou duas ligações nomeadas entre documentos; as demais conexões registradas nesta matriz não foram declaradas como relações documentais pelas fontes. | `DOC-RAW-002` a `DOC-RAW-014` | Cabeçalhos, referências e busca direcionada pelos títulos e tipos dos 13 documentos. | `NAO_ESPECIFICADO` | As 14 conexões estruturais ou temáticas permanecem inferenciais e não podem sustentar dependência, precedência ou substituição. | não especificado | Etapas 4 a 7 | `AGUARDANDO_AUDITORIA` |
-| `GAP-008` | `ENTRADA_EXTERNA_PENDENTE` | Artefatos do Figma ainda precisam ser fornecidos ou registrados antes da auditoria aprofundada de produto, domínio e UX. | UX e produto; nenhum nó documental criado | Ausência informada na solicitação aprovada da Etapa 3. | `FATO_DOCUMENTADO` | A rastreabilidade de arquivos, páginas, frames, telas e fluxos do Figma ainda não pode ser estabelecida. | `PD-005`, `PD-017` | Etapa 6 | `AGUARDANDO_ENTRADA_EXTERNA` |
+| `GAP-008` | `ENTRADA_EXTERNA_PENDENTE` | Artefatos do Figma constituem entrada suplementar, opcional e não bloqueante; sua ausência não impede as auditorias documentais nem a Etapa 6. | UX e produto; nenhum nó documental criado | Orientação atual da equipe registrada na solicitação aprovada da Etapa 4. | `DECISAO_CONFIRMADA` | A rastreabilidade de arquivos, páginas, frames, telas e fluxos do Figma poderá ser acrescentada, se esses artefatos forem apresentados, sem condicionar as auditorias. | `PD-005`, `PD-017` | Opcional na Etapa 6 ou posterior | `OPCIONAL_NAO_BLOQUEANTE` |
 | `GAP-009` | `DESTINO_NORMATIVO_NAO_DEFINIDO` | Os destinos normativos que receberão o conteúdo consolidado após as auditorias das camadas não estão especificados para todos os assuntos. | Ciência, produto, dados, UX e arquitetura | `PROJECT_CONTEXT.md`, `SOURCE_AUTHORITY.md` e destinos condicionais descritos em `PENDING_DECISIONS.md`. | `NAO_ESPECIFICADO` | Resultados futuros deverão aguardar autoridade e destino identificados antes de qualquer consolidação normativa. | `PD-002` a `PD-006` | Etapas 4 a 7 | `VINCULADA_A_PENDENCIA` |
 | `GAP-010` | `AUTORIDADE_PENDENTE` | A autoridade para confirmar a interpretação, a vigência e as mudanças no escopo institucional ainda depende de designação da equipe. | Escopo institucional; identidade e aplicabilidade da fonte institucional entre os nós históricos ainda não estabelecidas | `SOURCE_AUTHORITY.md`, `PENDING_DECISIONS.md` e ausência de um nó classificado no baseline como documento institucional aprovado. | `PENDENCIA_DE_DECISAO` | Limita o uso do escopo institucional como critério normativo na consolidação transversal, sem impedir o levantamento exploratório das camadas. | `PD-001` | Etapa 8 — consolidação transversal; confirmação necessária antes de atualizações normativas dependentes do escopo | `VINCULADA_A_PENDENCIA` |
 
@@ -129,27 +131,24 @@ A alocação cobre `DOC-RAW-002` a `DOC-RAW-014` exatamente uma vez, sem omissã
 | `DESTINO_NORMATIVO_NAO_DEFINIDO` | 1 |
 | `AGUARDANDO_AUDITORIA` | 2 |
 | `VINCULADA_A_PENDENCIA` | 7 |
-| `AGUARDANDO_ENTRADA_EXTERNA` | 1 |
+| `OPCIONAL_NAO_BLOQUEANTE` | 1 |
+| `AGUARDANDO_ENTRADA_EXTERNA` | 0 |
 | `PRELIMINAR` | 0 |
 
 Nenhuma nova pendência foi incorporada ao registro vivo nesta etapa. A leitura restrita não identificou candidata decisória claramente distinta de `PD-001` a `PD-017`; as lacunas sem vínculo decisório permanecem para confirmação nas auditorias.
 
-## Entrada futura dos artefatos do Figma
+## Orientação atual sobre os artefatos do Figma
 
-Os artefatos do Figma ainda precisam ser fornecidos ou registrados antes da auditoria aprofundada de produto, domínio e UX. Esta matriz não cria documento fictício nem identificador para arquivo inexistente e não audita o Figma nesta etapa.
+`DECISAO_CONFIRMADA` — A solicitação aprovada da Etapa 4 registra que os artefatos do Figma são uma entrada opcional, secundária e não bloqueante. Não são pré-requisito para a Etapa 6, sua ausência não bloqueia auditorias documentais e a ausência de implementação não constitui divergência. Telas não implementadas não geram obrigação de implementação.
 
-Quando forem efetivamente apresentados, arquivos, páginas, frames, telas e fluxos deverão receber identificadores estáveis e proveniência, incluindo origem, localizador, data quando disponível, responsável quando identificado e relação com os nós documentais existentes. O estado de cada artefato deverá seguir os critérios que a equipe definir em `PD-017`, usando somente:
+Os artefatos podem divergir dos documentos históricos, representar exploração ou alternativas ainda não implementadas e ser alterados posteriormente sem, por si só, exigir realinhamento normativo. Também podem ser alterados sem dificuldade relevante conforme a orientação atual da equipe. Eles não prevalecem sobre o escopo institucional, decisões aprovadas, requisitos normativos ou regras de negócio.
 
-- `APROVADO`;
-- `EM_REVISAO`;
-- `EXPLORACAO`;
-- `SUBSTITUIDO`;
-- `IMPLEMENTADO_NAO_APROVADO`.
+Por padrão, um artefato do Figma deve ser tratado como `EXPLORACAO` ou `EM_REVISAO`. Somente aprovação explícita por autoridade identificada permite o estado `APROVADO`. `PD-017` permanece aberto e inalterado porque os critérios formais e a autoridade de UX ainda não foram definidos; a orientação atual não resolve essa pendência.
 
-Até a resolução de `PD-005` e `PD-017` e a apresentação dos artefatos, nenhuma tela, fluxo ou estado de aprovação do Figma deve ser presumido.
+Quando forem efetivamente apresentados, arquivos, páginas, frames, telas e fluxos deverão receber identificadores estáveis e proveniência, incluindo origem, localizador, data quando disponível, responsável quando identificado e relação com os nós documentais existentes. Esta matriz não cria documento fictício nem identificador para arquivo inexistente e não audita o Figma nesta etapa.
 
 ## Método e ponto de parada
 
 A matriz foi construída a partir do registro canônico, da enumeração de títulos e cabeçalhos dos 13 arquivos, de buscas direcionadas por escopo, finalidade, entradas, saídas, referências, dependências, integração, rastreabilidade e títulos dos documentos, e da leitura apenas dos trechos mínimos necessários a localizadores. O mérito de regras, fórmulas, requisitos, wireframes e escolhas técnicas não foi analisado.
 
-Este documento permanece em `EM_REVISAO`. As relações inferenciais, as lacunas e a alocação deverão ser revisadas pela equipe antes da Etapa 4. Nenhuma auditoria aprofundada ou atualização normativa foi iniciada.
+Este documento foi promovido a `CANONICO_ATUAL` após aprovação humana da Etapa 3, exclusivamente para controle documental. As relações inferenciais continuam identificadas como inferências, as lacunas preservam seus limites e a alocação não concede autoridade normativa. A promoção não valida conteúdo científico, funcional, de UX, de dados ou técnico e não substitui as auditorias de cada camada.

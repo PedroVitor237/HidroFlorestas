@@ -4,7 +4,7 @@
 
 - **Identificador:** `DOC-PLAN-002`
 - **Título:** Rastreabilidade global inicial
-- **Estado atual:** `AGUARDANDO_REVISAO`
+- **Estado atual:** `CONCLUIDO`
 - **Data:** 2026-08-24
 - **Responsável:** não especificado
 
@@ -204,7 +204,8 @@ Responsável pela execução: agente mantenedor. Revisão e aprovação: equipe;
 | 2026-08-24 | `EM_ANDAMENTO` | Plano criado após a validação do estado inicial e a transição confirmada da Etapa 2; leitura estrutural controlada pendente. |
 | 2026-08-24 | `AGUARDANDO_REVISAO` | Matriz criada com 13 nós, relações explícitas separadas de inferências, alocação 13/13, lacunas e entrada futura do Figma; registro atualizado e verificações aplicáveis aprovadas. |
 | 2026-08-24 | `AGUARDANDO_REVISAO` | Revisão humana aprovou os 13 nós, as 16 relações e a alocação 13/13; identificou a omissão de `PD-001` na cobertura e nas lacunas e determinou a inclusão de `GAP-010`, sem iniciar nova auditoria. |
+| 2026-08-24 | `CONCLUIDO` | A solicitação aprovada da Etapa 4 formalizou a aprovação humana da Etapa 3, autorizou o arquivamento deste plano e a promoção de `DOC-008` para `CANONICO_ATUAL`, preservados os 13 nós, as 16 relações, as 10 lacunas e a alocação 13/13, com a atualização específica da orientação sobre o Figma. |
 
 ## Ponto de parada
 
-Este plano permanece em `AGUARDANDO_REVISAO` em `docs/plans/active/`, e a matriz permanece em `EM_REVISAO`. Nenhuma Etapa 4 será iniciada sem revisão e aprovação da equipe.
+Este plano foi concluído após a aprovação humana registrada na solicitação da Etapa 4 e deve permanecer arquivado em `docs/plans/completed/rastreabilidade-global-inicial.md` como registro operacional histórico. A matriz foi promovida a `CANONICO_ATUAL` exclusivamente para controle de rastreabilidade documental, sem autoridade científica, funcional, de UX, de dados ou técnica. A Etapa 4 pode prosseguir nos limites expressamente aprovados.
