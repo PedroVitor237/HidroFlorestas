@@ -4,7 +4,7 @@
 
 - **Identificador:** `DOC-PLAN-001`
 - **Título:** Inventário e baseline de `docs/raw/`
-- **Estado atual:** `AGUARDANDO_REVISAO`
+- **Estado atual:** `CONCLUIDO`
 - **Data do baseline:** 2026-08-24
 - **Responsável:** não especificado
 
@@ -143,7 +143,7 @@ Nenhum bloqueio material foi identificado. Como desvios instrumentais sem impact
 
 ## Ponto de parada
 
-Este plano permanece em `AGUARDANDO_REVISAO`. Não será movido para `docs/plans/completed/`, e nenhuma Etapa 3 será iniciada sem revisão e aprovação da equipe.
+A equipe aprovou a Etapa 2 após revisão, conforme solicitação aprovada da Etapa 3 recebida em 2026-08-24. O plano está `CONCLUIDO` e arquivado em `docs/plans/completed/`. Essa aprovação autoriza o encerramento e o arquivamento deste registro operacional; não atribui autoridade normativa aos documentos inventariados.
 
 ## Histórico de estados
 
@@ -151,7 +151,9 @@ Este plano permanece em `AGUARDANDO_REVISAO`. Não será movido para `docs/plans
 |---|---|---|
 | 2026-08-24 | `EM_ANDAMENTO` | Plano criado após levantamento do estado inicial; leitura controlada ainda pendente. |
 | 2026-08-24 | `AGUARDANDO_REVISAO` | Inventário individual, baseline final e verificações aplicáveis concluídos; arquivos de `docs/raw/` permaneceram inalterados. |
+| 2026-08-24 | `AGUARDANDO_REVISAO` | Correção decorrente da revisão humana: observação de `DOC-004` atualizada conforme a existência de `docs/plans/active/` e a ausência de `docs/plans/completed/`; o escape de checksum aparecia apenas na cópia apresentada para revisão, pois os 13 registros reais já usavam `SHA-256:` canônico; os checksums foram recalculados, permaneceram correspondentes e `docs/raw/` não foi alterado. |
+| 2026-08-24 | `CONCLUIDO` | A equipe informou que revisou e aprovou a Etapa 2 e autorizou seu encerramento e arquivamento; origem: solicitação aprovada da Etapa 3 recebida em 2026-08-24. O baseline e seus resultados foram preservados. |
 
 ## Resumo de encerramento
 
-Etapa 2 executada com 13 arquivos inventariados individualmente e integridade técnica confirmada antes e depois. O plano permanece ativo e aguarda revisão humana; nenhuma etapa posterior foi iniciada.
+Etapa 2 executada com 13 arquivos inventariados individualmente e integridade técnica confirmada antes e depois. Após revisão, a equipe aprovou a etapa e autorizou o encerramento; o plano foi marcado `CONCLUIDO` e arquivado, com o baseline e todo o histórico anterior preservados.
