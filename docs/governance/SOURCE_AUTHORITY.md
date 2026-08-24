@@ -36,7 +36,7 @@ A autoridade é específica ao assunto. Nenhuma fonte deve ter sua autoridade ex
 |---|---|
 | `FATO_DOCUMENTADO` | Informação declarada explicitamente por uma fonte identificada. |
 | `EVIDENCIA_IMPLEMENTACAO` | Informação confirmada diretamente por código, configuração, migration, teste ou comportamento executável. |
-| `DECISAO_CONFIRMADA` | Escolha explicitamente aprovada pela equipe, com origem e data registradas quando disponíveis. |
+| `DECISAO_CONFIRMADA` | Escolha explicitamente aprovada pela equipe, com origem identificada e registrada; data quando disponível. |
 | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | Escolha que a equipe informou ter adotado, mas cuja implementação ainda não foi verificada. |
 | `PROPOSTA` | Alternativa sugerida, sem aprovação registrada. |
 | `EM_AVALIACAO` | Alternativa sob análise, ainda sem decisão. |
@@ -45,7 +45,7 @@ A autoridade é específica ao assunto. Nenhuma fonte deve ter sua autoridade ex
 | `PENDENCIA_DE_DECISAO` | Ponto que depende de decisão, validação ou designação de responsável. |
 | `NAO_ESPECIFICADO` | Informação necessária que não consta nas fontes disponíveis. |
 
-Não converta ausência de informação em requisito, proposta recorrente em decisão ou implementação existente em intenção aprovada. Toda `INFERENCIA` deve ser identificada. `DECISAO_CONFIRMADA` exige origem; data, responsável ou origem ausente deve ser registrado como `não especificado`.
+Não converta ausência de informação em requisito, proposta recorrente em decisão ou implementação existente em intenção aprovada. Toda `INFERENCIA` deve ser identificada. `DECISAO_CONFIRMADA` exige origem identificada e registrada; origem `não especificado` não é suficiente. Sem essa origem, mantenha a informação como pendência ou use outra classificação compatível com as evidências. Data e responsável ausentes podem usar `não especificado`. Decisões já registradas com origem válida permanecem inalteradas.
 
 ## Estados de decisões técnicas
 

@@ -14,7 +14,7 @@
 - Não escolha silenciosamente entre fontes conflitantes. Identifique as fontes, registre as evidências e encaminhe o caso como `PENDENCIA_DE_DECISAO` quando a autoridade definida não bastar.
 - Mantenha separadas a intenção normativa, a implementação observada, as propostas, as inferências e as recomendações. Implementação não prova intenção; repetição de proposta não prova aprovação.
 - Use as classificações canônicas de informação de `SOURCE_AUTHORITY.md`. Identifique toda inferência como `INFERENCIA` e toda orientação do agente como `RECOMENDACAO`; não apresente nenhuma delas como decisão da equipe.
-- Só use `DECISAO_CONFIRMADA` quando a origem da confirmação estiver registrada. Para data, responsável ou origem ausente, use `não especificado`.
+- Só use `DECISAO_CONFIRMADA` quando a origem da confirmação estiver identificada e registrada. Se a origem não estiver disponível, registre uma pendência ou use outra classificação compatível com as evidências; data e responsável ausentes podem usar `não especificado`.
 
 ## Alterações e nomes
 

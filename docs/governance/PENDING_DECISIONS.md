@@ -26,7 +26,7 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-014` | Modelo conceitual de assinantes, laboratórios e áreas monitoradas | Definir e aprovar o modelo conceitual dessas entidades e de seus relacionamentos. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta produto, dados, permissões e requisitos futuros. | `ABERTA` |
 | `PD-015` | Terminologia e papéis | Definir assinante, usuário, laboratório, proprietário, membro, área monitorada e demais papéis relacionados. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Ambiguidade terminológica compromete requisitos, dados e UX. | `ABERTA` |
 | `PD-016` | Regras de laboratórios | Definir regras de criação, visualização, participação, propriedade e acesso aos laboratórios. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta requisitos, permissões, modelo de dados e fluxos de UX. | `ABERTA` |
-| `PD-017` | Estado das telas do Figma | Definir critérios para classificar telas como aprovadas, em revisão ou exploração. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Sem critérios, artefatos exploratórios podem ser confundidos com requisitos. | `ABERTA` |
+| `PD-017` | Estado dos artefatos do Figma | Definir critérios para classificar arquivos, páginas, frames, telas ou fluxos como `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` ou `IMPLEMENTADO_NAO_APROVADO`. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Sem critérios, artefatos exploratórios podem ser confundidos com requisitos. | `ABERTA` |
 
 ## Fontes, alternativas e encaminhamento
 
@@ -48,6 +48,6 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-014` | Mandato de governança; autoridade de dados ainda não designada | Alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar o registro normativo de dados aplicável após aprovação e manter o histórico. |
 | `PD-015` | Mandato de governança; autoridades de produto e dados ainda não designadas | Definições não especificadas. | não especificado | não especificado | não especificado | Atualizar os registros normativos de produto e dados aplicáveis e manter o histórico. |
 | `PD-016` | Mandato de governança; autoridades de produto, dados e UX ainda não designadas | Regras não especificadas. | não especificado | não especificado | não especificado | Atualizar os registros normativos de produto, dados e UX aplicáveis e manter o histórico. |
-| `PD-017` | Mandato de governança; autoridade de UX ainda não designada | Estados a disciplinar: aprovado, em revisão e exploração; critérios não especificados. | não especificado | não especificado | não especificado | Atualizar o registro normativo de UX aplicável e manter o histórico. |
+| `PD-017` | Mandato de governança; autoridade de UX ainda não designada | Estados a disciplinar: `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` e `IMPLEMENTADO_NAO_APROVADO`; critérios não especificados. | não especificado | não especificado | não especificado | Atualizar o registro normativo de UX aplicável e manter o histórico. |
 
 Plotly ter sido considerado não implica rejeição de Leaflet. Nenhuma entrada deste registro deve ser encerrada por inferência ou pela mera existência de uma implementação.
