@@ -5,7 +5,7 @@
 - **Identificador:** `DOC-PLAN-003`
 - **Título:** Auditoria científica fundamental
 - **Etapa:** 4
-- **Estado atual:** `AGUARDANDO_REVISAO`
+- **Estado atual:** `CONCLUIDO`
 - **Data:** 2026-08-24
 - **Responsável pela execução:** agente mantenedor
 - **Revisão e aprovação científica:** não especificado; dependente de `PD-002`
@@ -182,7 +182,9 @@ Nenhum outro caminho pode ser alterado.
 |---|---|---|
 | 2026-08-24 | `EM_ANDAMENTO` | Plano criado após a inspeção inicial, a confirmação do baseline e o encerramento formal da Etapa 3; leitura integral das quatro fontes autorizadas concluída e inventários em elaboração. |
 | 2026-08-24 | `AGUARDANDO_REVISAO` | Relatório `DOC-009` concluído documentalmente com inventários, cobertura, cadeias, 20 achados, 12 perguntas e 10 encaminhamentos; registro atualizado e verificações aplicáveis aprovadas, sem validação científica nem início da Etapa 5. |
+| 2026-08-25 | `AGUARDANDO_REVISAO` | A solicitação aprovada da Etapa 5 registrou a aprovação humana da Etapa 4 condicionada à correção conceitual de `SCI-FND-011`: distinguir a média simples declarada em 007, os pesos equivalentes declarados em 008, os pesos diferenciais declarados em 011 e a equivalência matemática apenas inferida para 007. |
+| 2026-08-25 | `CONCLUIDO` | Correção conceitual aplicada a `SCI-FND-011`, `SCI-Q-009`, ao teste do conflito e a `E5-001`/`E5-002`, preservando identificador, tipo de conflito, prioridade, impacto, demais achados, contagens e histórico. Preflight, baseline 13/13, correspondência 26/26 do registro e limites de autoridade foram verificados; o relatório foi aprovado somente como análise, sem validar ciência, criar norma ou resolver `PD-002`. |
 
 ## Ponto de parada
 
-Este plano permanece ativo em `AGUARDANDO_REVISAO`, sem conclusão ou arquivamento, e o relatório permanece em `EM_REVISAO`. A Etapa 4 alcançou seu ponto de parada documental. Nenhuma validação científica, atualização normativa ou Etapa 5 pode ser iniciada sem revisão, autoridade e aprovação apropriadas.
+Este plano está `CONCLUIDO` e arquivado em `docs/plans/completed/auditoria-cientifica-fundamental.md`, com todo o histórico preservado. O relatório está aprovado exclusivamente como relatório analítico, sem autoridade científica normativa; a conclusão não valida fórmulas, não transforma achados em regras e não resolve `PD-002`. A solicitação aprovada da Etapa 5 autoriza somente a auditoria documental matemática subsequente nos limites nela definidos.
