@@ -114,7 +114,7 @@ Nenhuma relação de substituição, cronologia ou precedência entre as fontes 
 | `PROD-REQ-052` | Usar pesos iguais por dimensão na v0.1 MVP (`PROPOSTA`). | 004:L265-L268 | `PROPOSTA` | não especificado | adotar pesos iguais | versão v0.1 | recomendação MVP | `PROPOSTA`; NE | proposta científica não validada; composição territorial imprecisa |
 | `PROD-REQ-053` | Calibrar pesos com dados reais na v0.2 pós-campo (`PROPOSTA`). | 004:L267-L268 | `PROPOSTA` | responsáveis científicos não especificados | calibrar pesos | pós-campo/Meta 4 | futuro explícito | `PROPOSTA`; NE | dados, método, autoridade e relação com v0.1 ausentes |
 | `PROD-REQ-054` | Com diagnóstico, dashboard mostra última classe e área colorida (`CRITERIO_DE_ACEITACAO`). | 004:L270-L282; 014:L309-L317 | `CRITERIO_DE_ACEITACAO` | usuário | verificar dashboard populado | ao menos um diagnóstico salvo | exemplo/MVP | `FATO_DOCUMENTADO`; NE | cenário alternativo, precisão e escopo de área ausentes |
-| `PROD-REQ-055` | Repetir checklist/aceite para cadastro, dados e resultado (`INSTRUCAO`). | 004:L270-L284; 014:L319-L345 | `CRITERIO_DE_ACEITACAO` | não especificado | definir/verificar aceites das telas | telas correspondentes | MVP | `INFERENCIA`; NE | 004 não formula cenários; 014 lista resultados sem Given/When/Then, erros ou exceções |
+| `PROD-REQ-055` | Repetir checklist/aceite para cadastro, dados e resultado (`INSTRUCAO`). | 004:L270-L284; 014:L319-L345 | `CRITERIO_DE_ACEITACAO` | não especificado | definir/verificar aceites das telas | telas correspondentes | MVP | `FATO_DOCUMENTADO`; NE | A instrução é explícita; 004 não formula cenários, e 014 lista resultados sem Given/When/Then, erros ou exceções; suficiência e aprovação permanecem não especificadas |
 | `PROD-REQ-056` | Em baixa conectividade, no mínimo não perder dados (`REQUISITO_FORMULADO`). | 004:L286-L291 | `NAO_FUNCIONAL` | sistema; usuário | preservar dados | offline/baixa conectividade | mínimo indispensável | `FATO_DOCUMENTADO`; NE | duração, escopo, recuperação e teste ausentes |
 | `PROD-REQ-057` | Idealmente salvar rascunho local e sincronizar depois, mesmo parcial (`PROPOSTA`). | 004:L288 | `PROPOSTA` | sistema; usuário | salvar/sincronizar rascunho | offline/retorno da conexão | ideal; MVP parcial possível | `PROPOSTA`; NE | conflito, segurança, volume e experiência não definidos |
 | `PROD-REQ-058` | Algoritmos simples, transparentes e auditáveis (`REQUISITO_FORMULADO`). | 004:L286-L290 | `NAO_FUNCIONAL` | sistema/equipe | permitir auditabilidade | processamento IHFR | mínimo/princípio do projeto citado | `FATO_DOCUMENTADO`; NE | métricas de simplicidade/transparência e autoridade científica ausentes |
@@ -282,9 +282,9 @@ A ordem do vetor é: ator; ação; objeto; pré-condição; fluxo principal; exc
 
 | Classificação da informação | Quantidade |
 |---|---:|
-| `FATO_DOCUMENTADO` | 50 |
+| `FATO_DOCUMENTADO` | 51 |
 | `PROPOSTA` | 6 |
-| `INFERENCIA` | 4 |
+| `INFERENCIA` | 3 |
 | **Total** | **60** |
 
 | Estado de aprovação | Quantidade |
@@ -905,7 +905,7 @@ Resultado: 13/13 caminhos, tipos, tamanhos, permissões, `mtime` e SHA-256 coinc
 | Checksums Etapa 5 | `sha256sum` | `DOC-PLAN-004` = `4d5a26...d8b0b`; `DOC-010` = `ded7d824...78e21`; registro coincidente |
 | Corpus da Etapa 6 | `nl -ba`, `wc -l` | 004 com 291 e 014 com 345 linhas; 636 totais, lidas integralmente |
 | Sequências e referências | verificação efêmera em Node.js dos nove namespaces | sequências completas e únicas: 60/9/25/20/13/10/17/22/28; todos os IDs referenciados existem |
-| Contagens dos requisitos | extração mecânica da tabela mestra/suficiência | tipos totalizam 60; suficiência 4/45/7/4/0; classificação 50/6/4; aprovação 0/60 |
+| Contagens dos requisitos | extração mecânica da tabela mestra/suficiência | tipos totalizam 60; suficiência 4/45/7/4/0; classificação 51/6/3; aprovação 0/60 |
 | Cobertura | extração mecânica dos estados | 414 relações: 144 CE, 125 CP, 45 CI, 28 NC, 62 NA e 10 AM |
 | Achados | extração mecânica de tipo/impacto/estado | 22; sínteses coincidentes e zero conflitos estritos |
 | Fontes/localizadores | contagem das tabelas mestras e revisão dos localizadores | todos os 60 requisitos, 9 papéis, 25 conceitos, 13 regras, 10 fluxos e 17 telas têm fonte/localizador |

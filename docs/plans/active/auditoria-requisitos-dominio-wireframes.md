@@ -226,6 +226,7 @@ Nenhum outro caminho pode ser alterado.
 |---|---|---|
 | 2026-08-26 | `EM_ANDAMENTO` | Plano criado após preflight consistente, encerramento administrativo da Etapa 5 e leitura integral das duas fontes primárias. O corpus histórico permanece imutável e nenhuma autoridade normativa foi presumida. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Auditoria concluída com 60 candidatos, 9 papéis, 25 conceitos, 20 relações, 13 regras, 10 fluxos, 17 itens de interface, 414 relações de cobertura, 22 achados e 28 perguntas. Registro 30/30 e verificações aplicáveis aprovadas; relatório `DOC-011` permanece `EM_REVISAO`, implementação `NAO_AVALIADO`, Figma opcional/não bloqueante e Etapa 7 não iniciada. |
+| 2026-08-26 | `AGUARDANDO_REVISAO` | Revisão humana identificou que a instrução de `PROD-REQ-055` está explicitamente documentada; classificação corrigida para 51 `FATO_DOCUMENTADO`, 6 `PROPOSTA` e 3 `INFERENCIA`. Nenhum outro requisito, relação, achado, pergunta ou bloqueio foi alterado. |
 
 ## Ponto de parada
 
