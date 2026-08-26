@@ -4,10 +4,10 @@
 
 - **Identificador:** `DOC-011`
 - **Título:** Auditoria documental de requisitos, domínio implícito e wireframes históricos do MVP HidroFlorestas
-- **Estado documental:** `EM_REVISAO`
+- **Estado documental:** `CANONICO_ATUAL`, exclusivamente como relatório analítico aprovado
 - **Data:** 2026-08-26
 - **Fontes primárias:** `DOC-RAW-004` e `DOC-RAW-014`
-- **Plano relacionado:** [`DOC-PLAN-005`](../../plans/active/auditoria-requisitos-dominio-wireframes.md)
+- **Plano relacionado:** [`DOC-PLAN-005`](../../plans/completed/auditoria-requisitos-dominio-wireframes.md)
 - **Responsável pela execução:** agente mantenedor
 - **Autoridade de produto:** não especificado; `PD-003` permanece aberta
 - **Autoridade de UX:** não especificado; `PD-005` permanece aberta
@@ -16,6 +16,8 @@
 - **Autoridade normativa:** nenhuma sobre produto, requisitos, domínio, UX, dados ou ciência
 
 Este relatório descreve o conteúdo histórico das duas fontes e suas relações internas. Não aprova requisito, papel, permissão, regra, fluxo ou tela; não define modelo normativo de domínio; não compara com código ou implementação; não audita Figma; não atualiza documentação normativa; não resolve pendências; e não inicia a Etapa 7.
+
+**Aprovação analítica:** a solicitação aprovada da Etapa 7 registra a aprovação humana desta análise, incluindo a correção de `PROD-REQ-055`. A promoção a `CANONICO_ATUAL` é exclusiva para este relatório analítico: não aprova requisitos nem wireframes, não define o modelo de domínio, não valida implementação e não resolve decisões de produto, UX ou dados.
 
 Declarações localizadas são `FATO_DOCUMENTADO` sobre o que a fonte registra, não sobre vigência atual. Relações deduzidas são `INFERENCIA`; alternativas históricas sem aprovação são `PROPOSTA`; ausências são `NAO_ESPECIFICADO`; orientações desta auditoria são `RECOMENDACAO`. As duas fontes permanecem `HISTORICO_IMUTAVEL`.
 
@@ -943,4 +945,4 @@ O `git status --short` inicial estava vazio. Não havia alteração preexistente
 
 ## Ponto de parada
 
-Etapa 6 concluída documentalmente e encaminhada à revisão. A auditoria parou antes de qualquer aprovação, atualização normativa, alteração da matriz/pendências, comparação com implementação ou início da Etapa 7. O plano relacionado deve permanecer em `AGUARDANDO_REVISAO`, este relatório em `EM_REVISAO` e Figma opcional/não bloqueante.
+Etapa 6 concluída documentalmente e aprovada exclusivamente em seu caráter analítico. A auditoria parou antes de qualquer aprovação normativa, atualização normativa, alteração da matriz/pendências ou comparação com implementação. O plano relacionado está `CONCLUIDO` e arquivado, este relatório está `CANONICO_ATUAL` exclusivamente como análise aprovada e Figma permanece opcional/não bloqueante.

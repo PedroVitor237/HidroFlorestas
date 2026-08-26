@@ -5,7 +5,7 @@
 - **Identificador:** `DOC-PLAN-005`
 - **Título:** Auditoria documental de requisitos, domínio implícito e wireframes históricos do MVP
 - **Etapa:** 6
-- **Estado atual:** `AGUARDANDO_REVISAO`
+- **Estado atual:** `CONCLUIDO`
 - **Data:** 2026-08-26
 - **Responsável pela execução:** agente mantenedor
 - **Autoridade de produto:** não especificada; dependente de `PD-003`
@@ -227,7 +227,8 @@ Nenhum outro caminho pode ser alterado.
 | 2026-08-26 | `EM_ANDAMENTO` | Plano criado após preflight consistente, encerramento administrativo da Etapa 5 e leitura integral das duas fontes primárias. O corpus histórico permanece imutável e nenhuma autoridade normativa foi presumida. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Auditoria concluída com 60 candidatos, 9 papéis, 25 conceitos, 20 relações, 13 regras, 10 fluxos, 17 itens de interface, 414 relações de cobertura, 22 achados e 28 perguntas. Registro 30/30 e verificações aplicáveis aprovadas; relatório `DOC-011` permanece `EM_REVISAO`, implementação `NAO_AVALIADO`, Figma opcional/não bloqueante e Etapa 7 não iniciada. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Revisão humana identificou que a instrução de `PROD-REQ-055` está explicitamente documentada; classificação corrigida para 51 `FATO_DOCUMENTADO`, 6 `PROPOSTA` e 3 `INFERENCIA`. Nenhum outro requisito, relação, achado, pergunta ou bloqueio foi alterado. |
+| 2026-08-26 | `CONCLUIDO` | A solicitação aprovada da Etapa 7 registrou a aprovação humana da análise da Etapa 6, incluindo a correção de `PROD-REQ-055`. Confirmados 60 requisitos (51 `FATO_DOCUMENTADO`, 6 `PROPOSTA`, 3 `INFERENCIA`), 414 relações, 22 achados, 28 perguntas e 9 bloqueios para normatização. O plano foi encerrado e arquivado sem alterar achados, perguntas ou conclusões. A aprovação é exclusivamente analítica: não aprova requisitos ou wireframes, não define o modelo de domínio, não valida implementação e não resolve decisões de produto, UX ou dados. |
 
 ## Ponto de parada
 
-Este plano está em `AGUARDANDO_REVISAO` e `DOC-011` em `EM_REVISAO`. Nenhum requisito, tela, fluxo, papel, regra ou modelo de domínio foi aprovado; nenhum código foi comparado; Figma permaneceu opcional e não bloqueante; a Etapa 7 não foi iniciada.
+Este plano está `CONCLUIDO` e arquivado após aprovação humana da análise; `DOC-011` foi promovido a `CANONICO_ATUAL` exclusivamente como relatório analítico aprovado. Nenhum requisito, tela, fluxo, papel, regra ou modelo de domínio foi aprovado; nenhum código foi comparado; Figma permaneceu opcional e não bloqueante; decisões de produto, UX e dados permanecem abertas.
