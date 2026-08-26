@@ -153,7 +153,7 @@ Ordem declarada em 002: validação → normalização → dimensões → exclus
 | `DOC-RAW-010` | `FORM-003` | 0.35 (`H`) | 0.30 | 0.25 | 0.10 | 1 | não especificada | Baixo Itapecuru/Itapecuru-Mirim | “solo e água” críticos; método/evidência não especificados | Formulação regional diferencial; precedência perante v0.1 geral não declarada. |
 | `DOC-RAW-011` | `FORM-003` | 0.35 | 0.30 | 0.25 | 0.10 | 1 | não especificada | Maranhão, foco no Baixo Itapecuru | justificativa/validação não especificadas | Alinha literalmente com 010; relação documental não declarada. |
 
-`INFERENCIA` — As formulações equivalentes e diferenciais produzem resultados distintos quando as dimensões não são iguais. A presença de escopo regional explícito em 010/011 pode explicar a diferença, mas as fontes não declaram se a calibração complementa, especializa, sucede ou substitui a v0.1 geral. Por isso, esta Etapa 5 registra divergência e ambiguidade de aplicabilidade, sem escolher pesos e sem revogar a classificação histórica de `SCI-FND-011`.
+`INFERENCIA` — As formulações equivalentes e diferenciais produzem resultados distintos quando as dimensões não são iguais. A presença de escopo regional explícito em 010/011 pode explicar a diferença, mas as fontes não declaram a relação entre a calibração e a v0.1 geral. A revisão humana posterior aos resultados documentais desta etapa reclassificou `SCI-FND-011` como `DIVERGENCIA_DOCUMENTAL`; `MATH-FND-003` e `MATH-FND-004` aprofundam essa interpretação ao manter divergentes os pesos gerais e regionais e ambígua a relação geral–regional, sem escolher fórmula ou pesos.
 
 ## Calibração regional
 
@@ -312,7 +312,7 @@ Somente `MATH-FND-005` e `MATH-FND-006` foram classificados como `CONFLITO_DOCUM
 3. não há versão, território ou aplicabilidade que as reconcilie;
 4. a escolha altera cálculo/comportamento operacional ou saída.
 
-Pesos equivalentes versus diferenciais ficaram como divergência/ambiguidade, porque 010/011 declaram recorte regional que pode explicar a diferença, embora sua relação com a v0.1 geral permaneça não confirmada. Essa conclusão nova não apaga nem renomeia `SCI-FND-011`, preservado como achado histórico aprovado da Etapa 4.
+Pesos equivalentes versus diferenciais ficaram como divergência/ambiguidade, porque 010/011 declaram recorte regional que pode explicar a diferença, embora sua relação com a v0.1 geral permaneça não confirmada. A revisão humana posterior reclassificou `SCI-FND-011` como divergência; `MATH-FND-003` e `MATH-FND-004` aprofundam essa interpretação sem alterar suas próprias classificações, sem definir a relação geral–regional e sem escolher fórmula ou pesos.
 
 ### Contagens dos achados
 

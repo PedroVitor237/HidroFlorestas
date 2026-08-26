@@ -16,7 +16,7 @@ Auditar documentalmente o contrato matemático do IHFR, a calibração regional 
 
 ## Escopo
 
-- Concluir administrativamente a Etapa 4 após o preflight e a correção conceitual delimitada de `SCI-FND-011`.
+- Concluir administrativamente a Etapa 4 após o preflight e a correção conceitual delimitada de `SCI-FND-011`, preservando o histórico de sua revisão posterior.
 - Ler integralmente `DOC-RAW-002`, `DOC-RAW-010` e `DOC-RAW-013`.
 - Consultar as seções matemáticas pertinentes de `DOC-RAW-007`, `DOC-RAW-008`, `DOC-RAW-009` e `DOC-RAW-011`.
 - Inventariar glossário, símbolos, fórmulas, contrato das 17 variáveis, agregações, pesos, parâmetros regionais, passos operacionais e saídas.
@@ -74,11 +74,11 @@ Declarações literais localizadas são `FATO_DOCUMENTADO`; ausências são `NAO
 ## Encerramento administrativo da Etapa 4
 
 - Preflight aprovado sem divergência material.
-- Correção aplicada a `SCI-FND-011`, `SCI-Q-009`, teste do conflito, `E5-001` e `E5-002`, distinguindo fatos literais de equivalência/incompatibilidade inferidas.
-- Identificador, tipo `CONFLITO_DOCUMENTAL`, impacto, prioridade implícita, demais achados, perguntas não relacionadas e contagens foram preservados.
+- A correção de 2026-08-25 aplicada a `SCI-FND-011`, `SCI-Q-009`, ao teste do conflito e a `E5-001`/`E5-002` distinguiu fatos literais de equivalência/incompatibilidade inferidas; revisão humana posterior identificou o recorte regional explícito de `DOC-RAW-011`.
+- `SCI-FND-011` foi reclassificado como `DIVERGENCIA_DOCUMENTAL`; identificador, impacto, prioridade implícita, evidências, pergunta, encaminhamentos e demais achados foram preservados. As contagens da Etapa 4 passaram a cinco divergências e zero conflitos, com 20 achados no total.
 - Aprovação humana condicionada e verificações foram registradas no histórico de `DOC-PLAN-003`.
-- Plano movido para `docs/plans/completed/auditoria-cientifica-fundamental.md`, estado `CONCLUIDO`, checksum `SHA-256:7a0ec452aa7e09861320b76bd9c1e053a9dd6ba1f1daa06996e05d6b763e1490`.
-- Relatório promovido a `CANONICO_ATUAL` exclusivamente como análise aprovada, checksum `SHA-256:04726bd347de783ce64fd905d1ca11f2dd58fb3c06910919466169e395541e07`.
+- Plano movido para `docs/plans/completed/auditoria-cientifica-fundamental.md`, estado `CONCLUIDO`, checksum `SHA-256:2f91d275ebb2e26a4f4b9cb17d1098a13969907d681c709a81e3152808c743cb`.
+- Relatório promovido a `CANONICO_ATUAL` exclusivamente como análise aprovada, checksum `SHA-256:b76471b7b0513a0f182da25395da8c954d6dbf3da8db6548de5df91a139d8a64`.
 - A promoção não valida ciência, não cria regra normativa e não resolve `PD-002`.
 
 ## Arquivos afetados
@@ -88,7 +88,7 @@ Declarações literais localizadas são `FATO_DOCUMENTADO`; ausências são `NAO
 | Alterar | `docs/reports/audits/2026-08-24-auditoria-cientifica-fundamental.md` | Aplicar a correção conceitual e registrar a aprovação analítica. |
 | Mover e alterar | `docs/plans/completed/auditoria-cientifica-fundamental.md` | Concluir e arquivar a Etapa 4, preservando o histórico. |
 | Criar e manter | `docs/plans/active/auditoria-contrato-matematico-calibracao-algoritmo.md` | Planejar, evidenciar e encaminhar a Etapa 5 à revisão. |
-| Criar | `docs/reports/audits/2026-08-24-auditoria-contrato-matematico-calibracao-algoritmo.md` | Registrar a auditoria matemática, regional e operacional. |
+| Criar, renomear e manter | `docs/reports/audits/2026-08-25-auditoria-contrato-matematico-calibracao-algoritmo.md` | Registrar a auditoria matemática, regional e operacional com caminho alinhado à data documental. |
 | Alterar | `docs/governance/DOCUMENT_REGISTER.md` | Registrar as transições e os artefatos das Etapas 4 e 5. |
 
 Nenhum outro caminho pode ser alterado.
@@ -172,7 +172,7 @@ Nenhum outro caminho pode ser alterado.
 |---|---|---|
 | Estado inicial e preflight | `git status --short`, `git rev-parse HEAD`, `git branch --show-current`, leitura integral de governança e planos | Aprovada; árvore inicialmente limpa, commit/branch registrados e nenhum bloqueio material. |
 | Matriz e pendências | `grep`, `awk` e leitura controlada | Aprovada; 13 nós, 16 relações, 10 lacunas, 13/13, `GAP-008` opcional, Figma não bloqueante e `PD-017` aberta. |
-| Encerramento da Etapa 4 | Estado/caminhos, revisão conceitual e `sha256sum` | Aprovada; plano `CONCLUIDO`/arquivado e relatório analítico `CANONICO_ATUAL`; checksums coincidentes com o registro. |
+| Encerramento da Etapa 4 | Estado/caminhos, revisão conceitual posterior e `sha256sum` | Aprovada; plano `CONCLUIDO`/arquivado e relatório analítico `CANONICO_ATUAL`; `SCI-FND-011` reclassificado como divergência, histórico preservado e checksums coincidentes com o registro. |
 | Corpus autorizado | `nl -ba` e `wc -l` | Aprovada; 002/010/013 lidas integralmente (777 linhas físicas) e 007/008/009/011 consultadas nas seções pertinentes. |
 | Cálculos | Comando efêmero `node -e`, revisado após erro de sintaxe inicial | Aprovada; somas, equivalência, cenário, extremos, clamp e lacunas de classe reproduzidos; nenhum arquivo temporário. |
 | Namespaces e contagens | Extração seccional por `awk`/Node.js e comparação com sequências esperadas | Aprovada; `FORM-001`–`016`, `REG-PAR-001`–`013`, `ALG-STEP-001`–`021`, `MATH-TEST-001`–`032`, `MATH-FND-001`–`020` e `MATH-Q-001`–`018` únicos e completos. |
@@ -195,6 +195,7 @@ Nenhum outro caminho pode ser alterado.
 |---|---|---|
 | 2026-08-25 | `EM_ANDAMENTO` | Plano criado após preflight aprovado, confirmação 13/13 do baseline, correção conceitual e encerramento administrativo da Etapa 4. Leitura integral das três fontes primárias iniciada. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Auditoria documental concluída com inventários, 32 testes, 20 achados, 18 perguntas e cobertura `E5-001` a `E5-010`; registro 28/28 e verificações aplicáveis aprovadas. O relatório permanece `EM_REVISAO`, sem validação científica, escolha normativa, consulta externa, comparação com código ou início da Etapa 6. |
+| 2026-08-26 | `AGUARDANDO_REVISAO` | Revisão humana reclassificou o achado histórico `SCI-FND-011` como divergência e renomeou `DOC-010` para alinhar o caminho à data documental 2026-08-25. Todos os `MATH-FND-NNN`, inclusive os dois conflitos próprios da Etapa 5, foram preservados; o plano continua em `AGUARDANDO_REVISAO`, o relatório em `EM_REVISAO` e a Etapa 6 não foi iniciada. |
 
 ## Ponto de parada
 

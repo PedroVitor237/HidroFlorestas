@@ -144,7 +144,7 @@ Nenhum outro caminho pode ser alterado.
 - Procedimentos de campo/registro: 13, dos quais 2 transversais sem variável própria.
 - Cobertura protocolar: 10 `COBERTA_EXPLICITAMENTE`, 1 `COBERTA_PARCIALMENTE`, 5 `NAO_LOCALIZADA`, 0 `NAO_APLICAVEL_DECLARADO` e 1 `AMBIGUA`.
 - Cadeias conceituais: 17; 12 alcançam procedimento nomeado e 5 terminam sem procedimento localizado.
-- Achados: 20 — 3 alinhamentos, 4 divergências, 1 conflito, 4 ambiguidades, 5 lacunas, 0 duplicidades, 1 não comparável, 1 encaminhamento e 1 pendência de validação.
+- Achados: 20 — 3 alinhamentos, 5 divergências, 0 conflitos, 4 ambiguidades, 5 lacunas, 0 duplicidades, 1 não comparável, 1 encaminhamento e 1 pendência de validação.
 - Impactos: 8 bloqueantes para normatização, 6 altos, 3 médios, 0 baixos e 3 informativos.
 - Estados: 1 aberto, 11 aguardando validação, 4 encaminhados à Etapa 5 e 4 informativos.
 - Perguntas científicas: 12. Encaminhamentos à Etapa 5: 10.
@@ -167,7 +167,7 @@ Nenhum outro caminho pode ser alterado.
 | Leitura autorizada | `nl -ba` integral de 007/008/009/011 e `wc -l` | Aprovada; somente quatro fontes profundamente lidas, 809 linhas físicas. |
 | Variáveis e cadeias | Extração seccional, sequência esperada com `seq` e `cmp`, revisão de localizadores | Aprovada; 17/17 variáveis e 17 cadeias; IDs únicos e sequenciais; cada variável localizada. |
 | Cobertura do protocolo | Matriz 17/17 e contagem de estados por `awk`/`grep` | Aprovada; 10 explícitas, 1 parcial, 5 não localizadas, 1 ambígua; dois procedimentos transversais registrados. |
-| Achados, perguntas e conflito | Sequências com `seq`/`cmp`, contagens seccionais e inspeção dos localizadores | Aprovada; 20 achados e 12 perguntas únicos; somente `SCI-FND-011` atende aos quatro critérios de conflito. |
+| Achados, perguntas e conflito | Sequências com `seq`/`cmp`, contagens seccionais e inspeção dos localizadores | Aprovada; 20 achados e 12 perguntas únicos; nenhum achado satisfaz simultaneamente os quatro critérios de conflito. `SCI-FND-011` é divergência devido ao recorte regional explícito, com relação geral–regional ainda ambígua. |
 | Referências documentais | Extração de `DOC-RAW-NNN` e `PD-NNN`, `sort`, `comm` e confronto com registros | Aprovada; nenhuma referência inexistente. |
 | Registro documental | Extração independente das duas tabelas, `sort` e `cmp` | Aprovada; correspondência 26/26, sem ID duplicado; novos registros presentes uma vez. |
 | Links locais | Extração de destinos Markdown e `test -e` relativo a cada arquivo | Aprovada; todos os links locais resolvem. |
@@ -184,6 +184,7 @@ Nenhum outro caminho pode ser alterado.
 | 2026-08-24 | `AGUARDANDO_REVISAO` | Relatório `DOC-009` concluído documentalmente com inventários, cobertura, cadeias, 20 achados, 12 perguntas e 10 encaminhamentos; registro atualizado e verificações aplicáveis aprovadas, sem validação científica nem início da Etapa 5. |
 | 2026-08-25 | `AGUARDANDO_REVISAO` | A solicitação aprovada da Etapa 5 registrou a aprovação humana da Etapa 4 condicionada à correção conceitual de `SCI-FND-011`: distinguir a média simples declarada em 007, os pesos equivalentes declarados em 008, os pesos diferenciais declarados em 011 e a equivalência matemática apenas inferida para 007. |
 | 2026-08-25 | `CONCLUIDO` | Correção conceitual aplicada a `SCI-FND-011`, `SCI-Q-009`, ao teste do conflito e a `E5-001`/`E5-002`, preservando identificador, tipo de conflito, prioridade, impacto, demais achados, contagens e histórico. Preflight, baseline 13/13, correspondência 26/26 do registro e limites de autoridade foram verificados; o relatório foi aprovado somente como análise, sem validar ciência, criar norma ou resolver `PD-002`. |
+| 2026-08-26 | `CONCLUIDO` | Revisão humana posterior aos resultados documentais da Etapa 5 identificou o recorte regional explícito de `DOC-RAW-011` e reclassificou `SCI-FND-011` de `CONFLITO_DOCUMENTAL` para `DIVERGENCIA_DOCUMENTAL`. Foram preservados impacto, evidências, `SCI-Q-009` e `E5-001`/`E5-002`; nenhuma decisão científica ou escolha de fórmula foi realizada, e `PD-002` permanece aberta. O registro anterior foi mantido como histórico da evolução da análise. |
 
 ## Ponto de parada
 
