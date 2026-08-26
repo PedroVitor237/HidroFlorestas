@@ -5,7 +5,7 @@
 - **Identificador:** `DOC-PLAN-004`
 - **Título:** Auditoria do contrato matemático, da calibração regional e do algoritmo operacional do IHFR
 - **Etapa:** 5
-- **Estado atual:** `AGUARDANDO_REVISAO`
+- **Estado atual:** `CONCLUIDO`
 - **Data:** 2026-08-25
 - **Responsável pela execução:** agente mantenedor
 - **Revisão e validação científica:** não especificadas; dependentes de `PD-002`
@@ -196,7 +196,8 @@ Nenhum outro caminho pode ser alterado.
 | 2026-08-25 | `EM_ANDAMENTO` | Plano criado após preflight aprovado, confirmação 13/13 do baseline, correção conceitual e encerramento administrativo da Etapa 4. Leitura integral das três fontes primárias iniciada. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Auditoria documental concluída com inventários, 32 testes, 20 achados, 18 perguntas e cobertura `E5-001` a `E5-010`; registro 28/28 e verificações aplicáveis aprovadas. O relatório permanece `EM_REVISAO`, sem validação científica, escolha normativa, consulta externa, comparação com código ou início da Etapa 6. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Revisão humana reclassificou o achado histórico `SCI-FND-011` como divergência e renomeou `DOC-010` para alinhar o caminho à data documental 2026-08-25. Todos os `MATH-FND-NNN`, inclusive os dois conflitos próprios da Etapa 5, foram preservados; o plano continua em `AGUARDANDO_REVISAO`, o relatório em `EM_REVISAO` e a Etapa 6 não foi iniciada. |
+| 2026-08-26 | `CONCLUIDO` | Aprovação humana da Etapa 5 registrada na solicitação aprovada da Etapa 6. O plano foi concluído para arquivamento e `DOC-010` foi aprovado exclusivamente como relatório analítico, sem validação de fórmulas, escolha de pesos, validação de calibração, resolução de `PD-002` ou criação de norma científica ou operacional. |
 
 ## Ponto de parada
 
-Este plano permanece ativo em `AGUARDANDO_REVISAO` e o relatório `DOC-010` permanece em `EM_REVISAO`. A Etapa 5 alcançou seu ponto de parada documental antes da Etapa 6. Nenhuma conclusão científica, escolha normativa, atualização da matriz ou comparação com implementação foi realizada.
+Este plano está `CONCLUIDO` e deve permanecer arquivado em `docs/plans/completed/auditoria-contrato-matematico-calibracao-algoritmo.md`. O relatório `DOC-010` está `CANONICO_ATUAL` exclusivamente como relatório analítico aprovado. A conclusão não valida fórmulas, não escolhe pesos, não valida calibração, não resolve `PD-002`, não cria norma científica ou operacional e não altera os resultados e limites da Etapa 5.

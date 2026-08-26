@@ -4,13 +4,14 @@
 
 - **Identificador:** `DOC-010`
 - **Título:** Auditoria do contrato matemático, da calibração regional e do algoritmo operacional do IHFR
-- **Estado documental:** `EM_REVISAO`
+- **Estado documental:** `CANONICO_ATUAL`, exclusivamente como relatório analítico aprovado
 - **Data:** 2026-08-25
 - **Escopo:** Etapa 5; auditoria documental interna das formulações matemáticas, da calibração declarada para o Baixo Itapecuru e do fluxo operacional do IHFR.
 - **Fontes primárias:** `DOC-RAW-002`, `DOC-RAW-010` e `DOC-RAW-013`.
 - **Fontes auxiliares:** seções matemáticas e operacionais pertinentes de `DOC-RAW-007`, `DOC-RAW-008`, `DOC-RAW-009` e `DOC-RAW-011`.
 - **Entrada analítica:** `DOC-009`, sem tratá-lo como fonte científica primária.
-- **Plano:** [`DOC-PLAN-004`](../../plans/active/auditoria-contrato-matematico-calibracao-algoritmo.md)
+- **Plano:** [`DOC-PLAN-004`](../../plans/completed/auditoria-contrato-matematico-calibracao-algoritmo.md)
+- **Aprovação analítica:** aprovação humana da Etapa 5 registrada na solicitação aprovada da Etapa 6, em 2026-08-26
 - **Responsável pela execução:** agente mantenedor.
 - **Responsável científico:** não especificado; dependente de `PD-002`.
 - **Autoridade:** este relatório não possui autoridade científica normativa.
@@ -465,4 +466,4 @@ Nenhuma dessas relações foi aplicada a `TRACEABILITY_MATRIX.md`.
 - `PD-002` permanece aberta e bloqueia qualquer promoção normativa científica.
 - `TRACEABILITY_MATRIX.md`, `PENDING_DECISIONS.md`, documentação normativa e `docs/raw/` permaneceram fora do escopo de alteração.
 
-O relatório permanece em `EM_REVISAO`. Nenhuma fórmula, peso, faixa, parâmetro, comportamento ou saída foi declarada oficial. A Etapa 6 não foi iniciada.
+O relatório está `CANONICO_ATUAL` exclusivamente como relatório analítico aprovado. Essa promoção não valida fórmulas, não escolhe pesos, não valida calibração, não resolve `PD-002`, não cria norma científica ou operacional e não transforma nenhum achado, teste ou pergunta em decisão. Nenhuma fórmula, peso, faixa, parâmetro, comportamento ou saída foi declarada oficial.
