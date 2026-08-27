@@ -5,7 +5,19 @@
 - **Estado do documento:** `EM_REVISAO`
 - **Runtime:** não executado; nenhuma capacidade foi verificada em runtime
 
-Este documento descreve o que o repositório demonstra, não o que o produto deveria fazer. Estados de decisão e implementação seguem [`../governance/source-policy.md`](../governance/source-policy.md).
+Este documento separa o que o repositório demonstra das hipóteses sobre o que o produto pretende fazer. Estados de decisão, implementação e hipóteses seguem [`../governance/source-policy.md`](../governance/source-policy.md).
+
+## Hipótese orientadora de produto
+
+> `HIPOTESE_DE_INTENCAO_DERIVADA_DO_CODIGO`: o HidroFlorestas aparenta estar sendo estruturado como uma plataforma colaborativa de monitoramento ambiental organizada por laboratórios. Usuários criam ou ingressam em laboratórios, gerenciam áreas monitoradas, registram coletas e dados ambientais, produzem diagnósticos relacionados ao IHFR e acompanham resultados por dashboard, histórico e mapas.
+
+Essa formulação combina rotas, telas, componentes, mocks, placeholders, schema, nomenclatura e fluxos observados. Ela orienta perguntas e um eventual rascunho, mas não constitui requisito aprovado e depende de confirmação humana.
+
+> `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO`: o conceito de laboratório utiliza como referência organizacional salas semelhantes às do Google Classroom: espaços colaborativos nos quais participantes ingressam e compartilham recursos e atividades. A analogia não aprova a reprodução das regras do Google Classroom; criação, convite, entrada, papéis, propriedade e saída ainda precisam ser confirmados para o HidroFlorestas.
+
+- **Origem:** relato da equipe apresentado na revisão humana da iniciativa PRD Code-First em 2026-08-27.
+- **Autoridade final:** não especificada.
+- **Regras detalhadas:** não especificadas.
 
 ## Capacidades observadas
 

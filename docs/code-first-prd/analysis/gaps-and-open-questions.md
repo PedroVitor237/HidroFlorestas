@@ -49,7 +49,7 @@
 
 | ID | Descrição | Evidência | Impacto | Classificação do bloqueio | Autoridade necessária | Pergunta | Próximo tratamento |
 |---|---|---|---|---|---|---|---|
-| `CF-GAP-012` | Fórmula, variáveis, unidades, pesos, classes, limiares, qualidade e versionamento do IHFR não estão validados. | campos em `prisma/schema.prisma:128-149`; limites científicos em `docs/governance/SOURCE_AUTHORITY.md:21-22`; `CF-RISK-020`. | Não é possível normatizar o núcleo científico de diagnóstico ou cálculo. | `BLOQUEANTE_GLOBAL` | responsáveis científicos designados | `CF-Q-011` | obter validação científica explícita e rastreável, sem inferir pelo schema. |
+| `CF-GAP-012` | Fórmula, variáveis, unidades, pesos, classes, limiares, qualidade e versionamento do IHFR não estão validados. | campos em `prisma/schema.prisma:128-149`; limites científicos em `docs/governance/SOURCE_AUTHORITY.md:21-22`; `CF-RISK-020`. | A ausência não impede iniciar o rascunho geral, mas impede aprovar requisitos detalhados de cálculo, variáveis, pesos, agregação, classes e limiares do IHFR. | `BLOQUEANTE_SE_NO_ESCOPO` | responsáveis científicos designados | `CF-Q-011` | registrar o IHFR como capacidade central com dependência científica explícita; obter validação antes de aprovar as partes dependentes e não inferir fórmula ou regra científica pelo schema. |
 | `CF-GAP-013` | Papel da explicação por IA e sua relação com o diagnóstico científico não foi decidido. | `explanationAI` em `prisma/schema.prisma:139`; alegação em `src/app/page.tsx:200-205`; ausência de serviço consumidor; `CF-RISK-011`. | IA pode ser confundida com cálculo, interpretação ou recomendação validada. | `BLOQUEANTE_SE_NO_ESCOPO` | produto define escopo; ciência valida limites científicos; segurança e arquitetura tratam controles técnicos | `CF-Q-004` | definir se IA permanece no escopo e então separar comportamento, ciência e implementação. |
 
 ### Dados
@@ -63,7 +63,7 @@
 
 | ID | Descrição | Evidência | Impacto | Classificação do bloqueio | Autoridade necessária | Pergunta | Próximo tratamento |
 |---|---|---|---|---|---|---|---|
-| `CF-GAP-016` | Nenhum Figma concreto ou estado de aprovação de UX foi identificado nas fontes permitidas. | inventário rastreado sem arquivo/URL/ID concreto; regra de autoridade em `docs/governance/SOURCE_AUTHORITY.md:25`. | Não está definido se haverá fonte normativa de Figma para separar UX pretendida da implementação. | `BLOQUEANTE_GLOBAL` | UX e produto | `CF-Q-014` | classificar o artefato aplicável ou registrar explicitamente que não haverá fonte normativa de Figma. |
+| `CF-GAP-016` | Nenhum Figma concreto ou estado de aprovação de UX foi identificado nas fontes permitidas. | inventário rastreado sem arquivo/URL/ID concreto; regra de autoridade em `docs/governance/SOURCE_AUTHORITY.md:25`. | A ausência não impede compreender o produto pelo código, formular hipóteses de UX, iniciar o rascunho ou definir jornadas com confirmação humana. | `NAO_BLOQUEANTE_DO_PRD` | UX e produto quando houver artefato aplicável | `CF-Q-014` | se fornecido, identificar e classificar o artefato, compará-lo com o código e usá-lo como evidência complementar; sem Figma, prosseguir com código, decisões e validação humana. |
 | `CF-GAP-017` | Rotas e ações referenciadas não possuem destino implementado ou decisão registrada. | perfil em `src/components/sidebar/index.tsx:15-19`; detalhes em `src/app/(private)/dashboard/collects/collect-card.tsx:74-79`; links `#` em `src/components/top-bar/index.tsx:20-28`; `CF-RISK-010`. | Jornada atual é interrompida e intenção é ambígua. | `BLOQUEANTE_SE_NO_ESCOPO` | produto e UX | `CF-Q-015` | classificar cada destino incluído como requerido, futuro, exploratório ou removível. |
 | `CF-GAP-018` | Estados de loading, vazio, erro, acessibilidade e comportamento mobile não foram especificados nem auditados. | `src/contexts/auth.context.tsx:46-73`; `src/app/login/page.tsx:20-25`; `src/components/sidebar/index.tsx:21-63`; `src/app/globals.css:3-6`; `CF-RISK-017`, `CF-RISK-018`, `CF-RISK-019`. | Experiência e inclusão não têm critérios verificáveis. | `BLOQUEANTE_SE_NO_ESCOPO` | UX, produto e acessibilidade | `CF-Q-014`, `CF-Q-019` | definir estados e critérios para as jornadas que permanecerem no escopo. |
 
@@ -104,6 +104,10 @@
 | `CF-GAP-029` | Vercel atual e Neon gratuito são relatos sem dono, plano ou ambiente verificados. | `TECH_DECISIONS.md:21,25,33,37`; adapter em `src/app/api/server/lib/prisma.ts:1-13`; `CF-RISK-016`. | Limites, custo e disponibilidade podem ser assumidos incorretamente. | `NAO_BLOQUEANTE_DO_PRD` | arquitetura, operação e produto para restrições de custo/serviço | `CF-Q-020` | confirmar responsáveis, vigência e limites de cada serviço. |
 | `CF-GAP-030` | CI/CD, controle de migrations e rollback não foram localizados. | ausência de workflows; migration ignorada por `.gitignore:21,27`; build em `package.json:7`; `CF-RISK-015`, `CF-RISK-022`. | Mudanças podem chegar a ambientes sem gate ou reversão. | `NAO_BLOQUEANTE_DO_PRD` | engenharia, dados e operação | `CF-Q-020` | decidir pipeline e política de schema antes de deploy verificável. |
 
+### Papel dos riscos de segurança e qualidade
+
+O catálogo de riscos permanece como contexto para impedir que defeitos atuais virem requisitos, não como plano de correção. Vulnerabilidades e problemas de privacidade, qualidade, deploy ou tooling não precisam ser resolvidos individualmente antes do primeiro rascunho. O PRD deve definir resultados de produto e requisitos não funcionais no nível adequado; redaction de hash, rotação JWT, CSRF, rate limiting, migrations, CI/CD e rollback pertencem principalmente à arquitetura, segurança e implementação. Somente decisões que alterem comportamento visível, acesso, papéis, privacidade ou escopo precisam ser confirmadas como decisões de produto.
+
 ### Distribuição das lacunas
 
 | Grupo | Quantidade | `BLOQUEANTE_GLOBAL` | `BLOQUEANTE_SE_NO_ESCOPO` | `NAO_BLOQUEANTE_DO_PRD` |
@@ -113,19 +117,19 @@
 | Produto | 3 | 0 | 3 | 0 |
 | Domínio | 2 | 0 | 2 | 0 |
 | Laboratórios e permissões | 2 | 0 | 2 | 0 |
-| Ciência e IHFR | 2 | 1 | 1 | 0 |
+| Ciência e IHFR | 2 | 0 | 2 | 0 |
 | Dados | 2 | 0 | 0 | 2 |
-| UX e Figma | 3 | 1 | 2 | 0 |
+| UX e Figma | 3 | 0 | 2 | 1 |
 | Arquitetura | 2 | 0 | 0 | 2 |
 | Mapas e Python | 3 | 0 | 1 | 2 |
 | Segurança | 2 | 0 | 2 | 0 |
 | Requisitos não funcionais | 2 | 0 | 1 | 1 |
 | Infraestrutura e deploy | 3 | 0 | 0 | 3 |
-| **Total** | **30** | **4** | **16** | **10** |
+| **Total** | **30** | **2** | **17** | **11** |
 
 ## Perguntas abertas
 
-As vinte perguntas abaixo são mantidas sem resposta. “Ordem recomendada” é `RECOMENDACAO` analítica de sequenciamento, não prioridade aprovada.
+As vinte perguntas abaixo são mantidas sem resposta. “Ordem recomendada” é `RECOMENDACAO` analítica de sequenciamento, não prioridade aprovada. `CF-Q-016`, `CF-Q-017`, `CF-Q-019` e `CF-Q-020` são inventários auxiliares e não precisam ser integralmente respondidos antes do primeiro rascunho do PRD.
 
 | ID | Formulação neutra | Lacunas relacionadas | Decisão necessária | Autoridade | Impacto | Ordem recomendada | Destino após resposta |
 |---|---|---|---|---|---|---:|---|
@@ -139,10 +143,10 @@ As vinte perguntas abaixo são mantidas sem resposta. “Ordem recomendada” é
 | `CF-Q-008` | Qual é a fronteira de isolamento entre usuários e laboratórios, e quem possui, visualiza ou altera áreas, coletas e diagnósticos? | `CF-GAP-009` | tenancy, propriedade e autoria | produto, dados e segurança | previne acesso cruzado e orienta consultas | 7 | política multitenant e matriz de acesso |
 | `CF-Q-009` | Quais papéis existem, como `role` e `isAdmin` devem se relacionar e quais ações globais ou por laboratório cada papel pode executar? | `CF-GAP-010`, `CF-GAP-011` | matriz de papéis/permissões | produto e segurança | habilita autorização consistente | 10 | matriz futura de autorização e decisão administrativa |
 | `CF-Q-010` | Qual é o fluxo pretendido de áreas e coletas, incluindo cadastro, edição, status, autoria, histórico, exclusão, anexos e diagnóstico? | `CF-GAP-006` | casos de uso e estados de domínio | produto, dados e ciência conforme os dados/diagnóstico | separa mocks do produto desejado | 11 | registro futuro de domínio/fluxos; depois, requisitos se autorizados |
-| `CF-Q-011` | Qual contrato científico do IHFR está aprovado, incluindo entradas, unidades, validações, pesos, agregação, classes/limiares, qualidade dos dados e versionamento científico? | `CF-GAP-012` | contrato científico do IHFR | responsáveis científicos designados | bloqueia qualquer definição confiável do diagnóstico IHFR | 5 | norma científica aprovada; decisões técnicas permanecem separadas |
+| `CF-Q-011` | Qual contrato científico do IHFR está aprovado, incluindo entradas, unidades, validações, pesos, agregação, classes/limiares, qualidade dos dados e versionamento científico? | `CF-GAP-012` | contrato científico do IHFR | responsáveis científicos designados | bloqueia a aprovação das regras científicas detalhadas, mas não a compreensão das demais jornadas do produto | 5 | norma científica aprovada para as partes dependentes; decisões técnicas permanecem separadas |
 | `CF-Q-012` | Quais casos de uso de mapa são necessários, com camadas, fonte cartográfica, coordenadas, precisão, privacidade, filtros, interação e operação offline/online? | `CF-GAP-021` | escopo funcional e de dados geoespaciais | produto, UX, dados e ciência | antecede escolha de tecnologia de mapa | 12 | pacote de caso de uso cartográfico |
 | `CF-Q-013` | Após definir os casos de uso cartográficos, quais papéis cabem a OpenStreetMap, Plotly e Leaflet, e qual arquitetura de mapas atende aos critérios aprovados? | `CF-GAP-022` | seleção e arquitetura cartográfica | arquitetura decide; produto, UX e dados fornecem os critérios | evita confundir base cartográfica, visualização e biblioteca | 13 | atualização futura de `TD-008`, `TD-010`, `TD-011` e `TD-014`, sem promoção silenciosa |
-| `CF-Q-014` | Quais artefatos Figma/UX são aplicáveis, qual seu estado de aprovação e quais jornadas, estados, acessibilidade e breakpoints governam; ou será registrado que não haverá fonte normativa de Figma? | `CF-GAP-016`, `CF-GAP-018` | fonte normativa de UX e critérios | UX e produto | separa implementação atual de intenção visual | 14 | registro/classificação de UX; depois, especificação se autorizada |
+| `CF-Q-014` | Quais artefatos Figma/UX devem ser considerados e, para cada artefato fornecido, qual é seu estado e como ele se relaciona com jornadas, estados, acessibilidade, breakpoints e código observado? | `CF-GAP-016`, `CF-GAP-018` | classificação dos artefatos fornecidos e critérios de UX | UX e produto | acrescenta evidência complementar de intenção visual sem condicionar o PRD à existência de Figma | 14 | registro e comparação dos artefatos fornecidos; depois, especificação se autorizada |
 | `CF-Q-015` | As rotas de perfil e detalhes de área, links institucionais e ações hoje placeholder devem existir, ser substituídos ou removidos? | `CF-GAP-017` | destino de navegação e ações | produto e UX | elimina rotas quebradas sem presumir requisito | 15 | decisão futura por rota/ação e backlog autorizado |
 | `CF-Q-016` | Qual política de segurança deve reger hash nas respostas, segredo/rotação JWT, sessão/cookie, CSRF, proteção de rotas, superadmin, rate limiting, validação e auditoria? | `CF-GAP-011`, `CF-GAP-024`, `CF-GAP-025` | inventário guarda-chuva de decisões de autenticação e segurança | segurança; produto, operação e privacidade conforme cada subtema | trata riscos críticos sem normalizar o código atual | 16 | decompor por assunto e autoridade antes de qualquer futuro pacote de decisão |
 | `CF-Q-017` | Qual modelo de dados é pretendido, com nomes, enumerações, cardinalidades, unidades, retenção, privacidade, migrations e dados de demonstração? | `CF-GAP-014`, `CF-GAP-015`, `CF-GAP-025` | inventário guarda-chuva de decisões de dados | dados; produto, ciência e privacidade conforme cada subtema | impede schema provisório de virar domínio aprovado | 17 | decompor por conceito, governança e operação antes de qualquer futuro pacote de decisão |
@@ -152,4 +156,4 @@ As vinte perguntas abaixo são mantidas sem resposta. “Ordem recomendada” é
 
 ## Ponto de parada
 
-Há 30 lacunas: 4 `BLOQUEANTE_GLOBAL`, 16 `BLOQUEANTE_SE_NO_ESCOPO` e 10 `NAO_BLOQUEANTE_DO_PRD`, além de 20 perguntas abertas. Nenhuma pergunta foi respondida, nenhum responsável individual foi atribuído e nenhum destino futuro foi criado. As perguntas `CF-Q-016`, `CF-Q-017`, `CF-Q-019` e `CF-Q-020` são inventários guarda-chuva e devem ser decompostas antes de qualquer futuro pacote de decisão. A revisão humana deve confirmar cobertura, autoridades, escopo e ordem.
+Há 30 lacunas: 2 `BLOQUEANTE_GLOBAL`, 17 `BLOQUEANTE_SE_NO_ESCOPO` e 11 `NAO_BLOQUEANTE_DO_PRD`, além de 20 perguntas abertas. Os dois bloqueios globais remanescentes são `CF-GAP-001`, sobre autoridade de produto e aprovação, e `CF-GAP-003`, sobre objetivos, usuários e escopo do MVP. Nenhuma pergunta foi respondida, nenhum responsável individual foi atribuído e nenhum destino futuro foi criado. As perguntas `CF-Q-016`, `CF-Q-017`, `CF-Q-019` e `CF-Q-020` permanecem inventários auxiliares a decompor antes de eventual pacote de decisão, sem condicionar integralmente o primeiro rascunho. A revisão humana deve confirmar cobertura, autoridades, escopo e ordem.
