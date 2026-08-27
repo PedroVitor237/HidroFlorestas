@@ -3,14 +3,15 @@
 ## Identificação, estado e limites
 
 - **Identificador:** `DOC-012`
-- **Estado documental:** `EM_REVISAO`
+- **Estado documental:** `CANONICO_ATUAL`, exclusivamente como relatório analítico aprovado
 - **Data:** 2026-08-26
-- **Plano:** [`DOC-PLAN-006`](../../plans/active/auditoria-dados-arquitetura-execucao.md)
+- **Plano:** [`DOC-PLAN-006`](../../plans/completed/auditoria-dados-arquitetura-execucao.md)
 - **Fontes primárias:** `DOC-RAW-003`, `DOC-RAW-005`, `DOC-RAW-006` e `DOC-RAW-012`
 - **Responsável pela execução:** agente mantenedor
 - **Autoridades de produto, dados, arquitetura e ciência:** não especificadas; `PD-002`, `PD-003`, `PD-004` e `PD-006`
 - **Natureza:** relatório analítico de auditoria documental interna
 - **Autoridade normativa:** nenhuma sobre requisitos, dados, ciência, algoritmo, arquitetura ou roadmap
+- **Aprovação analítica:** aprovação humana da Etapa 7 registrada na solicitação aprovada da Etapa 8, em 2026-08-26; responsável individual não especificado
 
 Este relatório registra o conteúdo histórico das quatro fontes e o confronta apenas com os relatórios analíticos aprovados das Etapas 4 a 6 e os registros canônicos permitidos. Não compara documentação com código, não verifica implementação, não define modelo de dados ou arquitetura normativa, não escolhe tecnologia, não resolve pendências, não altera `TRACEABILITY_MATRIX.md` e não inicia a Etapa 8.
 
@@ -987,4 +988,4 @@ O estado inicial estava limpo no commit `a44a69d69f896e4912ed4acca0d88a7edc11a2c
 
 ## Ponto de parada
 
-Etapa 7 concluída documentalmente. `DOC-PLAN-006` permanece em `AGUARDANDO_REVISAO` e este relatório em `EM_REVISAO`. Nenhum modelo de dados, requisito, fórmula, algoritmo, tecnologia, arquitetura, roadmap ou estado de implementação foi aprovado; nenhuma atualização normativa ou da matriz global foi feita; a Etapa 8 não foi iniciada.
+Etapa 7 encerrada e aprovada exclusivamente em seu caráter analítico. `DOC-PLAN-006` está `CONCLUIDO` e arquivado, e este relatório está `CANONICO_ATUAL` somente como evidência analítica da auditoria. A aprovação não valida implementação, não aprova modelo de dados, requisito, backlog ou roadmap, não confirma arquitetura, não resolve pendência e não concede autoridade normativa às fontes históricas.

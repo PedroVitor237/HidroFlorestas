@@ -1,17 +1,17 @@
-# Matriz global inicial de rastreabilidade documental
+# Matriz global de rastreabilidade documental
 
 ## Identificação, estado e limites
 
 - **Identificador documental:** `DOC-008`
 - **Estado:** `CANONICO_ATUAL`
 - **Natureza:** matriz canônica de governança documental
-- **Data da leitura controlada:** 2026-08-24
-- **Plano de execução:** [`DOC-PLAN-002`](../plans/completed/rastreabilidade-global-inicial.md)
-- **Aprovação:** aprovação humana da Etapa 3 registrada na solicitação aprovada da Etapa 4, em 2026-08-24; responsável individual não especificado
+- **Data da atualização controlada:** 2026-08-26
+- **Planos de execução:** [`DOC-PLAN-002`](../plans/completed/rastreabilidade-global-inicial.md) e [`DOC-PLAN-007`](../plans/active/consolidacao-auditoria-documental.md)
+- **Aprovação:** baseline aprovado na Etapa 3; atualização analítica da Etapa 8 em revisão; responsável individual não especificado
 - **Registro de metadados e integridade:** [`DOCUMENT_REGISTER.md`](DOCUMENT_REGISTER.md)
 - **Política de autoridade:** [`SOURCE_AUTHORITY.md`](SOURCE_AUTHORITY.md)
 
-Esta matriz representa a rastreabilidade documental inicial dos 13 arquivos históricos de `docs/raw/` no nível de documentos e camadas. Ela não constitui auditoria de conteúdo, não resolve possíveis conflitos, não estabelece vigência normativa e não substitui os documentos de origem. Relações preliminares deverão ser confirmadas nas auditorias futuras das camadas.
+Esta matriz representa a rastreabilidade documental dos 13 arquivos históricos de `docs/raw/` no nível de documentos e camadas. O baseline da Etapa 3 foi atualizado com evidências analíticas das auditorias das Etapas 4 a 7, consolidadas em [`DOC-013`](../reports/audits/2026-08-26-auditoria-documental-consolidada.md). Ela não resolve conflitos, não estabelece vigência normativa e não substitui os documentos de origem.
 
 > Controle de rastreabilidade documental no nível de documentos e camadas, sem autoridade para validar conteúdo científico, requisitos, UX, dados ou arquitetura.
 
@@ -22,7 +22,8 @@ Os nós reutilizam exclusivamente os identificadores de `DOCUMENT_REGISTER.md`. 
 - `FATO_DOCUMENTADO` identifica somente uma relação explicitamente declarada por fonte e localizador registrados.
 - `INFERENCIA` identifica uma conexão derivada de função, título ou estrutura documental; não comprova dependência, aprovação, substituição ou vigência.
 - `VERIFICADA_NA_FONTE` valida a presença da declaração, não o mérito de seu conteúdo.
-- `PRELIMINAR_PENDENTE_DE_AUDITORIA` mantém a relação aberta à confirmação nas futuras Etapas 4 a 7.
+- `VERIFICADA_ANALITICAMENTE` confirma que a relação foi examinada por uma auditoria de camada; quando classificada `INFERENCIA`, continua sem comprovar dependência, aprovação, precedência, substituição ou vigência.
+- `PRELIMINAR_PENDENTE_DE_AUDITORIA` é preservado como estado histórico da versão inicial; nenhuma relação permanece nesse estado após as Etapas 4 a 7.
 - `OPCIONAL_NAO_BLOQUEANTE` identifica lacuna de entrada suplementar que pode ser tratada futuramente sem impedir a auditoria ou a etapa relacionada.
 - A direção `origem → destino` representa apenas a leitura documental registrada na linha.
 - A alocação primária organiza o trabalho futuro e não altera autoridade ou estado documental.
@@ -51,33 +52,45 @@ Os nós reutilizam exclusivamente os identificadores de `DOCUMENT_REGISTER.md`. 
 |---|---|---|---|---|---|---|---|---|---|
 | `TR-001` | `DOC-RAW-006` | `DOC-RAW-014` | `REFERENCIA_EXPLICITA` | `DOC-RAW-006` → `DOC-RAW-014` | `DOC-RAW-006`, seção “11. FLUXO OPERACIONAL”, frase posterior ao diagrama que remete aos “wireframes do MVP”. | `FATO_DOCUMENTADO` | `VERIFICADA_NA_FONTE` | Etapa 7, com confirmação cruzada na Etapa 6 | Confirma apenas a referência ao artefato documental de wireframes; não confirma aprovação ou aderência entre os conteúdos. |
 | `TR-002` | `DOC-RAW-014` | `DOC-RAW-013` | `DEPENDENCIA_EXPLICITA` | `DOC-RAW-014` → `DOC-RAW-013` | `DOC-RAW-014`, seção “CRITÉRIOS DE ACEITAÇÃO” → “Resultado”, observação que determina uso da “ESPECIFICAÇÃO DO IHFR v0.1”. | `FATO_DOCUMENTADO` | `VERIFICADA_NA_FONTE` | Etapa 6, com confirmação do contrato na Etapa 5 | Confirma a dependência declarada pelo wireframe; não valida a especificação nem transforma o wireframe em UX aprovada. |
-| `TR-003` | `DOC-RAW-009` | `DOC-RAW-008` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-009` → `DOC-RAW-008` | Títulos e papéis declarados de modelo conceitual e modelo científico; cabeçalhos sobre princípio conceitual, fundamentos e estrutura do índice. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 4 | A ordem e a dependência entre os modelos não estão declaradas. |
-| `TR-004` | `DOC-RAW-008` | `DOC-RAW-007` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-008` → `DOC-RAW-007` | Finalidades declaradas de apresentar a estrutura científica e organizar indicadores nas dimensões do índice. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 4 | Não estabelece que a matriz deriva, implementa ou sucede o modelo. |
-| `TR-005` | `DOC-RAW-011` | `DOC-RAW-007` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-011` → `DOC-RAW-007` | Objetivo declarado do protocolo de coletar dados para o IHFR e papel declarado da matriz de organizar indicadores. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 4 | O mapeamento entre coleta e variáveis não foi auditado nem declarado como relação documental. |
-| `TR-006` | `DOC-RAW-007` | `DOC-RAW-013` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-007` → `DOC-RAW-013` | Papéis declarados de matriz de variáveis e contrato matemático, ambos estruturados por dimensões do IHFR. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapas 4 e 5 | Não comprova correspondência entre variáveis, pesos ou critérios. |
-| `TR-007` | `DOC-RAW-008` | `DOC-RAW-013` | `SOBREPOSICAO_TEMATICA_PRELIMINAR` | `DOC-RAW-008` → `DOC-RAW-013` | Cabeçalhos de formulação matemática no modelo científico e de estrutura do índice no contrato matemático. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapas 4 e 5 | Sobreposição temática não implica equivalência, conflito ou precedência. |
-| `TR-008` | `DOC-RAW-010` | `DOC-RAW-013` | `SOBREPOSICAO_TEMATICA_PRELIMINAR` | `DOC-RAW-010` → `DOC-RAW-013` | Título e cabeçalhos de calibração/pesos regionais e de estrutura/pesos do contrato matemático. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 5 | Nenhuma conclusão é feita sobre compatibilidade ou aplicação regional. |
-| `TR-009` | `DOC-RAW-013` | `DOC-RAW-002` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-013` → `DOC-RAW-002` | Papéis declarados de contrato matemático e algoritmo operacional, com seções de entradas e saídas. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 5 | A sequência é organizacional; dependência documental não foi explicitamente declarada. |
-| `TR-010` | `DOC-RAW-002` | `DOC-RAW-005` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-002` → `DOC-RAW-005` | Seções de entradas, saídas e persistência do algoritmo e finalidade declarada do dicionário de servir ao processamento do IHFR. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapas 5 e 7 | Não comprova correspondência de campos nem conformidade do modelo de dados. |
-| `TR-011` | `DOC-RAW-004` | `DOC-RAW-003` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-004` → `DOC-RAW-003` | Papéis documentais de definição de requisitos e organização do backlog em épicos, histórias e critérios. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapas 6 e 7 | Backlog não é requisito aprovado e derivação não foi declarada. |
-| `TR-012` | `DOC-RAW-004` | `DOC-RAW-014` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-004` → `DOC-RAW-014` | Cabeçalhos de requisitos por tela e papel declarado dos wireframes de estruturar telas e fluxo. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 6 | Não estabelece correspondência, completude ou aprovação de UX. |
-| `TR-013` | `DOC-RAW-004` | `DOC-RAW-005` | `SOBREPOSICAO_TEMATICA_PRELIMINAR` | `DOC-RAW-004` → `DOC-RAW-005` | Cabeçalho de modelo de dados no documento de requisitos e finalidade declarada do dicionário de dados. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapas 6 e 7 | Sobreposição temática não define autoridade de produto ou dados. |
-| `TR-014` | `DOC-RAW-005` | `DOC-RAW-006` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-005` → `DOC-RAW-006` | Finalidade declarada do dicionário para modelagem e API e cabeçalhos de banco de dados e API na especificação técnica. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 7 | Dependência ou conformidade entre os documentos não foi declarada. |
-| `TR-015` | `DOC-RAW-003` | `DOC-RAW-006` | `RELACAO_ESTRUTURAL_PRELIMINAR` | `DOC-RAW-003` → `DOC-RAW-006` | Papéis declarados de backlog do MVP e especificação técnica para desenvolvimento. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 7 | Não afirma que a especificação implementa, deriva ou atende ao backlog. |
-| `TR-016` | `DOC-RAW-012` | `DOC-RAW-006` | `SOBREPOSICAO_TEMATICA_PRELIMINAR` | `DOC-RAW-012` → `DOC-RAW-006` | Finalidades declaradas de arquitetura recomendada/evolução tecnológica e especificação técnica do sistema. | `INFERENCIA` | `PRELIMINAR_PENDENTE_DE_AUDITORIA` | Etapa 7 | Não estabelece arquitetura atual, sucessão ou compatibilidade. |
+| `TR-003` | `DOC-RAW-009` | `DOC-RAW-008` | `RELACAO_ESTRUTURAL_VERIFICADA` | `DOC-RAW-009` → `DOC-RAW-008` | `DOC-009`, `SCI-FND-001`,`016`: estrutura em quatro dimensões e relações ecológicas alinhadas. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 4; consolidação `DOC-013` | A ordem e a dependência entre os modelos continuam não declaradas. |
+| `TR-004` | `DOC-RAW-008` | `DOC-RAW-007` | `RELACAO_ESTRUTURAL_VERIFICADA` | `DOC-RAW-008` → `DOC-RAW-007` | `DOC-009`, matriz de variáveis/cadeias e `SCI-FND-002`; cobertura conceitual parcial. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 4; `DOC-013` | Não estabelece derivação, sucessão ou validação científica. |
+| `TR-005` | `DOC-RAW-011` | `DOC-RAW-007` | `COBERTURA_PARCIAL_VERIFICADA` | `DOC-RAW-011` → `DOC-RAW-007` | `DOC-009`, cobertura protocolar: 10 explícitas, 1 parcial, 5 não localizadas e 1 ambígua. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 4; `DOC-013` | Relação material auditada, mas incompleta e sem dependência declarada. |
+| `TR-006` | `DOC-RAW-007` | `DOC-RAW-013` | `RELACAO_ESTRUTURAL_VERIFICADA` | `DOC-RAW-007` → `DOC-RAW-013` | `DOC-010`, `MATH-FND-001`: 16/17 variáveis com correspondência; densidade de drenagem ausente do contrato. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapas 4 e 5; `DOC-013` | `area_size_ha` não foi tratado como substituição de densidade de drenagem. |
+| `TR-007` | `DOC-RAW-008` | `DOC-RAW-013` | `SOBREPOSICAO_TEMATICA_VERIFICADA` | `DOC-RAW-008` → `DOC-RAW-013` | `DOC-010`, `MATH-FND-002`: formulações gerais matematicamente equivalentes. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapas 4 e 5; `DOC-013` | Equivalência matemática não prova dependência, precedência ou validação. |
+| `TR-008` | `DOC-RAW-010` | `DOC-RAW-013` | `DIVERGENCIA_DE_APLICABILIDADE_VERIFICADA` | `DOC-RAW-010` → `DOC-RAW-013` | `DOC-010`, `MATH-FND-003`,`004`,`013`: pesos diferenciais e relação geral–regional aberta. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 5; `DOC-013` | Recorte regional impede classificar automaticamente como conflito ou substituição. |
+| `TR-009` | `DOC-RAW-013` | `DOC-RAW-002` | `RELACAO_ESTRUTURAL_VERIFICADA` | `DOC-RAW-013` → `DOC-RAW-002` | `DOC-010`, matrizes de entradas/passos/testes; `MATH-FND-005`,`006` preservam dois conflitos. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 5; `DOC-013` | Compartilhamento de versão/fluxo não estabelece precedência documental. |
+| `TR-010` | `DOC-RAW-002` | `DOC-RAW-005` | `RELACAO_ESTRUTURAL_VERIFICADA` | `DOC-RAW-002` → `DOC-RAW-005` | `DOC-012`, matriz 7: 17/17 variáveis com campo histórico, 16/17 com entrada algorítmica. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapas 5 e 7; `DOC-013` | Cadeia parcial; `VAR-017` permanece interrompida e conformidade não foi presumida. |
+| `TR-011` | `DOC-RAW-004` | `DOC-RAW-003` | `COBERTURA_TEMATICA_PARCIAL_VERIFICADA` | `DOC-RAW-004` → `DOC-RAW-003` | `DOC-012`, matriz 1 e `DAE-FND-004`: núcleo alinhado e lacunas bidirecionais. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapas 6 e 7; `DOC-013` | Backlog continua distinto de requisito aprovado; derivação não foi declarada. |
+| `TR-012` | `DOC-RAW-004` | `DOC-RAW-014` | `COBERTURA_TEMATICA_PARCIAL_VERIFICADA` | `DOC-RAW-004` → `DOC-RAW-014` | `DOC-011`, `PROD-FND-001`–`003`: núcleo das cinco telas, dashboard/mapa, coleta e resultado. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 6; `DOC-013` | Cobertura parcial não implica completude, derivação ou aprovação de UX. |
+| `TR-013` | `DOC-RAW-004` | `DOC-RAW-005` | `COBERTURA_TEMATICA_PARCIAL_VERIFICADA` | `DOC-RAW-004` → `DOC-RAW-005` | `DOC-012`, matrizes 5 e 6; núcleo nominal presente, organizações/laboratórios e regras ausentes. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapas 6 e 7; `DOC-013` | Não define autoridade nem valida o modelo de dados. |
+| `TR-014` | `DOC-RAW-005` | `DOC-RAW-006` | `DIVERGENCIA_ESTRUTURAL_VERIFICADA` | `DOC-RAW-005` → `DOC-RAW-006` | `DOC-012`, `DAE-FND-018`: entidades modulares versus tabela ambiental única. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 7; `DOC-013` | Divergência de granularidade, sem conflito estrito, dependência ou precedência. |
+| `TR-015` | `DOC-RAW-003` | `DOC-RAW-006` | `COBERTURA_TEMATICA_PARCIAL_VERIFICADA` | `DOC-RAW-003` → `DOC-RAW-006` | `DOC-012`, matriz 4 e `E7-015`: épico de API versus declarações `ARCH-012`–`018`. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 7; `DOC-013` | Cobertura parcial e rotas divergentes não provam implementação. |
+| `TR-016` | `DOC-RAW-012` | `DOC-RAW-006` | `SOBREPOSICAO_TEMATICA_VERIFICADA` | `DOC-RAW-012` → `DOC-RAW-006` | `DOC-012`, matriz 10: alinhamentos, alternativas e diferenças de fase entre `ARCH-NNN` e `ROAD-NNN`. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 7; `DOC-013` | Roadmap/recomendação não estabelece arquitetura atual, sucessão ou compatibilidade. |
+| `TR-017` | `DOC-RAW-007` | `DOC-RAW-009` | `SOBREPOSICAO_TEMATICA_VERIFICADA` | `DOC-RAW-007` → `DOC-RAW-009` | `DOC-009`, `SCI-FND-001`,`002`,`016`: dimensões, variáveis e relações ecológicas. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 4; `DOC-013` | Relação temática adicionada; não prova derivação ou precedência. |
+| `TR-018` | `DOC-RAW-008` | `DOC-RAW-011` | `SOBREPOSICAO_TEMATICA_VERIFICADA` | `DOC-RAW-008` → `DOC-RAW-011` | `DOC-009`, matrizes de cobertura e `SCI-FND-004`,`007`–`009`. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 4; `DOC-013` | Modelo e protocolo se sobrepõem, com cobertura incompleta. |
+| `TR-019` | `DOC-RAW-010` | `DOC-RAW-011` | `SOBREPOSICAO_TEMATICA_VERIFICADA` | `DOC-RAW-010` → `DOC-RAW-011` | `DOC-009`,`010`: fórmula regional e parâmetros convergentes de infiltração, cobertura e APP. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapas 4 e 5; `DOC-013` | Mesma temática regional; dependência e validação não declaradas. |
+| `TR-020` | `DOC-RAW-004` | `DOC-RAW-013` | `DEPENDENCIA_CIENTIFICA_ANALITICA` | `DOC-RAW-004` → `DOC-RAW-013` | `DOC-011`, `PROD-FND-020`: cálculo, classes, indicadores, alertas e recomendações dependem de ciência validada. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 6; `DOC-013` | Dependência analítica para normatização, não referência explícita nem aprovação do contrato. |
+| `TR-021` | `DOC-RAW-003` | `DOC-RAW-012` | `SOBREPOSICAO_TEMATICA_VERIFICADA` | `DOC-RAW-003` → `DOC-RAW-012` | `DOC-012`, matrizes 10 e 11; backlog, fases e capacidades futuras. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapa 7; `DOC-013` | Fase e natureza são eixos distintos; roadmap não aprova backlog. |
+| `TR-022` | `DOC-RAW-004` | `DOC-RAW-009` | `SOBREPOSICAO_TEMATICA_VERIFICADA` | `DOC-RAW-004` → `DOC-RAW-009` | `DOC-009`,`011`: diagnóstico, indicadores e relações ecológicas aparecem em ciência e produto. | `INFERENCIA` | `VERIFICADA_ANALITICAMENTE` | Etapas 4 e 6; `DOC-013` | Sobreposição de conceitos não autoriza requisito científico. |
 
 ### Síntese quantitativa das relações
 
 | Dimensão | Valor |
 |---|---:|
-| Relações totais | 16 |
+| Relações totais | 22 |
 | `REFERENCIA_EXPLICITA` | 1 |
 | `DEPENDENCIA_EXPLICITA` | 1 |
 | `ENTRADA_SAIDA_EXPLICITA` | 0 |
-| `RELACAO_ESTRUTURAL_PRELIMINAR` | 10 |
-| `SOBREPOSICAO_TEMATICA_PRELIMINAR` | 4 |
+| `RELACAO_ESTRUTURAL_VERIFICADA` | 5 |
+| `COBERTURA_PARCIAL_VERIFICADA` | 1 |
+| `COBERTURA_TEMATICA_PARCIAL_VERIFICADA` | 4 |
+| `SOBREPOSICAO_TEMATICA_VERIFICADA` | 7 |
+| `DIVERGENCIA_DE_APLICABILIDADE_VERIFICADA` | 1 |
+| `DIVERGENCIA_ESTRUTURAL_VERIFICADA` | 1 |
+| `DEPENDENCIA_CIENTIFICA_ANALITICA` | 1 |
 | `FATO_DOCUMENTADO` / `VERIFICADA_NA_FONTE` | 2 |
-| `INFERENCIA` / `PRELIMINAR_PENDENTE_DE_AUDITORIA` | 14 |
+| `INFERENCIA` / `VERIFICADA_ANALITICAMENTE` | 20 |
+| `PRELIMINAR_PENDENTE_DE_AUDITORIA` | 0 |
 | `NAO_ESTABELECIDA` | 0 |
 
 ## Cobertura documental por camada
@@ -108,34 +121,44 @@ A alocação cobre `DOC-RAW-002` a `DOC-RAW-014` exatamente uma vez, sem omissã
 
 | Identificador | Tipo | Descrição neutra | Documentos ou camadas | Evidência ou ausência observada | Classificação | Impacto sobre a rastreabilidade | Pendência existente relacionada | Auditoria futura | Estado |
 |---|---|---|---|---|---|---|---|---|---|
-| `GAP-001` | `METADADO_AUSENTE` | Origem, data e responsável não estão especificados para os 13 documentos; versão documental está especificada somente para dois, conforme o baseline. | `DOC-RAW-002` a `DOC-RAW-014` | Metadados registrados em `DOCUMENT_REGISTER.md`, sem nova auditoria substantiva. | `NAO_ESPECIFICADO` | Limita a proveniência e a interpretação do ciclo de vida documental. | não especificado | Etapas 4 a 7 | `AGUARDANDO_AUDITORIA` |
+| `GAP-001` | `METADADO_AUSENTE` | Origem, data e responsável não estão especificados para os 13 documentos; versão documental está especificada somente para dois, conforme o baseline. | `DOC-RAW-002` a `DOC-RAW-014` | Metadados registrados em `DOCUMENT_REGISTER.md` e confirmados nas auditorias `DOC-009`–`013`. | `NAO_ESPECIFICADO` | Limita a proveniência e a interpretação do ciclo de vida documental. | não especificado | Consolidação `DOC-013`; futura governança de proveniência | `VERIFICADA_NAS_AUDITORIAS` |
 | `GAP-002` | `AUTORIDADE_PENDENTE` | A autoridade para validar conteúdo científico e cálculo do IHFR ainda depende de designação da equipe. | Ciência, campo, matemática e algoritmo | `SOURCE_AUTHORITY.md` e `PENDING_DECISIONS.md`. | `PENDENCIA_DE_DECISAO` | Impede converter evidência histórica científica em conteúdo normativo validado. | `PD-002` | Etapas 4 e 5 | `VINCULADA_A_PENDENCIA` |
 | `GAP-003` | `AUTORIDADE_PENDENTE` | A autoridade para aprovar objetivos, requisitos, regras de negócio e definições relacionadas ainda depende de designação da equipe. | Produto e domínio implícito; `DOC-RAW-003`, `DOC-RAW-004` | `SOURCE_AUTHORITY.md` e `PENDING_DECISIONS.md`. | `PENDENCIA_DE_DECISAO` | Mantém backlog e requisitos históricos sem autoridade normativa atual presumida. | `PD-003`, `PD-014`, `PD-015`, `PD-016` | Etapas 6 e 7 | `VINCULADA_A_PENDENCIA` |
 | `GAP-004` | `AUTORIDADE_PENDENTE` | A autoridade sobre conceitos e modelo de dados pretendido ainda depende de designação da equipe. | Dados; `DOC-RAW-005` | `SOURCE_AUTHORITY.md` e `PENDING_DECISIONS.md`. | `PENDENCIA_DE_DECISAO` | Impede confirmar como normativa a representação histórica de dados. | `PD-004`, `PD-014`, `PD-015`, `PD-016` | Etapa 7 | `VINCULADA_A_PENDENCIA` |
 | `GAP-005` | `AUTORIDADE_PENDENTE` | A autoridade para aprovar UX, fluxos e estados dos artefatos ainda depende de designação da equipe. | UX; `DOC-RAW-014`; futura entrada do Figma | `SOURCE_AUTHORITY.md` e `PENDING_DECISIONS.md`. | `PENDENCIA_DE_DECISAO` | Mantém wireframes e futuros artefatos sem aprovação presumida. | `PD-005`, `PD-016`, `PD-017` | Etapa 6 | `VINCULADA_A_PENDENCIA` |
 | `GAP-006` | `AUTORIDADE_PENDENTE` | A autoridade para confirmar arquitetura e aceitar ADRs ainda depende de designação da equipe. | Arquitetura; `DOC-RAW-006`, `DOC-RAW-012` | `SOURCE_AUTHORITY.md`, `PENDING_DECISIONS.md` e alternativas registradas em `TECH_DECISIONS.md`. | `PENDENCIA_DE_DECISAO` | Mantém especificação, roadmap e alternativas separados de arquitetura normativa atual. | `PD-006` a `PD-013` | Etapa 7 | `VINCULADA_A_PENDENCIA` |
-| `GAP-007` | `RELACAO_NAO_DECLARADA` | A busca controlada identificou duas ligações nomeadas entre documentos; as demais conexões registradas nesta matriz não foram declaradas como relações documentais pelas fontes. | `DOC-RAW-002` a `DOC-RAW-014` | Cabeçalhos, referências e busca direcionada pelos títulos e tipos dos 13 documentos. | `NAO_ESPECIFICADO` | As 14 conexões estruturais ou temáticas permanecem inferenciais e não podem sustentar dependência, precedência ou substituição. | não especificado | Etapas 4 a 7 | `AGUARDANDO_AUDITORIA` |
+| `GAP-007` | `RELACAO_NAO_DECLARADA` | Duas ligações permanecem explicitamente nomeadas pelas fontes; as demais conexões da matriz são analíticas/inferenciais, ainda sem declaração documental de dependência, precedência ou substituição. | `DOC-RAW-002` a `DOC-RAW-014` | `DOC-009`–`013`; 20 relações inferenciais verificadas analiticamente. | `NAO_ESPECIFICADO` | As conexões organizam rastreabilidade, mas não sustentam autoridade, dependência normativa, precedência ou substituição. | não especificado | Destinos normativos futuros, se relações forem aprovadas | `VERIFICADA_NAS_AUDITORIAS` |
 | `GAP-008` | `ENTRADA_EXTERNA_PENDENTE` | Artefatos do Figma constituem entrada suplementar, opcional e não bloqueante; sua ausência não impede as auditorias documentais nem a Etapa 6. | UX e produto; nenhum nó documental criado | Orientação atual da equipe registrada na solicitação aprovada da Etapa 4. | `DECISAO_CONFIRMADA` | A rastreabilidade de arquivos, páginas, frames, telas e fluxos do Figma poderá ser acrescentada, se esses artefatos forem apresentados, sem condicionar as auditorias. | `PD-005`, `PD-017` | Opcional na Etapa 6 ou posterior | `OPCIONAL_NAO_BLOQUEANTE` |
 | `GAP-009` | `DESTINO_NORMATIVO_NAO_DEFINIDO` | Os destinos normativos que receberão o conteúdo consolidado após as auditorias das camadas não estão especificados para todos os assuntos. | Ciência, produto, dados, UX e arquitetura | `PROJECT_CONTEXT.md`, `SOURCE_AUTHORITY.md` e destinos condicionais descritos em `PENDING_DECISIONS.md`. | `NAO_ESPECIFICADO` | Resultados futuros deverão aguardar autoridade e destino identificados antes de qualquer consolidação normativa. | `PD-002` a `PD-006` | Etapas 4 a 7 | `VINCULADA_A_PENDENCIA` |
 | `GAP-010` | `AUTORIDADE_PENDENTE` | A autoridade para confirmar a interpretação, a vigência e as mudanças no escopo institucional ainda depende de designação da equipe. | Escopo institucional; identidade e aplicabilidade da fonte institucional entre os nós históricos ainda não estabelecidas | `SOURCE_AUTHORITY.md`, `PENDING_DECISIONS.md` e ausência de um nó classificado no baseline como documento institucional aprovado. | `PENDENCIA_DE_DECISAO` | Limita o uso do escopo institucional como critério normativo na consolidação transversal, sem impedir o levantamento exploratório das camadas. | `PD-001` | Etapa 8 — consolidação transversal; confirmação necessária antes de atualizações normativas dependentes do escopo | `VINCULADA_A_PENDENCIA` |
+| `GAP-011` | `CADEIA_TRANSVERSAL_INCOMPLETA` | A cadeia ciência → protocolo → entrada → algoritmo não fecha para cobertura, missing, qualidade e densidade de drenagem. | Ciência, campo, algoritmo e dados | `DOC-013`, `CON-FND-002`,`004`,`005`,`008`–`013`; auditorias `DOC-009`,`010`,`012`. | `INFERENCIA` | Impede normatizar uma entrada científica reproduzível de ponta a ponta. | `PD-002`,`004` | `DEC-PKG-003`,`004`,`008` | `VINCULADA_A_PENDENCIA` |
+| `GAP-012` | `MODELO_TRANSVERSAL_INCOMPLETO` | Terminologia, papéis, laboratórios, propriedade/tenant, cardinalidades e ciclos não formam modelo coerente aprovado. | Produto, domínio, UX e dados | `DOC-013`, `CON-FND-030`–`032`,`038`,`041`,`042`,`048`. | `INFERENCIA` | Interrompe requisitos, autorização, isolamento e modelo lógico. | `PD-003`–`005`,`014`–`016` | `DEC-PKG-005`,`006`,`008` | `VINCULADA_A_PENDENCIA` |
+| `GAP-013` | `COBERTURA_NORMATIVA_INCOMPLETA` | Escopo do MVP, critérios de aceitação, estados de UX e NFR permanecem incompletos e sem aprovação. | Produto, UX, backlog e arquitetura | `DOC-013`, `CON-FND-029`,`034`–`037`,`045`,`046`. | `INFERENCIA` | Requisitos e critérios verificáveis não podem ser promovidos. | `PD-003`,`005`,`006` | `DEC-PKG-007`,`012` | `VINCULADA_A_PENDENCIA` |
+| `GAP-014` | `CADEIA_TRANSVERSAL_INCOMPLETA` | Modelo de dados, saída IHFR, API, integração e responsabilidades arquiteturais não fecham um contrato transversal. | Algoritmo, dados e arquitetura | `DOC-013`, `CON-FND-024`,`026`,`041`,`048`–`052`,`056`. | `INFERENCIA` | Impede rastrear entrada, processamento, persistência e interface de forma normativa. | `PD-002`–`004`,`006`,`008`,`011` | `DEC-PKG-008`–`010` | `VINCULADA_A_PENDENCIA` |
+| `GAP-015` | `GOVERNANCA_DE_PLANEJAMENTO_INCOMPLETA` | Backlog e roadmap não possuem prioridade, estado, evidência, datas, responsáveis, riscos e gates suficientes. | Produto, backlog e arquitetura | `DOC-013`, `CON-FND-045`,`046`; `DOC-012`. | `INFERENCIA` | Limita cobertura auditável entre requisito, item, fase e entrega. | `PD-003`,`006` | `DEC-PKG-007`,`015` | `VINCULADA_A_PENDENCIA` |
+| `GAP-016` | `INSPECAO_DE_IMPLEMENTACAO_PENDENTE` | Alegações e decisões documentais ainda não foram comparadas com código, configuração, dados, testes ou infraestrutura. | Implementação futura e todas as camadas técnicas | `DOC-012`, `DAE-FND-029`,`030`; `DOC-013`, `CODE-CHECK-001`–`018`. | `NAO_ESPECIFICADO` | O estado implementado permanece `NAO_AVALIADO`; ausência de inspeção não prova implementação nem ausência. | Pendências variam por item; nenhuma nova criada | Futura inspeção autorizada; `CODE-CHECK-001`–`018` | `AGUARDANDO_INSPECAO_FUTURA` |
 
 ### Síntese quantitativa das lacunas
 
 | Dimensão | Valor |
 |---|---:|
-| Lacunas totais | 10 |
+| Lacunas totais | 16 |
 | `METADADO_AUSENTE` | 1 |
 | `AUTORIDADE_PENDENTE` | 6 |
 | `RELACAO_NAO_DECLARADA` | 1 |
 | `ENTRADA_EXTERNA_PENDENTE` | 1 |
 | `DESTINO_NORMATIVO_NAO_DEFINIDO` | 1 |
-| `AGUARDANDO_AUDITORIA` | 2 |
-| `VINCULADA_A_PENDENCIA` | 7 |
+| `CADEIA_TRANSVERSAL_INCOMPLETA` | 2 |
+| `MODELO_TRANSVERSAL_INCOMPLETO` | 1 |
+| `COBERTURA_NORMATIVA_INCOMPLETA` | 1 |
+| `GOVERNANCA_DE_PLANEJAMENTO_INCOMPLETA` | 1 |
+| `INSPECAO_DE_IMPLEMENTACAO_PENDENTE` | 1 |
+| `VERIFICADA_NAS_AUDITORIAS` | 2 |
+| `VINCULADA_A_PENDENCIA` | 12 |
 | `OPCIONAL_NAO_BLOQUEANTE` | 1 |
-| `AGUARDANDO_ENTRADA_EXTERNA` | 0 |
-| `PRELIMINAR` | 0 |
+| `AGUARDANDO_INSPECAO_FUTURA` | 1 |
 
-Nenhuma nova pendência foi incorporada ao registro vivo nesta etapa. A leitura restrita não identificou candidata decisória claramente distinta de `PD-001` a `PD-017`; as lacunas sem vínculo decisório permanecem para confirmação nas auditorias.
+Nenhuma nova pendência foi incorporada ao registro vivo na consolidação. `DOC-013` confirmou que `PD-001` a `PD-017` cobrem as decisões materiais; as novas lacunas descrevem rupturas de rastreabilidade e não duplicam decisões.
 
 ## Orientação atual sobre os artefatos do Figma
 
@@ -149,6 +172,6 @@ Quando forem efetivamente apresentados, arquivos, páginas, frames, telas e flux
 
 ## Método e ponto de parada
 
-A matriz foi construída a partir do registro canônico, da enumeração de títulos e cabeçalhos dos 13 arquivos, de buscas direcionadas por escopo, finalidade, entradas, saídas, referências, dependências, integração, rastreabilidade e títulos dos documentos, e da leitura apenas dos trechos mínimos necessários a localizadores. O mérito de regras, fórmulas, requisitos, wireframes e escolhas técnicas não foi analisado.
+A matriz foi construída na Etapa 3 a partir do registro canônico e de leitura estrutural controlada. Na Etapa 8, foi atualizada exclusivamente com as evidências analíticas registradas em `DOC-009` a `DOC-013`, sem nova leitura ampla de `docs/raw/` e sem inspeção de implementação. O mérito de regras, fórmulas, requisitos, wireframes e escolhas técnicas não foi validado.
 
-Este documento foi promovido a `CANONICO_ATUAL` após aprovação humana da Etapa 3, exclusivamente para controle documental. As relações inferenciais continuam identificadas como inferências, as lacunas preservam seus limites e a alocação não concede autoridade normativa. A promoção não valida conteúdo científico, funcional, de UX, de dados ou técnico e não substitui as auditorias de cada camada.
+Este documento foi promovido a `CANONICO_ATUAL` após aprovação humana da Etapa 3, exclusivamente para controle documental, e permanece canônico durante a atualização analítica em revisão da Etapa 8. As relações inferenciais continuam identificadas como inferências, as lacunas preservam seus limites e a alocação não concede autoridade normativa. A atualização não valida conteúdo científico, funcional, de UX, de dados ou técnico e não substitui as auditorias de cada camada.

@@ -6,7 +6,7 @@
 - **Título:** Auditoria documental do backlog, dos dados, da especificação técnica e do roadmap arquitetural
 - **Etapa:** 7
 - **Estado inicial desta execução:** `AGUARDANDO_REVISAO`
-- **Estado atual/final desta execução:** `AGUARDANDO_REVISAO`
+- **Estado atual/final desta execução:** `CONCLUIDO`
 - **Data:** 2026-08-26
 - **Responsável pela execução:** agente mantenedor
 - **Autoridade de produto:** não especificada; `PD-003`
@@ -158,7 +158,7 @@ O relatório registra o baseline completo dos 13 arquivos para confronto final.
 - Conflito sem autoridade suficiente: registrar e não resolver.
 - Decisão normativa necessária: registrar bloqueio para normatização e seguir nas partes independentes.
 - Mudança externa incompatível: reavaliar antes de editar.
-- Final desta etapa: manter este plano em `AGUARDANDO_REVISAO`, `DOC-012` em `EM_REVISAO` e parar antes da Etapa 8.
+- Ponto de parada original: a execução da Etapa 7 parou com este plano em `AGUARDANDO_REVISAO` e `DOC-012` em `EM_REVISAO`; após a aprovação humana registrada na solicitação da Etapa 8, ambos foram encerrados nos estados finais indicados neste plano, sem ampliar o escopo da Etapa 7.
 
 ## Bloqueios e desvios
 
@@ -173,7 +173,8 @@ O relatório registra o baseline completo dos 13 arquivos para confronto final.
 |---|---|---|
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Plano criado após preflight, baseline limpo e confirmação dos IDs `DOC-PLAN-006`/`DOC-012`; estado inicial exigido pela solicitação. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Auditoria documental concluída no escopo autorizado; quatro fontes lidas integralmente, inventários/comparações/achados/perguntas registrados e validações aplicáveis executadas. O relatório permanece `EM_REVISAO`. |
+| 2026-08-26 | `CONCLUIDO` | A solicitação aprovada da Etapa 8 registrou a aprovação humana da Etapa 7. O gate mecânico confirmou 9 épicos, 34 histórias, 9 entidades, 69 campos, 10 associações, 19 regras, 49 `ARCH-NNN`, 49 `ROAD-NNN`, 12 matrizes/projeções, 20 cadeias, 31 achados, 30 perguntas e 15 bloqueios para normatização. Confirmou também que os 49 itens de roadmap se dividem, no eixo de natureza, em 24 `PROPOSTA` e 25 `RECOMENDACAO`, enquanto as três fases são agrupadores estruturais sobrepostos. `DOC-012` foi promovido exclusivamente como análise documental aprovada; nenhuma implementação, requisito, modelo de dados, arquitetura, backlog ou pendência foi validado, aprovado ou resolvido. |
 
 ## Ponto de parada
 
-Etapa 7 concluída documentalmente e encaminhada à revisão. Este plano permanece em `AGUARDANDO_REVISAO` e `DOC-012` em `EM_REVISAO`. Nenhum modelo de dados, requisito, fórmula, tecnologia, arquitetura ou estado de implementação foi aprovado; a Etapa 8 não foi iniciada.
+Etapa 7 encerrada após aprovação humana e arquivada em `docs/plans/completed/auditoria-dados-arquitetura-execucao.md`. `DOC-012` está `CANONICO_ATUAL` exclusivamente como relatório analítico aprovado. Nenhum modelo de dados, requisito, fórmula, tecnologia, arquitetura, backlog ou estado de implementação foi aprovado, e nenhuma pendência foi resolvida.

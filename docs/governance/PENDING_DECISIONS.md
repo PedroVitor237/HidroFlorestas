@@ -51,3 +51,29 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-017` | Mandato de governança; autoridade de UX ainda não designada | Estados a disciplinar: `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` e `IMPLEMENTADO_NAO_APROVADO`; critérios não especificados. | não especificado | não especificado | não especificado | Atualizar o registro normativo de UX aplicável e manter o histórico. |
 
 Plotly ter sido considerado não implica rejeição de Leaflet. Nenhuma entrada deste registro deve ser encerrada por inferência ou pela mera existência de uma implementação.
+
+## Referências da consolidação transversal
+
+`FATO_DOCUMENTADO` — A auditoria consolidada [`DOC-013`](../reports/audits/2026-08-26-auditoria-documental-consolidada.md) relacionou as 17 pendências existentes aos pacotes abaixo. Esta seção acrescenta rastreabilidade; não altera assunto, estado, responsável, prazo, alternativas ou decisão resultante.
+
+| Pendência | Pacotes relacionados | Evidência adicional da consolidação | Impacto preservado |
+|---|---|---|---|
+| `PD-001` | `DEC-PKG-001`,`003`,`014`,`015` | `GAP-010`; `CON-FND-016`,`017`,`043` | Escopo institucional continua sem autoridade/fonte aprovada identificada no corpus. |
+| `PD-002` | `DEC-PKG-002`–`004`,`008`,`014`,`015` | `CON-FND-002`–`026`, conforme assunto; 17 ocorrências bloqueantes científicas nas Etapas 4 e 5 antes da deduplicação | Ciência não pode ser promovida por inferência; os dois conflitos próprios permanecem abertos. |
+| `PD-003` | `DEC-PKG-005`–`009`,`012`,`014`,`015` | `CON-FND-027`–`046`, conforme assunto | MVP, requisitos, regras, aceite, backlog e NFR continuam sem aprovação. |
+| `PD-004` | `DEC-PKG-004`–`006`,`008`,`009`,`011`,`012`,`014`,`015` | `CON-FND-026`,`030`,`038`,`041`,`042`,`047`–`051`,`056` | Modelo, ciclo, isolamento, geoespacial, auditabilidade e versão continuam pendentes. |
+| `PD-005` | `DEC-PKG-006`,`007`,`012`,`014`,`015` | `CON-FND-032`–`035`,`044` | Fluxos, estados, acessibilidade e aprovação de UX permanecem pendentes; Figma continua opcional. |
+| `PD-006` | `DEC-PKG-007`–`015` | `CON-FND-036`,`040`,`049`–`057` | Arquitetura, contratos, mapas, NFR e hospedagem continuam sem confirmação normativa. |
+| `PD-007` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de OpenStreetMap continua aberto. |
+| `PD-008` | `DEC-PKG-009`,`010` | `CON-FND-052`,`056`; `CON-Q-048`,`049` | Uso de Python e sua fronteira continuam abertos. |
+| `PD-009` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de Plotly continua aberto. |
+| `PD-010` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de Leaflet continua aberto; Plotly não implica rejeição. |
+| `PD-011` | `DEC-PKG-009`,`010` | `CON-FND-052`,`056`; `CON-Q-048`,`049` | Estratégia de integração continua não especificada. |
+| `PD-012` | `DEC-PKG-013` | `CON-FND-057`; `CON-Q-051` | Relato atual e estratégia futura de hospedagem permanecem distintos. |
+| `PD-013` | `DEC-PKG-011` | `CON-FND-040`,`049`,`055`; `CON-Q-034`,`044`,`050` | Arquitetura de mapas/geoprocessamento continua não aprovada. |
+| `PD-014` | `DEC-PKG-005`,`006`,`008`,`015` | `CON-FND-030`,`038`,`041`,`042` | Modelo de assinantes, laboratórios e áreas continua ausente/incompleto no corpus. |
+| `PD-015` | `DEC-PKG-005`,`006`,`015` | `CON-FND-018`,`030`,`031`,`042`; `CON-Q-022`–`026` | Terminologia e papéis continuam não normalizados. |
+| `PD-016` | `DEC-PKG-006`,`008`,`012`,`015` | `CON-FND-031`,`032`,`038`,`041`,`042`,`048` | Participação, propriedade, acesso e isolamento continuam pendentes. |
+| `PD-017` | `DEC-PKG-007` | `CON-FND-044`; `CON-Q-038`; `GAP-008` | Critérios de estado/proveniência permanecem abertos; a ausência de Figma continua não bloqueante. |
+
+As 17 pendências cobrem todas as decisões materiais identificadas por `DOC-013`; nenhuma nova pendência foi necessária.
