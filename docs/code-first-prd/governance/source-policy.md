@@ -45,6 +45,16 @@ Autoridade sobre intenção e evidência sobre implementação são dimensões i
 
 Nenhuma capacidade desta base recebeu `IMPLEMENTADO_VERIFICADO_EM_RUNTIME`, pois aplicação, build, banco, migrations e deploy não foram executados.
 
+## Taxonomia de bloqueios do PRD
+
+| Estado | Critério |
+|---|---|
+| `BLOQUEANTE_GLOBAL` | A ausência impede consolidar qualquer PRD confiável, independentemente do recorte funcional, por faltar autoridade, direção global ou base normativa transversal indispensável. |
+| `BLOQUEANTE_SE_NO_ESCOPO` | A ausência impede somente a parte do PRD que dependa do assunto; deixa de bloquear quando o tema é explicitamente excluído do escopo aprovado. |
+| `NAO_BLOQUEANTE_DO_PRD` | O assunto deve ser tratado em arquitetura, engenharia, operação, backlog ou plano de implementação, mas não impede definir o produto pretendido. |
+
+A classificação deve avaliar a lacuna de intenção, não a urgência de corrigir o código atual. Biblioteca, provedor, CI/CD, migration, rollback, configuração de deploy ou defeito do schema não são automaticamente bloqueios globais. Riscos críticos de segurança exigem tratamento, mas a definição do comportamento pretendido e a correção da implementação são controles distintos. A ausência de Figma requer classificar o artefato aplicável ou registrar explicitamente que não haverá fonte normativa de Figma.
+
 ## Classificações de origem
 
 | Classificação | Aplicação |
@@ -75,6 +85,8 @@ Nenhuma capacidade desta base recebeu `IMPLEMENTADO_VERIFICADO_EM_RUNTIME`, pois
 - Divergências entre intenção, implementação e interface devem permanecer explícitas.
 - Nenhuma inferência pode ser promovida silenciosamente.
 - Ausência de evidência não prova inexistência fora do commit e do escopo inspecionados.
+- Uma relação de rastreabilidade exige compatibilidade direta de assunto; menção tangencial não é vínculo.
+- Campos de rastreabilidade devem escrever cada identificador por completo, sem intervalos ou sufixos abreviados.
 
 ## Fontes permitidas e excluídas
 

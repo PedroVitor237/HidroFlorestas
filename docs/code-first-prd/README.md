@@ -69,9 +69,11 @@ Sua criação dependerá cumulativamente de:
 2. autorização explícita para iniciar o documento;
 3. designação das autoridades de produto, ciência/IHFR, dados, UX, arquitetura e segurança afetadas;
 4. confirmação ou rejeição explícita das decisões necessárias, com origem registrada;
-5. tratamento das lacunas classificadas como bloqueantes;
-6. classificação do Figma aplicável ou decisão explícita sobre sua ausência;
-7. separação rastreável entre capacidade atual, risco, proposta e comportamento pretendido.
+5. tratamento das lacunas classificadas como `BLOQUEANTE_GLOBAL`;
+6. classificação explícita do escopo pretendido;
+7. tratamento das lacunas `BLOQUEANTE_SE_NO_ESCOPO` que permanecerem dentro do escopo aprovado;
+8. classificação do Figma aplicável ou decisão explícita de que não haverá fonte normativa de Figma;
+9. separação rastreável entre capacidade atual, risco, proposta e comportamento pretendido.
 
 Essas condições são controles de prontidão, não requisitos de produto nem decisões da equipe.
 

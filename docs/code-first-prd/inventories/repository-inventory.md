@@ -61,9 +61,9 @@ O lockfile `package-lock.json:1-9` identifica npm e lockfile versão 3. Não há
 | `build` | `npx prisma generate && next build` | não executado | `package.json:7`. |
 | `start` | `next start` | não executado | `package.json:8`. |
 | `create-super-admin` | `tsx ./src/app/api/server/scripts/superadmin.ts` | não executado | `package.json:9`; `src/app/api/server/scripts/superadmin.ts:27-76`. |
-| `lint` | `eslint` | não reexecutado; inspeção anterior registrou bloqueio por erro de tooling | `package.json:10`; `eslint.config.mjs:1-18`; versões em `package-lock.json:4189` e `package-lock.json:4245-4264`. |
+| `lint` | `eslint` | não executado; há relato da inspeção Code-First anterior de falha de tooling, mas a condição não foi reproduzida nesta execução e permanece `NAO_VERIFICADO` | `package.json:10`; `eslint.config.mjs:1-18`; versões em `package-lock.json:4189` e `package-lock.json:4245-4264`. |
 
-O lint global foi deliberadamente omitido pelo mandato desta execução. A causa detalhada do erro anterior não foi reproduzida; portanto, esta base registra a condição como limitação de tooling, não como diagnóstico novo.
+O lint global foi deliberadamente omitido pelo mandato desta execução. O relato anterior de falha de tooling não foi reproduzido e permanece `NAO_VERIFICADO`; não constitui diagnóstico atual.
 
 ## Frontend e navegação
 
@@ -78,7 +78,7 @@ O lint global foi deliberadamente omitido pelo mandato desta execução. A causa
 
 ## Backend, APIs e persistência
 
-As APIs localizadas restringem-se a cadastro, login, consulta de sessão e logout. Cadastro/login percorrem route handler → `AuthService` → `UserService` → Prisma; a consulta de sessão percorre middleware JWT → usuário; logout apenas expira o cookie. Evidências: `src/app/api/auth/sign-up/route.ts:6-35`, `src/app/api/auth/sign-in/route.ts:6-30`, `src/app/api/auth/me/route.ts:5-13`, `src/app/api/auth/logout/route.ts:4-12`, `src/app/api/server/services/auth.service.ts:29-102` e `src/app/api/server/services/users.service.ts:6-39`.
+As APIs localizadas restringem-se a cadastro, login, consulta de sessão e logout. Foi localizado estaticamente o caminho cadastro/login → route handler → `AuthService` → `UserService` → Prisma e o caminho consulta de sessão → middleware JWT → consulta de usuário; o banco não foi exercitado. No logout, a API emite expiração do cookie. Evidências: `src/app/api/auth/sign-up/route.ts:6-35`, `src/app/api/auth/sign-in/route.ts:6-30`, `src/app/api/auth/me/route.ts:5-13`, `src/app/api/auth/logout/route.ts:4-12`, `src/app/api/server/services/auth.service.ts:29-102` e `src/app/api/server/services/users.service.ts:6-39`.
 
 Métodos para atualizar senha e usuário existem nos serviços, mas nenhum route handler consumidor foi localizado (`src/app/api/server/services/auth.service.ts:104-154`; inventário de quatro arquivos `src/app/api/**/route.ts`). Não foram localizadas APIs conectadas para laboratórios, membros, áreas, coletas, mapas ou IHFR.
 
@@ -120,5 +120,5 @@ Nenhum segredo ou valor de ambiente foi lido ou reproduzido.
 - Conectividade é conclusão estática; nenhum comportamento recebeu verificação em runtime.
 - Ausências são relativas ao commit-base, ao worktree e às fontes permitidas.
 - O conteúdo da migration ignorada e os arquivos gerados não foram usados para definir intenção ou requisitos.
-- O erro de tooling do lint vem da inspeção inicial e não foi reproduzido por proibição expressa.
+- Há relato da inspeção Code-First anterior de falha de tooling no lint, mas a condição não foi reproduzida nesta execução e permanece `NAO_VERIFICADO`.
 - Alegações da landing foram classificadas como texto comercial, nunca como evidência funcional.
