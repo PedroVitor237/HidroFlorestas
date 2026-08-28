@@ -5,10 +5,11 @@
 | Campo | Registro | Classificação |
 |---|---|---|
 | Iniciativa | `PRD Code-First` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
-| Estado | `EM_ELABORACAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
+| Estado | `EM_REVISAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Natureza | casos de uso candidatos baseados no código, schema, requisitos candidatos e decisões de trabalho atuais | `INFERENCIA` estruturada e rastreável |
-| Baseline | branch `docs/code-first-prd`; HEAD e upstream `4d6dd8c44582501faf47c913b567efc05d9454e6` | `EVIDENCIA_IMPLEMENTACAO` |
+| Baseline | branch `docs/code-first-prd`; HEAD e upstream `213918ec6a5f91ed4e35e54d9d0bef07ed156f36`; worktree inicialmente limpo | `EVIDENCIA_IMPLEMENTACAO` |
 | Aprovação normativa | inexistente | `NAO_ESPECIFICADO` |
+| Validação cruzada | `CONCLUIDA`; relatório em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md) | `EVIDENCIA_IMPLEMENTACAO` |
 
 Fontes usadas: código e configurações rastreados; `prisma/schema.prisma`; [`../../../TECH_DECISIONS.md`](../../../TECH_DECISIONS.md), com seus estados preservados; documentos existentes em [`../`](../), em especial o [PRD](../prd-code-first.md) e o [catálogo de requisitos](requirements.md); e decisões humanas já registradas na iniciativa (`CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008`).
 
@@ -104,7 +105,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`; comportamento pretendido candidato.
 - **Ator principal:** pessoa da equipe.
 - **Atores secundários:** usuário autenticado, após sucesso.
-- **Requisitos relacionados:** `CF-PRD-FR-001`, `CF-PRD-FR-002`; incidência de `CF-PRD-NFR-003` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-001`, `CF-PRD-FR-002`; incidência de `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `src/app/login/page.tsx:12-37`; `src/contexts/auth.context.tsx:77-117`; `src/app/api/auth/sign-in/route.ts`; `src/app/api/server/services/auth.service.ts`.
 - **Gatilho:** a pessoa solicita acesso com suas credenciais.
 - **Precondições:** conta existente em estado que permita acesso, conforme política aberta.
@@ -122,7 +123,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** manter ou restaurar o contexto autenticado e encerrá-lo quando solicitado ou expirado.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 - **Ator principal:** usuário autenticado.
-- **Requisitos relacionados:** `CF-PRD-FR-002`; incidência de `CF-PRD-NFR-003` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-002`; incidência de `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `src/contexts/auth.context.tsx:40-75`, `src/contexts/auth.context.tsx:159-171`; `src/app/api/auth/me/route.ts`; `src/app/api/auth/logout/route.ts`.
 - **Gatilho:** acesso a contexto autenticado, solicitação de logout ou detecção de sessão expirada.
 - **Precondições:** sessão previamente estabelecida para manutenção ou encerramento explícito.
@@ -140,7 +141,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** criar um contexto colaborativo mínimo de laboratório.
 - **Classificação:** `INFERENCIA` — comportamento pretendido candidato e papel responsável hipotético.
 - **Ator principal:** responsável pelo laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-003`, `CF-PRD-FR-011`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-003` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-003`, `CF-PRD-FR-011`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `LaboratoryRoom` em `prisma/schema.prisma:51-64`; ação em `src/app/(private)/workspace/page.tsx:72-80`.
 - **Gatilho:** usuário autenticado sem laboratório acessível solicita criar um.
 - **Precondições:** conta com acesso ao workspace e regras futuras de criação atendidas.
@@ -158,7 +159,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** obter vínculo e acesso a um laboratório existente.
 - **Classificação:** `INFERENCIA` — comportamento pretendido candidato.
 - **Ator principal:** participante do laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-003`, `CF-PRD-FR-011`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-003` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-003`, `CF-PRD-FR-011`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `ResearchersLinked` em `prisma/schema.prisma:66-74`; `LaboratoryRoom.accessCode` em `prisma/schema.prisma:60`; ação em `src/app/(private)/workspace/page.tsx:61-70`.
 - **Gatilho:** usuário autenticado solicita ingresso em laboratório existente.
 - **Precondições:** laboratório existente; vínculo, elegibilidade e mecanismo de ingresso ainda abertos.
@@ -176,7 +177,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** estabelecer o laboratório que contextualiza áreas, coletas, diagnósticos e acompanhamento.
 - **Classificação:** `INFERENCIA` — comportamento pretendido candidato.
 - **Ator principal:** participante do laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-004`, `CF-PRD-FR-011`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-003` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-004`, `CF-PRD-FR-011`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `src/app/(private)/workspace/page.tsx:19-168`; relações em `prisma/schema.prisma:51-126`.
 - **Gatilho:** participante escolhe acessar um laboratório disponível.
 - **Precondições:** sessão autenticada e vínculo com ao menos um laboratório acessível.
@@ -194,7 +195,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** criar uma área no laboratório ativo e manter sua representação espacial vinculada ao mesmo registro.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`, com direção funcional do mapa confirmada para o rascunho em `CF-PD-007`.
 - **Ator principal:** participante do laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-005`, `CF-PRD-FR-011` a `CF-PRD-FR-013`; incidência de todos os `CF-PRD-NFR-001` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-005`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-013`; incidência de todos os `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `Coordinates` e `CollectionArea` em `prisma/schema.prisma:43-49`, `prisma/schema.prisma:76-109`; ação em `src/app/(private)/dashboard/collects/page.tsx:6-24`; mapa placeholder em `src/app/(private)/dashboard/maps.tsx:18-46`.
 - **Gatilho:** participante autorizado solicita nova área no laboratório ativo.
 - **Precondições:** laboratório ativo e acesso aplicável.
@@ -212,7 +213,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** reencontrar uma área acessível e consultar seus dados e vínculos aplicáveis.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 - **Ator principal:** participante do laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-005`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-005`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `CollectionArea` em `prisma/schema.prisma:76-109`; cards em `src/app/(private)/dashboard/collects/collect-card.tsx:24-80`; grade em `src/app/(private)/dashboard/collects/collects-grid.tsx`.
 - **Gatilho:** participante acessa as áreas monitoradas ou solicita detalhes de uma área.
 - **Precondições:** laboratório ativo, área existente e acesso aplicável.
@@ -230,7 +231,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** registrar uma coleta vinculada à área, ao laboratório por essa área e ao autor aplicável.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 - **Ator principal:** participante de campo.
-- **Requisitos relacionados:** `CF-PRD-FR-006`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; incidência de `CF-PRD-NFR-001` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-006`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** `CollectionData` em `prisma/schema.prisma:110-126`; ação em `src/app/(private)/dashboard/page.tsx:7-22`.
 - **Gatilho:** participante de campo solicita nova coleta para uma área acessível.
 - **Precondições:** laboratório ativo, área acessível e acesso aplicável.
@@ -266,7 +267,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** associar à coleta os dados ambientais exigidos pelo contrato científico aplicável.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`; regras científicas permanecem abertas.
 - **Ator principal:** participante de campo.
-- **Requisitos relacionados:** `CF-PRD-FR-007`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; incidência de `CF-PRD-NFR-001` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-007`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** relações de `CollectionData` e estruturas em `prisma/schema.prisma:110-126`, `prisma/schema.prisma:151-198`.
 - **Gatilho:** participante acessa uma coleta para registrar os dados científicos aplicáveis.
 - **Precondições:** coleta existente e contrato científico aplicável definido para o uso.
@@ -285,7 +286,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`; mecanismo de produção é `PENDENCIA_DE_DECISAO`.
 - **Ator principal:** participante do laboratório.
 - **Atores secundários:** processo de diagnóstico `NAO_ESPECIFICADO`; não modelado como ator por falta de decisão.
-- **Requisitos relacionados:** `CF-PRD-FR-008`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001` a `CF-PRD-NFR-006`.
+- **Requisitos relacionados:** `CF-PRD-FR-008`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006`.
 - **Evidência no código/schema:** `IHFRDiagnosis` e sua relação em `prisma/schema.prisma:128-142`.
 - **Gatilho:** existe diagnóstico aceito ou solicitação de obtê-lo por mecanismo futuro.
 - **Precondições:** coleta existente com dados aplicáveis; contrato científico e acesso cabíveis.
@@ -303,7 +304,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** consultar o resultado associado à coleta com a proveniência e versão disponíveis.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 - **Ator principal:** participante do laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001` a `CF-PRD-NFR-006`.
+- **Requisitos relacionados:** `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006`.
 - **Evidência no código/schema:** estrutura em `prisma/schema.prisma:128-142`; comportamento de consulta não localizado.
 - **Gatilho:** participante solicita o resultado de uma coleta acessível.
 - **Precondições:** diagnóstico associado e acesso ao laboratório ativo.
@@ -321,7 +322,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** reencontrar registros do ciclo em resumo e histórico básicos do laboratório ativo.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 - **Ator principal:** participante do laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-010` a `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001` a `CF-PRD-NFR-005`.
+- **Requisitos relacionados:** `CF-PRD-FR-010`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`.
 - **Evidência no código/schema:** dashboard em `src/app/(private)/dashboard/page.tsx:7-22`; histórico em `src/app/(private)/dashboard/activity-history.tsx:25-270`.
 - **Gatilho:** participante solicita acompanhamento do contexto ativo.
 - **Precondições:** laboratório ativo e registros acessíveis.
@@ -339,7 +340,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Objetivo:** visualizar no mapa áreas, coletas, dados, gráficos e resultados IHFR aplicáveis, ligados aos registros de origem.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`, com mapa no núcleo por `CF-PD-007`.
 - **Ator principal:** participante do laboratório.
-- **Requisitos relacionados:** `CF-PRD-FR-009` a `CF-PRD-FR-012`, `CF-PRD-FR-015`; incidência de todos os `CF-PRD-NFR-001` a `CF-PRD-NFR-006`.
+- **Requisitos relacionados:** `CF-PRD-FR-009`, `CF-PRD-FR-010`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-015`; incidência de todos os `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006`.
 - **Evidência no código/schema:** mapa em `src/app/(private)/dashboard/maps.tsx:18-46`; cadeia espacial e diagnóstica em `prisma/schema.prisma:43-49`, `prisma/schema.prisma:76-142`.
 - **Gatilho:** participante acessa a visão territorial do laboratório ativo.
 - **Precondições:** laboratório ativo, acesso aplicável e registros espaciais disponíveis; resultados e gráficos apenas quando existentes.
@@ -374,27 +375,27 @@ Não foram usadas relações `extend`. Cadastrar a área já incorpora sua repre
 | `CF-PRD-FR-008` | `CF-UC-012` | direta | mecanismo de obtenção permanece aberto |
 | `CF-PRD-FR-009` | `CF-UC-013`, `CF-UC-015` | direta | consulta do resultado e projeção territorial quando aplicável |
 | `CF-PRD-FR-010` | `CF-UC-014`, `CF-UC-015` | direta | acompanhamento básico e territorial |
-| `CF-PRD-FR-011` | `CF-UC-004` a `CF-UC-015` | transversal nos casos autenticados | acesso depende do vínculo e das permissões futuras do laboratório ativo |
-| `CF-PRD-FR-012` | `CF-UC-007` a `CF-UC-015` | transversal nos registros aplicáveis | autoria é associada ou consultada sem definir propriedade ou edição por terceiros |
+| `CF-PRD-FR-011` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | transversal nos casos autenticados | acesso depende do vínculo e das permissões futuras do laboratório ativo |
+| `CF-PRD-FR-012` | `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | transversal nos registros aplicáveis | autoria é associada ou consultada sem definir propriedade ou edição por terceiros |
 | `CF-PRD-FR-013` | `CF-UC-007` | direta | cadastro da área incorpora sua representação no mapa |
-| `CF-PRD-FR-014` | `CF-UC-009` a `CF-UC-011` | direta | coleta e dados preservam área e referência espacial aplicável |
+| `CF-PRD-FR-014` | `CF-UC-009`, `CF-UC-010`, `CF-UC-011` | direta | coleta e dados preservam área e referência espacial aplicável |
 | `CF-PRD-FR-015` | `CF-UC-015` | direta | áreas, coletas, dados, gráficos e resultados aplicáveis no mapa |
-| `CF-PRD-NFR-001` | `CF-UC-004` a `CF-UC-015` | transversal | segregação incide sobre recursos e operações contextualizados por laboratório |
-| `CF-PRD-NFR-002` | `CF-UC-007` a `CF-UC-015` | transversal | integridade de autoria e proveniência ao longo do ciclo |
-| `CF-PRD-NFR-003` | `CF-UC-001` a `CF-UC-015` | transversal | proteção de dados pessoais em todas as jornadas que os tratem |
-| `CF-PRD-NFR-004` | `CF-UC-001` a `CF-UC-015` | transversal | responsividade do ciclo principal nos contextos suportados a definir |
-| `CF-PRD-NFR-005` | `CF-UC-001` a `CF-UC-015` | transversal | acessibilidade de controles, mensagens, estados e conteúdo territorial |
+| `CF-PRD-NFR-001` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | transversal | segregação incide sobre recursos e operações contextualizados por laboratório |
+| `CF-PRD-NFR-002` | `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | transversal | integridade de autoria e proveniência ao longo do ciclo |
+| `CF-PRD-NFR-003` | `CF-UC-001`, `CF-UC-002`, `CF-UC-003`, `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | transversal | proteção de dados pessoais em todas as jornadas que os tratem |
+| `CF-PRD-NFR-004` | `CF-UC-001`, `CF-UC-002`, `CF-UC-003`, `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | transversal | responsividade do ciclo principal nos contextos suportados a definir |
+| `CF-PRD-NFR-005` | `CF-UC-001`, `CF-UC-002`, `CF-UC-003`, `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | transversal | acessibilidade de controles, mensagens, estados e conteúdo territorial |
 | `CF-PRD-NFR-006` | `CF-UC-012`, `CF-UC-013`, `CF-UC-015` | transversal e direta | integridade da cadeia diagnóstica na associação, consulta e projeção |
 
 ## Decisões abertas e ponto de parada
 
 | Decisão | Incidência nos casos de uso | Conteúdo que permanece aberto |
 |---|---|---|
-| `CF-PD-002` | `CF-UC-004` a `CF-UC-006` | criação, ingresso, aprovação, código/convite, saída, cardinalidade, responsabilidade e transferência |
-| `CF-PD-003` | `CF-UC-007` a `CF-UC-011`, `CF-UC-014`, `CF-UC-015` | dados mínimos, estados, edição, exclusão, eventos, resumo e comportamento cartográfico detalhado |
-| `CF-PD-005` | `CF-UC-011` a `CF-UC-013`, `CF-UC-015` | contrato científico, produção, validação, qualidade, conteúdo e versionamento do IHFR |
-| `CF-PD-006` | `CF-UC-004` a `CF-UC-015` | papéis, permissões, propriedade, autoria detalhada, isolamento e privacidade |
+| `CF-PD-002` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006` | criação, ingresso, aprovação, código/convite, saída, cardinalidade, responsabilidade e transferência |
+| `CF-PD-003` | `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-014`, `CF-UC-015` | dados mínimos, estados, edição, exclusão, eventos, resumo e comportamento cartográfico detalhado |
+| `CF-PD-005` | `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-015` | contrato científico, produção, validação, qualidade, conteúdo e versionamento do IHFR |
+| `CF-PD-006` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | papéis, permissões, propriedade, autoria detalhada, isolamento e privacidade |
 | `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-UC-007`, `CF-UC-010`, `CF-UC-015` | alternativas e arquitetura cartográfica; nenhuma foi selecionada |
 | `TD-009`, `TD-012` | `CF-UC-012` | eventual Python e integração; não definem a produção do IHFR |
 
-Este documento permanece `EM_ELABORACAO`. A Fase 1 não está concluída. O ponto de parada desta execução é a especificação dos casos de uso e suas duas representações equivalentes; permanecem pendentes o diagrama de classes, os fluxos e a validação cruzada final do pacote documental.
+Este documento e seu PlantUML permanecem `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. As decisões abertas e a ausência de aprovação normativa permanecem preservadas.

@@ -5,12 +5,13 @@
 | Campo | Registro | Classificação |
 |---|---|---|
 | Iniciativa | `PRD Code-First` — Fase 1 | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
-| Estado | `EM_ELABORACAO` | estado documental; não conclui a Fase 1 |
-| Baseline | branch `docs/code-first-prd`; HEAD e upstream `4d6dd8c44582501faf47c913b567efc05d9454e6` | `EVIDENCIA_IMPLEMENTACAO` |
-| Escopo | exatamente sete fluxos `CF-PFLOW-001` a `CF-PFLOW-007` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
+| Estado | `EM_REVISAO` | estado documental; não concede aprovação normativa |
+| Baseline | branch `docs/code-first-prd`; HEAD e upstream `213918ec6a5f91ed4e35e54d9d0bef07ed156f36`; worktree inicialmente limpo | `EVIDENCIA_IMPLEMENTACAO` |
+| Escopo | exatamente sete fluxos `CF-PFLOW-001`, `CF-PFLOW-002`, `CF-PFLOW-003`, `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-006`, `CF-PFLOW-007` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Natureza | fluxos candidatos derivados do código, schema, requisitos, casos de uso e decisões registradas | `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO` |
 | Validação | inspeção estática; runtime não executado | `LIMITACAO_DA_EVIDENCIA` |
 | Aprovação normativa | inexistente | `NAO_ESPECIFICADO` |
+| Validação cruzada | `CONCLUIDA`; relatório em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md) | `EVIDENCIA_IMPLEMENTACAO` |
 
 Fontes usadas: código e configurações rastreados; [`../../../prisma/schema.prisma`](../../../prisma/schema.prisma); [`requirements.md`](requirements.md); [`use-cases.md`](use-cases.md); [`class-diagram.md`](class-diagram.md); os demais documentos da iniciativa em [`../`](../); [`../../../TECH_DECISIONS.md`](../../../TECH_DECISIONS.md), com seus estados preservados; e as decisões humanas registradas na iniciativa. `docs/raw/**`, matriz global, relatórios históricos, internet, fontes externas e Figma foram excluídos.
 
@@ -43,9 +44,9 @@ Nos diagramas, `SNN` identifica uma etapa e `DNN` uma decisão. Os rótulos perm
 | Gatilho | pessoa inicia acesso ao produto para realizar ou acompanhar o ciclo do MVP |
 | Precondições | elegibilidade e dados de acesso aplicáveis; contratos e permissões exigidos em cada etapa permanecem abertos |
 | Pós-condições | diagnóstico, quando aplicável, permanece ligado à coleta e à área; registros podem ser reencontrados em mapa, resumo ou histórico |
-| Requisitos relacionados | `CF-PRD-FR-001` a `CF-PRD-FR-015`; `CF-PRD-NFR-001` a `CF-PRD-NFR-006` transversalmente |
-| Casos de uso relacionados | `CF-UC-001` a `CF-UC-015` |
-| Classes/models relacionados | `CF-CLS-001` a `CF-CLS-011`; classes e tipos de autenticação `CF-CLS-022` a `CF-CLS-028`; `CF-CLS-029` e `CF-CLS-030` apenas como mocks de histórico e cards |
+| Requisitos relacionados | `CF-PRD-FR-001`, `CF-PRD-FR-002`, `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-005`, `CF-PRD-FR-006`, `CF-PRD-FR-007`, `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-010`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-013`, `CF-PRD-FR-014`, `CF-PRD-FR-015`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` transversalmente |
+| Casos de uso relacionados | `CF-UC-001`, `CF-UC-002`, `CF-UC-003`, `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` |
+| Classes/models relacionados | `CF-CLS-001`, `CF-CLS-002`, `CF-CLS-003`, `CF-CLS-004`, `CF-CLS-005`, `CF-CLS-006`, `CF-CLS-007`, `CF-CLS-008`, `CF-CLS-009`, `CF-CLS-010`, `CF-CLS-011`; classes e tipos de autenticação `CF-CLS-022`, `CF-CLS-023`, `CF-CLS-024`, `CF-CLS-025`, `CF-CLS-026`, `CF-CLS-027`, `CF-CLS-028`; `CF-CLS-029` e `CF-CLS-030` apenas como mocks de histórico e cards |
 | Evidências | `src/contexts/auth.context.tsx:40-171`; `src/app/(private)/workspace/page.tsx:19-168`; `src/app/(private)/dashboard/page.tsx:7-22`; `src/app/(private)/dashboard/maps.tsx:18-46`; `prisma/schema.prisma:10-198` |
 | Estado geral da implementação | `PARCIALMENTE_IMPLEMENTADO`: identidade possui caminhos estáticos; núcleo de domínio é schema, mock ou placeholder sem ciclo conectado |
 | Decisões abertas | `CF-PD-002`, `CF-PD-003`, `CF-PD-005`, `CF-PD-006`; `CF-Q-005`, `CF-Q-006`, `CF-Q-011`, `CF-Q-012`, `CF-Q-013` |
@@ -99,9 +100,9 @@ flowchart TD
 | Gatilho | pessoa acessa uma rota de entrada ou uma página que utiliza o contexto autenticado |
 | Precondições | política de elegibilidade, dados mínimos e estados de conta ainda aberta; para restauração, sessão previamente disponível |
 | Pós-condições | sessão disponível para o workspace ou encerrada no logout; falha permanece sem promover detalhes técnicos a regra de produto |
-| Requisitos relacionados | `CF-PRD-FR-001`, `CF-PRD-FR-002`; `CF-PRD-NFR-003` a `CF-PRD-NFR-005` |
+| Requisitos relacionados | `CF-PRD-FR-001`, `CF-PRD-FR-002`; `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` |
 | Casos de uso relacionados | `CF-UC-001`, `CF-UC-002`, `CF-UC-003` |
-| Classes/models relacionados | `CF-CLS-001` `User`; `CF-CLS-013` `UserStatus`; `CF-CLS-022` a `CF-CLS-029` — tipos e serviços de autenticação |
+| Classes/models relacionados | `CF-CLS-001` `User`; `CF-CLS-013` `UserStatus`; `CF-CLS-022`, `CF-CLS-023`, `CF-CLS-024`, `CF-CLS-025`, `CF-CLS-026`, `CF-CLS-027`, `CF-CLS-028` — tipos e serviços de autenticação |
 | Evidências | `src/app/register/page.tsx:14-49`; `src/app/login/page.tsx:12-37`; `src/contexts/auth.context.tsx:40-171`; rotas em `src/app/api/auth/` |
 | Estado geral da implementação | `PARCIALMENTE_IMPLEMENTADO`: cadastro e login localizados estaticamente; restauração e logout localizados sem validação runtime integral |
 | Decisões abertas | `CF-Q-005`, `CF-Q-006`; política de acesso e privacidade em `CF-PD-006` |
@@ -158,7 +159,7 @@ flowchart TD
 | Gatilho | usuário acessa o workspace e precisa estabelecer um contexto de laboratório |
 | Precondições | sessão autenticada; vínculo, elegibilidade e permissões futuras aplicáveis |
 | Pós-condições | laboratório disponível e selecionado como contexto das áreas, coletas, diagnósticos e acompanhamento |
-| Requisitos relacionados | `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-011`; `CF-PRD-NFR-001`, `CF-PRD-NFR-003` a `CF-PRD-NFR-005` |
+| Requisitos relacionados | `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-011`; `CF-PRD-NFR-001`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` |
 | Casos de uso relacionados | `CF-UC-004`, `CF-UC-005`, `CF-UC-006` |
 | Classes/models relacionados | `CF-CLS-001` `User`; `CF-CLS-003` `LaboratoryRoom`; `CF-CLS-004` `ResearchersLinked` |
 | Evidências | `prisma/schema.prisma:51-74`; `src/app/(private)/workspace/page.tsx:19-168` |
@@ -208,7 +209,7 @@ flowchart TD
 | Gatilho | participante inicia nova área ou consulta áreas existentes no laboratório ativo |
 | Precondições | laboratório ativo; acesso aplicável |
 | Pós-condições | área ligada ao laboratório, ao autor aplicável e à representação espacial; registro reencontrável para consulta |
-| Requisitos relacionados | `CF-PRD-FR-005`, `CF-PRD-FR-011` a `CF-PRD-FR-013`; `CF-PRD-NFR-001` a `CF-PRD-NFR-005` |
+| Requisitos relacionados | `CF-PRD-FR-005`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-013`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` |
 | Casos de uso relacionados | `CF-UC-007`, `CF-UC-008` |
 | Classes/models relacionados | `CF-CLS-001` `User`; `CF-CLS-002` `Coordinates`; `CF-CLS-003` `LaboratoryRoom`; `CF-CLS-005` `CollectionArea`; `CF-CLS-014` `LandType` apenas como enum técnico não aprovado; `CF-CLS-030` `CollectCardData` como mock |
 | Evidências | `prisma/schema.prisma:43-109`; `src/app/(private)/dashboard/collects/page.tsx:6-24`; `src/app/(private)/dashboard/collects/collect-card.tsx:24-80`; `src/app/(private)/dashboard/collects/collects-grid.tsx:3-49`; `src/app/(private)/dashboard/maps.tsx:18-46` |
@@ -257,9 +258,9 @@ flowchart TD
 | Gatilho | participante seleciona uma área acessível e solicita nova coleta |
 | Precondições | laboratório ativo; área acessível com referência espacial aplicável; contrato científico definido para o uso |
 | Pós-condições | coleta recuperável, ligada à área, autor e dados aplicáveis, disponível para o ciclo diagnóstico |
-| Requisitos relacionados | `CF-PRD-FR-006`, `CF-PRD-FR-007`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; `CF-PRD-NFR-001` a `CF-PRD-NFR-005` |
+| Requisitos relacionados | `CF-PRD-FR-006`, `CF-PRD-FR-007`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` |
 | Casos de uso relacionados | `CF-UC-009`, `CF-UC-010`, `CF-UC-011` |
-| Classes/models relacionados | `CF-CLS-001` `User`; `CF-CLS-002` `Coordinates`; `CF-CLS-005` `CollectionArea`; `CF-CLS-006` `CollectionData`; `CF-CLS-008` a `CF-CLS-011` — grupos técnicos ambientais |
+| Classes/models relacionados | `CF-CLS-001` `User`; `CF-CLS-002` `Coordinates`; `CF-CLS-005` `CollectionArea`; `CF-CLS-006` `CollectionData`; `CF-CLS-008`, `CF-CLS-009`, `CF-CLS-010`, `CF-CLS-011` — grupos técnicos ambientais |
 | Evidências | `prisma/schema.prisma:43-49`, `prisma/schema.prisma:76-126`, `prisma/schema.prisma:151-198`; `src/app/(private)/dashboard/page.tsx:7-22` |
 | Estado geral da implementação | `PARCIALMENTE_IMPLEMENTADO`: models e relações declarados; ação placeholder e nenhum formulário/consumidor localizado |
 | Decisões abertas | `CF-PD-003`, `CF-PD-005`, `CF-PD-006`; `CF-Q-011`, `CF-Q-012` |
@@ -306,7 +307,7 @@ flowchart TD
 | Gatilho | coleta possui dados aplicáveis ou existe diagnóstico aceito para associação |
 | Precondições | coleta e área existentes; dados e contrato científicos aplicáveis; acesso cabível |
 | Pós-condições | diagnóstico associado à coleta e, por ela, à área; versão preservada quando disponível; resultado consultável |
-| Requisitos relacionados | `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; `CF-PRD-NFR-001` a `CF-PRD-NFR-006` |
+| Requisitos relacionados | `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` |
 | Casos de uso relacionados | `CF-UC-012`, `CF-UC-013` |
 | Classes/models relacionados | `CF-CLS-005` `CollectionArea`; `CF-CLS-006` `CollectionData`; `CF-CLS-007` `IHFRDiagnosis`; `CF-CLS-015` e `CF-CLS-016` apenas como enums técnicos não validados cientificamente |
 | Evidências | `prisma/schema.prisma:76-142`; ausência de API, serviço ou tela consumidora registrada em `CF-GAP-012` |
@@ -359,7 +360,7 @@ flowchart TD
 | Gatilho | participante solicita acompanhamento no laboratório ativo |
 | Precondições | laboratório ativo; registros acessíveis; gráficos e resultados somente quando aplicáveis |
 | Pós-condições | conteúdo consultado sem alteração e com vínculo ao registro de origem preservado |
-| Requisitos relacionados | `CF-PRD-FR-009` a `CF-PRD-FR-012`, `CF-PRD-FR-015`; `CF-PRD-NFR-001` a `CF-PRD-NFR-006` |
+| Requisitos relacionados | `CF-PRD-FR-009`, `CF-PRD-FR-010`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-015`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` |
 | Casos de uso relacionados | `CF-UC-014`, `CF-UC-015`; `CF-UC-008` e `CF-UC-013` como consultas de origem relacionadas |
 | Classes/models relacionados | `CF-CLS-002` `Coordinates`; `CF-CLS-003` `LaboratoryRoom`; `CF-CLS-005` `CollectionArea`; `CF-CLS-006` `CollectionData`; `CF-CLS-007` `IHFRDiagnosis`; `CF-CLS-029` `ActivityLog` como mock não persistido |
 | Evidências | `src/app/(private)/dashboard/page.tsx:7-22`; `src/app/(private)/dashboard/maps.tsx:18-46`; `src/app/(private)/dashboard/activity-history.tsx:9-270`; `prisma/schema.prisma:43-142` |
@@ -405,13 +406,13 @@ flowchart TD
 
 | Fluxo | Requisitos | Casos de uso | Cobertura |
 |---|---|---|---|
-| `CF-PFLOW-001` | `CF-PRD-FR-001` a `CF-PRD-FR-015`; `CF-PRD-NFR-001` a `CF-PRD-NFR-006` | `CF-UC-001` a `CF-UC-015` | macrofluxo completo; NFRs transversais não viram etapas artificiais |
-| `CF-PFLOW-002` | `CF-PRD-FR-001`, `CF-PRD-FR-002`; `CF-PRD-NFR-003` a `CF-PRD-NFR-005` | `CF-UC-001` a `CF-UC-003` | identidade, sessão e logout |
-| `CF-PFLOW-003` | `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-011`; `CF-PRD-NFR-001`, `CF-PRD-NFR-003` a `CF-PRD-NFR-005` | `CF-UC-004` a `CF-UC-006` | laboratório disponível, ativo e contextual |
-| `CF-PFLOW-004` | `CF-PRD-FR-005`, `CF-PRD-FR-011` a `CF-PRD-FR-013`; `CF-PRD-NFR-001` a `CF-PRD-NFR-005` | `CF-UC-007`, `CF-UC-008` | cadastro, representação espacial e consulta |
-| `CF-PFLOW-005` | `CF-PRD-FR-006`, `CF-PRD-FR-007`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; `CF-PRD-NFR-001` a `CF-PRD-NFR-005` | `CF-UC-009` a `CF-UC-011` | coleta, autoria, espaço e dados aplicáveis |
-| `CF-PFLOW-006` | `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; `CF-PRD-NFR-001` a `CF-PRD-NFR-006` | `CF-UC-012`, `CF-UC-013` | obtenção/associação neutra e consulta do IHFR |
-| `CF-PFLOW-007` | `CF-PRD-FR-009` a `CF-PRD-FR-012`, `CF-PRD-FR-015`; `CF-PRD-NFR-001` a `CF-PRD-NFR-006` | `CF-UC-014`, `CF-UC-015`; consultas relacionadas `CF-UC-008`, `CF-UC-013` | resumo, histórico, território e retorno à origem |
+| `CF-PFLOW-001` | `CF-PRD-FR-001`, `CF-PRD-FR-002`, `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-005`, `CF-PRD-FR-006`, `CF-PRD-FR-007`, `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-010`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-013`, `CF-PRD-FR-014`, `CF-PRD-FR-015`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` | `CF-UC-001`, `CF-UC-002`, `CF-UC-003`, `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | macrofluxo completo; NFRs transversais não viram etapas artificiais |
+| `CF-PFLOW-002` | `CF-PRD-FR-001`, `CF-PRD-FR-002`; `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` | `CF-UC-001`, `CF-UC-002`, `CF-UC-003` | identidade, sessão e logout |
+| `CF-PFLOW-003` | `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-011`; `CF-PRD-NFR-001`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006` | laboratório disponível, ativo e contextual |
+| `CF-PFLOW-004` | `CF-PRD-FR-005`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-013`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` | `CF-UC-007`, `CF-UC-008` | cadastro, representação espacial e consulta |
+| `CF-PFLOW-005` | `CF-PRD-FR-006`, `CF-PRD-FR-007`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-014`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005` | `CF-UC-009`, `CF-UC-010`, `CF-UC-011` | coleta, autoria, espaço e dados aplicáveis |
+| `CF-PFLOW-006` | `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` | `CF-UC-012`, `CF-UC-013` | obtenção/associação neutra e consulta do IHFR |
+| `CF-PFLOW-007` | `CF-PRD-FR-009`, `CF-PRD-FR-010`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-015`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` | `CF-UC-014`, `CF-UC-015`; consultas relacionadas `CF-UC-008`, `CF-UC-013` | resumo, histórico, território e retorno à origem |
 
 Cobertura validável: os 15 requisitos funcionais, os 6 não funcionais e os 15 casos de uso aparecem no macrofluxo e possuem ao menos um fluxo detalhado diretamente relacionado.
 
@@ -444,10 +445,10 @@ Cobertura validável: os 15 requisitos funcionais, os 6 não funcionais e os 15 
 | Decisão | Fluxos afetados | Conteúdo que permanece aberto |
 |---|---|---|
 | `CF-PD-002` | `CF-PFLOW-003` e ciclo principal | criação, entrada, convite/código, aprovação, múltiplos laboratórios, saída e transferência |
-| `CF-PD-003` | `CF-PFLOW-004`, `005`, `007` e ciclo principal | dados mínimos, estados, edição, exclusão, eventos, resumo e detalhes cartográficos |
-| `CF-PD-005` | `CF-PFLOW-005`, `006`, `007` e ciclo principal | contrato científico, forma de produção, conteúdo, qualidade, validação e versão do IHFR |
+| `CF-PD-003` | `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-007` e ciclo principal | dados mínimos, estados, edição, exclusão, eventos, resumo e detalhes cartográficos |
+| `CF-PD-005` | `CF-PFLOW-005`, `CF-PFLOW-006`, `CF-PFLOW-007` e ciclo principal | contrato científico, forma de produção, conteúdo, qualidade, validação e versão do IHFR |
 | `CF-PD-006` | todos os fluxos autenticados | papéis, permissões, propriedade, autoria detalhada, isolamento e privacidade |
-| `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-PFLOW-004`, `005`, `007` | base, visualização, biblioteca e arquitetura cartográfica; nenhuma selecionada |
+| `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-007` | base, visualização, biblioteca e arquitetura cartográfica; nenhuma selecionada |
 | `TD-009`, `TD-012` | `CF-PFLOW-006` | eventual Python e integração; não determinam a forma de produção do IHFR |
 
-Os sete fluxos estão especificados, mas este documento permanece `EM_ELABORACAO`. A Fase 1 não está concluída. O ponto de parada é a entrega dos fluxos e de suas representações Mermaid/PlantUML; ainda resta a validação cruzada final do PRD, requisitos, casos de uso, diagrama de classes e fluxos.
+Os sete fluxos e seu PlantUML permanecem `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. As decisões abertas e a ausência de aprovação normativa permanecem preservadas.

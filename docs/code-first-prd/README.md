@@ -2,10 +2,14 @@
 
 - **Nome da iniciativa:** `PRD Code-First`
 - **Natureza:** iniciativa paralela, analítica e não canônica
-- **Estado da iniciativa:** `EM_ELABORACAO`
+- **Estado da iniciativa:** `CONCLUIDA_EM_REVISAO`
 - **Estado dos documentos desta base:** `EM_REVISAO`
-- **Estado do PRD:** `EM_ELABORACAO`
+- **Estado do PRD:** `EM_REVISAO`
 - **Estado do Figma:** `NAO_AVALIADO`
+- **Estado da validação cruzada:** `CONCLUIDA`
+- **Estado da Fase 1:** `CONCLUIDA`
+- **Estado da Fase 2:** `NAO_INICIADA`
+- **Aprovação normativa:** não concedida
 
 ## Objetivo e limites
 
@@ -59,14 +63,15 @@ Assim, estado implementado e estado pretendido permanecem em eixos independentes
 | [`analysis/decision-snapshot.md`](analysis/decision-snapshot.md) | `EM_REVISAO` | Snapshot não normativo de `TD-001` a `TD-014`. |
 | [`analysis/gaps-and-open-questions.md`](analysis/gaps-and-open-questions.md) | `EM_REVISAO` | Lacunas e perguntas sem respostas ou decisões. |
 | [`analysis/product-hypotheses.md`](analysis/product-hypotheses.md) | `EM_REVISAO` | Hipótese integrada do produto, escopo candidato e decisões mínimas derivadas do código. |
-| [`prd-code-first.md`](prd-code-first.md) | `EM_ELABORACAO` | Rascunho paralelo, não canônico e derivado do código, com requisitos candidatos e dependências abertas. |
-| [`specifications/requirements.md`](specifications/requirements.md) | `EM_ELABORACAO` | Catálogo detalhado dos 15 requisitos funcionais e 6 não funcionais candidatos do pacote documental do PRD. |
-| [`specifications/use-cases.md`](specifications/use-cases.md) | `EM_ELABORACAO` | Especificação dos atores, 15 casos de uso candidatos, relações, cobertura e visão Mermaid. |
-| [`diagrams/plantuml/use-cases.puml`](diagrams/plantuml/use-cases.puml) | `EM_ELABORACAO` | Representação PlantUML semanticamente equivalente à visão Mermaid dos casos de uso. |
-| [`specifications/class-diagram.md`](specifications/class-diagram.md) | `EM_ELABORACAO` | Inventário e diagrama Mermaid do modelo implementado, com separação entre persistência, aplicação e mocks. |
-| [`diagrams/plantuml/class-diagram.puml`](diagrams/plantuml/class-diagram.puml) | `EM_ELABORACAO` | Representação PlantUML semanticamente equivalente ao diagrama de classes Mermaid. |
-| [`specifications/product-flows.md`](specifications/product-flows.md) | `EM_ELABORACAO` | Especificação textual dos sete fluxos do produto, com Mermaid, rastreabilidade e separação entre comportamento candidato e implementação atual. |
-| [`diagrams/plantuml/product-flows.puml`](diagrams/plantuml/product-flows.puml) | `EM_ELABORACAO` | Sete diagramas de atividade PlantUML semanticamente equivalentes aos fluxos Mermaid. |
+| [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) | `EM_REVISAO`; validação `CONCLUIDA` | Validação cruzada final, matriz mestra, gates, correções, limitações e estados da Fase 1. |
+| [`prd-code-first.md`](prd-code-first.md) | `EM_REVISAO` | Rascunho paralelo, não canônico e derivado do código, com requisitos candidatos e dependências abertas. |
+| [`specifications/requirements.md`](specifications/requirements.md) | `EM_REVISAO` | Catálogo detalhado dos 15 requisitos funcionais e 6 não funcionais candidatos do pacote documental do PRD. |
+| [`specifications/use-cases.md`](specifications/use-cases.md) | `EM_REVISAO` | Especificação dos atores, 15 casos de uso candidatos, relações, cobertura e visão Mermaid. |
+| [`diagrams/plantuml/use-cases.puml`](diagrams/plantuml/use-cases.puml) | `EM_REVISAO` | Representação PlantUML semanticamente equivalente à visão Mermaid dos casos de uso. |
+| [`specifications/class-diagram.md`](specifications/class-diagram.md) | `EM_REVISAO` | Inventário e diagrama Mermaid do modelo implementado, com separação entre persistência, aplicação e mocks. |
+| [`diagrams/plantuml/class-diagram.puml`](diagrams/plantuml/class-diagram.puml) | `EM_REVISAO` | Representação PlantUML semanticamente equivalente ao diagrama de classes Mermaid. |
+| [`specifications/product-flows.md`](specifications/product-flows.md) | `EM_REVISAO` | Especificação textual dos sete fluxos do produto, com Mermaid, rastreabilidade e separação entre comportamento candidato e implementação atual. |
+| [`diagrams/plantuml/product-flows.puml`](diagrams/plantuml/product-flows.puml) | `EM_REVISAO` | Sete diagramas de atividade PlantUML semanticamente equivalentes aos fluxos Mermaid. |
 
 O PRD central apresenta visão, problema, usuários, jornada, escopo e critérios de sucesso. O catálogo de requisitos é a referência detalhada de cada requisito candidato, a especificação de casos de uso detalha atores e interações, o diagrama de classes registra o modelo observável e a especificação de fluxos detalha etapas, alternativas sustentadas e relações. As visões Mermaid possuem PlantUML equivalente. Esses documentos integram o mesmo pacote, não possuem aprovação normativa e não transformam implementação observada em comportamento ou domínio aprovado.
 
@@ -113,4 +118,10 @@ Esses gates são controles de prontidão, não requisitos de produto nem decisõ
 
 ## Ponto de parada
 
-A execução termina com esta base em `EM_REVISAO` e o PRD, o catálogo de requisitos, os casos de uso, o diagrama de classes e os fluxos em `EM_ELABORACAO`; o Figma permanece `NAO_AVALIADO`. `CF-PD-001` e `CF-PD-004` orientam o rascunho como decisões de trabalho; `CF-PD-007` registra a direção funcional confirmada do mapa no núcleo do MVP; `CF-PD-008` mantém Figma como fonte complementar e não bloqueante. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. A Fase 1 não está concluída: ainda falta a validação cruzada final do PRD, requisitos, casos de uso, diagrama de classes e fluxos, sem consolidação normativa ou alteração da Etapa 9 original.
+A validação cruzada final está registrada em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) com estado `CONCLUIDA`. O PRD, o catálogo de requisitos, os casos de uso, o diagrama de classes, os fluxos e as três representações PlantUML permanecem `EM_REVISAO`; o Figma permanece `NAO_AVALIADO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` mantêm os limites já registrados. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`.
+
+A versão Code-First baseada no código está `CONCLUIDA_EM_REVISAO`. A Fase 1 está `CONCLUIDA`; a Fase 2 está `NAO_INICIADA` e só poderá começar após revisão humana e autorização explícita. Nenhuma aprovação normativa foi concedida e a trilha documental original permanece inalterada.
+
+`VERSAO_CODE_FIRST_BASEADA_NO_CODIGO_CONCLUIDA`
+
+`FASE_2_COMPLEMENTACAO_INCREMENTAL_NAO_INICIADA`

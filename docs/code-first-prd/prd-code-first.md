@@ -5,17 +5,20 @@
 | Campo | Registro | Classificação |
 |---|---|---|
 | Nome | `PRD Code-First` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
-| Estado | `EM_ELABORACAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
+| Estado | `EM_REVISAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Natureza | rascunho paralelo, não canônico e derivado do código | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Público prioritário | equipes de pesquisa e extensão | `DIRECAO_CONFIRMADA_PARA_RASCUNHO` — `CF-PD-001` |
 | Direção do MVP | demonstrar o ciclo completo laboratório → área monitorada e representada no mapa → coleta e dados associados espacialmente → diagnóstico IHFR → acompanhamento e visualização territorial | `DIRECAO_CONFIRMADA_PARA_RASCUNHO` — `CF-PD-004`, `CF-PD-007` |
-| Baseline | branch `docs/code-first-prd`; HEAD e upstream `4d6dd8c44582501faf47c913b567efc05d9454e6`; alterações preexistentes não commitadas em `analysis/product-hypotheses.md` e `prd-code-first.md`, preservadas nesta execução | `EVIDENCIA_DE_IMPLEMENTACAO` |
+| Baseline | branch `docs/code-first-prd`; HEAD e upstream `213918ec6a5f91ed4e35e54d9d0bef07ed156f36`; worktree inicialmente limpo; o baseline informado `4d6dd8c44582501faf47c913b567efc05d9454e6` foi reconciliado e os commits posteriores alteraram somente `docs/code-first-prd/**` | `EVIDENCIA_DE_IMPLEMENTACAO` |
 | Método | análise Code-First estática, com separação entre direção humana, intenção inferida e estado implementado | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Evidência de execução | runtime, aplicação, build, lint, testes, banco e deploy não foram validados nesta iniciativa; essa ausência limita a evidência sobre a implementação, mas não bloqueia a elaboração, a revisão ou a aprovação conceitual do PRD | `LIMITACAO_DA_EVIDENCIA` |
 | Figma | fonte complementar e opcional; nenhum artefato foi avaliado ou utilizado nesta execução, e sua ausência não bloqueia a elaboração ou a aprovação do PRD | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` — `CF-PD-008` |
 | Decisões abertas | `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006` | `DEPENDENCIA_ABERTA` |
 | Autoridade para aprovação final | não designada | `NAO_ESPECIFICADO` — `CF-GAP-001`, `CF-Q-001` |
 | Relação com a trilha original | não substitui nem cria `docs/product/PRD.md`, não inicia a Etapa 9 original e não altera seu estado | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
+| Validação cruzada | `CONCLUIDA`; relatório em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) | `EVIDENCIA_DE_IMPLEMENTACAO` |
+| Versão Code-First baseada no código | `CONCLUIDA_EM_REVISAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
+| Fase 1 / Fase 2 | `CONCLUIDA` / `NAO_INICIADA` | ponto de parada da iniciativa |
 
 As fontes locais deste rascunho são [`README.md`](README.md), [`governance/source-policy.md`](governance/source-policy.md), [`inventories/repository-inventory.md`](inventories/repository-inventory.md), [`analysis/current-product-state.md`](analysis/current-product-state.md), [`analysis/decision-snapshot.md`](analysis/decision-snapshot.md), [`analysis/gaps-and-open-questions.md`](analysis/gaps-and-open-questions.md), [`analysis/product-hypotheses.md`](analysis/product-hypotheses.md), o catálogo detalhado [`specifications/requirements.md`](specifications/requirements.md) e a especificação do [`diagrama de classes`](specifications/class-diagram.md). Também foram usados código, schema e configurações permitidas, [`../../TECH_DECISIONS.md`](../../TECH_DECISIONS.md), [`../../PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) apenas para identidade/propósito geral e as respostas humanas de `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` fornecidas em 2026-08-27.
 
@@ -123,7 +126,7 @@ usuário
 | Resumo/histórico | projeção básica para acompanhamento posterior | `DIRECAO_CONFIRMADA_PARA_RASCUNHO` | eventos, filtros, retenção e conteúdo do resumo | `CF-PD-004`, `CF-CAP-008`, `CF-CAP-010`, `CF-FLOW-007` |
 | Mapa | participa do cadastro e da representação espacial das áreas, da associação espacial das coletas e dados e da visualização territorial de coletas, gráficos e resultados IHFR aplicáveis | `DIRECAO_CONFIRMADA_PARA_RASCUNHO` | geometria, coordenadas, camadas, precisão, privacidade, filtros, interação e tecnologia | `CF-PD-007`, `CF-CAP-011`, `CF-GAP-021`, `CF-PRD-FR-013`, `CF-PRD-FR-014`, `CF-PRD-FR-015` |
 
-O schema evidencia relações implementadas, mas não aprova o domínio (`CF-GAP-014`, `CF-Q-017`). O modelo implementado completo, seus tipos de aplicação e os mocks não persistidos estão inventariados em [`specifications/class-diagram.md`](specifications/class-diagram.md), com Mermaid no próprio documento e representação equivalente em [`diagrams/plantuml/class-diagram.puml`](diagrams/plantuml/class-diagram.puml). Os diagramas retratam o código e o schema do baseline `4d6dd8c44582501faf47c913b567efc05d9454e6`; não aprovam o schema como domínio final, não definem arquitetura de mapa e não validam o contrato científico do IHFR.
+O schema evidencia relações implementadas, mas não aprova o domínio (`CF-GAP-014`, `CF-Q-017`). O modelo implementado completo, seus tipos de aplicação e os mocks não persistidos estão inventariados em [`specifications/class-diagram.md`](specifications/class-diagram.md), com Mermaid no próprio documento e representação equivalente em [`diagrams/plantuml/class-diagram.puml`](diagrams/plantuml/class-diagram.puml). Os diagramas retratam o código e o schema reconciliados no baseline `213918ec6a5f91ed4e35e54d9d0bef07ed156f36`; não aprovam o schema como domínio final, não definem arquitetura de mapa e não validam o contrato científico do IHFR.
 
 ## Laboratórios
 
@@ -331,6 +334,12 @@ Esta matriz é local ao rascunho e não altera a matriz global.
 | IA | fora do núcleo do MVP | `FORA_DO_MVP_CANDIDATO` — `CF-PD-004` |
 | Figma | fonte complementar e opcional; ausente nesta execução sem bloquear o PRD; artefato futuro exige identificação e classificação antes de adquirir autoridade | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` — `CF-PD-008` |
 
-## Estado de elaboração e ponto de parada
+## Estado de revisão e ponto de parada
 
-Este documento permanece `EM_ELABORACAO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` têm origem humana registrada para orientar o rascunho, sem equivaler a `APROVADO`. Os 15 requisitos funcionais e 6 requisitos não funcionais são candidatos e estão detalhados em [`specifications/requirements.md`](specifications/requirements.md); os casos de uso candidatos estão detalhados em [`specifications/use-cases.md`](specifications/use-cases.md), o modelo implementado está registrado em [`specifications/class-diagram.md`](specifications/class-diagram.md) e os sete fluxos estão em [`specifications/product-flows.md`](specifications/product-flows.md). A Fase 1 não é concluída nesta execução: permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`, e ainda falta a validação cruzada final do pacote. Aprovação final depende de autoridade formal, decisões aplicáveis e validação científica das partes do IHFR.
+Este documento permanece `EM_REVISAO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` têm origem humana registrada para orientar o rascunho, sem equivaler a `APROVADO`. Os 15 requisitos funcionais e 6 requisitos não funcionais são candidatos e estão detalhados em [`specifications/requirements.md`](specifications/requirements.md); os casos de uso candidatos estão detalhados em [`specifications/use-cases.md`](specifications/use-cases.md), o modelo implementado está registrado em [`specifications/class-diagram.md`](specifications/class-diagram.md) e os sete fluxos estão em [`specifications/product-flows.md`](specifications/product-flows.md).
+
+A validação cruzada final foi concluída em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md). A versão Code-First baseada no código está `CONCLUIDA_EM_REVISAO`, a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. Aprovação final continua dependente de autoridade formal, decisões aplicáveis e validação científica das partes do IHFR; nenhuma aprovação normativa foi concedida.
+
+`VERSAO_CODE_FIRST_BASEADA_NO_CODIGO_CONCLUIDA`
+
+`FASE_2_COMPLEMENTACAO_INCREMENTAL_NAO_INICIADA`

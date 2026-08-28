@@ -7,7 +7,7 @@
 | Iniciativa | `PRD Code-First` | `EVIDENCIA_DE_IMPLEMENTACAO` |
 | Natureza | análise Code-First não normativa; não constitui PRD, requisito, decisão aprovada ou especificação | `NAO_BLOQUEANTE_DO_PRD` |
 | Estado | `EM_REVISAO` | `EVIDENCIA_DE_IMPLEMENTACAO` |
-| Baseline efetivo | branch `docs/code-first-prd`; HEAD e upstream `4d6dd8c44582501faf47c913b567efc05d9454e6`, iguais ao baseline informado mais recente | `EVIDENCIA_DE_IMPLEMENTACAO` |
+| Baseline efetivo | branch `docs/code-first-prd`; HEAD e upstream `213918ec6a5f91ed4e35e54d9d0bef07ed156f36`; o baseline anterior `4d6dd8c44582501faf47c913b567efc05d9454e6` foi reconciliado sem alteração posterior de código ou schema | `EVIDENCIA_DE_IMPLEMENTACAO` |
 | Estado Git usado | alterações preexistentes não commitadas em `docs/code-first-prd/analysis/product-hypotheses.md` e `docs/code-first-prd/prd-code-first.md`, preservadas nesta execução | `EVIDENCIA_DE_IMPLEMENTACAO` |
 | Método | inspeção estática e convergente de código rastreado, rotas, páginas, componentes, mocks, placeholders, `prisma/schema.prisma`, configurações, decisões técnicas e dos seis documentos então existentes nesta iniciativa | `EVIDENCIA_DE_IMPLEMENTACAO` |
 | Runtime e Figma | runtime, build, lint, testes, banco, migration, deploy e Figma não foram executados nem acessados | `EVIDENCIA_DE_IMPLEMENTACAO` |

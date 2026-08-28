@@ -5,10 +5,11 @@
 | Campo | Registro | Classificação |
 |---|---|---|
 | Iniciativa | `PRD Code-First` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
-| Estado do documento | `EM_ELABORACAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
+| Estado do documento | `EM_REVISAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Estado dos requisitos | candidatos | `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO` |
 | Natureza | especificação baseada no código, no schema e nas decisões de trabalho registradas | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Aprovação normativa | inexistente | `NAO_ESPECIFICADO` |
+| Validação cruzada | `CONCLUIDA`; relatório em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md) | `EVIDENCIA_IMPLEMENTACAO` |
 
 O [`../prd-code-first.md`](../prd-code-first.md) permanece o documento central de visão, problema, usuários, escopo, jornada e critérios de sucesso. Este catálogo integra o mesmo pacote documental e mantém a especificação detalhada dos requisitos candidatos.
 
@@ -315,8 +316,8 @@ Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são
 
 | Tipo | Intervalo | Quantidade |
 |---|---|---:|
-| Requisitos funcionais | `CF-PRD-FR-001` a `CF-PRD-FR-015` | 15 |
-| Requisitos não funcionais | `CF-PRD-NFR-001` a `CF-PRD-NFR-006` | 6 |
+| Requisitos funcionais | `CF-PRD-FR-001`, `CF-PRD-FR-002`, `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-005`, `CF-PRD-FR-006`, `CF-PRD-FR-007`, `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-010`, `CF-PRD-FR-011`, `CF-PRD-FR-012`, `CF-PRD-FR-013`, `CF-PRD-FR-014`, `CF-PRD-FR-015` | 15 |
+| Requisitos não funcionais | `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` | 6 |
 | **Total** | — | **21** |
 
-Este catálogo permanece `EM_ELABORACAO`. As decisões de produto abertas são `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. `CF-PD-007` registra a direção funcional confirmada do mapa, mas não encerra as decisões técnicas ou de UX sobre representação, dados espaciais, camadas, precisão, interação ou tecnologia. `CF-PD-008` permanece decisão de trabalho complementar e não bloqueante sobre Figma.
+Este catálogo permanece `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`. As decisões de produto abertas são `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. `CF-PD-007` registra a direção funcional confirmada do mapa, mas não encerra as decisões técnicas ou de UX sobre representação, dados espaciais, camadas, precisão, interação ou tecnologia. `CF-PD-008` permanece decisão de trabalho complementar e não bloqueante sobre Figma. Nenhuma aprovação normativa foi concedida.
