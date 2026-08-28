@@ -1,0 +1,305 @@
+@startuml
+left to right direction
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "Modelo persistido principal" {
+  class "User (CF-CLS-001)" as User <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + email : String <<UNIQUE>>
+    + firstName : String
+    + lastName : String
+    + password : String
+    + role : UserRole = USER
+    + image : String = empty
+    + status : UserStatus = PENDING
+    + createdAt : DateTime = now
+    + updatedAt : DateTime <<updatedAt>>
+    + isAdmin : Boolean = false
+  }
+
+  class "Coordinates (CF-CLS-002)" as Coordinates <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + latitude : String
+    + longitude : String
+  }
+
+  class "LaboratoryRoom (CF-CLS-003)" as LaboratoryRoom <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + name : String
+    + createdAt : DateTime = now
+    + updatedAt : DateTime <<updatedAt>>
+    + userId : String <<FK>>
+    + imageBanner : String = empty
+    + isActive : Boolean = true
+    + accessCode : String
+  }
+
+  class "ResearchersLinked (CF-CLS-004)" as ResearchersLinked <<PRISMA_MODEL>> {
+    + userId : String <<PK,FK>>
+    + laboratoryRoomId : String <<PK,FK>>
+  }
+
+  class "CollectionArea (CF-CLS-005)" as CollectionArea <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + name : String
+    + image : String [0..1]
+    + createdAt : DateTime = now
+    + updatedAt : DateTime <<updatedAt>>
+    + isActive : Boolean = true
+    + userId : String <<FK>>
+    + laboratoryRoomId : String <<FK>>
+    + coordinatesId : String <<FK>>
+    + municipality : String
+    + state : String
+    + cep : String
+    + landType : LandType
+    + descriptionLandType : String [0..1]
+  }
+
+  class "CollectionData (CF-CLS-006)" as CollectionData <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + createdAt : DateTime = now
+    + updatedAt : DateTime <<updatedAt>>
+    + collectionAreaId : String <<FK>>
+    + userId : String <<FK>>
+    + observations : String [0..1]
+  }
+
+  enum "UserRole (CF-CLS-012)" as UserRole <<PRISMA_ENUM>> {
+    USER
+    ADMIN
+    DEVELOPER
+    MODERATOR
+  }
+
+  enum "UserStatus (CF-CLS-013)" as UserStatus <<PRISMA_ENUM>> {
+    ACTIVE
+    INACTIVE
+    PENDING
+    BLOCKED
+  }
+
+  enum "LandType (CF-CLS-014)" as LandType <<PRISMA_ENUM>> {
+    FOREST
+    AGROFORESTRY
+    CROPLAND
+    PASTURE
+    DEGRADED_PASTURE
+    BARE_SOIL
+    URBAN
+    OTHERS
+  }
+}
+
+package "Dados ambientais e diagnostico" {
+  class "IHFRDiagnosis (CF-CLS-007)" as IHFRDiagnosis <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + collectionDataId : String <<FK>>
+    + ihfrScore : Float
+    + ihfrClass : IHFRClass
+    + waterScore : Float
+    + soilScore : Float
+    + vegetationScore : Float
+    + territoryScore : Float
+    + dataQuality : LevelBasicDefault
+    + algorithmVersion : String = 1.0.0
+    + explanationAI : String [0..1]
+  }
+
+  class "WaterData (CF-CLS-008)" as WaterData <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + collectionDataId : String <<FK,UNIQUE>>
+    + waterSourceType : WaterSourceType
+    + hasSpring : Boolean
+    + wellDepth_m : Float [0..1]
+    + waterAvailability : WaterAvailability
+    + salinityIndicator : SalinityIndicator [0..1]
+  }
+
+  class "SoilData (CF-CLS-009)" as SoilData <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + collectionDataId : String <<FK,UNIQUE>>
+    + soilTexture : SoilTexture
+    + infiltrationRate_mm_h : Float
+    + compactionLevel : LevelBasicDefault
+    + erosionSigns : ErosionSigns
+    + soilExposedPercent : Float [0..1]
+  }
+
+  class "VegetationData (CF-CLS-010)" as VegetationData <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + collectionDataId : String <<FK,UNIQUE>>
+    + vegetationCoverPercent : Float
+    + fragmentationLevel : LevelBasicDefault
+    + hasRiparian_app : Boolean [0..1]
+    + landscapeDegradation : LevelBasicDefault
+  }
+
+  class "TerrainData (CF-CLS-011)" as TerrainData <<PRISMA_MODEL>> {
+    + id : String <<PK>>
+    + collectionDataId : String <<FK,UNIQUE>>
+    + drainage_density : Float [0..1]
+    + elevation_m : Float [0..1]
+    + slopePercent : Float [0..1]
+  }
+
+  enum "IHFRClass (CF-CLS-015)" as IHFRClass <<PRISMA_ENUM>> {
+    LOW
+    MODERATE
+    HIGH
+    CRITICAL
+  }
+
+  enum "LevelBasicDefault (CF-CLS-016)" as LevelBasicDefault <<PRISMA_ENUM>> {
+    LOW
+    MODERATE
+    HIGH
+  }
+
+  enum "WaterSourceType (CF-CLS-017)" as WaterSourceType <<PRISMA_ENUM>> {
+    RIVER_STREAM
+    SPRING
+    SHALLOW_WELL
+    TUBULA_WELL
+    CISTERN
+    OTHER
+  }
+
+  enum "WaterAvailability (CF-CLS-018)" as WaterAvailability <<PRISMA_ENUM>> {
+    PERMANENT
+    SEASONAL
+    SCARCE
+  }
+
+  enum "SalinityIndicator (CF-CLS-019)" as SalinityIndicator <<PRISMA_ENUM>> {
+    NONE
+    SUSPERCTED
+    CONFIRMED
+  }
+
+  enum "SoilTexture (CF-CLS-020)" as SoilTexture <<PRISMA_ENUM>> {
+    SANDY
+    MEDIUM
+    CLAYEY
+  }
+
+  enum "ErosionSigns (CF-CLS-021)" as ErosionSigns <<PRISMA_ENUM>> {
+    NONE
+    LAMINAR
+    RILLS_GUILLIES
+  }
+}
+
+package "Tipos e classes de aplicacao" {
+  class "UserType (CF-CLS-022)" as UserType <<TYPESCRIPT_TYPE>> {
+    + email : string
+    + firstName : string
+    + lastName : string
+    + password : string [0..1]
+    + image : string [0..1]
+    + isAdmin : boolean [0..1]
+    + createdAt : string [0..1]
+    + updatedAt : string [0..1]
+    + status : ACTIVE_OR_INACTIVE_OR_PENDING_OR_BLOCKED [0..1]
+  }
+
+  class "PayloadToken (CF-CLS-023)" as PayloadToken <<TYPESCRIPT_TYPE>> {
+    + userId : string
+  }
+
+  class "SignInData (CF-CLS-024)" as SignInData <<TYPESCRIPT_TYPE>> {
+    + email : string
+    + password : string
+  }
+
+  class "SignUpData (CF-CLS-025)" as SignUpData <<TYPESCRIPT_TYPE>> {
+    + email : string
+    + password : string
+    + firstName : string
+    + lastName : string
+  }
+
+  class "AuthContextType (CF-CLS-026)" as AuthContextType <<TYPESCRIPT_TYPE>> {
+    + user : UserType [0..1]
+    + fetchUserData(options) : Promise<void>
+    + signIn(data) : Promise<boolean>
+    + signUp(data) : Promise<boolean>
+    + logout() : void
+  }
+
+  class "AuthService (CF-CLS-027)" as AuthService <<CLASSE_CONECTADA>> {
+    - generateToken(payload)
+    + verifyToken(token)
+    + signUp(data)
+    + signIn(email, password)
+    + updatePassword(userId, currentPassword, newPassword)
+    + updateUser(userId, data)
+  }
+
+  class "UserService (CF-CLS-028)" as UserService <<CLASSE_CONECTADA>> {
+    + create(data)
+    + getUserById(id)
+    + getUserByEmail(email)
+    + updatePassword(userId, password)
+    + updateUser(userId, data)
+  }
+}
+
+package "Mocks nao persistidos" {
+  class "ActivityLog (CF-CLS-029)" as ActivityLog <<MOCK_NAO_PERSISTIDO>> {
+    + id : number
+    + user : object
+    + log : object
+  }
+
+  class "CollectCardData (CF-CLS-030)" as CollectCardData <<MOCK_NAO_PERSISTIDO>> {
+    + id : string
+    + localName : string
+    + created : string
+    + lastUpdate : string
+    + status : ACTIVE_OR_INACTIVE
+    + local_url : string
+    + image : string_or_null
+  }
+}
+
+User "1" -- "0..*" LaboratoryRoom : user / laboratoryRooms
+User "1" -- "0..*" ResearchersLinked : user / researchersLinked
+LaboratoryRoom "1" -- "0..*" ResearchersLinked : laboratoryRoom / researchersLinked
+User "1" -- "0..*" CollectionArea : user / collectionAreas
+Coordinates "1" -- "0..*" CollectionArea : coordinates / collectionAreas
+LaboratoryRoom "1" -- "0..*" CollectionArea : laboratoryRoom / collectionAreas
+User "1" -- "0..*" CollectionData : user / collectionData
+CollectionArea "1" -- "0..*" CollectionData : collectionArea / collectionData
+CollectionData "1" -- "0..*" IHFRDiagnosis : collectionData / diagnoses
+CollectionData "1" -- "0..1" WaterData : collectionData / waterData
+CollectionData "1" -- "0..1" SoilData : collectionData / soilData
+CollectionData "1" -- "0..1" VegetationData : collectionData / vegetationData
+CollectionData "1" -- "0..1" TerrainData : collectionData / terrainData
+
+User ..> UserRole : role
+User ..> UserStatus : status
+CollectionArea ..> LandType : landType
+IHFRDiagnosis ..> IHFRClass : ihfrClass
+IHFRDiagnosis ..> LevelBasicDefault : dataQuality
+WaterData ..> WaterSourceType : waterSourceType
+WaterData ..> WaterAvailability : waterAvailability
+WaterData ..> SalinityIndicator : salinityIndicator
+SoilData ..> SoilTexture : soilTexture
+SoilData ..> LevelBasicDefault : compactionLevel
+SoilData ..> ErosionSigns : erosionSigns
+VegetationData ..> LevelBasicDefault : levels
+
+UserType ..> User : forma parcial de dados
+PayloadToken ..> User : referencia userId
+AuthContextType ..> UserType : user
+AuthContextType ..> SignInData : signIn
+AuthContextType ..> SignUpData : signUp
+AuthService ..> PayloadToken : token
+AuthService ..> UserType : entrada e atualização
+AuthService --> UserService : usa
+UserService ..> UserType : entrada
+UserService ..> User : prisma.user
+
+@enduml

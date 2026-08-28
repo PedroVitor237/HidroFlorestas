@@ -1,0 +1,45 @@
+@startuml
+top to bottom direction
+
+actor "Pessoa da equipe" as A1
+actor "Usuário autenticado" as A2
+actor "Responsável pelo laboratório" as A3
+actor "Participante do laboratório" as A4
+actor "Participante de campo" as A5
+
+rectangle "HidroFlorestas" {
+  usecase "CF-UC-001\nCriar conta" as U1
+  usecase "CF-UC-002\nAutenticar-se" as U2
+  usecase "CF-UC-003\nGerenciar sessão" as U3
+  usecase "CF-UC-004\nCriar laboratório" as U4
+  usecase "CF-UC-005\nIngressar em laboratório" as U5
+  usecase "CF-UC-006\nSelecionar laboratório ativo" as U6
+  usecase "CF-UC-007\nCadastrar área monitorada no mapa" as U7
+  usecase "CF-UC-008\nConsultar área monitorada" as U8
+  usecase "CF-UC-009\nRegistrar coleta" as U9
+  usecase "CF-UC-010\nAssociar coleta espacialmente" as U10
+  usecase "CF-UC-011\nRegistrar dados ambientais" as U11
+  usecase "CF-UC-012\nObter ou associar diagnóstico IHFR" as U12
+  usecase "CF-UC-013\nConsultar diagnóstico IHFR" as U13
+  usecase "CF-UC-014\nAcompanhar resumo e histórico" as U14
+  usecase "CF-UC-015\nVisualizar acompanhamento territorial" as U15
+}
+
+A1 --> U1
+A1 --> U2
+A2 --> U3
+A3 --> U4
+A4 --> U5
+A4 --> U6
+A4 --> U7
+A4 --> U8
+A4 --> U12
+A4 --> U13
+A4 --> U14
+A4 --> U15
+A5 --> U9
+A5 --> U10
+A5 --> U11
+U9 ..> U10 : <<include>>
+
+@enduml
