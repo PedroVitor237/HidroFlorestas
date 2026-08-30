@@ -10,6 +10,7 @@
 | Público prioritário | equipes de pesquisa e extensão | `DIRECAO_CONFIRMADA_PARA_RASCUNHO` — `CF-PD-001` |
 | Direção do MVP | demonstrar o ciclo completo laboratório → área monitorada e representada no mapa → coleta e dados associados espacialmente → diagnóstico IHFR → acompanhamento e visualização territorial | `DIRECAO_CONFIRMADA_PARA_RASCUNHO` — `CF-PD-004`, `CF-PD-007` |
 | Baseline | branch `docs/code-first-prd`; HEAD e upstream `213918ec6a5f91ed4e35e54d9d0bef07ed156f36`; worktree inicialmente limpo; o baseline informado `4d6dd8c44582501faf47c913b567efc05d9454e6` foi reconciliado e os commits posteriores alteraram somente `docs/code-first-prd/**` | `EVIDENCIA_DE_IMPLEMENTACAO` |
+| Baseline da ampliação dos modelos de dados | branch `docs/code-first-prd`; HEAD `b3c73fb7e3151c7badb23f8dfeac5c689e17983b`; upstream `origin/docs/code-first-prd`; worktree inicialmente limpo | `EVIDENCIA_IMPLEMENTACAO` |
 | Método | análise Code-First estática, com separação entre direção humana, intenção inferida e estado implementado | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Evidência de execução | runtime, aplicação, build, lint, testes, banco e deploy não foram validados nesta iniciativa; essa ausência limita a evidência sobre a implementação, mas não bloqueia a elaboração, a revisão ou a aprovação conceitual do PRD | `LIMITACAO_DA_EVIDENCIA` |
 | Figma | fonte complementar e opcional; nenhum artefato foi avaliado ou utilizado nesta execução, e sua ausência não bloqueia a elaboração ou a aprovação do PRD | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` — `CF-PD-008` |
@@ -19,8 +20,9 @@
 | Validação cruzada | `CONCLUIDA`; relatório em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) | `EVIDENCIA_DE_IMPLEMENTACAO` |
 | Versão Code-First baseada no código | `CONCLUIDA_EM_REVISAO` | `DECISAO_DE_TRABALHO_PARA_RASCUNHO` |
 | Fase 1 / Fase 2 | `CONCLUIDA` / `NAO_INICIADA` | ponto de parada da iniciativa |
+| Fase 1 ampliada | `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO` | quatro novos artefatos de modelos de dados validados estaticamente; não inicia a Fase 2 |
 
-As fontes locais deste rascunho são [`README.md`](README.md), [`governance/source-policy.md`](governance/source-policy.md), [`inventories/repository-inventory.md`](inventories/repository-inventory.md), [`analysis/current-product-state.md`](analysis/current-product-state.md), [`analysis/decision-snapshot.md`](analysis/decision-snapshot.md), [`analysis/gaps-and-open-questions.md`](analysis/gaps-and-open-questions.md), [`analysis/product-hypotheses.md`](analysis/product-hypotheses.md), o catálogo detalhado [`specifications/requirements.md`](specifications/requirements.md) e a especificação do [`diagrama de classes`](specifications/class-diagram.md). Também foram usados código, schema e configurações permitidas, [`../../TECH_DECISIONS.md`](../../TECH_DECISIONS.md), [`../../PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) apenas para identidade/propósito geral e as respostas humanas de `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` fornecidas em 2026-08-27.
+As fontes locais deste rascunho são [`README.md`](README.md), [`governance/source-policy.md`](governance/source-policy.md), [`inventories/repository-inventory.md`](inventories/repository-inventory.md), [`analysis/current-product-state.md`](analysis/current-product-state.md), [`analysis/decision-snapshot.md`](analysis/decision-snapshot.md), [`analysis/gaps-and-open-questions.md`](analysis/gaps-and-open-questions.md), [`analysis/product-hypotheses.md`](analysis/product-hypotheses.md), o catálogo detalhado [`specifications/requirements.md`](specifications/requirements.md), a especificação do [`diagrama de classes`](specifications/class-diagram.md), o [`modelo lógico de dados`](specifications/logical-data-model.md) e o [`modelo relacional de dados`](specifications/relational-data-model.md). Também foram usados código, schema e configurações permitidas, [`../../TECH_DECISIONS.md`](../../TECH_DECISIONS.md), [`../../PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) apenas para identidade/propósito geral e as respostas humanas de `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` fornecidas em 2026-08-27.
 
 ### Classificações deste rascunho
 
@@ -36,6 +38,14 @@ As fontes locais deste rascunho são [`README.md`](README.md), [`governance/sour
 | `NAO_ESPECIFICADO` | informação ausente nas fontes permitidas ou ainda sem resposta aplicável |
 
 Nenhuma dessas classificações equivale a `APROVADO`. Os requisitos escritos com “deverá” são candidatos deste rascunho e não possuem autoridade normativa final.
+
+## Modelos de dados Code-First
+
+O [`modelo lógico`](specifications/logical-data-model.md) apresenta as entidades, atributos, identificadores, domínios enumerados e relacionamentos observáveis no schema. O [`modelo relacional`](specifications/relational-data-model.md) apresenta a organização da mesma estrutura nos 11 models Prisma, diferenciando campos escalares potencialmente persistíveis de campos de relação, e registra chaves, FKs, unicidade, nulabilidade, defaults, índices e ações referenciais somente quando explicitamente declarados.
+
+Os dois modelos são complementares e descritivos do baseline; não são propostas independentes, não redesenham o schema e não aprovam o domínio. O nome de um model ou campo não é apresentado como nome físico observado no banco, e a declaração do provider PostgreSQL não prova que o banco esteja implantado.
+
+A correspondência com `CF-CLS-*`, requisitos, casos de uso e fluxos fica detalhada nos próprios modelos. O mapa permanece no MVP, mas a estrutura espacial declarada limita-se a `Coordinates` vinculado a `CollectionArea` e ao encadeamento indireto até `CollectionData`. O contrato científico e a forma de obtenção do IHFR, assim como regras de laboratório, participação, papéis e propriedade, continuam abertos.
 
 ## Resumo executivo
 
@@ -336,10 +346,14 @@ Esta matriz é local ao rascunho e não altera a matriz global.
 
 ## Estado de revisão e ponto de parada
 
-Este documento permanece `EM_REVISAO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` têm origem humana registrada para orientar o rascunho, sem equivaler a `APROVADO`. Os 15 requisitos funcionais e 6 requisitos não funcionais são candidatos e estão detalhados em [`specifications/requirements.md`](specifications/requirements.md); os casos de uso candidatos estão detalhados em [`specifications/use-cases.md`](specifications/use-cases.md), o modelo implementado está registrado em [`specifications/class-diagram.md`](specifications/class-diagram.md) e os sete fluxos estão em [`specifications/product-flows.md`](specifications/product-flows.md).
+Este documento permanece `EM_REVISAO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` têm origem humana registrada para orientar o rascunho, sem equivaler a `APROVADO`. Os 15 requisitos funcionais e 6 requisitos não funcionais são candidatos e estão detalhados em [`specifications/requirements.md`](specifications/requirements.md); os casos de uso candidatos estão detalhados em [`specifications/use-cases.md`](specifications/use-cases.md), o modelo implementado está registrado em [`specifications/class-diagram.md`](specifications/class-diagram.md), os modelos [`lógico`](specifications/logical-data-model.md) e [`relacional`](specifications/relational-data-model.md) descrevem o baseline do schema e os sete fluxos estão em [`specifications/product-flows.md`](specifications/product-flows.md).
 
-A validação cruzada final foi concluída em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md). A versão Code-First baseada no código está `CONCLUIDA_EM_REVISAO`, a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. Aprovação final continua dependente de autoridade formal, decisões aplicáveis e validação científica das partes do IHFR; nenhuma aprovação normativa foi concedida.
+A validação cruzada final e sua ampliação foram concluídas em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md). A versão Code-First baseada no código está `CONCLUIDA_EM_REVISAO`, a ampliação está `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. Aprovação final continua dependente de autoridade formal, decisões aplicáveis e validação científica das partes do IHFR; nenhuma aprovação normativa foi concedida.
 
 `VERSAO_CODE_FIRST_BASEADA_NO_CODIGO_CONCLUIDA`
 
+`FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`
+
 `FASE_2_COMPLEMENTACAO_INCREMENTAL_NAO_INICIADA`
+
+`FASE_2_NAO_INICIADA`

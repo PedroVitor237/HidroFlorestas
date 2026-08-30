@@ -2,12 +2,14 @@
 
 - **Nome da iniciativa:** `PRD Code-First`
 - **Natureza:** iniciativa paralela, analítica e não canônica
-- **Estado da iniciativa:** `CONCLUIDA_EM_REVISAO`
+- **Estado da iniciativa:** `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`
 - **Estado dos documentos desta base:** `EM_REVISAO`
 - **Estado do PRD:** `EM_REVISAO`
 - **Estado do Figma:** `NAO_AVALIADO`
 - **Estado da validação cruzada:** `CONCLUIDA`
 - **Estado da Fase 1:** `CONCLUIDA`
+- **Estado da validação ampliada:** `CONCLUIDA`
+- **Estado da Fase 1 ampliada:** `CONCLUIDA_EM_REVISAO`
 - **Estado da Fase 2:** `NAO_INICIADA`
 - **Aprovação normativa:** não concedida
 
@@ -70,6 +72,10 @@ Assim, estado implementado e estado pretendido permanecem em eixos independentes
 | [`diagrams/plantuml/use-cases.puml`](diagrams/plantuml/use-cases.puml) | `EM_REVISAO` | Representação PlantUML semanticamente equivalente à visão Mermaid dos casos de uso. |
 | [`specifications/class-diagram.md`](specifications/class-diagram.md) | `EM_REVISAO` | Inventário e diagrama Mermaid do modelo implementado, com separação entre persistência, aplicação e mocks. |
 | [`diagrams/plantuml/class-diagram.puml`](diagrams/plantuml/class-diagram.puml) | `EM_REVISAO` | Representação PlantUML semanticamente equivalente ao diagrama de classes Mermaid. |
+| [`specifications/logical-data-model.md`](specifications/logical-data-model.md) | `EM_REVISAO` | Modelo lógico descritivo das entidades, atributos, identificadores, domínios e relacionamentos declarados. |
+| [`diagrams/plantuml/logical-data-model.puml`](diagrams/plantuml/logical-data-model.puml) | `EM_REVISAO` | Representação PlantUML equivalente ao Mermaid do modelo lógico. |
+| [`specifications/relational-data-model.md`](specifications/relational-data-model.md) | `EM_REVISAO` | Modelo relacional descritivo dos models, campos, chaves, restrições, nulabilidade, defaults e relações declarados. |
+| [`diagrams/plantuml/relational-data-model.puml`](diagrams/plantuml/relational-data-model.puml) | `EM_REVISAO` | Representação PlantUML equivalente ao Mermaid do modelo relacional. |
 | [`specifications/product-flows.md`](specifications/product-flows.md) | `EM_REVISAO` | Especificação textual dos sete fluxos do produto, com Mermaid, rastreabilidade e separação entre comportamento candidato e implementação atual. |
 | [`diagrams/plantuml/product-flows.puml`](diagrams/plantuml/product-flows.puml) | `EM_REVISAO` | Sete diagramas de atividade PlantUML semanticamente equivalentes aos fluxos Mermaid. |
 
@@ -77,12 +83,16 @@ O PRD central apresenta visão, problema, usuários, jornada, escopo e critério
 
 ## Representações do pacote
 
-Os fluxos do produto agora existem nas duas representações complementares:
+Os fluxos e os dois modelos de dados existem em representações complementares:
 
 - [`specifications/product-flows.md`](specifications/product-flows.md), com especificação textual, tabelas e Mermaid;
-- [`diagrams/plantuml/product-flows.puml`](diagrams/plantuml/product-flows.puml), com os sete diagramas de atividade equivalentes.
+- [`diagrams/plantuml/product-flows.puml`](diagrams/plantuml/product-flows.puml), com os sete diagramas de atividade equivalentes;
+- [`specifications/logical-data-model.md`](specifications/logical-data-model.md) e [`diagrams/plantuml/logical-data-model.puml`](diagrams/plantuml/logical-data-model.puml), com entidades, atributos, identificadores e cardinalidades equivalentes;
+- [`specifications/relational-data-model.md`](specifications/relational-data-model.md) e [`diagrams/plantuml/relational-data-model.puml`](diagrams/plantuml/relational-data-model.puml), com relações, campos escalares, chaves e cardinalidades equivalentes.
 
 Convenção do pacote: os documentos Markdown contêm explicação e Mermaid; os arquivos `.puml` contêm a representação equivalente em PlantUML. Mermaid e PlantUML preservam os mesmos elementos e relações, sem exigir layout visual idêntico.
+
+Na terminologia desta iniciativa, o modelo lógico descreve entidades, atributos, identificadores, domínios e relacionamentos; o modelo relacional descreve a mesma estrutura como relações representadas pelos models Prisma, campos e restrições declaradas. Ambos reproduzem o baseline Code-First e não aprovam o domínio nem comprovam banco implantado.
 
 ## Artefatos ainda não autorizados
 
@@ -116,12 +126,22 @@ A aprovação final das partes aplicáveis dependerá de:
 
 Esses gates são controles de prontidão, não requisitos de produto nem decisões da equipe. Código completo, ausência de defeitos, runtime validado e correção integral de vulnerabilidades não são condições para iniciar o rascunho.
 
+## Ampliação da Fase 1 concluída em revisão
+
+O baseline da ampliação é a branch `docs/code-first-prd`, HEAD `b3c73fb7e3151c7badb23f8dfeac5c689e17983b` e upstream `origin/docs/code-first-prd`, com worktree inicialmente limpo. Os quatro novos artefatos cobrem os 11 models, 10 enums, atributos/campos e 13 relações do schema atual, além da correspondência com `CF-CLS-*`, requisitos, casos de uso e fluxos diretamente relacionados.
+
+Durante a execução, o encerramento ampliado foi mantido como `PENDENTE_VALIDACAO`. Após a aprovação dos gates materiais estáticos, o resultado passou a `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`. A validação anterior e seu baseline continuam preservados no relatório de [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md). Nenhuma decisão aberta foi encerrada, o schema não foi promovido a domínio aprovado e a Fase 2 não começou.
+
 ## Ponto de parada
 
-A validação cruzada final está registrada em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) com estado `CONCLUIDA`. O PRD, o catálogo de requisitos, os casos de uso, o diagrama de classes, os fluxos e as três representações PlantUML permanecem `EM_REVISAO`; o Figma permanece `NAO_AVALIADO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` mantêm os limites já registrados. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`.
+A validação cruzada final e sua ampliação estão registradas em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) com estado `CONCLUIDA`. O PRD, o catálogo de requisitos, os casos de uso, o diagrama de classes, os modelos lógico e relacional, os fluxos e as cinco representações PlantUML permanecem `EM_REVISAO`; o Figma permanece `NAO_AVALIADO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` mantêm os limites já registrados. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`.
 
-A versão Code-First baseada no código está `CONCLUIDA_EM_REVISAO`. A Fase 1 está `CONCLUIDA`; a Fase 2 está `NAO_INICIADA` e só poderá começar após revisão humana e autorização explícita. Nenhuma aprovação normativa foi concedida e a trilha documental original permanece inalterada.
+A versão Code-First baseada no código anterior permanece `CONCLUIDA_EM_REVISAO`. A Fase 1 original permanece `CONCLUIDA`; a ampliação está `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`. A Fase 2 está `NAO_INICIADA` e só poderá começar após revisão humana e autorização explícita. Nenhuma aprovação normativa foi concedida e a trilha documental original permanece inalterada.
 
 `VERSAO_CODE_FIRST_BASEADA_NO_CODIGO_CONCLUIDA`
 
+`FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`
+
 `FASE_2_COMPLEMENTACAO_INCREMENTAL_NAO_INICIADA`
+
+`FASE_2_NAO_INICIADA`

@@ -146,3 +146,87 @@ A conclusão significa somente que o pacote representa e classifica de forma ras
 `VERSAO_CODE_FIRST_BASEADA_NO_CODIGO_CONCLUIDA`
 
 `FASE_2_COMPLEMENTACAO_INCREMENTAL_NAO_INICIADA`
+
+## Ampliação do escopo — 2026-08-30
+
+### Estado durante a execução
+
+| Campo | Registro |
+|---|---|
+| Natureza | ampliação da Fase 1 baseada no código; não inicia a Fase 2 |
+| Estado dos novos documentos | `EM_REVISAO` |
+| Encerramento ampliado | `PENDENTE_VALIDACAO` |
+| Fase 2 | `NAO_INICIADA` |
+| Aprovação normativa | não concedida |
+
+Esta seção amplia o relatório sem substituir a validação anterior, seu resultado, sua data ou seu baseline. O histórico acima continua atribuído somente aos artefatos que existiam naquela execução.
+
+### Baseline da ampliação
+
+| Item | Resultado |
+|---|---|
+| Branch | `docs/code-first-prd` |
+| HEAD inicial | `b3c73fb7e3151c7badb23f8dfeac5c689e17983b` |
+| Upstream | `origin/docs/code-first-prd` |
+| Estado inicial | worktree limpo |
+| Alterações preexistentes | nenhuma |
+| Relação com o baseline anterior | alterações entre `213918ec6a5f91ed4e35e54d9d0bef07ed156f36` e o HEAD desta ampliação estavam restritas a `docs/code-first-prd/**`; schema, código e configurações estruturais usados pelos modelos não divergiram |
+| Commit e push | não realizados |
+
+### Artefatos acrescentados
+
+| Artefato | Estado | Finalidade |
+|---|---|---|
+| [`../specifications/logical-data-model.md`](../specifications/logical-data-model.md) | `EM_REVISAO` | entidades, atributos, identificadores, domínios, relacionamentos, cardinalidades e participação |
+| [`../specifications/relational-data-model.md`](../specifications/relational-data-model.md) | `EM_REVISAO` | relações representadas, inventário de campos, chaves, restrições, nulabilidade, defaults, índices, ações e enums |
+| [`../diagrams/plantuml/logical-data-model.puml`](../diagrams/plantuml/logical-data-model.puml) | `EM_REVISAO` | fonte PlantUML equivalente ao Mermaid lógico `LDM-01` |
+| [`../diagrams/plantuml/relational-data-model.puml`](../diagrams/plantuml/relational-data-model.puml) | `EM_REVISAO` | fonte PlantUML equivalente ao Mermaid relacional `RDM-01` |
+
+### Cobertura a validar
+
+| Dimensão | Baseline esperado | Estado durante a execução |
+|---|---:|---|
+| Models Prisma | 11 | cobertos; validação final pendente |
+| Campos escalares | 80 | cobertos; validação final pendente |
+| Campos de relação Prisma | 26 | diferenciados de colunas; validação final pendente |
+| Enums | 10 | tratados como domínios; validação final pendente |
+| FKs e relacionamentos | 13 | cobertos; validação final pendente |
+| Correspondência lógico → relacional → `CF-CLS-*` | 11 entidades/models e 10 domínios/enums | registrada; validação final pendente |
+| Rastreabilidade para requisitos, casos de uso e fluxos | somente vínculos estruturais diretos | registrada; validação final pendente |
+| Mermaid `LDM-01` → PlantUML `LDM-01` | mesmos elementos, atributos, identificadores, relações e cardinalidades | validação final pendente |
+| Mermaid `RDM-01` → PlantUML `RDM-01` | mesmas relações, campos escalares, chaves, relações e cardinalidades | validação final pendente |
+
+### Limitações preservadas
+
+- schema atual é evidência de estrutura declarada, não domínio final aprovado;
+- relação representada por model Prisma não equivale a tabela física observada; banco e migrations não foram inspecionados;
+- tipos SQL, nomes de constraints, índices implícitos e ações referenciais ausentes não foram inventados;
+- `@default(...)` e `@updatedAt` foram registrados conforme a declaração, sem atribuir execução ao PostgreSQL ou runtime validado;
+- mapa continua no MVP, mas somente `Coordinates` e a cadeia até `CollectionData` possuem representação estrutural localizada;
+- contrato científico e forma de obtenção do IHFR permanecem abertos;
+- laboratório, participação, papéis, propriedade e permissões não receberam regras novas;
+- aplicação, banco, migrations, Prisma generate, build, testes, instalações, internet e renderizadores externos não foram executados.
+
+### Resultado ampliado
+
+| Gate material | Resultado | Evidência sintética |
+|---|---|---|
+| Cobertura de models e campos | aprovado | 11 de 11 models; 80 de 80 campos escalares; 26 de 26 campos de relação Prisma inventariados por model e tipo |
+| Enums | aprovado | 10 de 10 enums e todos os valores preservados como domínios, sem entidades persistidas artificiais |
+| Chaves e restrições | aprovado | PKs simples e composta, 13 FKs, 5 unicidades simples, nulabilidade, defaults e quatro `@updatedAt` conferidos contra o schema |
+| Campos escalares × campos de relação | aprovado | diagramas relacionais contêm somente os 80 escalares como campos; os 26 campos de relação estão identificados textualmente e representados por ligações |
+| Cardinalidades e ações | aprovado | 13 relações conferidas por FK, nulabilidade e unicidade; nenhuma ação referencial ausente foi inferida |
+| Lógico → relacional → classes | aprovado | 11 entidades/models mapeados para `CF-CLS-001` a `CF-CLS-011`; 10 domínios/enums mapeados para `CF-CLS-012` a `CF-CLS-021` |
+| Produto diretamente relacionado | aprovado | requisitos, casos de uso e fluxos estruturais resolvem para os catálogos existentes; responsividade e acessibilidade não receberam cobertura forçada |
+| Mermaid–PlantUML | aprovado estaticamente | cada par contém 11 elementos, 80 atributos, mesmos identificadores, relações e 13 cardinalidades; renderização visual não verificada porque `plantuml` e `mmdc` não estão disponíveis localmente |
+| Links e tabelas | aprovado | destinos locais existem e estruturas tabulares mantêm suas colunas |
+| `git diff --check` | aprovado | alterações rastreadas e os quatro arquivos novos conferidos; nenhum erro de whitespace |
+| Escopo | aprovado | somente os sete arquivos autorizados foram criados ou atualizados; código, schema, configurações, dependências, governança global e trilha original preservados |
+| Fontes excluídas | aprovado | descoberta com poda explícita e leituras diretas de fontes permitidas; nenhum conteúdo de `docs/raw/**`, migration ignorada, internet ou Figma foi consultado |
+| Execuções proibidas | aprovado | aplicação, banco, migrations, Prisma generate, build, testes, instalações, commit e push não executados |
+
+Não foi localizada inconsistência material. O estado durante a execução permaneceu `PENDENTE_VALIDACAO` até a aprovação dos gates acima. Com a validação ampliada concluída, os documentos permanecem `EM_REVISAO`, todas as decisões abertas e a ausência de aprovação normativa são preservadas, e o resultado é `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`.
+
+`FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`
+
+`FASE_2_NAO_INICIADA`
