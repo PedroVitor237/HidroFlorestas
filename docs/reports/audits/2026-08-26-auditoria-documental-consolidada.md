@@ -4,10 +4,10 @@
 
 - **Identificador documental:** `DOC-013`
 - **Data:** 2026-08-26
-- **Estado:** `EM_REVISAO`
-- **Plano:** [`DOC-PLAN-007`](../../plans/active/consolidacao-auditoria-documental.md)
+- **Estado:** `CANONICO_ATUAL`, exclusivamente como análise documental consolidada aprovada
+- **Plano:** [`DOC-PLAN-007`](../../plans/completed/consolidacao-auditoria-documental.md)
 - **Natureza:** consolidação analítica e controle de rastreabilidade
-- **Revisão humana:** pendente
+- **Revisão humana:** aprovada pela equipe na solicitação da Etapa 9, em 2026-08-28
 - **Autoridade normativa:** nenhuma sobre ciência, produto, domínio, UX, dados, arquitetura ou implementação
 
 Este relatório consolida as auditorias `DOC-009`, `DOC-010`, `DOC-011` e `DOC-012`. Sua autoridade limita-se ao método, à cobertura, aos agrupamentos e às limitações aqui registrados. Ele não escolhe alternativas, não valida ciência, não aprova requisitos ou wireframes, não define domínio, dados ou arquitetura, não compara documentação com implementação e não inicia a Etapa 9.
@@ -807,3 +807,9 @@ O worktree inicial estava limpo; não havia alteração rastreada ou não rastre
 ## Ponto de parada
 
 Etapa 8 concluída em seu escopo analítico e de controle. `DOC-PLAN-007` permanece `AGUARDANDO_REVISAO` e `DOC-013` permanece `EM_REVISAO`. A execução para aqui obrigatoriamente, antes de qualquer inspeção de código, infraestrutura, dados executáveis ou início da Etapa 9.
+
+## Encerramento após revisão humana
+
+`DECISAO_CONFIRMADA` — A equipe aprovou formalmente a Etapa 8 na solicitação da Etapa 9, em 2026-08-28, após confirmação do gate mecânico e da verificação corretiva posterior. A aprovação confirma somente a qualidade, a cobertura e a consistência desta análise documental consolidada. Ela não aprova ciência, fórmula, requisitos, modelo de dados, UX ou arquitetura; não valida implementação; não transforma propostas em decisões; não resolve `PD-001`–`017`; não produz o PRD e não concede autoridade normativa a este relatório.
+
+O ponto de parada acima registra o estado histórico ao fim da execução da Etapa 8. Após a revisão humana, `DOC-PLAN-007` passou a `CONCLUIDO` e foi arquivado; este `DOC-013` passou a `CANONICO_ATUAL` exclusivamente como relatório analítico aprovado. Os catálogos, agrupamentos e conclusões aprovados permanecem inalterados.

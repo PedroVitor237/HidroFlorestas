@@ -7,9 +7,9 @@
 - **Etapa:** 8
 - **Data:** 2026-08-26
 - **Estado inicial:** `NAO_INICIADO`
-- **Estado atual:** `AGUARDANDO_REVISAO`
+- **Estado atual:** `CONCLUIDO`
 - **Responsável pela execução:** agente mantenedor
-- **Revisão humana:** pendente
+- **Revisão humana:** aprovada pela equipe na solicitação da Etapa 9, em 2026-08-28
 - **Relatório relacionado:** [`DOC-013`](../../reports/audits/2026-08-26-auditoria-documental-consolidada.md)
 
 ## Objetivo e resultado esperado
@@ -131,7 +131,10 @@ Classificações admitidas: `FATO_DOCUMENTADO`, `DECISAO_CONFIRMADA`, `DECISAO_R
 | 2026-08-26 | `NAO_INICIADO` | Próximos IDs `DOC-PLAN-007`/`DOC-013`, baseline limpo, corpus de controle e linha de base de `docs/raw/` confirmados antes da edição. |
 | 2026-08-26 | `EM_ANDAMENTO` | Leitura integral obrigatória concluída; gate mecânico da Etapa 7 aprovado, incluindo 49 `ROAD-NNN` = 24 `PROPOSTA` + 25 `RECOMENDACAO` e três fases como eixo estrutural sobreposto. |
 | 2026-08-26 | `AGUARDANDO_REVISAO` | Etapa 7 concluída/arquivada; `DOC-013` consolidou 93 achados em 58 problemas, 88 perguntas em 52, 41 ocorrências bloqueantes em 26 bloqueios únicos, 15 pacotes e 18 verificações futuras; controles atualizados e validações aplicáveis aprovadas sem inspeção de implementação. |
+| 2026-08-28 | `CONCLUIDO` | Aprovação humana registrada na solicitação da Etapa 9 após gate corretivo: 93/93 achados, 88/88 perguntas, 58 problemas, 52 perguntas consolidadas, 41 ocorrências bloqueantes, 26 bloqueios únicos, 15 pacotes, 18 `CODE-CHECK` ainda `NAO_AVALIADO`, 12 camadas, 13 nós, 22 relações, 16 lacunas, 17 pendências abertas e 24 tabelas válidas. A aprovação limita-se à qualidade e à consistência da análise documental; não valida ciência, requisitos, dados, arquitetura ou implementação, não resolve decisões e não autoriza o PRD. Plano encerrado e destinado a `docs/plans/completed/`. |
 
 ## Ponto de parada previsto
 
 Ao final, este plano permanecerá em `AGUARDANDO_REVISAO` e `DOC-013` em `EM_REVISAO`. A execução deve parar antes de qualquer inventário de código, infraestrutura, schema, migration, teste, configuração, banco, deploy ou comportamento.
+
+O ponto de parada foi cumprido em 2026-08-26. A equipe aprovou a Etapa 8 na solicitação da Etapa 9, em 2026-08-28, exclusivamente em seus limites analíticos. Após essa aprovação, o plano foi marcado `CONCLUIDO` e arquivado; `DOC-013` foi promovido somente como análise documental consolidada aprovada. A autorização subsequente para a Etapa 9 não altera retroativamente os catálogos, agrupamentos, conclusões ou limites desta etapa.

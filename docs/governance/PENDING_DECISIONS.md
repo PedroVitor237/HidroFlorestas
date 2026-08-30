@@ -77,3 +77,29 @@ Plotly ter sido considerado não implica rejeição de Leaflet. Nenhuma entrada 
 | `PD-017` | `DEC-PKG-007` | `CON-FND-044`; `CON-Q-038`; `GAP-008` | Critérios de estado/proveniência permanecem abertos; a ausência de Figma continua não bloqueante. |
 
 As 17 pendências cobrem todas as decisões materiais identificadas por `DOC-013`; nenhuma nova pendência foi necessária.
+
+## Referências da auditoria de implementação
+
+`FATO_DOCUMENTADO` — A auditoria [`DOC-014`](../reports/audits/2026-08-28-auditoria-implementacao-infraestrutura.md), ainda `EM_REVISAO`, acrescentou as referências abaixo. `EVIDENCIA_IMPLEMENTACAO` descreve somente o baseline inspecionado e não decide intenção, correção, prioridade ou alternativa. Esta seção não altera assunto, estado, responsável, prazo, alternativas ou decisão resultante.
+
+| Pendência | Evidências e achados de implementação | Consequência preservada |
+|---|---|---|
+| `PD-001` | `IMP-FND-010`; ausência de motor e aplicabilidade implementada | Autoridade e escopo institucional continuam sem designação; código não decide aplicabilidade. |
+| `PD-002` | `IMP-FND-009`–`011`,`014`; cobertura estrutural 17/17, motor/testes ausentes | Regras, variáveis, fórmula, qualidade e validação científica continuam abertas. |
+| `PD-003` | `IMP-FND-005`–`007`,`013`,`016`,`017` | Fluxos existentes e ausentes não aprovam objetivos, requisitos, segurança ou MVP. |
+| `PD-004` | `IMP-FND-003`,`004`,`006`,`008`,`009`,`011`–`013` | Schema e integrações observadas não aprovam modelo, isolamento, ciclo ou auditabilidade. |
+| `PD-005` | `IMP-FND-002`,`016`; inspeção estática de UX e acessibilidade | Telas implementadas/mocks não aprovam fluxos, critérios ou estados de UX. |
+| `PD-006` | `IMP-FND-001`–`004`,`006`,`012`,`014`,`015`,`018` | Stack localizada não confirma arquitetura normativa, NFR, operação ou ADR. |
+| `PD-007` | `IMP-FND-012`; OpenStreetMap não localizado | Ausência no baseline não rejeita nem aprova OpenStreetMap. |
+| `PD-008` | `IMP-FND-010`; Python não localizado | Ausência no baseline não resolve a alternativa de Python. |
+| `PD-009` | `IMP-FND-012`; Plotly não localizado | Ausência no baseline não rejeita nem aprova Plotly. |
+| `PD-010` | `IMP-FND-012`; Leaflet não localizado | Ausência no baseline não rejeita nem aprova Leaflet; estado segue independente de Plotly. |
+| `PD-011` | `IMP-FND-001`,`010`; Next.js presente e componente Python ausente | A fronteira Next.js↔Python continua condicional e não especificada. |
+| `PD-012` | `IMP-FND-003`,`015`; Neon parcial e Vercel/deploy não avaliados | Hospedagem atual relatada e estratégia futura continuam distintas e abertas. |
+| `PD-013` | `IMP-FND-012`; mapa apenas placeholder, sem pilha geoespacial | Arquitetura de mapas continua sem alternativa/composição aprovada. |
+| `PD-014` | `IMP-FND-006`,`008`; schema contém usuário, laboratório e área | Existência de models não aprova o modelo conceitual nem suas cardinalidades. |
+| `PD-015` | `IMP-FND-006`,`008`,`017`; papéis/flags e vocabulário observados | Nomes e campos implementados não normalizam terminologia ou papéis. |
+| `PD-016` | `IMP-FND-006`,`008`,`017`; ausência de enforcement de membership/ownership | Regras de criação, participação, propriedade e acesso continuam abertas. |
+| `PD-017` | `IMP-FND-016`; Figma não consultado e não necessário | A implementação observada não define estado ou aprovação dos artefatos de UX. |
+
+As 17 pendências foram revisadas e permanecem `ABERTA`. Nenhuma nova pendência foi necessária e nenhuma evidência de implementação foi tratada como decisão.

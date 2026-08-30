@@ -5,13 +5,13 @@
 - **Identificador documental:** `DOC-008`
 - **Estado:** `CANONICO_ATUAL`
 - **Natureza:** matriz canônica de governança documental
-- **Data da atualização controlada:** 2026-08-26
-- **Planos de execução:** [`DOC-PLAN-002`](../plans/completed/rastreabilidade-global-inicial.md) e [`DOC-PLAN-007`](../plans/active/consolidacao-auditoria-documental.md)
-- **Aprovação:** baseline aprovado na Etapa 3; atualização analítica da Etapa 8 em revisão; responsável individual não especificado
+- **Data da atualização controlada:** 2026-08-28
+- **Planos de execução:** [`DOC-PLAN-002`](../plans/completed/rastreabilidade-global-inicial.md), [`DOC-PLAN-007`](../plans/completed/consolidacao-auditoria-documental.md) e [`DOC-PLAN-008`](../plans/active/auditoria-implementacao-infraestrutura.md)
+- **Aprovação:** baseline aprovado na Etapa 3; atualização analítica da Etapa 8 aprovada pela equipe na solicitação da Etapa 9, exclusivamente como controle documental; responsável individual não especificado
 - **Registro de metadados e integridade:** [`DOCUMENT_REGISTER.md`](DOCUMENT_REGISTER.md)
 - **Política de autoridade:** [`SOURCE_AUTHORITY.md`](SOURCE_AUTHORITY.md)
 
-Esta matriz representa a rastreabilidade documental dos 13 arquivos históricos de `docs/raw/` no nível de documentos e camadas. O baseline da Etapa 3 foi atualizado com evidências analíticas das auditorias das Etapas 4 a 7, consolidadas em [`DOC-013`](../reports/audits/2026-08-26-auditoria-documental-consolidada.md). Ela não resolve conflitos, não estabelece vigência normativa e não substitui os documentos de origem.
+Esta matriz representa a rastreabilidade documental dos 13 arquivos históricos de `docs/raw/` no nível de documentos e camadas. O baseline da Etapa 3 foi atualizado com evidências analíticas das auditorias das Etapas 4 a 7, consolidadas em [`DOC-013`](../reports/audits/2026-08-26-auditoria-documental-consolidada.md), e com o tratamento limitado de `GAP-016` pela auditoria de implementação [`DOC-014`](../reports/audits/2026-08-28-auditoria-implementacao-infraestrutura.md), ainda em revisão. Ela não resolve conflitos, não estabelece vigência normativa e não substitui os documentos de origem.
 
 > Controle de rastreabilidade documental no nível de documentos e camadas, sem autoridade para validar conteúdo científico, requisitos, UX, dados ou arquitetura.
 
@@ -25,6 +25,7 @@ Os nós reutilizam exclusivamente os identificadores de `DOCUMENT_REGISTER.md`. 
 - `VERIFICADA_ANALITICAMENTE` confirma que a relação foi examinada por uma auditoria de camada; quando classificada `INFERENCIA`, continua sem comprovar dependência, aprovação, precedência, substituição ou vigência.
 - `PRELIMINAR_PENDENTE_DE_AUDITORIA` é preservado como estado histórico da versão inicial; nenhuma relação permanece nesse estado após as Etapas 4 a 7.
 - `OPCIONAL_NAO_BLOQUEANTE` identifica lacuna de entrada suplementar que pode ser tratada futuramente sem impedir a auditoria ou a etapa relacionada.
+- `INSPECAO_REALIZADA_COM_LIMITACOES` identifica cobertura metodológica de todos os itens previstos com ao menos um item material ainda `NAO_AVALIADO`; não equivale a inspeção integralmente concluída nem a aprovação da implementação.
 - A direção `origem → destino` representa apenas a leitura documental registrada na linha.
 - A alocação primária organiza o trabalho futuro e não altera autoridade ou estado documental.
 
@@ -136,7 +137,7 @@ A alocação cobre `DOC-RAW-002` a `DOC-RAW-014` exatamente uma vez, sem omissã
 | `GAP-013` | `COBERTURA_NORMATIVA_INCOMPLETA` | Escopo do MVP, critérios de aceitação, estados de UX e NFR permanecem incompletos e sem aprovação. | Produto, UX, backlog e arquitetura | `DOC-013`, `CON-FND-029`,`034`–`037`,`045`,`046`. | `INFERENCIA` | Requisitos e critérios verificáveis não podem ser promovidos. | `PD-003`,`005`,`006` | `DEC-PKG-007`,`012` | `VINCULADA_A_PENDENCIA` |
 | `GAP-014` | `CADEIA_TRANSVERSAL_INCOMPLETA` | Modelo de dados, saída IHFR, API, integração e responsabilidades arquiteturais não fecham um contrato transversal. | Algoritmo, dados e arquitetura | `DOC-013`, `CON-FND-024`,`026`,`041`,`048`–`052`,`056`. | `INFERENCIA` | Impede rastrear entrada, processamento, persistência e interface de forma normativa. | `PD-002`–`004`,`006`,`008`,`011` | `DEC-PKG-008`–`010` | `VINCULADA_A_PENDENCIA` |
 | `GAP-015` | `GOVERNANCA_DE_PLANEJAMENTO_INCOMPLETA` | Backlog e roadmap não possuem prioridade, estado, evidência, datas, responsáveis, riscos e gates suficientes. | Produto, backlog e arquitetura | `DOC-013`, `CON-FND-045`,`046`; `DOC-012`. | `INFERENCIA` | Limita cobertura auditável entre requisito, item, fase e entrega. | `PD-003`,`006` | `DEC-PKG-007`,`015` | `VINCULADA_A_PENDENCIA` |
-| `GAP-016` | `INSPECAO_DE_IMPLEMENTACAO_PENDENTE` | Alegações e decisões documentais ainda não foram comparadas com código, configuração, dados, testes ou infraestrutura. | Implementação futura e todas as camadas técnicas | `DOC-012`, `DAE-FND-029`,`030`; `DOC-013`, `CODE-CHECK-001`–`018`. | `NAO_ESPECIFICADO` | O estado implementado permanece `NAO_AVALIADO`; ausência de inspeção não prova implementação nem ausência. | Pendências variam por item; nenhuma nova criada | Futura inspeção autorizada; `CODE-CHECK-001`–`018` | `AGUARDANDO_INSPECAO_FUTURA` |
+| `GAP-016` | `INSPECAO_DE_IMPLEMENTACAO_PENDENTE` | A inspeção local comparou as alegações documentais com código, configuração, dados, testes e infraestrutura, mas quatro itens materiais permanecem não avaliados. | Implementação e todas as camadas técnicas | `DOC-014`, `IMP-EVD-001`–`036`, `IMP-FND-001`–`018`; cobertura `CODE-CHECK-001`–`018`: 3 implementados, 4 parciais, 7 não implementados e 4 não avaliados. | `EVIDENCIA_IMPLEMENTACAO` | O baseline implementado foi caracterizado, porém implantação externa, contrato futuro de API/modelo e política futura de operação impedem conclusão integral. | Pendências variam por item; `PD-001`–`017` preservadas, nenhuma nova criada | Revisão humana de `DOC-014`; decisões e verificações futuras conforme assunto | `INSPECAO_REALIZADA_COM_LIMITACOES` |
 
 ### Síntese quantitativa das lacunas
 
@@ -156,9 +157,9 @@ A alocação cobre `DOC-RAW-002` a `DOC-RAW-014` exatamente uma vez, sem omissã
 | `VERIFICADA_NAS_AUDITORIAS` | 2 |
 | `VINCULADA_A_PENDENCIA` | 12 |
 | `OPCIONAL_NAO_BLOQUEANTE` | 1 |
-| `AGUARDANDO_INSPECAO_FUTURA` | 1 |
+| `INSPECAO_REALIZADA_COM_LIMITACOES` | 1 |
 
-Nenhuma nova pendência foi incorporada ao registro vivo na consolidação. `DOC-013` confirmou que `PD-001` a `PD-017` cobrem as decisões materiais; as novas lacunas descrevem rupturas de rastreabilidade e não duplicam decisões.
+Nenhuma nova pendência ou lacuna foi incorporada na Etapa 9. `DOC-014` cobriu metodologicamente os 18 checks, tratou `GAP-016` com limitações e confirmou que `PD-001` a `PD-017` continuam cobrindo as decisões materiais; quatro itens `NAO_AVALIADO` impedem marcar a inspeção como integralmente concluída.
 
 ## Orientação atual sobre os artefatos do Figma
 
@@ -172,6 +173,6 @@ Quando forem efetivamente apresentados, arquivos, páginas, frames, telas e flux
 
 ## Método e ponto de parada
 
-A matriz foi construída na Etapa 3 a partir do registro canônico e de leitura estrutural controlada. Na Etapa 8, foi atualizada exclusivamente com as evidências analíticas registradas em `DOC-009` a `DOC-013`, sem nova leitura ampla de `docs/raw/` e sem inspeção de implementação. O mérito de regras, fórmulas, requisitos, wireframes e escolhas técnicas não foi validado.
+A matriz foi construída na Etapa 3 a partir do registro canônico e de leitura estrutural controlada. Na Etapa 8, foi atualizada exclusivamente com as evidências analíticas registradas em `DOC-009` a `DOC-013`, sem nova leitura ampla de `docs/raw/`. Na Etapa 9, somente metadados de controle e `GAP-016` foram atualizados a partir de `DOC-014`; os 13 nós, 22 relações e 16 lacunas foram preservados. O mérito de regras, fórmulas, requisitos, wireframes, implementação e escolhas técnicas não foi validado.
 
-Este documento foi promovido a `CANONICO_ATUAL` após aprovação humana da Etapa 3, exclusivamente para controle documental, e permanece canônico durante a atualização analítica em revisão da Etapa 8. As relações inferenciais continuam identificadas como inferências, as lacunas preservam seus limites e a alocação não concede autoridade normativa. A atualização não valida conteúdo científico, funcional, de UX, de dados ou técnico e não substitui as auditorias de cada camada.
+Este documento foi promovido a `CANONICO_ATUAL` após aprovação humana da Etapa 3, exclusivamente para controle documental. A atualização analítica da Etapa 8 foi aprovada pela equipe na solicitação da Etapa 9, em 2026-08-28, com o mesmo limite. A atualização da Etapa 9 permanece `EM_REVISAO`. As relações inferenciais continuam identificadas como inferências, as lacunas preservam seus limites e a alocação não concede autoridade normativa. A atualização não valida conteúdo científico, funcional, de UX, de dados, técnico ou implementado e não substitui as auditorias de cada camada.
