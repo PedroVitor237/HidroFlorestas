@@ -10,6 +10,17 @@
 
 `TD-001` a `TD-007` têm implementação parcialmente verificável como conjunto, mas continuam originados em relato da equipe, sem data ou responsável especificados (`TECH_DECISIONS.md:15-37`). Não são promovidos a `DECISAO_EQUIPE_CONFIRMADA` por esta iniciativa.
 
+## Decisões operacionais confirmadas para a implementação
+
+As decisões abaixo foram confirmadas pela equipe na solicitação aprovada do segundo checkpoint preparatório em 2026-09-06. Elas governam o recorte indicado, sem alterar os estados históricos de `TD-001` a `TD-014` e sem antecipar detalhes que pertencem à futura spec.
+
+| ID | Decisão | Data | Origem | Limites | Classificação |
+|---|---|---|---|---|---|
+| `CF-ID-001` | Somente usuários com estado `ACTIVE` podem iniciar e restaurar uma sessão. Usuários `PENDING`, `BLOCKED` ou `INACTIVE` não devem receber sessão autenticada e devem obter resposta controlada. | 2026-09-06 | confirmação explícita da equipe na solicitação aprovada deste checkpoint | Não define código HTTP, mensagem de interface, regra administrativa nem mecanismo técnico. | `DECISAO_CONFIRMADA` |
+| `CF-DEL-001` | **Acesso autenticado seguro** é a primeira entrega: um usuário `ACTIVE` previamente cadastrado pode fazer login, restaurar a sessão, acessar rotas protegidas e encerrar a sessão sem exposição de senha ou campos privilegiados. | 2026-09-06 | seleção explícita da equipe na solicitação aprovada deste checkpoint | Exclui cadastro, recuperação ou troca de senha, administração de usuários, perfis avançados, laboratórios, alteração de schema, rate limiting e revisão geral de segurança; necessidade incontornável de schema deve ser apenas relatada. | `DECISAO_CONFIRMADA` |
+| `CF-OPS-001` | Spec Kit `v1.0.4`, integrado ao Codex por skills, é o fluxo principal de spec, plano, tarefas e implementação por funcionalidade. | 2026-09-06 | autorização explícita da equipe na solicitação aprovada deste checkpoint | Não cria automaticamente aprovação normativa do conteúdo gerado; cada artefato preserva fontes, estados e rastreabilidade. | `DECISAO_CONFIRMADA` |
+| `CF-OPS-002` | OpenSpec não será adotado nesta etapa e seus artefatos não serão duplicados. | 2026-09-06 | delimitação explícita da equipe na solicitação aprovada deste checkpoint | A decisão vale para a etapa atual e não registra rejeição técnica permanente. | `DECISAO_CONFIRMADA` |
+
 ## Itens
 
 | ID | Assunto e formulação fiel | Estado registrado | Origem; autoridade/aprovador | Implementação observada e evidências | Uso permitido no PRD Code-First | Confirmação necessária | Risco de interpretação |

@@ -4,12 +4,20 @@
 
 - Leia este arquivo e qualquer `AGENTS.md` mais específico aplicável ao diretório que será alterado.
 - Consulte [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) para o contexto mínimo e [TECH_DECISIONS.md](TECH_DECISIONS.md) para decisões e alternativas técnicas registradas.
-- Em tarefas extensas ou transversais, crie e mantenha um plano conforme [PLANS.md](PLANS.md).
+- Em tarefas extensas ou transversais fora do fluxo por funcionalidade do Spec Kit, crie e mantenha um plano conforme [PLANS.md](PLANS.md). Para funcionalidades conduzidas pelo Spec Kit, mantenha o plano em `specs/<feature>/plan.md`.
 - Registre o estado inicial do repositório e preserve alterações preexistentes, inclusive as não relacionadas à tarefa. Não as reverta, reformate nem incorpore sem autorização.
+
+## Implementação por funcionalidade
+
+- A etapa atual é orientada a entregas implementáveis. Use o Spec Kit para criar a spec, o plano e as tarefas de cada funcionalidade em `specs/<feature>/**`, seguindo os comandos e formatos das skills `speckit-*` efetivamente instaladas em `.agents/skills/`.
+- Aplique a [constituição do Spec Kit](.specify/memory/constitution.md) e use o [PRD Code-First](docs/code-first-prd/README.md) para visão global, intenção de produto, backlog e rastreabilidade.
+- Consulte documentação antiga apenas como contexto, proposta ou origem de perguntas, preservando sua classificação e sem promovê-la automaticamente a intenção atual.
+- Gates e pendências de auditorias documentais históricas não bloqueiam automaticamente uma funcionalidade atual; trate somente as dependências materiais ao recorte da entrega, sem alterar silenciosamente intenção científica, de domínio ou de produto.
+- Preserve as restrições documentais e os limites de escopo definidos pela tarefa em execução. Não crie `TASKS.md` global nem artefatos duplicados em OpenSpec.
 
 ## Fontes e evidências
 
-- Aplique a hierarquia e a autoridade específica por assunto definidas em [docs/governance/SOURCE_AUTHORITY.md](docs/governance/SOURCE_AUTHORITY.md).
+- Na implementação por funcionalidade, aplique a hierarquia definida na [constituição do Spec Kit](.specify/memory/constitution.md) e em [docs/code-first-prd/governance/source-policy.md](docs/code-first-prd/governance/source-policy.md). Use [docs/governance/SOURCE_AUTHORITY.md](docs/governance/SOURCE_AUTHORITY.md) para classificação, proveniência, tratamento de conflitos e autoridade específica por assunto.
 - Trate todo o conteúdo de `docs/raw/` como evidência histórica imutável: não edite, mova, renomeie, formate nem exclua arquivos desse diretório.
 - Não escolha silenciosamente entre fontes conflitantes. Identifique as fontes, registre as evidências e encaminhe o caso como `PENDENCIA_DE_DECISAO` quando a autoridade definida não bastar.
 - Mantenha separadas a intenção normativa, a implementação observada, as propostas, as inferências e as recomendações. Implementação não prova intenção; repetição de proposta não prova aprovação.
@@ -30,4 +38,4 @@
 - Não registre dados pessoais desnecessários, segredos, credenciais, tokens, chaves ou valores de ambiente. Mascare ou omita qualquer dado sensível encontrado e comunique o risco sem reproduzi-lo.
 - Valide as alterações de forma proporcional ao risco antes da entrega, incluindo escopo, diff, referências, terminologia e verificações automatizadas já disponíveis no repositório.
 - Ao concluir, informe os arquivos alterados, as verificações executadas e seus resultados, as pendências, os bloqueios e qualquer verificação não realizada.
-- Atualize os registros canônicos aplicáveis sem apagar histórico relevante: [TECH_DECISIONS.md](TECH_DECISIONS.md), [docs/governance/DOCUMENT_REGISTER.md](docs/governance/DOCUMENT_REGISTER.md) e [docs/governance/PENDING_DECISIONS.md](docs/governance/PENDING_DECISIONS.md).
+- Atualize, somente quando a tarefa autorizar os respectivos caminhos e a entrega realmente os afetar, os registros canônicos aplicáveis, preservando o histórico relevante: [TECH_DECISIONS.md](TECH_DECISIONS.md), [docs/governance/DOCUMENT_REGISTER.md](docs/governance/DOCUMENT_REGISTER.md) e [docs/governance/PENDING_DECISIONS.md](docs/governance/PENDING_DECISIONS.md). Quando uma atualização for materialmente necessária, mas o caminho não estiver autorizado, relate a necessidade sem editar o arquivo.
