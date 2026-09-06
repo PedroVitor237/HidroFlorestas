@@ -98,10 +98,10 @@ note right
   CF-PD-005 mantém a forma de produção aberta.
 end note
 :S04 Associar diagnóstico à coleta e área;
-if (D01 Versão científica disponível?) then (Sim)
-  :S05 Preservar versão disponível;
+if (D01 Versão do algoritmo disponível?) then (Sim)
+  :S05 Preservar versão do algoritmo;
 else (Não)
-  :S06 Prosseguir sem versão disponível;
+  :S06 Prosseguir sem inventar versão;
 endif
 :S07 Disponibilizar resultado;
 :S08 Consultar resultado e origem;

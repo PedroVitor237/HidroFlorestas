@@ -63,6 +63,7 @@ A classificação deve avaliar a lacuna de intenção, não a urgência de corri
 | `HIPOTESE_DE_INTENCAO_DERIVADA_DO_CODIGO` | Hipótese analítica de comportamento ou estrutura pretendida, derivada da combinação coerente de código, interface, schema, nomenclatura e fluxos observados. Pode orientar perguntas e o rascunho do PRD quando explicitamente rotulada, mas requer confirmação humana antes de se tornar requisito aprovado. |
 | `DECISAO_EQUIPE_CONFIRMADA` | Decisão da equipe com aprovação, origem e autoridade identificadas. |
 | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | Decisão relatada sem confirmação completa de origem, responsável, data ou implementação. |
+| `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE` | Direção, correção ou esclarecimento humano sem autor, função ou autoridade competente identificados; pode orientar perguntas e registrar intenção alegada, mas não aprova requisito ou decisão. |
 | `CONTEXTO_GERAL_PERMITIDO` | Identidade ou propósito geral, sem autoridade para requisitos detalhados. |
 | `FIGMA_APROVADO` | Artefato Figma com aprovação e escopo identificados. |
 | `FIGMA_NAO_CLASSIFICADO` | Artefato Figma sem estado normativo identificado. |
@@ -133,7 +134,7 @@ Mecanismos como redaction de hash, rotação JWT, CSRF, rate limiting, migration
 
 ## Fontes permitidas e excluídas
 
-As fontes permitidas são código e configurações rastreados, `package.json`, `package-lock.json`, `prisma/schema.prisma`, o estado ignorado da migration local, `TECH_DECISIONS.md`, contexto geral limitado de `PROJECT_CONTEXT.md`, governança global apenas para controle de autoridade e estado e o relato da equipe apresentado na revisão humana da iniciativa em 2026-08-27, limitado à referência organizacional do conceito de laboratório e explicitamente classificado como `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO`.
+As fontes permitidas são código e configurações rastreados, `package.json`, `package-lock.json`, `prisma/schema.prisma`, o estado ignorado da migration local, `TECH_DECISIONS.md`, contexto geral limitado de `PROJECT_CONTEXT.md`, governança global apenas para controle de autoridade e estado, o relato da equipe apresentado na revisão humana da iniciativa em 2026-08-27 com os limites já registrados e o anexo `obs-prd-hidroflorestas-formal.md` verificado em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md). Como o anexo não identifica autor, função ou autoridade, suas direções usam `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE` e não podem ser promovidas a decisão aprovada.
 
 São `FONTE_EXCLUIDA`: `docs/raw/**`, `docs/governance/TRACEABILITY_MATRIX.md`, relatórios derivados do corpus histórico, planos de auditorias anteriores como fonte de conteúdo, conclusões exclusivamente históricas, texto comercial como prova funcional, internet e fontes externas. O relatório da Etapa 8 serve apenas para confirmar estado e ponto de parada, nunca para conteúdo de produto.
 

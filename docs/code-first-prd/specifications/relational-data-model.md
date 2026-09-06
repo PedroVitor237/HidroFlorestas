@@ -160,7 +160,7 @@ O schema não contém `@map` ou `@@map`. Assim:
 | `vegetationScore` | `Float` | obrigatório | — | — | — | escalar persistível |
 | `territoryScore` | `Float` | obrigatório | — | — | — | escalar persistível |
 | `dataQuality` | `LevelBasicDefault` | obrigatório | — | — | — | escalar persistível com domínio enum |
-| `algorithmVersion` | `String` | obrigatório | — | — | `"1.0.0"` | escalar persistível; não valida versão científica |
+| `algorithmVersion` | `String` | obrigatório | — | — | `"1.0.0"` | escalar persistível; identifica textualmente versão do algoritmo, não versão do contrato científico |
 | `explanationAI` | `String?` | nullable | — | — | — | escalar persistível; não prova capacidade de IA |
 | `collectionData` | `CollectionData` | relação obrigatória | — | usa `collectionDataId` → `CollectionData.id` | — | campo de relação Prisma; não é coluna automática |
 
@@ -412,6 +412,7 @@ Não foi forçada cobertura estrutural de requisitos sem relação direta com da
 - `LIMITACAO_DA_EVIDENCIA` — não foram inferidos tipos SQL, nomes de constraints, índices implícitos, ações referenciais, defaults executados pelo banco ou comportamento de `@updatedAt` em runtime.
 - `PENDENCIA_DE_DECISAO` — o schema não aprova o domínio, a governança de dados, a propriedade, os papéis ou as regras de laboratório.
 - `PENDENCIA_DE_DECISAO` — campos, unidades, enums, scores e classes ambientais/IHFR não constituem contrato científico aprovado; forma de obtenção do IHFR permanece aberta.
+- `LIMITACAO_DA_EVIDENCIA` — o schema contém `IHFRDiagnosis.algorithmVersion`, mas não contém campo ou relação para versão do contrato científico. A cadeia ampliada proposta em H08 não integra este modelo as-is e permanece pendente em `CF-PD-005` e `CF-Q-011`.
 - `LIMITACAO_DA_EVIDENCIA` — o mapa integra o MVP, mas a estrutura declarada cobre somente `Coordinates` associado à área e o encadeamento indireto até a coleta; entidades cartográficas não foram inventadas.
 - `LIMITACAO_DA_EVIDENCIA` — renderizadores PlantUML e Mermaid não estão disponíveis localmente; a equivalência foi validada estruturalmente, mas a renderização visual não foi verificada.
 

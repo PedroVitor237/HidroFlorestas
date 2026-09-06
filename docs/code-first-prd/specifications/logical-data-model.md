@@ -201,7 +201,7 @@ As cardinalidades derivam das FKs, da nulabilidade e da unicidade declaradas. O 
 
 Cada `CollectionArea` exige referências a `User`, `LaboratoryRoom` e `Coordinates`. `Coordinates` contém somente latitude e longitude textuais, e sua FK não única permite que várias áreas reutilizem o mesmo registro. `CollectionData` exige uma área e um usuário; por isso sua associação espacial observável é indireta, via `CollectionArea` → `Coordinates`, sem localização própria de coleta.
 
-Uma `CollectionData` pode reunir opcionalmente até um registro de cada grupo `WaterData`, `SoilData`, `VegetationData` e `TerrainData`. Pode também possuir zero ou vários `IHFRDiagnosis`. Essa estrutura não informa o método de obtenção do diagnóstico, a relação temporal entre diagnósticos nem a validade científica de campos, unidades, enums, pontuações ou classes.
+Uma `CollectionData` pode reunir opcionalmente até um registro de cada grupo `WaterData`, `SoilData`, `VegetationData` e `TerrainData`. Pode também possuir zero ou vários `IHFRDiagnosis`. Cada diagnóstico contém `algorithmVersion`, mas não há atributo que identifique a versão do contrato científico aplicada à coleta. Essa estrutura não informa o método de obtenção do diagnóstico, a relação temporal entre diagnósticos, a relação contrato–algoritmo nem a validade científica de campos, unidades, enums, pontuações ou classes.
 
 ## Diagrama Mermaid
 
@@ -346,6 +346,7 @@ Relações acima são incluídas somente quando há compatibilidade estrutural d
 - acompanhamento persistido, eventos de histórico e resumo consolidado;
 - processo que calcula, importa, obtém, registra ou consulta o IHFR;
 - contrato científico aprovado para variáveis, unidades, validações, pontuações, classes e limiares;
+- identificação da versão do contrato científico aplicada à coleta e sua relação rastreável com `IHFRDiagnosis.algorithmVersion`; a cadeia ampliada proposta em H08 é lacuna, não estrutura as-is;
 - gráficos e projeções territoriais persistidos;
 - alertas, mencionados somente em comentário do schema, sem model declarado.
 
@@ -357,6 +358,7 @@ Essas ausências não criam entidades propostas. O mapa continua no MVP por `CF-
 - `LIMITACAO_DA_EVIDENCIA` — somente `User` possui uso Prisma conectado localizado; os demais models não foram validados em runtime.
 - `PENDENCIA_DE_DECISAO` — o modelo pretendido, a governança de dados e o domínio final não estão aprovados.
 - `PENDENCIA_DE_DECISAO` — campos e enums ambientais e de IHFR não constituem contrato científico validado.
+- `PENDENCIA_DE_DECISAO` — `algorithmVersion` registra somente uma versão textual do algoritmo no diagnóstico; versão do contrato científico e cadeia contrato–algoritmo permanecem ausentes e dependem de `CF-PD-005`, `CF-Q-011` e autoridade científica.
 - `NAO_ESPECIFICADO` — ações referenciais, ciclos de vida, retenção, privacidade e regras de propriedade não são definidos por esta visão.
 - `LIMITACAO_DA_EVIDENCIA` — renderizadores PlantUML e Mermaid não estão disponíveis localmente; a equivalência foi validada estruturalmente, mas a renderização visual não foi verificada.
 

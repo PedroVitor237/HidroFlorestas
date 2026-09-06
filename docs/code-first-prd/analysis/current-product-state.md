@@ -13,7 +13,7 @@ Este documento separa o que o repositório demonstra das hipóteses sobre o que 
 
 Essa formulação combina rotas, telas, componentes, mocks, placeholders, schema, nomenclatura e fluxos observados. Ela orienta perguntas e um eventual rascunho, mas não constitui requisito aprovado e depende de confirmação humana.
 
-> `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO`: o conceito de laboratório utiliza como referência organizacional salas semelhantes às do Google Classroom: espaços colaborativos nos quais participantes ingressam e compartilham recursos e atividades. A analogia não aprova a reprodução das regras do Google Classroom; criação, convite, entrada, papéis, propriedade e saída ainda precisam ser confirmados para o HidroFlorestas.
+> `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE`: o conceito de laboratório recebeu a analogia organizacional com salas semelhantes às do Google Classroom. A analogia é humana e exclusivamente conceitual, não é verificável no código e não aprova a reprodução de regras, terminologia, fluxos, permissões ou interface; criação, convite, entrada, compartilhamento, papéis, propriedade e saída ainda precisam ser confirmados para o HidroFlorestas. Ver revisão H09 em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md).
 
 - **Origem:** relato da equipe apresentado na revisão humana da iniciativa PRD Code-First em 2026-08-27.
 - **Autoridade final:** não especificada.

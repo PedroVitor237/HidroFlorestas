@@ -35,6 +35,7 @@ O `PRD Code-First` não substitui `docs/product/PRD.md`, não constitui continua
 8. documentos globais de governança, somente para autoridade, estado e separação entre iniciativas.
 9. relato da equipe apresentado na revisão humana da iniciativa em 2026-08-27, somente para a referência organizacional do conceito de laboratório explicitamente classificada.
 10. decisões humanas registradas nesta iniciativa, inclusive `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008`, preservando seus limites e a inexistência de aprovação normativa final.
+11. anexo `obs-prd-hidroflorestas-formal.md`, somente por meio da revisão H01–H10 que distingue compatibilidade técnica de autoridade e classifica suas direções como `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE`.
 
 ### Excluídas como conteúdo
 
@@ -66,6 +67,7 @@ Assim, estado implementado e estado pretendido permanecem em eixos independentes
 | [`analysis/gaps-and-open-questions.md`](analysis/gaps-and-open-questions.md) | `EM_REVISAO` | Lacunas e perguntas sem respostas ou decisões. |
 | [`analysis/product-hypotheses.md`](analysis/product-hypotheses.md) | `EM_REVISAO` | Hipótese integrada do produto, escopo candidato e decisões mínimas derivadas do código. |
 | [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) | `EM_REVISAO`; validação `CONCLUIDA` | Validação cruzada final, matriz mestra, gates, correções, limitações e estados da Fase 1. |
+| [`reviews/product-hypotheses-human-review.md`](reviews/product-hypotheses-human-review.md) | `EM_REVISAO`; `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE` | Verificação corrigida de H01–H10 em compatibilidade técnica e autoridade da intenção, sem iniciar a Fase 2. |
 | [`prd-code-first.md`](prd-code-first.md) | `EM_REVISAO` | Rascunho paralelo, não canônico e derivado do código, com requisitos candidatos e dependências abertas. |
 | [`specifications/requirements.md`](specifications/requirements.md) | `EM_REVISAO` | Catálogo detalhado dos 15 requisitos funcionais e 6 não funcionais candidatos do pacote documental do PRD. |
 | [`specifications/use-cases.md`](specifications/use-cases.md) | `EM_REVISAO` | Especificação dos atores, 15 casos de uso candidatos, relações, cobertura e visão Mermaid. |
@@ -134,7 +136,7 @@ Durante a execução, o encerramento ampliado foi mantido como `PENDENTE_VALIDAC
 
 ## Ponto de parada
 
-A validação cruzada final e sua ampliação estão registradas em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) com estado `CONCLUIDA`. O PRD, o catálogo de requisitos, os casos de uso, o diagrama de classes, os modelos lógico e relacional, os fluxos e as cinco representações PlantUML permanecem `EM_REVISAO`; o Figma permanece `NAO_AVALIADO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` mantêm os limites já registrados. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`.
+A validação cruzada final e sua ampliação estão registradas em [`analysis/code-first-package-validation.md`](analysis/code-first-package-validation.md) com estado `CONCLUIDA`. A revisão de H01–H10 está em [`reviews/product-hypotheses-human-review.md`](reviews/product-hypotheses-human-review.md): o anexo humano não identifica autor, função ou autoridade, e suas conclusões normativas permanecem `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE`. O PRD, o catálogo de requisitos, os casos de uso, o diagrama de classes, os modelos lógico e relacional, os fluxos e as cinco representações PlantUML permanecem `EM_REVISAO`; o Figma permanece `NAO_AVALIADO`. `CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008` mantêm os limites já registrados. Permanecem abertas `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`.
 
 A versão Code-First baseada no código anterior permanece `CONCLUIDA_EM_REVISAO`. A Fase 1 original permanece `CONCLUIDA`; a ampliação está `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`. A Fase 2 está `NAO_INICIADA` e só poderá começar após revisão humana e autorização explícita. Nenhuma aprovação normativa foi concedida e a trilha documental original permanece inalterada.
 

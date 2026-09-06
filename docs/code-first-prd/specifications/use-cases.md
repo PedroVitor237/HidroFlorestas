@@ -13,7 +13,7 @@
 
 Fontes usadas: código e configurações rastreados; `prisma/schema.prisma`; [`../../../TECH_DECISIONS.md`](../../../TECH_DECISIONS.md), com seus estados preservados; documentos existentes em [`../`](../), em especial o [PRD](../prd-code-first.md) e o [catálogo de requisitos](requirements.md); e decisões humanas já registradas na iniciativa (`CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008`).
 
-Limites: estes casos detalham atores e interações candidatas da versão Code-First, não aprovam produto, ciência, UX, dados ou arquitetura e não comprovam comportamento em runtime. `docs/raw/**`, matriz global, relatórios históricos, internet, fontes externas e Figma não foram consultados. Mocks e placeholders são evidência do estado estático, não comportamento aprovado. O mapa integra o núcleo do MVP por `CF-PD-007`, sem seleção de tecnologia cartográfica. IA permanece fora do núcleo por `CF-PD-004`. A produção do IHFR continua `PENDENCIA_DE_DECISAO`: não se escolhe entre cálculo interno, Python, importação, registro manual ou serviço externo.
+Limites: estes casos detalham atores e interações candidatas da versão Code-First, não aprovam produto, ciência, UX, dados ou arquitetura e não comprovam comportamento em runtime. `docs/raw/**`, matriz global, relatórios históricos, internet, fontes externas e Figma não foram consultados. Mocks e placeholders são evidência do estado estático, não comportamento aprovado. O mapa integra o núcleo do MVP por `CF-PD-007`, sem seleção de tecnologia cartográfica. IA permanece fora do núcleo por `CF-PD-004`. A produção do IHFR continua `PENDENCIA_DE_DECISAO`: não se escolhe entre cálculo interno, Python, importação, registro manual ou serviço externo. A revisão H01–H10 está em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md); suas direções humanas permanecem sem autoridade identificada e não alteram a classificação dos atores candidatos.
 
 Neste documento, **comportamento pretendido candidato** designa a interação estruturada a partir dos requisitos candidatos e das direções registradas; **implementação observada estaticamente** designa somente código ou schema diretamente localizado; **mock ou placeholder** identifica interfaces sem fluxo de domínio conectado; e **dependência aberta** identifica decisão ou contrato ainda necessário. Nenhuma dessas categorias equivale a `APROVADO`.
 
@@ -290,30 +290,30 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Evidência no código/schema:** `IHFRDiagnosis` e sua relação em `prisma/schema.prisma:128-142`.
 - **Gatilho:** existe diagnóstico aceito ou solicitação de obtê-lo por mecanismo futuro.
 - **Precondições:** coleta existente com dados aplicáveis; contrato científico e acesso cabíveis.
-- **Fluxo principal candidato:** 1. localizar a coleta; 2. obter ou registrar o diagnóstico por mecanismo ainda aberto; 3. validar sua aceitação conforme contrato futuro; 4. associá-lo à coleta; 5. preservar origem e versão disponível.
+- **Fluxo principal candidato:** 1. localizar a coleta; 2. obter ou registrar o diagnóstico por mecanismo ainda aberto; 3. validar sua aceitação conforme contrato futuro; 4. associá-lo à coleta; 5. preservar a origem e a versão do algoritmo disponível.
 - **Fluxos alternativos ou exceções sustentados:** nenhum fluxo consumidor foi localizado; falhas e estados do diagnóstico não estão definidos.
 - **Pós-condições:** diagnóstico associado à coleta e alcançável pela área de origem.
 - **Estado da implementação:** `PARCIALMENTE_IMPLEMENTADO`; schema sem consumidor ou validação científica.
 - **Mock ou placeholder:** não há interface localizada; campos, classes e valores padrão do schema não aprovam ciência.
-- **Dependências abertas:** método, fórmula, variáveis, qualidade, versionamento e validação em `CF-PD-005`, `CF-Q-011`; `TD-009` e `TD-012` permanecem em avaliação.
+- **Dependências abertas:** método, fórmula, variáveis, qualidade, identificação da versão do contrato, relação contrato–algoritmo e validação em `CF-PD-005`, `CF-Q-011`; `TD-009` e `TD-012` permanecem em avaliação. A cadeia ampliada de H08 não está implementada nem aprovada.
 - **Decisões relacionadas:** `CF-PD-004`, `CF-PD-005`.
 - **Limitações:** não escolhe cálculo interno, Python, importação, registro manual ou serviço externo; IA não integra o núcleo.
 
 ### `CF-UC-013` — Consultar diagnóstico IHFR
 
-- **Objetivo:** consultar o resultado associado à coleta com a proveniência e versão disponíveis.
+- **Objetivo:** consultar o resultado associado à coleta com a proveniência e a versão do algoritmo disponível.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 - **Ator principal:** participante do laboratório.
 - **Requisitos relacionados:** `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; incidência de `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006`.
 - **Evidência no código/schema:** estrutura em `prisma/schema.prisma:128-142`; comportamento de consulta não localizado.
 - **Gatilho:** participante solicita o resultado de uma coleta acessível.
 - **Precondições:** diagnóstico associado e acesso ao laboratório ativo.
-- **Fluxo principal candidato:** 1. localizar coleta ou diagnóstico; 2. consultar o resultado disponível; 3. identificar coleta, área e versão científica disponíveis.
+- **Fluxo principal candidato:** 1. localizar coleta ou diagnóstico; 2. consultar o resultado disponível; 3. identificar coleta, área e versão do algoritmo disponível.
 - **Fluxos alternativos ou exceções sustentados:** resultado ausente ou ainda indisponível é uma possibilidade lógica, mas o tratamento permanece `NAO_ESPECIFICADO` e não é normatizado aqui.
 - **Pós-condições:** resultado consultado sem alteração e com cadeia de origem preservada.
 - **Estado da implementação:** `NAO_LOCALIZADO` como comportamento; schema parcial existente.
 - **Mock ou placeholder:** legenda de risco no mapa é placeholder e não comprova resultado IHFR conectado.
-- **Dependências abertas:** conteúdo, método, estados e versionamento em `CF-PD-005`, `CF-Q-011`.
+- **Dependências abertas:** conteúdo, método, estados, versão do contrato científico e relação contrato–algoritmo em `CF-PD-005`, `CF-Q-011`.
 - **Decisões relacionadas:** `CF-PD-004`, `CF-PD-005`.
 - **Limitações:** não infere fórmula, pesos, classes, limiares, explicação ou recomendação.
 
@@ -393,9 +393,9 @@ Não foram usadas relações `extend`. Cadastrar a área já incorpora sua repre
 |---|---|---|
 | `CF-PD-002` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006` | criação, ingresso, aprovação, código/convite, saída, cardinalidade, responsabilidade e transferência |
 | `CF-PD-003` | `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-014`, `CF-UC-015` | dados mínimos, estados, edição, exclusão, eventos, resumo e comportamento cartográfico detalhado |
-| `CF-PD-005` | `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-015` | contrato científico, produção, validação, qualidade, conteúdo e versionamento do IHFR |
+| `CF-PD-005` | `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-015` | contrato científico, produção, validação, qualidade, conteúdo, versão do contrato, versão do algoritmo e relação entre ambas |
 | `CF-PD-006` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | papéis, permissões, propriedade, autoria detalhada, isolamento e privacidade |
 | `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-UC-007`, `CF-UC-010`, `CF-UC-015` | alternativas e arquitetura cartográfica; nenhuma foi selecionada |
 | `TD-009`, `TD-012` | `CF-UC-012` | eventual Python e integração; não definem a produção do IHFR |
 
-Este documento e seu PlantUML permanecem `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. As decisões abertas e a ausência de aprovação normativa permanecem preservadas.
+Este documento e seu PlantUML permanecem `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), e H01–H10 estão verificadas em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md) sem autoridade normativa identificada. A Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. As decisões abertas e a ausência de aprovação normativa permanecem preservadas.

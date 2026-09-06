@@ -17,6 +17,8 @@ Nenhum requisito representa automaticamente comportamento já implementado. O ca
 
 Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são apenas grupos sugeridos pelo schema atual, não um contrato científico aprovado. OpenStreetMap, Plotly e Leaflet permanecem alternativas abertas em `TD-008`, `TD-010` e `TD-011`; este catálogo não prescreve biblioteca, provedor, arquitetura, camadas, precisão, geometria, simbologia ou interação cartográfica.
 
+A verificação de H01–H10 está em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md). O anexo humano não identifica autor, função ou autoridade; por isso, suas direções não aprovam requisitos. Em especial, H08 não cria campos nem requisito novo: `algorithmVersion` é a única versão observada no schema, enquanto a versão do contrato científico e sua relação com o algoritmo permanecem lacunas de `CF-PD-005`.
+
 ## Requisitos funcionais candidatos
 
 ### `CF-PRD-FR-001` — Cadastro e login
@@ -120,7 +122,7 @@ Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são
 - **Precondições conhecidas:** coleta existente e contrato científico aplicável definido para o uso.
 - **Comportamento ou fluxo principal:** acessar a coleta; informar os dados exigidos pelo contrato; associá-los à coleta; disponibilizá-los para o ciclo aplicável.
 - **Critérios de aceitação provisórios:** a coleta mantém os dados exigidos pelo contrato científico aplicável, sem que este catálogo defina ou aprove grupos, variáveis, unidades ou cardinalidades.
-- **Dependências abertas:** contrato, campos normativos, unidades, obrigatoriedade e validações científicas (`CF-PD-003`, `CF-PD-005`, `CF-Q-011`).
+- **Dependências abertas:** contrato, identificação de sua versão, campos normativos, unidades, obrigatoriedade, validações científicas e regras de evolução/compatibilidade (`CF-PD-003`, `CF-PD-005`, `CF-Q-011`; revisão H08).
 - **Decisões relacionadas:** `CF-PD-003`, `CF-PD-004`, `CF-PD-005`.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 
@@ -141,16 +143,16 @@ Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são
 
 ### `CF-PRD-FR-009` — Consulta do resultado IHFR
 
-- **Formulação:** O produto deverá permitir consultar o resultado IHFR associado à coleta, preservando origem e versão científica quando disponíveis.
+- **Formulação:** O produto deverá permitir consultar o resultado IHFR associado à coleta, preservando a origem e a versão do algoritmo disponível.
 - **Ator:** participante do laboratório autorizado.
 - **Prioridade no MVP:** núcleo do MVP.
 - **Origem:** `CF-PD-004`; hipótese de resultado derivada do código.
-- **Evidência:** `CF-CAP-014`; `prisma/schema.prisma:128-142`; ausência de consumidor registrada em `CF-GAP-012`.
+- **Evidência:** `CF-CAP-014`; `IHFRDiagnosis.collectionDataId` e `IHFRDiagnosis.algorithmVersion`; ausência de consumidor e de versão do contrato científico registrada em `CF-GAP-012`.
 - **Estado da implementação:** `NAO_LOCALIZADO` como comportamento de consulta; schema parcial existente.
 - **Precondições conhecidas:** diagnóstico associado à coleta e acesso autorizado ao contexto.
-- **Comportamento ou fluxo principal:** localizar a coleta ou seu resultado; consultar o IHFR; identificar origem e versão disponíveis.
-- **Critérios de aceitação provisórios:** a consulta apresenta o resultado associado à coleta e a proveniência e versão disponíveis, sem inferir fórmula, classe ou limiar.
-- **Dependências abertas:** conteúdo do resultado, método de obtenção, validação e versionamento científico (`CF-PD-005`).
+- **Comportamento ou fluxo principal:** localizar a coleta ou seu resultado; consultar o IHFR; identificar a origem e a versão do algoritmo disponível.
+- **Critérios de aceitação provisórios:** a consulta apresenta o resultado associado à coleta e a proveniência e versão de algoritmo disponível, sem inferir versão do contrato, fórmula, classe ou limiar.
+- **Dependências abertas:** conteúdo do resultado, método de obtenção, validação, identificação da versão do contrato científico e relação contrato–algoritmo (`CF-PD-005`; revisão H08).
 - **Decisões relacionadas:** `CF-PD-004`, `CF-PD-005`.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 
@@ -304,12 +306,12 @@ Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são
 ### `CF-PRD-NFR-006` — Integridade da cadeia diagnóstica
 
 - **Categoria:** integridade científica e rastreabilidade.
-- **Resultado esperado:** O produto deverá preservar a integridade da associação entre diagnóstico, coleta e área e registrar versão científica quando disponível.
-- **Origem e evidência:** `CF-PD-004`, `CF-PD-005`; `CF-CAP-014`; `prisma/schema.prisma:76-142`.
+- **Resultado esperado:** O produto deverá preservar a integridade da associação entre diagnóstico, coleta e área e registrar a versão do algoritmo disponível.
+- **Origem e evidência:** `CF-PD-004`, `CF-PD-005`; `CF-CAP-014`; `IHFRDiagnosis.collectionDataId` e `IHFRDiagnosis.algorithmVersion`.
 - **Alcance:** criação, associação, consulta e projeção do diagnóstico, inclusive sua visualização territorial aplicável.
 - **Estado atual:** estrutura parcial no schema, sem consumidor ou validação científica.
-- **Critério provisório de verificação:** a consulta ou projeção do diagnóstico mantém a cadeia área → coleta → resultado e apresenta a versão disponível sem inferir regra científica.
-- **Dependências abertas:** contrato, proveniência, método e versionamento (`CF-PD-005`, `CF-Q-011`).
+- **Critério provisório de verificação:** a consulta ou projeção do diagnóstico mantém a cadeia área → coleta → resultado e apresenta a versão de algoritmo disponível sem inferir contrato ou regra científica.
+- **Dependências abertas:** contrato, identificação de sua versão, proveniência, método e relação contrato–algoritmo (`CF-PD-005`, `CF-Q-011`; revisão H08). A cadeia ampliada proposta por H08 não está implementada e não é requisito aprovado.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 
 ## Distribuição e ponto de parada
@@ -320,4 +322,4 @@ Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são
 | Requisitos não funcionais | `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` | 6 |
 | **Total** | — | **21** |
 
-Este catálogo permanece `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`. As decisões de produto abertas são `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. `CF-PD-007` registra a direção funcional confirmada do mapa, mas não encerra as decisões técnicas ou de UX sobre representação, dados espaciais, camadas, precisão, interação ou tecnologia. `CF-PD-008` permanece decisão de trabalho complementar e não bloqueante sobre Figma. Nenhuma aprovação normativa foi concedida.
+Este catálogo permanece `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), e H01–H10 estão verificadas em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md) sem autoridade normativa identificada. A Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`. As decisões de produto abertas são `CF-PD-002`, `CF-PD-003`, `CF-PD-005` e `CF-PD-006`. `CF-PD-007` registra a direção funcional confirmada do mapa, mas não encerra as decisões técnicas ou de UX sobre representação, dados espaciais, camadas, precisão, interação ou tecnologia. `CF-PD-008` permanece decisão de trabalho complementar e não bloqueante sobre Figma. Nenhuma aprovação normativa foi concedida.

@@ -79,7 +79,7 @@ flowchart TD
 | `S06` | registrar coleta, autoria, área e associação espacial aplicável | ◇ requisito candidato | ◐ `CollectionData` e relações no schema; ▧ ação de nova coleta |
 | `S07` | registrar dados exigidos pelo contrato científico aplicável | ◇ requisito candidato | ◐ quatro grupos sugeridos pelo schema, sem consumidor; ⚠ contrato científico |
 | `S08` | obter ou associar diagnóstico IHFR pelo mecanismo aplicável | ◆ IHFR no ciclo; ⚠ mecanismo aberto | ◐ `IHFRDiagnosis` sem serviço, API ou interface consumidora localizada |
-| `S09` | consultar o resultado com origem e versão disponíveis | ◇ requisito candidato | △ consulta não localizada; apenas estrutura parcial no schema |
+| `S09` | consultar o resultado com origem e versão do algoritmo disponível | ◇ requisito candidato | △ consulta não localizada; apenas estrutura parcial no schema |
 | `S10` | visualizar mapa/resumo/histórico e retornar aos registros de origem | ◆ mapa no núcleo; ◇ acompanhamento candidato | ▧ mapa e histórico; ◐ dashboard; destinos parcialmente ausentes |
 
 ### Alternativas, exceções e separação de estados
@@ -306,7 +306,7 @@ flowchart TD
 | Atores | participante autorizado; processo de diagnóstico `NAO_ESPECIFICADO` |
 | Gatilho | coleta possui dados aplicáveis ou existe diagnóstico aceito para associação |
 | Precondições | coleta e área existentes; dados e contrato científicos aplicáveis; acesso cabível |
-| Pós-condições | diagnóstico associado à coleta e, por ela, à área; versão preservada quando disponível; resultado consultável |
+| Pós-condições | diagnóstico associado à coleta e, por ela, à área; versão do algoritmo preservada quando disponível; resultado consultável |
 | Requisitos relacionados | `CF-PRD-FR-008`, `CF-PRD-FR-009`, `CF-PRD-FR-011`, `CF-PRD-FR-012`; `CF-PRD-NFR-001`, `CF-PRD-NFR-002`, `CF-PRD-NFR-003`, `CF-PRD-NFR-004`, `CF-PRD-NFR-005`, `CF-PRD-NFR-006` |
 | Casos de uso relacionados | `CF-UC-012`, `CF-UC-013` |
 | Classes/models relacionados | `CF-CLS-005` `CollectionArea`; `CF-CLS-006` `CollectionData`; `CF-CLS-007` `IHFRDiagnosis`; `CF-CLS-015` e `CF-CLS-016` apenas como enums técnicos não validados cientificamente |
@@ -322,9 +322,9 @@ flowchart TD
     S01["S01 Selecionar coleta com dados aplicáveis"] --> S02["S02 Solicitar, obter, registrar ou associar diagnóstico"]
     S02 --> S03["S03 Usar mecanismo aplicável futuro"]
     S03 --> S04["S04 Associar diagnóstico à coleta e área"]
-    S04 --> D01{"D01 Versão científica disponível?"}
-    D01 -- Sim --> S05["S05 Preservar versão disponível"]
-    D01 -- Não --> S06["S06 Prosseguir sem versão disponível"]
+    S04 --> D01{"D01 Versão do algoritmo disponível?"}
+    D01 -- Sim --> S05["S05 Preservar versão do algoritmo"]
+    D01 -- Não --> S06["S06 Prosseguir sem inventar versão"]
     S05 --> S07["S07 Disponibilizar resultado"]
     S06 --> S07
     S07 --> S08["S08 Consultar resultado e origem"]
@@ -338,15 +338,16 @@ flowchart TD
 | `S02` | solicitar, obter, registrar ou associar diagnóstico | ◇ requisito candidato; ⚠ forma de produção aberta | △ nenhum fluxo localizado |
 | `S03` | usar o mecanismo que vier a ser decidido | ⚠ `CF-PD-005` | △ mecanismo `NAO_ESPECIFICADO` |
 | `S04` | associar diagnóstico à coleta e, por ela, à área | ◇ requisito candidato | ◐ `IHFRDiagnosis.collectionDataId` obrigatório |
-| `D01`/`S05` | preservar versão científica quando disponível | ◇ requisito candidato | ◐ `algorithmVersion` existe no schema, mas não aprova semântica nem valor |
+| `D01`/`S05` | preservar a versão do algoritmo disponível | ◇ requisito candidato | ◐ `algorithmVersion` existe no schema, mas não aprova semântica nem valor; versão do contrato científico não existe |
 | `S06` | prosseguir sem inventar versão quando ela não estiver disponível | △ limite da evidência | △ tratamento específico não localizado |
 | `S07` | disponibilizar resultado associado | ◇ requisito candidato | ◐ campos técnicos no schema; contrato científico não aprovado |
-| `S08` | consultar resultado, coleta, área e versão disponível | ◇ requisito candidato | △ comportamento de consulta não localizado |
+| `S08` | consultar resultado, coleta, área e versão do algoritmo disponível | ◇ requisito candidato | △ comportamento de consulta não localizado |
 
 ### Alternativas, exceções e separação de estados
 
 - `S02` mantém todas as formas plausíveis abertas; nenhuma é escolhida ou privilegiada.
 - A ausência de versão não autoriza preenchimento inventado; o tratamento futuro permanece `NAO_ESPECIFICADO`.
+- A cadeia ampliada `coleta → versão do contrato científico → versão do algoritmo → diagnóstico`, proposta em H08, não está integralmente implementada nem aprovada. O fluxo atual documenta apenas coleta → diagnóstico e a versão de algoritmo armazenada no diagnóstico; a versão do contrato permanece em `CF-PD-005` e `CF-Q-011`.
 - Comportamento candidato: diagnóstico rastreável e consultável. Implementação atual: model parcial sem produção ou consulta conectada.
 
 ## `CF-PFLOW-007` — Acompanhamento territorial, resumo e histórico
@@ -446,7 +447,7 @@ Cobertura validável: os 15 requisitos funcionais, os 6 não funcionais e os 15 
 |---|---|---|
 | `CF-PD-002` | `CF-PFLOW-003` e ciclo principal | criação, entrada, convite/código, aprovação, múltiplos laboratórios, saída e transferência |
 | `CF-PD-003` | `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-007` e ciclo principal | dados mínimos, estados, edição, exclusão, eventos, resumo e detalhes cartográficos |
-| `CF-PD-005` | `CF-PFLOW-005`, `CF-PFLOW-006`, `CF-PFLOW-007` e ciclo principal | contrato científico, forma de produção, conteúdo, qualidade, validação e versão do IHFR |
+| `CF-PD-005` | `CF-PFLOW-005`, `CF-PFLOW-006`, `CF-PFLOW-007` e ciclo principal | contrato científico, forma de produção, conteúdo, qualidade, validação, versão do contrato, versão do algoritmo e relação entre ambas |
 | `CF-PD-006` | todos os fluxos autenticados | papéis, permissões, propriedade, autoria detalhada, isolamento e privacidade |
 | `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-007` | base, visualização, biblioteca e arquitetura cartográfica; nenhuma selecionada |
 | `TD-009`, `TD-012` | `CF-PFLOW-006` | eventual Python e integração; não determinam a forma de produção do IHFR |
