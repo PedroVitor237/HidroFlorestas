@@ -1,0 +1,144 @@
+@startuml RDM-01
+title RDM-01 — Modelo relacional de dados Code-First
+hide methods
+hide stereotypes
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+entity "User" as User {
+  * id : String <<PK>>
+  --
+  email : String <<UK>>
+  firstName : String
+  lastName : String
+  password : String
+  role : UserRole
+  image : String
+  status : UserStatus
+  createdAt : DateTime
+  updatedAt : DateTime
+  isAdmin : Boolean
+}
+
+entity "Coordinates" as Coordinates {
+  * id : String <<PK>>
+  --
+  latitude : String
+  longitude : String
+}
+
+entity "LaboratoryRoom" as LaboratoryRoom {
+  * id : String <<PK>>
+  --
+  name : String
+  createdAt : DateTime
+  updatedAt : DateTime
+  userId : String <<FK>>
+  imageBanner : String
+  isActive : Boolean
+  accessCode : String
+}
+
+entity "ResearchersLinked" as ResearchersLinked {
+  * userId : String <<PK,FK>>
+  * laboratoryRoomId : String <<PK,FK>>
+}
+
+entity "CollectionArea" as CollectionArea {
+  * id : String <<PK>>
+  --
+  name : String
+  image : String [nullable]
+  createdAt : DateTime
+  updatedAt : DateTime
+  isActive : Boolean
+  userId : String <<FK>>
+  laboratoryRoomId : String <<FK>>
+  coordinatesId : String <<FK>>
+  municipality : String
+  state : String
+  cep : String
+  landType : LandType
+  descriptionLandType : String [nullable]
+}
+
+entity "CollectionData" as CollectionData {
+  * id : String <<PK>>
+  --
+  createdAt : DateTime
+  updatedAt : DateTime
+  collectionAreaId : String <<FK>>
+  userId : String <<FK>>
+  observations : String [nullable]
+}
+
+entity "IHFRDiagnosis" as IHFRDiagnosis {
+  * id : String <<PK>>
+  --
+  collectionDataId : String <<FK>>
+  ihfrScore : Float
+  ihfrClass : IHFRClass
+  waterScore : Float
+  soilScore : Float
+  vegetationScore : Float
+  territoryScore : Float
+  dataQuality : LevelBasicDefault
+  algorithmVersion : String
+  explanationAI : String [nullable]
+}
+
+entity "WaterData" as WaterData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String <<FK,UK>>
+  waterSourceType : WaterSourceType
+  hasSpring : Boolean
+  wellDepth_m : Float [nullable]
+  waterAvailability : WaterAvailability
+  salinityIndicator : SalinityIndicator [nullable]
+}
+
+entity "SoilData" as SoilData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String <<FK,UK>>
+  soilTexture : SoilTexture
+  infiltrationRate_mm_h : Float
+  compactionLevel : LevelBasicDefault
+  erosionSigns : ErosionSigns
+  soilExposedPercent : Float [nullable]
+}
+
+entity "VegetationData" as VegetationData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String <<FK,UK>>
+  vegetationCoverPercent : Float
+  fragmentationLevel : LevelBasicDefault
+  hasRiparian_app : Boolean [nullable]
+  landscapeDegradation : LevelBasicDefault
+}
+
+entity "TerrainData" as TerrainData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String <<FK,UK>>
+  drainage_density : Float [nullable]
+  elevation_m : Float [nullable]
+  slopePercent : Float [nullable]
+}
+
+User ||--o{ LaboratoryRoom : userId
+User ||--o{ ResearchersLinked : userId
+LaboratoryRoom ||--o{ ResearchersLinked : laboratoryRoomId
+User ||--o{ CollectionArea : userId
+Coordinates ||--o{ CollectionArea : coordinatesId
+LaboratoryRoom ||--o{ CollectionArea : laboratoryRoomId
+User ||--o{ CollectionData : userId
+CollectionArea ||--o{ CollectionData : collectionAreaId
+CollectionData ||--o{ IHFRDiagnosis : collectionDataId
+CollectionData ||--o| WaterData : collectionDataId UK
+CollectionData ||--o| SoilData : collectionDataId UK
+CollectionData ||--o| VegetationData : collectionDataId UK
+CollectionData ||--o| TerrainData : collectionDataId UK
+@enduml
