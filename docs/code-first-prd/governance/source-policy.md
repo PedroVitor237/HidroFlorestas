@@ -6,19 +6,20 @@
 
 ## Princípio
 
-Autoridade sobre intenção e evidência sobre implementação são dimensões independentes. O código é a fonte inicial principal para reconstruir o produto que está sendo desenvolvido, mas nenhuma fonte pode ter sua autoridade extrapolada para outro assunto e nenhuma inferência pode ser promovida silenciosamente a fato, decisão ou requisito.
+Autoridade sobre intenção e evidência sobre implementação são dimensões independentes. A hierarquia abaixo orienta a etapa de implementação sem promover o pacote Code-First, o código ou a documentação histórica além de seus estados registrados. Nenhuma fonte pode ter sua autoridade extrapolada para outro assunto e nenhuma inferência pode ser promovida silenciosamente a fato, decisão ou requisito.
 
 ## Hierarquia
 
 | Ordem | Fonte | Uso autorizado | Limite |
 |---|---|---|---|
-| 1 | Decisão explicitamente aprovada pela autoridade competente | Intenção pretendida no assunto aprovado. | Exige origem e autoridade identificadas; não prova implementação. |
-| 2 | Código conectado e verificável | Estado implementado observável e origem de hipóteses de intenção explicitamente classificadas. | Não prova que o comportamento é desejado ou aprovado. |
-| 3 | Schema, migration, configuração e testes | Evidência técnica conforme o alcance de cada artefato. | Schema não aprova domínio; migration local ignorada não é artefato versionado; teste prova somente o cenário executado. |
-| 4 | Figma classificado | Intenção de UX conforme estado e aprovação identificados. | Artefato não classificado não possui autoridade normativa. |
-| 5 | Contexto geral permitido | Identidade e propósito geral do HidroFlorestas. | Nunca fundamenta requisito detalhado, regra científica ou arquitetura. |
-| 6 | Proposta, comentário, mock ou inferência | Informação não normativa para análise e perguntas. | Não pode ser apresentada como decisão, capacidade real ou requisito. |
-| 7 | Fonte excluída | Nenhum uso permitido nesta iniciativa. | Não pode fundamentar conteúdo direta ou indiretamente. |
+| 1 | Decisões atuais explicitamente confirmadas pela autoridade competente | Intenção pretendida no assunto e no recorte aprovados. | Exigem origem registrada; não provam implementação nem se estendem a assuntos não decididos. |
+| 2 | Intenção registrada no PRD Code-First | Visão, requisitos candidatos, backlog e rastreabilidade para especificar a funcionalidade. | Cada afirmação conserva sua classificação e estado; o pacote em revisão não adquire aprovação normativa por uso na implementação. |
+| 3 | Código, schema, migrations, testes e configurações conectados e verificáveis | Baseline implementado e evidência técnica conforme o alcance de cada artefato. | Não provam intenção; schema não aprova domínio, migration local ignorada não é artefato versionado e teste prova somente o cenário executado. |
+| 4 | Decisões técnicas registradas | Direção técnica conforme os estados decisório e de implementação de cada entrada. | Uma decisão relatada, proposta ou em avaliação não pode ser promovida por recorrência ou por aderência parcial do código. |
+| 5 | Documentação antiga | Contexto histórico, proposta ou origem de perguntas para a entrega. | Não se torna intenção atual nem requisito; `docs/raw/**` permanece imutável e exige classificação e autoridade específicas ao assunto. |
+| 6 | Referência visual classificada | Apoio de UX conforme origem, estado e aprovação registrados. | Artefato não classificado não possui autoridade normativa; Figma é complementar e opcional no estado atual. |
+| 7 | Proposta, comentário, mock ou inferência | Informação não normativa para análise e perguntas. | Não pode ser apresentada como decisão, capacidade real ou requisito. |
+| 8 | Fonte expressamente excluída pela tarefa | Nenhum uso na execução correspondente. | Não pode fundamentar conteúdo direta ou indiretamente naquele recorte. |
 
 ## Eixo 1 — estado da decisão
 
@@ -134,9 +135,9 @@ Mecanismos como redaction de hash, rotação JWT, CSRF, rate limiting, migration
 
 ## Fontes permitidas e excluídas
 
-As fontes permitidas são código e configurações rastreados, `package.json`, `package-lock.json`, `prisma/schema.prisma`, o estado ignorado da migration local, `TECH_DECISIONS.md`, contexto geral limitado de `PROJECT_CONTEXT.md`, governança global apenas para controle de autoridade e estado, o relato da equipe apresentado na revisão humana da iniciativa em 2026-08-27 com os limites já registrados e o anexo `obs-prd-hidroflorestas-formal.md` verificado em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md). Como o anexo não identifica autor, função ou autoridade, suas direções usam `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE` e não podem ser promovidas a decisão aprovada.
+As fontes permitidas para a etapa de implementação são decisões atuais com origem registrada, o pacote Code-First conforme a classificação de cada afirmação, código e configurações rastreados, `package.json`, `package-lock.json`, `prisma/schema.prisma`, o estado ignorado da migration local, `TECH_DECISIONS.md`, contexto geral limitado de `PROJECT_CONTEXT.md` e governança global para autoridade e estado. O relato da equipe apresentado na revisão humana de 2026-08-27 e o anexo `obs-prd-hidroflorestas-formal.md`, verificado em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md), preservam os limites já registrados. Como o anexo não identifica autor, função ou autoridade, suas direções continuam `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE` e não aprovam requisitos.
 
-São `FONTE_EXCLUIDA`: `docs/raw/**`, `docs/governance/TRACEABILITY_MATRIX.md`, relatórios derivados do corpus histórico, planos de auditorias anteriores como fonte de conteúdo, conclusões exclusivamente históricas, texto comercial como prova funcional, internet e fontes externas. O relatório da Etapa 8 serve apenas para confirmar estado e ponto de parada, nunca para conteúdo de produto.
+Documentação anterior, inclusive `docs/raw/**`, relatórios e planos de auditorias, pode ser consultada somente como contexto histórico, proposta ou origem de perguntas quando a tarefa permitir. `docs/raw/**` permanece imutável e não pode fundamentar intenção atual sem confirmação pela autoridade aplicável. `docs/governance/TRACEABILITY_MATRIX.md` não possui autoridade científica, funcional ou técnica; texto comercial não prova capacidade. Internet, fontes externas e qualquer fonte expressamente excluída pela tarefa permanecem `FONTE_EXCLUIDA` no respectivo recorte.
 
 ## Protocolo para divergências
 

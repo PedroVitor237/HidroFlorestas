@@ -80,8 +80,11 @@ Assim, estado implementado e estado pretendido permanecem em eixos independentes
 | [`diagrams/plantuml/relational-data-model.puml`](diagrams/plantuml/relational-data-model.puml) | `EM_REVISAO` | Representação PlantUML equivalente ao Mermaid do modelo relacional. |
 | [`specifications/product-flows.md`](specifications/product-flows.md) | `EM_REVISAO` | Especificação textual dos sete fluxos do produto, com Mermaid, rastreabilidade e separação entre comportamento candidato e implementação atual. |
 | [`diagrams/plantuml/product-flows.puml`](diagrams/plantuml/product-flows.puml) | `EM_REVISAO` | Sete diagramas de atividade PlantUML semanticamente equivalentes aos fluxos Mermaid. |
+| [`implementation/`](implementation/) | `EM_EVOLUCAO` | Plano global mínimo e backlog de entregas para orientar a implementação por funcionalidade. |
 
 O PRD central apresenta visão, problema, usuários, jornada, escopo e critérios de sucesso. O catálogo de requisitos é a referência detalhada de cada requisito candidato, a especificação de casos de uso detalha atores e interações, o diagrama de classes registra o modelo observável e a especificação de fluxos detalha etapas, alternativas sustentadas e relações. As visões Mermaid possuem PlantUML equivalente. Esses documentos integram o mesmo pacote, não possuem aprovação normativa e não transformam implementação observada em comportamento ou domínio aprovado.
+
+O pacote Code-First mantém a visão global, a intenção de produto, o backlog e a rastreabilidade. As specs, os planos e as tarefas executáveis de cada funcionalidade ficam em `specs/<feature>/**`; o pacote será atualizado de forma evolutiva conforme cada entrega produzir novas evidências e decisões confirmadas.
 
 ## Representações do pacote
 

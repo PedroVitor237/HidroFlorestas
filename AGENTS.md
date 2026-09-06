@@ -7,6 +7,14 @@
 - Em tarefas extensas ou transversais, crie e mantenha um plano conforme [PLANS.md](PLANS.md).
 - Registre o estado inicial do repositório e preserve alterações preexistentes, inclusive as não relacionadas à tarefa. Não as reverta, reformate nem incorpore sem autorização.
 
+## Implementação por funcionalidade
+
+- A etapa atual é orientada a entregas implementáveis. Use o Spec Kit para criar a spec, o plano e as tarefas de cada funcionalidade em `specs/<feature>/**`, seguindo os comandos e formatos das skills `speckit-*` efetivamente instaladas em `.agents/skills/`.
+- Aplique a [constituição do Spec Kit](.specify/memory/constitution.md) e use o [PRD Code-First](docs/code-first-prd/README.md) para visão global, intenção de produto, backlog e rastreabilidade.
+- Consulte documentação antiga apenas como contexto, proposta ou origem de perguntas, preservando sua classificação e sem promovê-la automaticamente a intenção atual.
+- Gates e pendências de auditorias documentais históricas não bloqueiam automaticamente uma funcionalidade atual; trate somente as dependências materiais ao recorte da entrega, sem alterar silenciosamente intenção científica, de domínio ou de produto.
+- Preserve as restrições documentais e os limites de escopo definidos pela tarefa em execução. Não crie `TASKS.md` global nem artefatos duplicados em OpenSpec.
+
 ## Fontes e evidências
 
 - Aplique a hierarquia e a autoridade específica por assunto definidas em [docs/governance/SOURCE_AUTHORITY.md](docs/governance/SOURCE_AUTHORITY.md).
