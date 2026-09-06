@@ -69,7 +69,8 @@ sequência começa por acesso autenticado seguro e preserva o recorte confirmado
 
 ### Trilha B — preparação da entrega seguinte
 
-O segundo integrante revisa rastreabilidade, critérios e riscos em arquivos não compartilhados.
+Um integrante da Trilha B revisa rastreabilidade, critérios e riscos em arquivos não
+compartilhados.
 Após a estabilização do contrato de autenticação, pode iniciar a spec da criação mínima de
 laboratório. Não deve implementar laboratório contra contrato instável nem editar simultaneamente
 schema, autenticação, configuração global ou componentes compartilhados pela Trilha A.
@@ -78,8 +79,9 @@ schema, autenticação, configuração global ou componentes compartilhados pela
 
 - Usar uma branch e uma spec por funcionalidade; nomes de branch e diretório de spec devem ser
   curtos, em kebab-case, e rastreáveis entre si.
-- Criar a branch a partir de `development` limpa e atual. Um worktree separado é opcional para o
-  segundo integrante e deve apontar para outra branch, sem compartilhar arquivos em edição.
+- Criar a branch a partir de `development` limpa e atual. Quando houver trabalho paralelo, um
+  worktree separado é opcional e deve apontar para outra branch, sem compartilhar arquivos em
+  edição.
 - Antes de começar, registrar branch, HEAD, upstream, worktrees e alterações preexistentes.
 - Integrar por PR pequeno em `development`, com revisão e validações do recorte; atualizar a branch
   com frequência para reduzir divergência.
@@ -121,22 +123,11 @@ quando ordem, dependências ou estado mudarem; e ajustar o pacote Code-First afe
 evidências ou decisões confirmadas. Registros globais só mudam quando aplicáveis e autorizados.
 Preservar `docs/raw/**`, o histórico e as classificações existentes.
 
-## Guia curto para o segundo integrante
+## Guia para desenvolvedores
 
-1. Receba uma feature com recorte confirmado ou escolha o próximo item elegível no
-   [`backlog.md`](backlog.md), sem antecipar dependências abertas.
-2. Parta de `development` limpa e atual; crie uma branch própria ou um worktree ligado a outra
-   branch e registre o baseline.
-3. Consulte o [PRD Code-First](../README.md), a
-   [constituição](../../../.specify/memory/constitution.md) e `specs/<feature>/**`.
-4. Leia e siga a skill `speckit-*` correspondente em `.agents/skills/`; prepare a branch
-   manualmente, pois a integração instalada não inclui criação automática de branch.
-5. Localize comandos reais em `package.json`, nos artefatos da feature e na configuração existente.
-   Hoje há `lint` e `build`, mas nenhum script `test`; não invente nem instale um comando para
-   completar um gate.
-6. Registre dúvidas na spec ou como pendência classificada, com fonte e impacto; não decida por
-   inferência.
-7. Atualize a documentação afetada após validar a entrega e entregue um PR pequeno com diff,
-   comandos, resultados, riscos e limitações.
-8. Não edite simultaneamente schema, autenticação, configuração global ou componentes
-   compartilhados; combine a propriedade desses caminhos antes de iniciar.
+O [guia prático de desenvolvimento](developer-guide.md) orienta a preparação da máquina, a escolha
+coordenada de trabalho e o ciclo completo de especificação, implementação, validação e entrega.
+Cada feature deve partir de `development` limpa e atual, usar branch e spec próprias e preservar o
+baseline e as alterações existentes. A equipe deve combinar previamente a propriedade de schema,
+autenticação, configuração global e componentes compartilhados, registrar dúvidas com fonte e
+impacto e integrar por PR pequeno revisado.
