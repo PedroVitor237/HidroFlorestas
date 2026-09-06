@@ -1,7 +1,7 @@
 # PRD Code-First
 
 - **Nome da iniciativa:** `PRD Code-First`
-- **Natureza:** iniciativa paralela, analítica e não canônica
+- **Natureza:** iniciativa paralela, analítica
 - **Estado da iniciativa:** `FASE_1_AMPLIADA_CONCLUIDA_EM_REVISAO`
 - **Estado dos documentos desta base:** `EM_REVISAO`
 - **Estado do PRD:** `EM_REVISAO`
