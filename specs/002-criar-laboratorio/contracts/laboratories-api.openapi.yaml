@@ -1,0 +1,70 @@
+openapi: 3.1.0
+info: { title: HidroFlorestas Laboratories API, version: 0.1.0 }
+paths:
+  /api/laboratories:
+    get:
+      summary: List accessible laboratories
+      responses:
+        '200':
+          description: Accessible laboratories
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [success, laboratories]
+                properties:
+                  success: { type: boolean, const: true }
+                  laboratories: { type: array, maxItems: 5, items: { $ref: '#/components/schemas/PublicLaboratory' } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      summary: Create a laboratory for the authenticated principal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [name]
+              properties: { name: { type: string, minLength: 1, maxLength: 100 } }
+      responses:
+        '201':
+          description: Laboratory and initial membership created atomically
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [success, laboratory]
+                properties:
+                  success: { type: boolean, const: true }
+                  laboratory: { $ref: '#/components/schemas/PublicLaboratory' }
+        '400': { $ref: '#/components/responses/InvalidRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+components:
+  schemas:
+    PublicLaboratory:
+      type: object
+      additionalProperties: false
+      required: [name, createdAt, status]
+      properties:
+        name: { type: string }
+        createdAt: { type: string, format: date-time }
+        status: { type: string, enum: [ACTIVE, INACTIVE] }
+    Failure:
+      type: object
+      additionalProperties: false
+      required: [success, code, message]
+      properties:
+        success: { type: boolean, const: false }
+        code: { type: string }
+        message: { type: string }
+  responses:
+    InvalidRequest: { description: Invalid allowlisted input, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    Unauthenticated: { description: Session is not authoritative, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    Conflict: { description: Limit or concurrency conflict, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    InternalError: { description: Controlled internal failure, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
