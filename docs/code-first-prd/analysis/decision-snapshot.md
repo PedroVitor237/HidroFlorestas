@@ -12,7 +12,9 @@
 
 ## Decisões operacionais confirmadas para a implementação
 
-As decisões abaixo foram confirmadas pela equipe na solicitação aprovada do segundo checkpoint preparatório em 2026-09-06. Elas governam o recorte indicado, sem alterar os estados históricos de `TD-001` a `TD-014` e sem antecipar detalhes que pertencem à futura spec.
+As decisões abaixo foram confirmadas pela equipe nas solicitações aprovadas dos checkpoints de
+2026-09-06 e 2026-09-07. Elas governam somente os recortes indicados, sem alterar os estados
+históricos de `TD-001` a `TD-014` nem transformar decisões de uma feature em norma global.
 
 | ID | Decisão | Data | Origem | Limites | Classificação |
 |---|---|---|---|---|---|
@@ -20,6 +22,7 @@ As decisões abaixo foram confirmadas pela equipe na solicitação aprovada do s
 | `CF-DEL-001` | **Acesso autenticado seguro** é a primeira entrega: um usuário `ACTIVE` previamente cadastrado pode fazer login, restaurar a sessão, acessar rotas protegidas e encerrar a sessão sem exposição de senha ou campos privilegiados. | 2026-09-06 | seleção explícita da equipe na solicitação aprovada deste checkpoint | Exclui cadastro, recuperação ou troca de senha, administração de usuários, perfis avançados, laboratórios, alteração de schema, rate limiting e revisão geral de segurança; necessidade incontornável de schema deve ser apenas relatada. | `DECISAO_CONFIRMADA` |
 | `CF-OPS-001` | Spec Kit `v1.0.4`, integrado ao Codex por skills, é o fluxo principal de spec, plano, tarefas e implementação por funcionalidade. | 2026-09-06 | autorização explícita da equipe na solicitação aprovada deste checkpoint | Não cria automaticamente aprovação normativa do conteúdo gerado; cada artefato preserva fontes, estados e rastreabilidade. | `DECISAO_CONFIRMADA` |
 | `CF-OPS-002` | OpenSpec não será adotado nesta etapa e seus artefatos não serão duplicados. | 2026-09-06 | delimitação explícita da equipe na solicitação aprovada deste checkpoint | A decisão vale para a etapa atual e não registra rejeição técnica permanente. | `DECISAO_CONFIRMADA` |
+| `CF-TECH-001` | Para a feature `001-authenticated-access`, adotar JWT stateless HS256 de sete dias; cookie HTTP-only, SameSite=Lax, Path=/ e Secure em produção; `GET /api/auth/me`; proxy otimista; layout e operações server-side autoritativos; Playwright Chromium serial; banco separado com guard determinístico fail-closed; validação sintática de email; núcleo injetável com adapters Next.js finos; erros tipados no cliente; `AuthenticatedPrincipal` interno separado do DTO público; instalação e verificação explícitas do Chromium; e reconciliação documental antes da implementação. | 2026-09-07 | equipe do HidroFlorestas; aprovação explícita do pacote técnico da feature `001-authenticated-access` na solicitação deste checkpoint | Válida somente para esta feature; não constitui padrão global, não prova implementação e não amplia o escopo para cadastro, administração, schema, migrations, CI global, rate limiting, domínio ou atualização do Next.js. O risco residual de JWT copiado permanecer válido até expirar continua aceito no recorte. | `DECISAO_CONFIRMADA` |
 
 ## Itens
 
