@@ -32,7 +32,7 @@ test.describe("minimum laboratory creation", () => {
     const response = await responsePromise;
     expect(response.status()).toBe(201);
     const body = await response.json();
-    expect(body).toEqual({ success: true, laboratory: { name, createdAt: expect.any(String), status: "ACTIVE" } });
+    expect(body).toEqual({ success: true, laboratory: { id: expect.any(String), name, createdAt: expect.any(String), status: "ACTIVE", isOwner: true } });
     expect(JSON.stringify(body)).not.toContain("accessCode");
     await expect(page.getByRole("heading", { name })).toBeVisible();
     await page.reload();

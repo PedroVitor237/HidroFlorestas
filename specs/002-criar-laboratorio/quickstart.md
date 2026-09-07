@@ -51,3 +51,11 @@ Registrar cada gate com data, ambiente não sensível, resultado e limitação. 
 - Banco/migration/HTTP real: NOT RUN; a migration foi criada, mas não aplicada. Histórico remoto, duplicidades e destino precisam ser inspecionados antes de qualquer aplicação.
 - Navegador, responsividade e acessibilidade manual: NOT RUN; o fluxo autenticado persistente depende do banco isolado/migration para validação real.
 - TDD de T010: DEVIATION; os testes novos não foram observados falhando exclusivamente pela ausência da implementação. A primeira execução falhou por falta do Prisma Client gerado; após geração, os testes passaram. Não usar essa falha ambiental como evidência de TDD.
+## Validação da ampliação de configurações — 2026-09-07
+
+- `npm run test:unit`: aprovado, 8 arquivos de teste sem falhas.
+- `npm run test:integration`: aprovado, 20 testes em 6 suítes, incluindo detalhes, confirmação textual e bloqueio por dados dependentes.
+- `npx tsc --noEmit --incremental false`: aprovado.
+- `npm run build`: aprovado, incluindo `/api/laboratories/[laboratoryId]` e `/workspace`.
+- `git diff --check`: aprovado.
+- Navegador autenticado com banco isolado, rolagem da lista, foco e viewports: pendente; não havia ambiente isolado confirmado nesta execução.

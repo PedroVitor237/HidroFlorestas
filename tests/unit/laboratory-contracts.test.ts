@@ -12,10 +12,10 @@ describe("laboratory contracts", () => {
   });
 
   it("serializes the exact public allowlist", () => {
-    assert.deepEqual(serializePublicLaboratory({ name: "Lab", createdAt: new Date("2026-09-07T12:00:00Z"), isActive: true }), { name: "Lab", createdAt: "2026-09-07T12:00:00.000Z", status: "ACTIVE" });
+    assert.deepEqual(serializePublicLaboratory({ id: "lab-id", name: "Lab", createdAt: new Date("2026-09-07T12:00:00Z"), isActive: true, userId: "owner" }, "owner"), { id: "lab-id", name: "Lab", createdAt: "2026-09-07T12:00:00.000Z", status: "ACTIVE", isOwner: true });
   });
 
   it("rejects envelopes containing internal fields", () => {
-    assert.equal(parseLaboratoriesEnvelope({ success: true, laboratory: { name: "Lab", createdAt: "2026-09-07T12:00:00.000Z", status: "ACTIVE", accessCode: "secret" } }), null);
+    assert.equal(parseLaboratoriesEnvelope({ success: true, laboratory: { id: "lab-id", name: "Lab", createdAt: "2026-09-07T12:00:00.000Z", status: "ACTIVE", isOwner: true, accessCode: "secret" } }), null);
   });
 });

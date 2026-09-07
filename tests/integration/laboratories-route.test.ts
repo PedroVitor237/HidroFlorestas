@@ -5,7 +5,7 @@ import { createLaboratoriesHandlers } from "../../src/app/api/laboratories/route
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
 
 const principal = { id: "principal-id", firstName: "Ana", lastName: "Silva", image: "", isAdmin: false };
-const laboratory = { name: "Lab", createdAt: "2026-09-07T12:00:00.000Z", status: "ACTIVE" as const };
+const laboratory = { id: "lab-id", name: "Lab", createdAt: "2026-09-07T12:00:00.000Z", status: "ACTIVE" as const, isOwner: true };
 const request = (body: unknown) => new NextRequest("http://localhost/api/laboratories", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
 
 describe("/api/laboratories", () => {

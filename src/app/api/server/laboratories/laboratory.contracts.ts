@@ -1,7 +1,7 @@
 import type { LaboratoriesEnvelope, LaboratoryFailureCode, PublicLaboratoryDto } from "@/types/laboratory.type";
 
 export type CreateLaboratoryInput = { name: string };
-export type LaboratoryPublicSource = { name: string; createdAt: Date; isActive: boolean };
+export type LaboratoryPublicSource = { id: string; name: string; createdAt: Date; isActive: boolean; userId: string };
 
 export const LABORATORY_MESSAGES = {
   invalidRequest: "Informe um nome de laboratório válido.",
@@ -9,6 +9,10 @@ export const LABORATORY_MESSAGES = {
   limitReached: "Você já atingiu o limite de cinco laboratórios.",
   conflict: "Não foi possível concluir devido a uma atualização concorrente. Tente novamente.",
   internalError: "Não foi possível concluir a solicitação.",
+  forbidden: "Somente a pessoa responsável pode realizar esta ação.",
+  notFound: "Laboratório não encontrado.",
+  confirmationMismatch: "Digite exatamente o nome do laboratório para confirmar.",
+  laboratoryHasData: "O laboratório possui dados científicos e não pode ser excluído.",
 } as const;
 
 export function laboratoryFailure(
@@ -35,10 +39,19 @@ export function parseCreateLaboratoryInput(input: unknown):
   return { success: true, data: { name } };
 }
 
-export function serializePublicLaboratory(source: LaboratoryPublicSource): PublicLaboratoryDto {
+export function serializePublicLaboratory(source: LaboratoryPublicSource, viewerId: string): PublicLaboratoryDto {
   return {
+    id: source.id,
     name: source.name,
     createdAt: source.createdAt.toISOString(),
     status: source.isActive ? "ACTIVE" : "INACTIVE",
+    isOwner: source.userId === viewerId,
   };
+}
+
+export function parseRiskActionInput(input: unknown): { success: true; confirmationName: string } | { success: false } {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) return { success: false };
+  const value = input as Record<string, unknown>;
+  if (Object.keys(value).length !== 1 || typeof value.confirmationName !== "string") return { success: false };
+  return { success: true, confirmationName: value.confirmationName };
 }

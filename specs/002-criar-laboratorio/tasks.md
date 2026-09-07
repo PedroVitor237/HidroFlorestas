@@ -51,6 +51,15 @@
 - [X] T024 Reconsultar `origin/001-authenticated-access` sem merge/rebase e registrar risco de reconciliação em `specs/002-criar-laboratorio/plan.md`
 - [X] T025 Revisar diff exclusivo, `docs/raw/**`, segredos, tarefas e executar `git diff --check`
 
+## Phase 7: Configurações e ações de risco
+
+- [X] T026 [US3] Ampliar DTOs públicos e contratos de confirmação em `src/types/laboratory.type.ts` e `src/app/api/server/laboratories/laboratory.contracts.ts`
+- [X] T027 [US3] Implementar consulta protegida de membros e autorização de proprietário em `src/app/api/server/services/laboratories.service.ts`
+- [X] T028 [US3] Implementar GET/PATCH/DELETE protegidos em `src/app/api/laboratories/[laboratoryId]/route.ts`
+- [X] T029 [US3] Implementar popup, avatares por iniciais, rolagem e confirmações de risco em `src/components/workspace/laboratory-workspace.tsx`
+- [X] T030 [US3] Atualizar cobertura de contratos, serviço e handlers em `tests/unit/` e `tests/integration/`
+- [ ] T031 Validar typecheck, testes, build e comportamento visual do popup em `specs/002-criar-laboratorio/quickstart.md` (automação aprovada; navegador autenticado pendente)
+
 ## Dependencies
 
 ```text

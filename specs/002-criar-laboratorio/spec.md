@@ -109,7 +109,12 @@ Após a criação, a pessoa identifica claramente o laboratório como contexto d
 - **FR-011**: A ação de criação MUST prevenir submissão duplicada acidental enquanto uma solicitação estiver em andamento e MUST seguir a regra confirmada para duplicidade ou concorrência.
 - **FR-012**: A criação e a consulta MUST negar de forma controlada sessão ausente, inválida ou expirada e pessoa que deixou de ser elegível.
 - **FR-013**: A interface MUST ser utilizável por teclado, ter rótulos e foco perceptíveis, feedback compreensível e comportamento funcional em telas móveis e amplas.
-- **FR-014**: O produto MUST manter fora deste recorte ingresso por código, convites, aprovação e administração de participantes, transferência, saída, edição, arquivamento, exclusão, áreas, coletas, IHFR, mapas, dashboard/histórico persistentes, administração global e papéis avançados.
+- **FR-014**: O produto MUST manter fora deste recorte ingresso por código, convites, aprovação e administração de participantes, transferência, saída, edição, áreas, coletas, IHFR, mapas, dashboard/histórico persistentes, administração global e papéis avançados.
+- **FR-015**: Qualquer pessoa vinculada MUST poder abrir as informações do laboratório e consultar uma lista rolável de membros contendo somente nome e avatar neutro formado pelas iniciais.
+- **FR-016**: Somente a pessoa criadora MUST poder desativar ou excluir o laboratório; essa autorização MUST ser validada no servidor e não apenas ocultada na interface.
+- **FR-017**: Desativação e exclusão MUST exigir que a pessoa digite exatamente o nome atual do laboratório, com confirmação validada novamente no servidor.
+- **FR-018**: A exclusão MUST remover permanentemente o laboratório e seus vínculos em uma operação atômica, mas MUST ser recusada quando existirem áreas ou dados científicos dependentes.
+- **FR-019**: Um laboratório desativado MUST continuar visível com status inativo; esta entrega não inclui reativação.
 
 ### Key Entities
 
@@ -130,7 +135,7 @@ Após a criação, a pessoa identifica claramente o laboratório como contexto d
 
 - Cadastro, login, logout, reestruturação ou correções gerais da autenticação.
 - Entrada por código, convites, aprovação, listagem ou administração de participantes.
-- Transferência de responsabilidade, saída, remoção, edição, arquivamento, desativação ou exclusão de laboratório.
+- Transferência de responsabilidade, saída, remoção ou edição de membros, reativação e edição dos dados do laboratório.
 - Papéis avançados, administração global, áreas monitoradas, coletas, dados ambientais, IHFR, mapas, dashboard e histórico persistentes.
 - Rate limiting, revisão geral de segurança, redesign completo, novas dependências sem aprovação, mudanças científicas ou mudanças não relacionadas de schema/migrations.
 
@@ -161,3 +166,9 @@ Após a criação, a pessoa identifica claramente o laboratório como contexto d
 - **SC-006**: Todos os estados do fluxo — vazio, carregamento, sucesso e erro — são identificáveis e acionáveis por teclado em viewport móvel e ampla.
 - **SC-007**: Em 100% das respostas exercitadas, nenhum campo de identidade interna, relação ou metadado não aprovado é exposto.
 - **SC-008**: Em 100% dos testes no limite, uma pessoa com menos de cinco laboratórios acessíveis pode criar e uma pessoa com cinco recebe recusa controlada sem qualquer novo laboratório ou vínculo.
+- **SC-009**: Em 100% dos testes de autorização, membros consultam informações, mas somente a pessoa criadora consegue desativar ou excluir após confirmação textual exata.
+- **SC-010**: A lista de membros permanece utilizável com rolagem quando excede o espaço disponível e não expõe email, ID ou outros dados pessoais.
+
+## Amendment — Configurações do laboratório (2026-09-07)
+
+`DECISAO_CONFIRMADA`: a autoridade técnica desta sessão ampliou expressamente a IMP-002 para incluir popup de informações, lista rolável de membros, desativação e exclusão com confirmação textual no padrão GitHub. Esta decisão substitui apenas as exclusões de escopo conflitantes; as demais fronteiras permanecem.

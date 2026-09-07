@@ -9,9 +9,11 @@ import {
   FlaskConicalIcon,
   RefreshCw,
   SettingsIcon,
+  Trash2Icon,
   UsersIcon,
+  XIcon,
 } from "lucide-react";
-import { parseLaboratoriesEnvelope, type PublicLaboratoryDto } from "@/types/laboratory.type";
+import { parseLaboratoriesEnvelope, type LaboratoryDetailsDto, type PublicLaboratoryDto } from "@/types/laboratory.type";
 
 const CONNECTION_ERROR = "Não foi possível conectar ao servidor.";
 const RESPONSE_ERROR = "O servidor enviou uma resposta inválida.";
@@ -23,6 +25,11 @@ export function LaboratoryWorkspace() {
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [name, setName] = useState("");
+  const [selected, setSelected] = useState<PublicLaboratoryDto | null>(null);
+  const [details, setDetails] = useState<LaboratoryDetailsDto | null>(null);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [riskAction, setRiskAction] = useState<"DEACTIVATE" | "DELETE" | null>(null);
+  const [confirmationName, setConfirmationName] = useState("");
   const nameInput = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
@@ -49,6 +56,30 @@ export function LaboratoryWorkspace() {
       if (!response.ok || !result?.success || !("laboratory" in result)) { setError(result && !result.success ? result.message : RESPONSE_ERROR); return; }
       setName(""); setFeedback(`Laboratório “${result.laboratory.name}” criado com sucesso.`); await load();
     } catch { setError(CONNECTION_ERROR); } finally { setSubmitting(false); }
+  }
+
+  async function openSettings(laboratory: PublicLaboratoryDto) {
+    setSelected(laboratory); setDetails(null); setRiskAction(null); setConfirmationName(""); setError(null); setSettingsLoading(true);
+    try {
+      const response = await fetch(`/api/laboratories/${laboratory.id}`, { credentials: "include", cache: "no-store" });
+      const result = parseLaboratoriesEnvelope(await response.json());
+      if (!response.ok || !result?.success || !("details" in result)) setError(result && !result.success ? result.message : RESPONSE_ERROR);
+      else setDetails(result.details);
+    } catch { setError(CONNECTION_ERROR); } finally { setSettingsLoading(false); }
+  }
+
+  function closeSettings() { if (!settingsLoading) { setSelected(null); setDetails(null); setRiskAction(null); setConfirmationName(""); } }
+
+  async function executeRiskAction() {
+    if (!selected || !riskAction || confirmationName !== selected.name || settingsLoading) return;
+    setSettingsLoading(true); setError(null);
+    try {
+      const response = await fetch(`/api/laboratories/${selected.id}`, { method: riskAction === "DELETE" ? "DELETE" : "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirmationName }) });
+      const result = parseLaboratoriesEnvelope(await response.json());
+      if (!response.ok || !result?.success || !("action" in result)) { setError(result && !result.success ? result.message : RESPONSE_ERROR); return; }
+      setFeedback(riskAction === "DELETE" ? `Laboratório “${selected.name}” excluído.` : `Laboratório “${selected.name}” desativado.`);
+      setSelected(null); setDetails(null); setRiskAction(null); setConfirmationName(""); await load();
+    } catch { setError(CONNECTION_ERROR); } finally { setSettingsLoading(false); }
   }
 
   const atLimit = laboratories.length >= 5;
@@ -154,7 +185,7 @@ export function LaboratoryWorkspace() {
                         </div>
                         <div className="min-w-0">
                           <span className="text-xs font-bold uppercase tracking-widest text-blue-600">Laboratório IHFR</span>
-                          <h3 className="mt-2 break-words text-3xl font-black text-slate-800 sm:text-4xl">{laboratory.name}</h3>
+                          <h3 style={{fontSize: 24}} className="mt-2 wrap-break-word text-[20px] font-black text-slate-800 sm:text-4xl">{laboratory.name}</h3>
                         </div>
                       </div>
                     </div>
@@ -163,7 +194,7 @@ export function LaboratoryWorkspace() {
                       <div className="rounded-2xl bg-slate-100 p-6">
                         <CalendarIcon aria-hidden="true" className="text-blue-600" />
                         <p className="mt-4 text-sm text-slate-500">Criado em</p>
-                        <p className="mt-1 text-2xl font-bold text-slate-800">
+                        <p className="mt-1 text-[20px] font-bold text-slate-800">
                           {new Intl.DateTimeFormat("pt-BR").format(new Date(laboratory.createdAt))}
                         </p>
                       </div>
@@ -178,7 +209,7 @@ export function LaboratoryWorkspace() {
                   </div>
 
                   <div className="mt-10 flex flex-col justify-end gap-4 sm:flex-row">
-                    <button disabled type="button" className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-slate-300 px-7 py-4 font-semibold text-slate-400" title="Disponível em uma próxima etapa">
+                    <button type="button" onClick={() => void openSettings(laboratory)} className="flex items-center justify-center gap-3 rounded-2xl border border-slate-300 px-7 py-4 font-semibold transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
                       <SettingsIcon aria-hidden="true" size={20} />
                       Configurações
                     </button>
@@ -196,6 +227,26 @@ export function LaboratoryWorkspace() {
 
       {feedback && <p role="status" className="mt-5 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-800">{feedback}</p>}
       {error && <p role="alert" className="mt-5 rounded-xl bg-red-50 p-3 text-sm font-medium text-red-800">{error}</p>}
+
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeSettings(); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="settings-title" className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[30px] bg-white shadow-2xl">
+            <div className="sticky top-0 z-10 flex items-start justify-between border-b border-slate-200 bg-white px-6 py-5 sm:px-8">
+              <div><p className="text-xs font-bold uppercase tracking-widest text-blue-600">Configurações</p><h2 id="settings-title" className="mt-1 break-words text-2xl font-black text-slate-800">{selected.name}</h2></div>
+              <button type="button" onClick={closeSettings} aria-label="Fechar configurações" className="rounded-full p-2 text-slate-500 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-600"><XIcon aria-hidden="true" /></button>
+            </div>
+
+            <div className="space-y-7 p-6 sm:p-8">
+              {settingsLoading && !details ? <p role="status" className="text-slate-600">Carregando informações…</p> : details && <>
+                <div className="grid gap-4 sm:grid-cols-2"><div className="rounded-2xl bg-slate-100 p-5"><p className="text-sm text-slate-500">Criado em</p><p className="mt-1 font-bold text-slate-800">{new Intl.DateTimeFormat("pt-BR").format(new Date(details.createdAt))}</p></div><div className="rounded-2xl bg-slate-100 p-5"><p className="text-sm text-slate-500">Status</p><p className="mt-1 font-bold text-slate-800">{details.status === "ACTIVE" ? "Ativo" : "Inativo"}</p></div></div>
+                <div><div className="flex items-center justify-between"><h3 className="text-lg font-bold text-slate-800">Membros</h3><span className="text-sm text-slate-500">{details.members.length}</span></div><ul className="mt-3 max-h-56 space-y-2 overflow-y-auto rounded-2xl border border-slate-200 p-3">{details.members.map((member, index) => <li key={`${member.name}-${index}`} className="flex items-center gap-3 rounded-xl p-2 hover:bg-slate-50"><span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-200 font-bold text-slate-700">{member.initials}</span><span className="break-words font-medium text-slate-800">{member.name}</span></li>)}</ul></div>
+
+                {details.isOwner ? <div className="rounded-2xl border border-red-200 p-5"><h3 className="font-bold text-red-800">Zona de perigo</h3><p className="mt-1 text-sm text-slate-600">Estas ações só podem ser realizadas pela pessoa responsável.</p>{!riskAction ? <div className="mt-4 flex flex-col gap-3 sm:flex-row"><button type="button" disabled={details.status === "INACTIVE"} onClick={() => setRiskAction("DEACTIVATE")} className="rounded-xl border border-amber-500 px-4 py-3 font-bold text-amber-800 disabled:cursor-not-allowed disabled:opacity-50">Desativar laboratório</button><button type="button" onClick={() => setRiskAction("DELETE")} className="rounded-xl bg-red-700 px-4 py-3 font-bold text-white">Excluir laboratório</button></div> : <div className="mt-5 rounded-xl bg-red-50 p-4"><p className="text-sm text-red-900">Para {riskAction === "DELETE" ? "excluir permanentemente" : "desativar"}, digite <strong>{selected.name}</strong>.</p><label htmlFor="confirmation-name" className="mt-4 block text-sm font-semibold text-red-900">Nome do laboratório</label><input id="confirmation-name" value={confirmationName} onChange={(event) => setConfirmationName(event.target.value)} autoComplete="off" className="mt-2 w-full rounded-xl border border-red-300 bg-white px-4 py-3 text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"/><div className="mt-4 flex flex-col gap-3 sm:flex-row"><button type="button" onClick={() => { setRiskAction(null); setConfirmationName(""); }} className="rounded-xl border border-slate-300 px-4 py-3 font-semibold">Cancelar</button><button type="button" onClick={() => void executeRiskAction()} disabled={confirmationName !== selected.name || settingsLoading} className="rounded-xl bg-red-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-400">{settingsLoading ? "Processando…" : riskAction === "DELETE" ? "Excluir permanentemente" : "Desativar laboratório"}</button></div></div>}</div> : <p className="rounded-2xl bg-slate-100 p-4 text-sm text-slate-600">Somente a pessoa responsável pode alterar ou excluir este laboratório.</p>}
+              </>}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
