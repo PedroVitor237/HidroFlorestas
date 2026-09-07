@@ -1,39 +1,66 @@
-'use server';
-
 import { NextRequest, NextResponse } from "next/server";
 import auth from "../../server/services/auth.service";
+import type { SignInServiceResult } from "../../server/services/auth.service";
+import {
+    internalErrorFailure,
+    invalidCredentialsFailure,
+    invalidRequestFailure,
+    parseSignInInput,
+    serializePublicUser,
+    type SignInInput,
+} from "../../server/auth/auth.contracts";
+import {
+    AUTH_COOKIE_NAME,
+    getAuthCookieOptions,
+} from "../../server/auth/session";
 
-export async function POST(req: NextRequest) {
+type SignInHandlerDependencies = {
+    signIn: (input: SignInInput) => Promise<SignInServiceResult>;
+    nodeEnvironment?: string;
+};
 
-    try {
-        const body = await req.json();
-
-        const result = await auth.signIn(body.email, body.password);
-
-        if (!result.success) {
-            return NextResponse.json(result, { status: 401 });
+export function createSignInHandler(dependencies: SignInHandlerDependencies) {
+    return async function signInHandler(req: NextRequest) {
+        let body: unknown;
+        try {
+            body = await req.json();
+        } catch {
+            return NextResponse.json(invalidRequestFailure(), { status: 400 });
         }
 
-        const response = NextResponse.json({
-            success: true,
-            user: result.user
-        });
+        const parsed = parseSignInInput(body);
+        if (!parsed.success) {
+            return NextResponse.json(parsed.failure, { status: 400 });
+        }
 
-        response.cookies.set("auth_token", result.token as string, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7
-        });
+        try {
+            const result = await dependencies.signIn(parsed.data);
 
-        return response;
-    } catch (error) {
-        console.error("Erro ao processar a requisição de login");
-        console.error(error);
-        return NextResponse.json(
-            { success: false, message: "Ocorreu um erro inesperado em nossos servidores." },
-            { status: 500 }
-        );
-    }
+            if (!result.success) {
+                if (result.reason === "INVALID_CREDENTIALS") {
+                    return NextResponse.json(invalidCredentialsFailure(), { status: 401 });
+                }
+
+                return NextResponse.json(internalErrorFailure(), { status: 500 });
+            }
+
+            const response = NextResponse.json({
+                success: true as const,
+                user: serializePublicUser(result.user),
+            });
+            response.cookies.set(
+                AUTH_COOKIE_NAME,
+                result.token,
+                getAuthCookieOptions(dependencies.nodeEnvironment),
+            );
+            return response;
+        } catch {
+            return NextResponse.json(internalErrorFailure(), { status: 500 });
+        }
+    };
 }
+
+export const POST = createSignInHandler({
+    signIn: (input) => auth.signIn(input),
+    nodeEnvironment: process.env.NODE_ENV,
+});

@@ -27,10 +27,10 @@ priorizadas e acabamento. Cada tarefa contém o caminho exato afetado.
 **Purpose**: preparar somente a infraestrutura de testes prevista no plano, sem alterar schema,
 migrations, CI global ou dependências de produção.
 
-- [ ] T001 Adicionar somente `@playwright/test` às `devDependencies` e atualizar o lockfile correspondente em `package.json` e `package-lock.json`
-- [ ] T002 Registrar os scripts `test:fixtures:auth`, `test:unit`, `test:integration`, `test:e2e`, `test` e `typecheck` com os comandos definidos no quickstart em `package.json`
-- [ ] T003 Instalar Chromium com `npx playwright install chromium` e verificar a instalação por lançamento headless controlado com `chromium.launch()` e encerramento imediato, sem usar `--with-deps` como requisito geral
-- [ ] T004 [P] Configurar Playwright para `tests/e2e`, Chromium, `workers: 1`, `PLAYWRIGHT_BASE_URL` opcional e servidor local controlado em `playwright.config.ts`
+- [x] T001 Adicionar somente `@playwright/test` às `devDependencies` e atualizar o lockfile correspondente em `package.json` e `package-lock.json`
+- [x] T002 Registrar os scripts `test:fixtures:auth`, `test:unit`, `test:integration`, `test:e2e`, `test` e `typecheck` com os comandos definidos no quickstart em `package.json`
+- [x] T003 Instalar Chromium com `npx playwright install chromium` e verificar a instalação por lançamento headless controlado com `chromium.launch()` e encerramento imediato, sem usar `--with-deps` como requisito geral
+- [x] T004 [P] Configurar Playwright para `tests/e2e`, Chromium, `workers: 1`, `PLAYWRIGHT_BASE_URL` opcional e servidor local controlado em `playwright.config.ts`
 
 **Checkpoint**: runners e comandos mínimos definidos; nenhuma fixture ou implementação executada.
 
@@ -45,20 +45,20 @@ bloqueiam todas as histórias.
 
 ### Tests for the foundation
 
-- [ ] T005 [P] Escrever testes unitários inicialmente falhos para parser de entrada, `trim`, rejeição de chaves extras/whitespace, emails válidos e inválidos pela regra `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`, `400 INVALID_REQUEST` antes de consulta e serializer com saída exata `{ firstName, lastName, image }` sem campos proibidos em `tests/unit/auth-contracts.test.ts`
-- [ ] T006 [P] Escrever testes unitários inicialmente falhos para `JWT_SECRET` obrigatório, payload `{ userId }`, allowlist `HS256`, tokens válidos/adulterados/expirados e coerência entre criação e remoção do cookie de sete dias em `tests/unit/session.test.ts`
-- [ ] T007 [P] Escrever testes unitários inicialmente falhos do núcleo de autenticação com fakes manuais injetados para busca de usuário, comparação de senha e emissão/verificação de token, cobrindo cookie ausente, token inválido/expirado, payload inválido, usuário inexistente, `ACTIVE`, demais estados, falha de repositório e produção exata de `AuthenticatedPrincipal` em `tests/unit/auth-core.test.ts`
-- [ ] T008 [P] Escrever testes de integração inicialmente falhos do adapter `requireAuth` pelo harness de Next.js que controla leitura de cookie e captura do resultado sem banco real, cobrindo passagem do token ao núcleo, retorno do principal, falha controlada e ausência de autoridade no adapter em `tests/integration/auth-guard.test.ts`
-- [ ] T009 [P] Escrever testes unitários inicialmente falhos do guard da fixture para cada variável ausente, confirmação incorreta, URLs malformadas, URLs normalizadas iguais, proibição de fallback e combinação válida, comprovando recusa anterior a conexão ou escrita em `tests/unit/auth-fixture-guard.test.ts`
+- [x] T005 [P] Escrever testes unitários inicialmente falhos para parser de entrada, `trim`, rejeição de chaves extras/whitespace, emails válidos e inválidos pela regra `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`, `400 INVALID_REQUEST` antes de consulta e serializer com saída exata `{ firstName, lastName, image }` sem campos proibidos em `tests/unit/auth-contracts.test.ts`
+- [x] T006 [P] Escrever testes unitários inicialmente falhos para `JWT_SECRET` obrigatório, payload `{ userId }`, allowlist `HS256`, tokens válidos/adulterados/expirados e coerência entre criação e remoção do cookie de sete dias em `tests/unit/session.test.ts`
+- [x] T007 [P] Escrever testes unitários inicialmente falhos do núcleo de autenticação com fakes manuais injetados para busca de usuário, comparação de senha e emissão/verificação de token, cobrindo cookie ausente, token inválido/expirado, payload inválido, usuário inexistente, `ACTIVE`, demais estados, falha de repositório e produção exata de `AuthenticatedPrincipal` em `tests/unit/auth-core.test.ts`
+- [x] T008 [P] Escrever testes de integração inicialmente falhos do adapter `requireAuth` pelo harness de Next.js que controla leitura de cookie e captura do resultado sem banco real, cobrindo passagem do token ao núcleo, retorno do principal, falha controlada e ausência de autoridade no adapter em `tests/integration/auth-guard.test.ts`
+- [x] T009 [P] Escrever testes unitários inicialmente falhos do guard da fixture para cada variável ausente, confirmação incorreta, URLs malformadas, URLs normalizadas iguais, proibição de fallback e combinação válida, comprovando recusa anterior a conexão ou escrita em `tests/unit/auth-fixture-guard.test.ts`
 
 ### Implementation for the foundation
 
-- [ ] T010 Definir `PublicUserDto`, envelopes públicos de sucesso/falha e parser cliente do envelope tipado sem imports de Prisma em `src/types/auth.type.ts`
-- [ ] T011 Implementar parser runtime allowlisted com `trim` e validação sintática do email pela regra aprovada antes de consulta, além do serializer campo a campo para `PublicUserDto`, em `src/app/api/server/auth/auth.contracts.ts`
-- [ ] T012 [P] Centralizar nome, TTL, atributos de criação/remoção do cookie, leitura do segredo, emissão e verificação JWT fail-closed em `src/app/api/server/auth/session.ts`
-- [ ] T013 [P] Adicionar consultas Prisma com `select` explícito: credencial interna e identidade atual contendo somente `id`, `firstName`, `lastName`, `image`, `status` e `isAdmin`, sem devolver registros brutos aos handlers, em `src/app/api/server/services/users.service.ts`
-- [ ] T014 Criar o núcleo independente do Next.js com dependências injetáveis e `AuthenticatedPrincipal { id, firstName, lastName, image, isAdmin }` em `src/app/api/server/auth/auth.core.ts`, e tornar `src/app/api/server/middlewares/auth.middleware.ts` um adapter fino de `cookies()` que preserva `isAdmin` para `requireAdmin` sem expor o principal ao cliente
-- [ ] T015 [P] Criar fixture fictícia determinística em `tests/fixtures/auth-users.ts` que, antes de conectar ou escrever, exige `NODE_ENV=test`, `TEST_DATABASE_URL`, confirmação exata e URLs válidas/normalizadas diferentes; usa explicitamente `TEST_DATABASE_URL`; restringe setup/update/teardown aos quatro IDs e emails reservados; não usa fallback, `truncate` nem remoção sem filtro estrito; e restaura `ACTIVE` após a transição
+- [x] T010 Definir `PublicUserDto`, envelopes públicos de sucesso/falha e parser cliente do envelope tipado sem imports de Prisma em `src/types/auth.type.ts`
+- [x] T011 Implementar parser runtime allowlisted com `trim` e validação sintática do email pela regra aprovada antes de consulta, além do serializer campo a campo para `PublicUserDto`, em `src/app/api/server/auth/auth.contracts.ts`
+- [x] T012 [P] Centralizar nome, TTL, atributos de criação/remoção do cookie, leitura do segredo, emissão e verificação JWT fail-closed em `src/app/api/server/auth/session.ts`
+- [x] T013 [P] Adicionar consultas Prisma com `select` explícito: credencial interna e identidade atual contendo somente `id`, `firstName`, `lastName`, `image`, `status` e `isAdmin`, sem devolver registros brutos aos handlers, em `src/app/api/server/services/users.service.ts`
+- [x] T014 Criar o núcleo independente do Next.js com dependências injetáveis e `AuthenticatedPrincipal { id, firstName, lastName, image, isAdmin }` em `src/app/api/server/auth/auth.core.ts`, e tornar `src/app/api/server/middlewares/auth.middleware.ts` um adapter fino de `cookies()` que preserva `isAdmin` para `requireAdmin` sem expor o principal ao cliente
+- [x] T015 [P] Criar fixture fictícia determinística em `tests/fixtures/auth-users.ts` que, antes de conectar ou escrever, exige `NODE_ENV=test`, `TEST_DATABASE_URL`, confirmação exata e URLs válidas/normalizadas diferentes; usa explicitamente `TEST_DATABASE_URL`; restringe setup/update/teardown aos quatro IDs e emails reservados; não usa fallback, `truncate` nem remoção sem filtro estrito; e restaura `ACTIVE` após a transição
 
 **Checkpoint**: fundação testável pronta; presença de cookie ou estado React isolados continuam sem
 autoridade de segurança.
@@ -76,15 +76,15 @@ ao `/workspace`.
 
 ### Tests for User Story 1
 
-- [ ] T016 [P] [US1] Escrever testes unitários inicialmente falhos para usuário ausente, senha incorreta, comparação bcrypt, igualdade estrita `ACTIVE`, rejeição uniforme de `PENDING`/`BLOCKED`/`INACTIVE`, erro interno e retorno público do serviço em `tests/unit/auth-service.test.ts`
-- [ ] T017 [P] [US1] Escrever testes de integração inicialmente falhos do adapter fino `POST /api/auth/sign-in` pelo harness controlado, com request/cookie/response e dependências do núcleo injetadas, para JSON inválido, email sintaticamente inválido antes de consulta, credenciais válidas/inválidas, quatro estados, `400/401/500`, `Set-Cookie` e envelope sem campos proibidos em `tests/integration/auth-sign-in.test.ts`
+- [x] T016 [P] [US1] Escrever testes unitários inicialmente falhos para usuário ausente, senha incorreta, comparação bcrypt, igualdade estrita `ACTIVE`, rejeição uniforme de `PENDING`/`BLOCKED`/`INACTIVE`, erro interno e retorno público do serviço em `tests/unit/auth-service.test.ts`
+- [x] T017 [P] [US1] Escrever testes de integração inicialmente falhos do adapter fino `POST /api/auth/sign-in` pelo harness controlado, com request/cookie/response e dependências do núcleo injetadas, para JSON inválido, email sintaticamente inválido antes de consulta, credenciais válidas/inválidas, quatro estados, `400/401/500`, `Set-Cookie` e envelope sem campos proibidos em `tests/integration/auth-sign-in.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Refatorar login para receber entrada validada, comparar a senha com bcrypt, aceitar somente `status === "ACTIVE"`, emitir sessão após elegibilidade e retornar resultado discriminado com `PublicUserDto` em `src/app/api/server/services/auth.service.ts`
-- [ ] T019 [US1] Implementar o adapter fino `POST /api/auth/sign-in` com body `unknown`, chamada ao núcleo, adaptação de request/response/cookie, códigos `INVALID_REQUEST`/`INVALID_CREDENTIALS`/`INTERNAL_ERROR`, cookie somente no sucesso e `AuthSuccess` sem token em `src/app/api/auth/sign-in/route.ts`
-- [ ] T020 [US1] Migrar o estado para `PublicUserDto`, fazer parse do envelope tipado, decidir o fluxo de login por `code`, tratar `INVALID_CREDENTIALS`, usar `message` pública segura como fallback e navegar para `/workspace` somente após sucesso em `src/contexts/auth.context.tsx`
-- [ ] T021 [US1] Manter validação cliente apenas como conveniência e apresentar a falha controlada produzida pelo parser cliente, sem revelar estado de conta nem duplicar autoridade do servidor, em `src/app/login/page.tsx`
+- [x] T018 [US1] Refatorar login para receber entrada validada, comparar a senha com bcrypt, aceitar somente `status === "ACTIVE"`, emitir sessão após elegibilidade e retornar resultado discriminado com `PublicUserDto` em `src/app/api/server/services/auth.service.ts`
+- [x] T019 [US1] Implementar o adapter fino `POST /api/auth/sign-in` com body `unknown`, chamada ao núcleo, adaptação de request/response/cookie, códigos `INVALID_REQUEST`/`INVALID_CREDENTIALS`/`INTERNAL_ERROR`, cookie somente no sucesso e `AuthSuccess` sem token em `src/app/api/auth/sign-in/route.ts`
+- [x] T020 [US1] Migrar o estado para `PublicUserDto`, fazer parse do envelope tipado, decidir o fluxo de login por `code`, tratar `INVALID_CREDENTIALS`, usar `message` pública segura como fallback e navegar para `/workspace` somente após sucesso em `src/contexts/auth.context.tsx`
+- [x] T021 [US1] Manter validação cliente apenas como conveniência e apresentar a falha controlada produzida pelo parser cliente, sem revelar estado de conta nem duplicar autoridade do servidor, em `src/app/login/page.tsx`
 - [ ] T022 [US1] Implementar cenários Playwright por HTTP real de login `ACTIVE`, email sintaticamente inválido com `400`, credenciais bem formadas inválidas com `401`, demais estados, chegada ao `/workspace`, atributos do cookie e serialização exata de `user` em `tests/e2e/authenticated-access.spec.ts`
 
 **Checkpoint**: US1 entrega o MVP e pode ser validada isoladamente pela página de login.
@@ -101,15 +101,15 @@ recarregar as duas árvores privadas para cada estado de sessão e conta.
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escrever testes de integração inicialmente falhos do adapter fino `GET /api/auth/me` pelo harness controlado de request/cookie/response, sem banco real, para sessão válida, ausente, inválida, expirada, payload inválido, usuário inexistente, `ACTIVE → BLOCKED`, demais estados, falha interna, `no-store`, expiração do cookie e serialização do principal em DTO público exato em `tests/integration/auth-me.test.ts`
-- [ ] T024 [P] [US2] Escrever testes unitários inicialmente falhos do proxy para ausência de cookie nas duas árvores, passagem otimista de cookie arbitrário, acesso livre a `/login` e ausência de consulta a banco/autorização no proxy em `tests/unit/proxy.test.ts`
+- [x] T023 [P] [US2] Escrever testes de integração inicialmente falhos do adapter fino `GET /api/auth/me` pelo harness controlado de request/cookie/response, sem banco real, para sessão válida, ausente, inválida, expirada, payload inválido, usuário inexistente, `ACTIVE → BLOCKED`, demais estados, falha interna, `no-store`, expiração do cookie e serialização do principal em DTO público exato em `tests/integration/auth-me.test.ts`
+- [x] T024 [P] [US2] Escrever testes unitários inicialmente falhos do proxy para ausência de cookie nas duas árvores, passagem otimista de cookie arbitrário, acesso livre a `/login` e ausência de consulta a banco/autorização no proxy em `tests/unit/proxy.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T025 [P] [US2] Converter restauração para o adapter fino `GET /api/auth/me`, chamar o guard autoritativo, nunca devolver `AuthenticatedPrincipal` diretamente, serializar `PublicUserDto`, aplicar `Cache-Control: no-store` e expirar cookie obsoleto em `UNAUTHENTICATED` em `src/app/api/auth/me/route.ts`
-- [ ] T026 [P] [US2] Converter o layout privado em Server Component que valida a identidade atual antes de renderizar ou redireciona para `/login`, protegendo `/workspace/**` e `/dashboard/**` sem flash de conteúdo em `src/app/(private)/layout.tsx`
-- [ ] T027 [P] [US2] Limitar o proxy ao redirecionamento otimista quando o cookie estiver ausente nas duas árvores, sem banco, sem conceder acesso e sem afastar `/login` pela mera presença de cookie em `src/proxy.ts`
-- [ ] T028 [US2] Restaurar o contexto com `GET /api/auth/me`, fazer parse do envelope tipado, decidir por `UNAUTHENTICATED`, limpar somente o estado local sem logout recursivo, usar `message` pública segura como fallback e manter o contexto cliente sem autoridade em `src/contexts/auth.context.tsx`
+- [x] T025 [P] [US2] Converter restauração para o adapter fino `GET /api/auth/me`, chamar o guard autoritativo, nunca devolver `AuthenticatedPrincipal` diretamente, serializar `PublicUserDto`, aplicar `Cache-Control: no-store` e expirar cookie obsoleto em `UNAUTHENTICATED` em `src/app/api/auth/me/route.ts`
+- [x] T026 [P] [US2] Converter o layout privado em Server Component que valida a identidade atual antes de renderizar ou redireciona para `/login`, protegendo `/workspace/**` e `/dashboard/**` sem flash de conteúdo em `src/app/(private)/layout.tsx`
+- [x] T027 [P] [US2] Limitar o proxy ao redirecionamento otimista quando o cookie estiver ausente nas duas árvores, sem banco, sem conceder acesso e sem afastar `/login` pela mera presença de cookie em `src/proxy.ts`
+- [x] T028 [US2] Restaurar o contexto com `GET /api/auth/me`, fazer parse do envelope tipado, decidir por `UNAUTHENTICATED`, limpar somente o estado local sem logout recursivo, usar `message` pública segura como fallback e manter o contexto cliente sem autoridade em `src/contexts/auth.context.tsx`
 - [ ] T029 [US2] Acrescentar cenários Playwright serializados para reload de `/workspace`, acesso a `/dashboard`, cookie ausente/malformado/adulterado/expirado/órfão, usuário não `ACTIVE`, transição `ACTIVE → BLOCKED` e ausência de conteúdo protegido em `tests/e2e/authenticated-access.spec.ts`
 
 **Checkpoint**: US2 pode ser validada com sessões preparadas e protege as duas árvores antes da
@@ -127,13 +127,13 @@ recarregar e acessar diretamente as rotas protegidas; repetir também sem sessã
 
 ### Tests for User Story 3
 
-- [ ] T030 [US3] Escrever testes de integração inicialmente falhos do adapter fino `POST /api/auth/logout` pelo harness controlado de cookie/response para sessão válida, ausente, inválida e expirada, repetição idempotente, `200`, falha controlada, envelope público e remoção consistente do cookie em `tests/integration/auth-logout.test.ts`
+- [x] T030 [US3] Escrever testes de integração inicialmente falhos do adapter fino `POST /api/auth/logout` pelo harness controlado de cookie/response para sessão válida, ausente, inválida e expirada, repetição idempotente, `200`, falha controlada, envelope público e remoção consistente do cookie em `tests/integration/auth-logout.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T031 [P] [US3] Reutilizar a política compartilhada para expirar `auth_token` com o mesmo path, `maxAge: 0` e data passada, preservando logout idempotente e erro interno controlado em `src/app/api/auth/logout/route.ts`
-- [ ] T032 [P] [US3] Aguardar a resposta de logout, fazer parse do envelope tipado, decidir o fluxo por `code`/sucesso, usar `message` pública segura como fallback, limpar `PublicUserDto` somente após sucesso e usar `router.replace("/login")` + `router.refresh()` sem declarar sucesso em falha em `src/contexts/auth.context.tsx`
-- [ ] T033 [US3] Tornar `/logout` estável para repetição, apresentar o estado controlado recebido do contexto sem expor detalhes e evitar navegação prematura em `src/app/logout/page.tsx`
+- [x] T031 [P] [US3] Reutilizar a política compartilhada para expirar `auth_token` com o mesmo path, `maxAge: 0` e data passada, preservando logout idempotente e erro interno controlado em `src/app/api/auth/logout/route.ts`
+- [x] T032 [P] [US3] Aguardar a resposta de logout, fazer parse do envelope tipado, decidir o fluxo por `code`/sucesso, usar `message` pública segura como fallback, limpar `PublicUserDto` somente após sucesso e usar `router.replace("/login")` + `router.refresh()` sem declarar sucesso em falha em `src/contexts/auth.context.tsx`
+- [x] T033 [US3] Tornar `/logout` estável para repetição, apresentar o estado controlado recebido do contexto sem expor detalhes e evitar navegação prematura em `src/app/logout/page.tsx`
 - [ ] T034 [US3] Acrescentar cenários Playwright serializados de logout, voltar, reload, acesso direto a `/workspace` e `/dashboard`, repetição sem sessão e impossibilidade de restaurar acesso em `tests/e2e/authenticated-access.spec.ts`
 
 **Checkpoint**: ciclo da sessão completo; logout repetido permanece seguro e nenhuma rota privada
@@ -146,8 +146,8 @@ recarregar e acessar diretamente as rotas protegidas; repetir também sem sessã
 **Purpose**: executar a matriz integral, validar critérios de sucesso, atualizar somente a
 documentação diretamente afetada e revisar escopo/rastreabilidade.
 
-- [ ] T035 Executar `npm run test:unit`; exigir saída sem falhas e reconciliar os resultados de `tests/unit/auth-contracts.test.ts`, `tests/unit/session.test.ts`, `tests/unit/auth-core.test.ts`, `tests/unit/auth-service.test.ts`, `tests/unit/auth-fixture-guard.test.ts` e `tests/unit/proxy.test.ts` com `specs/001-authenticated-access/quickstart.md`
-- [ ] T036 Após T035, executar `npm run test:integration` em modo serial; exigir saída sem falhas e reconciliar `tests/integration/auth-sign-in.test.ts`, `tests/integration/auth-me.test.ts`, `tests/integration/auth-logout.test.ts` e `tests/integration/auth-guard.test.ts` com `specs/001-authenticated-access/quickstart.md`
+- [x] T035 Executar `npm run test:unit`; exigir saída sem falhas e reconciliar os resultados de `tests/unit/auth-contracts.test.ts`, `tests/unit/session.test.ts`, `tests/unit/auth-core.test.ts`, `tests/unit/auth-service.test.ts`, `tests/unit/auth-fixture-guard.test.ts` e `tests/unit/proxy.test.ts` com `specs/001-authenticated-access/quickstart.md`
+- [x] T036 Após T035, executar `npm run test:integration` em modo serial; exigir saída sem falhas e reconciliar `tests/integration/auth-sign-in.test.ts`, `tests/integration/auth-me.test.ts`, `tests/integration/auth-logout.test.ts` e `tests/integration/auth-guard.test.ts` com `specs/001-authenticated-access/quickstart.md`
 - [ ] T037 Após T036, executar `npm run lint`, `npm run typecheck` e `npm run build`; exigir código de saída zero nos três comandos e inspecionar qualquer diagnóstico desta feature somente em `package.json`, `package-lock.json`, `playwright.config.ts`, `src/types/auth.type.ts`, `src/app/api/server/auth/auth.contracts.ts`, `src/app/api/server/auth/auth.core.ts`, `src/app/api/server/auth/session.ts`, `src/app/api/server/services/auth.service.ts`, `src/app/api/server/services/users.service.ts`, `src/app/api/server/middlewares/auth.middleware.ts`, `src/app/api/auth/sign-in/route.ts`, `src/app/api/auth/me/route.ts`, `src/app/api/auth/logout/route.ts`, `src/app/(private)/layout.tsx`, `src/contexts/auth.context.tsx`, `src/app/login/page.tsx`, `src/app/logout/page.tsx`, `src/proxy.ts`, `tests/fixtures/auth-users.ts`, os seis arquivos exatos de T035, os quatro arquivos exatos de T036 e `tests/e2e/authenticated-access.spec.ts`
 - [ ] T038 Após T037 e o smoke de T003, confirmar visualmente que `TEST_DATABASE_URL` identifica o banco isolado; exigir sucesso do guard de T009/T015; executar setup allowlisted e `npm run test:e2e` em Chromium serial com `TEST_DATABASE_URL` fornecida ao processo filho como `DATABASE_URL`; e executar teardown em bloco `finally`, inclusive após falha, usando `tests/fixtures/auth-users.ts` e `tests/e2e/authenticated-access.spec.ts`
 - [ ] T039 Após T038, validar manualmente ausência de flash protegido, envelope/DTO em Network, atributos do cookie em HTTPS e navegação pós-logout, registrando resultados e limitações em `specs/001-authenticated-access/quickstart.md`

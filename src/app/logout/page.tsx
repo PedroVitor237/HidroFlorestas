@@ -1,21 +1,46 @@
-'use client'
+'use client';
+
 import Image from "next/image";
-import Logo from '@/assets/logo/logo.png'
+import { useCallback, useEffect, useState } from "react";
+
+import Logo from '@/assets/logo/logo.png';
 import { useAuth } from "@/contexts/auth.context";
-import { useEffect } from "react";
 
-export default function LoginPage() {
-
+export default function LogoutPage() {
     const { logout } = useAuth();
+    const [errorMessage, setErrorMessage] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    const performLogout = useCallback(async () => {
+        setLoading(true);
+        setErrorMessage("");
+        const result = await logout();
+        if (!result.success) {
+            setErrorMessage(result.message);
+            setLoading(false);
+        }
+    }, [logout]);
 
     useEffect(() => {
-        logout();
-    }, []);
+        void performLogout();
+    }, [performLogout]);
 
     return (
         <div className="flex items-center justify-center h-screen text-2xl font-bold flex-col">
-            <Image src={Logo} alt="Logo" width={250} height={250} /> <br /> <br /> <br /> 
-            Fazendo Logout, aguarde... 
+            <Image src={Logo} alt="Logo" width={250} height={250} />
+            {loading ? <p>Fazendo logout, aguarde...</p> : null}
+            {errorMessage ? (
+                <div className="text-center" role="alert">
+                    <p>{errorMessage}</p>
+                    <button
+                        type="button"
+                        onClick={() => void performLogout()}
+                        className="mt-4 rounded bg-green-700 px-4 py-2 text-base text-white"
+                    >
+                        Tentar novamente
+                    </button>
+                </div>
+            ) : null}
         </div>
-    )
+    );
 }

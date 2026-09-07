@@ -1,13 +1,36 @@
-// app/api/auth/logout/route.ts
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-export async function POST() {
-    const response = NextResponse.json({ success: true });
+import { internalErrorFailure } from "../../server/auth/auth.contracts";
+import {
+    AUTH_COOKIE_NAME,
+    getExpiredAuthCookieOptions,
+} from "../../server/auth/session";
 
-    response.cookies.set("auth_token", "", {
-        path: "/",
-        expires: new Date(0),
-    });
+type LogoutHandlerDependencies = {
+    nodeEnvironment?: string;
+    expireCookie?: (response: NextResponse) => void;
+};
 
-    return response;
+export function createLogoutHandler(dependencies: LogoutHandlerDependencies = {}) {
+    return async function logoutHandler(_request?: NextRequest) {
+        try {
+            const response = NextResponse.json({ success: true as const });
+            const expireCookie = dependencies.expireCookie ?? ((target: NextResponse) => {
+                target.cookies.set(
+                    AUTH_COOKIE_NAME,
+                    "",
+                    getExpiredAuthCookieOptions(dependencies.nodeEnvironment),
+                );
+            });
+
+            expireCookie(response);
+            return response;
+        } catch {
+            return NextResponse.json(internalErrorFailure(), { status: 500 });
+        }
+    };
 }
+
+export const POST = createLogoutHandler({
+    nodeEnvironment: process.env.NODE_ENV,
+});

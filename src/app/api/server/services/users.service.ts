@@ -3,6 +3,35 @@ import { UserType } from "../types/database-tables.type";
 
 export class UserService {
 
+    async getCredentialUserByEmail(email: string) {
+        return prisma.user.findUnique({
+            where: { email },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                image: true,
+                password: true,
+                status: true,
+                isAdmin: true,
+            },
+        });
+    }
+
+    async getCurrentIdentityById(id: string) {
+        return prisma.user.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                image: true,
+                status: true,
+                isAdmin: true,
+            },
+        });
+    }
+
     async create(data: UserType) {
         try {
             const user = await prisma.user.create({
