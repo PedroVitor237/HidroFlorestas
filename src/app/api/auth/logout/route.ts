@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 import { internalErrorFailure } from "../../server/auth/auth.contracts";
 import {
@@ -12,7 +12,7 @@ type LogoutHandlerDependencies = {
 };
 
 export function createLogoutHandler(dependencies: LogoutHandlerDependencies = {}) {
-    return async function logoutHandler(_request?: NextRequest) {
+    return async function logoutHandler() {
         try {
             const response = NextResponse.json({ success: true as const });
             const expireCookie = dependencies.expireCookie ?? ((target: NextResponse) => {

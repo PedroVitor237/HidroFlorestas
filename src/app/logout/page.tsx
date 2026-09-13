@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Logo from '@/assets/logo/logo.png';
 import { useAuth } from "@/contexts/auth.context";
@@ -11,7 +11,21 @@ export default function LogoutPage() {
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(true);
 
-    const performLogout = useCallback(async () => {
+    useEffect(() => {
+        let cancelled = false;
+        void logout().then((result) => {
+            if (!cancelled && !result.success) {
+                setErrorMessage(result.message);
+                setLoading(false);
+            }
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [logout]);
+
+    const retryLogout = async () => {
         setLoading(true);
         setErrorMessage("");
         const result = await logout();
@@ -19,11 +33,7 @@ export default function LogoutPage() {
             setErrorMessage(result.message);
             setLoading(false);
         }
-    }, [logout]);
-
-    useEffect(() => {
-        void performLogout();
-    }, [performLogout]);
+    };
 
     return (
         <div className="flex items-center justify-center h-screen text-2xl font-bold flex-col">
@@ -34,7 +44,7 @@ export default function LogoutPage() {
                     <p>{errorMessage}</p>
                     <button
                         type="button"
-                        onClick={() => void performLogout()}
+                        onClick={() => void retryLogout()}
                         className="mt-4 rounded bg-green-700 px-4 py-2 text-base text-white"
                     >
                         Tentar novamente
