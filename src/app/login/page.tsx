@@ -16,21 +16,27 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   async function handleLogin() {
     if (loading) return;
 
     if (!email.trim() || !password.trim()) {
+      setErrorMessage('Informe seu email e sua senha.');
       return;
     }
 
+    setErrorMessage('');
     setLoading(true);
 
     try {
-      await signIn({
+      const result = await signIn({
         email,
         password,
       });
+      if (!result.success) {
+        setErrorMessage(result.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -92,7 +98,7 @@ export default function LoginPage() {
 
           {/* Email */}
           <div className="mt-8">
-            <label className="mb-2 block text-[18px] font-bold text-amber-700">
+            <label htmlFor="email" className="mb-2 block text-[18px] font-bold text-amber-700">
               E-mail
             </label>
 
@@ -101,9 +107,16 @@ export default function LoginPage() {
 
               <input
                 type="email"
+                id="email"
                 placeholder="seu@email.com"
+                name="email"
+                autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrorMessage('');
+                }}
+                aria-describedby={errorMessage ? 'login-error' : undefined}
                 className="w-full bg-transparent outline-none placeholder:text-[#858585]"
               />
             </div>
@@ -111,7 +124,7 @@ export default function LoginPage() {
 
           {/* Senha */}
           <div className="mt-6">
-            <label className="mb-2 block text-[18px] font-bold text-amber-700">
+            <label htmlFor="password" className="mb-2 block text-[18px] font-bold text-amber-700">
               Senha
             </label>
 
@@ -120,9 +133,16 @@ export default function LoginPage() {
 
               <input
                 type={showPassword ? 'text' : 'password'}
+                id="password"
                 placeholder="••••••••"
+                name="password"
+                autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMessage('');
+                }}
+                aria-describedby={errorMessage ? 'login-error' : undefined}
                 className="w-full bg-transparent text-[16px] text-[#3E3E3E] outline-none placeholder:text-[#858585]"
               />
 
@@ -162,6 +182,12 @@ export default function LoginPage() {
               Esqueceu sua senha?
             </Link>
           </div>
+
+          {errorMessage ? (
+            <p id="login-error" role="alert" className="mt-4 text-sm text-red-700">
+              {errorMessage}
+            </p>
+          ) : null}
 
           {/* Botão */}
           <button
@@ -226,4 +252,3 @@ export default function LoginPage() {
 //         </div>
 //     );
 // }
-

@@ -1,33 +1,67 @@
-'use server';
-import { NextResponse } from "next/server";
-import { requireAuth } from "../../server/middlewares/auth.middleware";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
-    try {
+import {
+    internalErrorFailure,
+    serializePublicUser,
+    unauthenticatedFailure,
+} from "../../server/auth/auth.contracts";
+import type { AuthenticatedPrincipal } from "../../server/auth/auth.core";
+import {
+    AUTH_COOKIE_NAME,
+    getExpiredAuthCookieOptions,
+} from "../../server/auth/session";
+import {
+    AuthBoundaryError,
+    requireAuth,
+} from "../../server/middlewares/auth.middleware";
 
-        const user = await requireAuth();
+type MeHandlerDependencies = {
+    requireAuth: () => Promise<AuthenticatedPrincipal>;
+    nodeEnvironment?: string;
+};
 
-        return NextResponse.json({
-            success: true,
-            user: {...user, password: undefined}
-        });
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
 
-    } catch (error) {
+export function createMeHandler(dependencies: MeHandlerDependencies) {
+    return async function meHandler(req: NextRequest) {
+        try {
+            const principal = await dependencies.requireAuth();
+            return NextResponse.json(
+                {
+                    success: true as const,
+                    user: serializePublicUser(principal),
+                },
+                { headers: NO_STORE_HEADERS },
+            );
+        } catch (error) {
+            if (
+                error instanceof AuthBoundaryError &&
+                error.code === "UNAUTHORIZED"
+            ) {
+                const response = NextResponse.json(unauthenticatedFailure(), {
+                    status: 401,
+                    headers: NO_STORE_HEADERS,
+                });
 
-        if (error instanceof Error) {
-
-            if (error.message === "UNAUTHORIZED") {
-                return NextResponse.json(
-                    { success: false, message: "Não autenticado" },
-                    { status: 401 }
-                );
+                if (req.cookies.has(AUTH_COOKIE_NAME)) {
+                    response.cookies.set(
+                        AUTH_COOKIE_NAME,
+                        "",
+                        getExpiredAuthCookieOptions(dependencies.nodeEnvironment),
+                    );
+                }
+                return response;
             }
 
+            return NextResponse.json(internalErrorFailure(), {
+                status: 500,
+                headers: NO_STORE_HEADERS,
+            });
         }
-
-        return NextResponse.json(
-            { success: false, message: "Erro interno" },
-            { status: 500 }
-        );
-    }
+    };
 }
+
+export const GET = createMeHandler({
+    requireAuth,
+    nodeEnvironment: process.env.NODE_ENV,
+});
