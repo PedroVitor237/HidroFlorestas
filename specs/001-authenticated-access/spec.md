@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-06
 
-**Status**: Draft
+**Status**: Ready for Review
 
 **Input**: User description: "Criar a especificação da entrega vertical Acesso autenticado seguro para que um usuário previamente cadastrado e ACTIVE possa iniciar, restaurar e encerrar uma sessão, acessar rotas protegidas e receber respostas controladas sem exposição de dados sensíveis."
 
@@ -211,6 +211,17 @@ formulário de login.
 - **SC-007**: Em validação de usabilidade das falhas previstas, pelo menos 90% das pessoas
   identificam corretamente que não estão autenticadas e que o acesso protegido não foi concedido,
   sem depender de detalhes técnicos.
+
+### Estado das validações humanas
+
+- `DECISAO_CONFIRMADA` — A equipe do HidroFlorestas decidiu em 2026-09-13 substituir T039 por
+  validação técnica automatizada em Playwright para observações objetivas do navegador.
+- **SC-006 — `NAO_VERIFICADO`**: a meta de 90% em até dois minutos permanece integralmente
+  preservada e será avaliada em trabalho futuro de UX/produto.
+- **SC-007 — `NAO_VERIFICADO`**: a meta de 90% de compreensão permanece integralmente preservada
+  e será avaliada em trabalho futuro de UX/produto.
+- O adiamento aprovado dessas duas avaliações humanas não bloqueia a conclusão técnica de
+  `IMP-001` e não constitui evidência de que as metas foram atendidas.
 
 ## Assumptions
 

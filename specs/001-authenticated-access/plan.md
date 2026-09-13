@@ -4,8 +4,8 @@
 
 **Input**: especificação funcional validada em `specs/001-authenticated-access/spec.md`
 
-**Estado**: pacote técnico aprovado pela equipe do HidroFlorestas em 2026-09-07; `tasks.md`
-gerado e reconciliado; implementação condicionada ao novo `$speckit-analyze`
+**Estado**: implementação e validações técnicas concluídas em 2026-09-13; `$speckit-converge`
+aprovado sem trabalho restante no recorte; SC-006 e SC-007 permanecem `NAO_VERIFICADO`
 
 ## Summary
 
@@ -62,7 +62,7 @@ checklist da spec tem 16/16 itens aprovados e não há marcador de esclareciment
 
 **PASS** — pesquisa, modelo, contrato OpenAPI, quickstart e tarefas preservam o mesmo recorte;
 nenhuma entidade persistida, dependência de produção ou funcionalidade excluída foi adicionada.
-`@playwright/test` foi aprovado, permanece isolado à validação e ainda não foi instalado. A
+`@playwright/test` foi instalado e permanece isolado à validação. A
 pendência de upgrade global do Next.js continua como risco externo, não incorporado à feature.
 
 ## Project Structure
@@ -83,8 +83,8 @@ specs/001-authenticated-access/
     └── auth-api.openapi.yaml
 ```
 
-`tasks.md` já foi gerado pelo fluxo do Spec Kit e reconciliado pontualmente após a aprovação técnica
-de 2026-09-07. A implementação ainda não começou.
+`tasks.md` foi gerado pelo fluxo do Spec Kit e reconciliado após a aprovação técnica de 2026-09-07
+e a decisão de fechamento de 2026-09-13. A implementação e os gates técnicos foram concluídos.
 
 ### Source Code (repository root)
 
@@ -101,7 +101,7 @@ src/
 │   │   │   ├── me/route.ts
 │   │   │   └── logout/route.ts
 │   │   └── server/
-│   │       ├── auth/                         # planejado
+│   │       ├── auth/
 │   │       │   ├── auth.contracts.ts
 │   │       │   ├── auth.core.ts
 │   │       │   └── session.ts
@@ -112,16 +112,16 @@ src/
 │   ├── login/page.tsx
 │   └── logout/page.tsx
 ├── contexts/auth.context.tsx
-├── types/auth.type.ts                            # planejado, contrato público sem imports server
+├── types/auth.type.ts                            # contrato público sem imports server
 └── proxy.ts
 
-tests/                                           # planejado
+tests/
 ├── fixtures/auth-users.ts
 ├── unit/
 ├── integration/
 └── e2e/
 
-playwright.config.ts                             # proposto
+playwright.config.ts
 package.json
 package-lock.json
 ```
@@ -195,7 +195,8 @@ convenção `src/proxy.ts` exigida pelo Next.js quando existe `src/app`.
 | Unitária | `node:test` + `tsx` existentes | Parser/allowlist/formato de email, núcleo com fakes injetados, principal/serializer, guard da URL de teste, segredo, JWT e cookie. |
 | Integração | `node:test` serial e harness explícito | Adapters/handlers finos com request, cookie e response controlados; bcrypt/JWT reais quando aplicável, sem banco real. |
 | Percurso completo | `@playwright/test` aprovado, Chromium, `workers: 1`, app e PostgreSQL de teste | HTTP e servidor reais; login, reload, árvores privadas, condições de sessão, `ACTIVE → BLOCKED`, DTO e logout. |
-| Manual | Navegador/DevTools e sessão de usabilidade | Ausência de flash protegido, atributos em HTTPS, mensagens compreensíveis e SC-006/SC-007 com participantes. |
+| Navegador automatizado | Playwright Chromium serial, produção e HTTPS local temporário | Ausência de flash protegido sob latência, DTO/cache no tráfego real, atributos do cookie e ciclo pós-logout. |
+| Humana futura | Sessão de usabilidade com participantes | SC-006/SC-007 permanecem `NAO_VERIFICADO`; follow-up de UX/produto não bloqueia a conclusão técnica. |
 | Qualidade | scripts planejados e existentes | `test:fixtures:auth`, `test:unit`, `test:integration`, `test:e2e`, `lint`, `typecheck`, `build` e `git diff --check`. |
 
 Os E2E usam somente usuários fictícios allowlisted e banco dedicado; não chamam cadastro. Antes de
@@ -210,9 +211,9 @@ com o peer opcional do Next.js observado. A implementação atualizará `package
 `package-lock.json`; o Chromium será instalado e verificado separadamente e não entra no lockfile. Não adotar
 Vitest, Jest, Testing Library, jsdom, Cypress, Zod ou biblioteca nova de sessão nesta feature.
 
-## Arquivos previstos para implementação
+## Arquivos da implementação
 
-### Novos
+### Adicionados
 
 - `src/app/api/server/auth/auth.contracts.ts`
 - `src/app/api/server/auth/auth.core.ts`
@@ -222,6 +223,8 @@ Vitest, Jest, Testing Library, jsdom, Cypress, Zod ou biblioteca nova de sessão
 - `tests/unit/*.test.ts`
 - `tests/integration/*.test.ts`
 - `tests/e2e/authenticated-access.spec.ts`
+- `tests/e2e/authenticated-access-https.spec.ts`
+- `tests/e2e/run-auth-https.mjs`
 - `playwright.config.ts`
 
 ### Alterados
@@ -265,7 +268,7 @@ atravessar a validação server-side sem usuário `ACTIVE`.
 | Fixture atingir banco indevido | Quatro condições simultâneas, parsing/normalização das URLs antes da comparação, conexão explícita por `TEST_DATABASE_URL`, IDs/emails reservados e operações estritamente filtradas. | Guard fail-closed e seus testes bloqueiam setup, update e teardown. |
 | Nova devDependency e browser | Instalar somente na implementação; lockfile, download e smoke de lançamento headless explícitos; `--with-deps` apenas como contingência operacional. | Decisão aprovada em `CF-TECH-001`. |
 | Next.js 16.1.6 abaixo do patch indicado por boletim de 2026-08 | Coordenar upgrade global separado antes de produção; não misturar no PR da feature. | Pendência externa, não bloqueia `$speckit-tasks`. |
-| Metas SC-006/SC-007 exigem participantes | Registrar protocolo e evidência manual; automação não substitui usabilidade. | Dependência de validação humana. |
+| Metas SC-006/SC-007 exigem participantes | Preservar metas e registrar follow-up de UX/produto; automação não substitui usabilidade. | `NAO_VERIFICADO`; adiada por decisão confirmada de 2026-09-13 e não bloqueante para o fechamento técnico. |
 
 ## Trabalho paralelo e propriedade temporária
 
@@ -282,11 +285,19 @@ atravessar a validação server-side sem usuário `ACTIVE`.
   schema ou configuração de testes. Implementação de laboratório deve aguardar estabilização do
   contrato autenticado.
 
-## Condição para avançar à implementação
+## Reconciliação da implementação
 
-O pacote técnico foi aprovado pela equipe em 2026-09-07 e `tasks.md` já foi gerado e reconciliado.
-A implementação só pode começar depois de um novo `$speckit-analyze` confirmar ausência de achado
-crítico ou alto e de decisão material pendente.
+`EVIDENCIA_IMPLEMENTACAO` — A matriz técnica foi executada em 2026-09-13: 34 unitários, 14 testes
+de integração, os dez E2E preexistentes e dois cenários complementares de T039 em produção HTTPS
+passaram. O lint terminou com zero erros e quatro warnings preexistentes; typecheck, build e
+`git diff --check` passaram. O ciclo real do Neon E2E começou e terminou com contagem allowlisted
+zero e usou somente as quatro fixtures determinísticas.
+
+`DECISAO_CONFIRMADA` — A equipe do HidroFlorestas decidiu em 2026-09-13 que a automação objetiva
+substitui a observação manual de T039 e que o adiamento de SC-006/SC-007 para UX/produto não bloqueia
+a conclusão técnica de `IMP-001`. Ambas as metas permanecem `NAO_VERIFICADO`, sem resultado humano
+inventado. O desenho JWT stateless mantém o risco aceito de cópia do token permanecer válida até
+expirar; a atualização global de dependências continua trabalho futuro separado.
 
 ## Complexity Tracking
 

@@ -150,12 +150,12 @@ documentação diretamente afetada e revisar escopo/rastreabilidade.
 - [x] T036 Após T035, executar `npm run test:integration` em modo serial; exigir saída sem falhas e reconciliar `tests/integration/auth-sign-in.test.ts`, `tests/integration/auth-me.test.ts`, `tests/integration/auth-logout.test.ts` e `tests/integration/auth-guard.test.ts` com `specs/001-authenticated-access/quickstart.md`
 - [x] T037 Após T036, executar `npm run lint`, `npm run typecheck` e `npm run build`; exigir código de saída zero nos três comandos e inspecionar qualquer diagnóstico desta feature somente em `package.json`, `package-lock.json`, `playwright.config.ts`, `src/types/auth.type.ts`, `src/app/api/server/auth/auth.contracts.ts`, `src/app/api/server/auth/auth.core.ts`, `src/app/api/server/auth/session.ts`, `src/app/api/server/services/auth.service.ts`, `src/app/api/server/services/users.service.ts`, `src/app/api/server/middlewares/auth.middleware.ts`, `src/app/api/auth/sign-in/route.ts`, `src/app/api/auth/me/route.ts`, `src/app/api/auth/logout/route.ts`, `src/app/(private)/layout.tsx`, `src/contexts/auth.context.tsx`, `src/app/login/page.tsx`, `src/app/logout/page.tsx`, `src/proxy.ts`, `tests/fixtures/auth-users.ts`, os seis arquivos exatos de T035, os quatro arquivos exatos de T036 e `tests/e2e/authenticated-access.spec.ts`
 - [x] T038 Após T037 e o smoke de T003, confirmar visualmente que `TEST_DATABASE_URL` identifica o banco isolado; exigir sucesso do guard de T009/T015; executar setup allowlisted e `npm run test:e2e` em Chromium serial com `TEST_DATABASE_URL` fornecida ao processo filho como `DATABASE_URL`; e executar teardown em bloco `finally`, inclusive após falha, usando `tests/fixtures/auth-users.ts` e `tests/e2e/authenticated-access.spec.ts`
-- [ ] T039 Após T038, validar manualmente ausência de flash protegido, envelope/DTO em Network, atributos do cookie em HTTPS e navegação pós-logout, registrando resultados e limitações em `specs/001-authenticated-access/quickstart.md`
-- [ ] T040 Após T039, conduzir a validação humana de SC-006 e SC-007 com participantes ou representantes definidos pela equipe e registrar amostra, tempos, compreensão e resultado em `specs/001-authenticated-access/quickstart.md`
-- [ ] T041 Após T040, atualizar o estado e as evidências observadas de `IMP-001` sem promover inferências ou propostas em `docs/code-first-prd/implementation/backlog.md`
-- [ ] T042 Após T041, atualizar o estado da primeira entrega e impactos comprovados na sequência de módulos em `docs/code-first-prd/implementation/implementation-plan.md`
-- [ ] T043 Após T042, reconciliar comportamento implementado, validações executadas, riscos e limitações reais sem alterar intenção nem duplicar `CF-TECH-001` em `specs/001-authenticated-access/plan.md` e `specs/001-authenticated-access/quickstart.md`
-- [ ] T044 Por último e após T043, revisar o diff final contra FR-001–FR-014, os 13 cenários, SC-001–SC-007 e exclusões, confirmar somente caminhos autorizados e executar `git diff --check` usando `specs/001-authenticated-access/spec.md`, `specs/001-authenticated-access/plan.md` e `specs/001-authenticated-access/tasks.md`
+- [x] T039 Após T038, automatizar em Playwright a ausência de flash protegido sob latência, envelope/DTO e `Cache-Control` no tráfego real, atributos do cookie em produção HTTPS e o ciclo de reload/logout/voltar/acesso direto/logout repetido; executar em loopback com certificado temporário, branch Neon E2E existente, setup/teardown protegido e contagem final zero; registrar resultados e limitações em `specs/001-authenticated-access/quickstart.md`
+- [x] T040 Após T039, registrar a decisão confirmada de adiar as avaliações humanas SC-006 e SC-007, preservá-las como `NAO_VERIFICADO` e não bloqueantes para a conclusão técnica de `IMP-001`, e criar o follow-up no backlog Code-First aplicável sem inventar resultado humano
+- [x] T041 Após T040 e o registro formal do adiamento, atualizar o estado e as evidências observadas de `IMP-001` sem promover inferências ou propostas em `docs/code-first-prd/implementation/backlog.md`
+- [x] T042 Após T041, atualizar o estado da primeira entrega e impactos comprovados na sequência de módulos em `docs/code-first-prd/implementation/implementation-plan.md`
+- [x] T043 Após T042, reconciliar comportamento implementado, validações executadas, riscos e limitações reais sem alterar intenção nem duplicar `CF-TECH-001` em `specs/001-authenticated-access/plan.md` e `specs/001-authenticated-access/quickstart.md`
+- [x] T044 Por último e após T043, executar integralmente `$speckit-converge`, exigir aprovação sem trabalho técnico restante no recorte, revisar o diff final contra FR-001–FR-014, os 13 cenários, SC-001–SC-007 e exclusões, confirmar somente caminhos autorizados e executar `git diff --check` usando `specs/001-authenticated-access/spec.md`, `specs/001-authenticated-access/plan.md` e `specs/001-authenticated-access/tasks.md`
 
 ---
 
@@ -175,8 +175,9 @@ documentação diretamente afetada e revisar escopo/rastreabilidade.
 - **Phase 5 — US3**: depende da fundação. Após T030 falhar pelo motivo esperado, T031 e T032 podem
   avançar em paralelo; T033 depende de T032 e T034 valida o incremento.
 - **Phase 6 — Polish**: depende das três histórias. Os gates automatizados seguem estritamente
-  T035 → T036 → T037 → T038; T039 e T040 registram validações manual e humana; T041–T043 só usam
-  evidência desses gates; T044 é obrigatoriamente a última tarefa.
+  T035 → T036 → T037 → T038 → T039; T040 registra o adiamento aprovado de SC-006/SC-007 e seu
+  follow-up, sem exigir a execução humana futura; T041–T043 usam as evidências técnicas e esse
+  registro; T044 é obrigatoriamente a última tarefa.
 
 ### User Story Dependencies
 
@@ -328,8 +329,9 @@ T032: src/contexts/auth.context.tsx
   token permanecem fora do escopo.
 - Fixture e E2E exigem banco explicitamente isolado; T038 não pode prosseguir sem confirmação do
   destino de `TEST_DATABASE_URL` nem sem aprovação do guard fail-closed.
-- SC-006 e SC-007 dependem de validação humana e podem permanecer pendentes até a equipe fornecer
-  participantes ou representantes adequados.
+- SC-006 e SC-007 dependem de validação humana, permanecem `NAO_VERIFICADO` e foram adiadas pela
+  equipe em 2026-09-13 para follow-up de UX/produto; esse trabalho futuro não bloqueia o fechamento
+  técnico de `IMP-001`.
 - Não criar tarefas para cadastro, recuperação/troca de senha, transições administrativas,
   autorização detalhada, domínio IHFR, schema, migrations, rate limiting, CI global ou auditoria
   geral.

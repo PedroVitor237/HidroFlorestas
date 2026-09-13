@@ -1,8 +1,7 @@
 # Quickstart de validação: acesso autenticado seguro
 
 **Feature**: `001-authenticated-access`
-**Uso**: roteiro aprovado para a fase de implementação; nada abaixo foi executado neste checkpoint
-documental.
+**Uso**: roteiro reproduzível e registro das validações técnicas concluídas em 2026-09-13.
 
 ## Precondições
 
@@ -12,9 +11,9 @@ documental.
   executa migration.
 - Nenhum ambiente de desenvolvimento compartilhado ou produção pode ser usado pelas fixtures.
 - A implementação dos contratos em [contracts/auth-api.openapi.yaml](contracts/auth-api.openapi.yaml)
-  e dos scripts planejados em `package.json` deve estar concluída.
-- `@playwright/test` e Chromium devem ser instalados e verificados somente no checkpoint autorizado
-  de implementação; não fazem parte do estado atual.
+  e os scripts de `package.json` estão concluídos.
+- `@playwright/test`, Chromium, Node.js e OpenSSL estão disponíveis; T039 não exige dependência
+  adicional nem certificado persistente.
 
 ## Variáveis necessárias
 
@@ -34,7 +33,8 @@ Somente os nomes são registrados; valores devem vir do canal seguro da equipe.
 
 ## Preparação dos usuários
 
-A fixture planejada `tests/fixtures/auth-users.ts` deve, antes de abrir conexão ou executar escrita:
+A fixture `tests/fixtures/auth-users.ts` executa as seguintes proteções antes de abrir conexão ou
+realizar escrita:
 
 1. exigir simultaneamente `NODE_ENV=test`, `TEST_DATABASE_URL` definido e
    `TEST_DATABASE_CONFIRMATION=HIDROFLORESTAS_AUTH_TEST`;
@@ -57,43 +57,40 @@ cada condição ausente ou inválida e o único caminho válido.
 O script não chama `/api/auth/sign-up`, não usa o script de superadmin, não altera schema e não
 cria migration.
 
-## Comandos planejados
+## Comandos de validação
 
-Após autorização para implementação, a adoção inicial da ferramenta E2E deverá atualizar
-`package.json` e `package-lock.json`:
+O comando reproduzível de T039 executa build de produção, cria certificado efêmero em diretório
+temporário, sobe Next.js e proxy HTTPS somente em loopback, prepara as quatro fixtures, roda a
+cobertura Playwright complementar e sempre executa teardown e contagem final:
 
 ```bash
-npm install --save-dev @playwright/test
-npx playwright install chromium
-node --input-type=module -e "import { chromium } from '@playwright/test'; const browser = await chromium.launch({ headless: true }); await browser.close();"
+npm run test:e2e:https
 ```
 
-O último comando é o smoke de verificação da instalação e encerra o navegador imediatamente.
-`--with-deps` não é requisito geral; pode ser usado somente como solução operacional eventual se o
-ambiente realmente não possuir bibliotecas de sistema necessárias e houver autorização adequada.
-
-Scripts a acrescentar durante a implementação:
+Scripts disponíveis:
 
 ```text
 test:fixtures:auth  -> carrega ou remove apenas as quatro fixtures allowlisted
 test:unit           -> node --import=tsx --test tests/unit/*.test.ts
 test:integration    -> node --import=tsx --test --test-concurrency=1 tests/integration/*.test.ts
 test:e2e            -> playwright test
+test:e2e:https      -> produção HTTPS temporária + cobertura Playwright de T039 + cleanup
 test                -> unitários seguidos de integração
 typecheck           -> tsc --noEmit
 ```
 
-Sequência de validação prevista:
+Sequência integral executada:
 
 ```bash
-npm run test:fixtures:auth -- setup
 npm run test:unit
 npm run test:integration
 npm run lint
 npm run typecheck
 npm run build
+npm run test:fixtures:auth -- setup
 npm run test:e2e
 npm run test:fixtures:auth -- teardown
+npm run test:e2e:https
 git diff --check
 ```
 
@@ -161,17 +158,43 @@ Executar também cenários isolados para cookie ausente, token malformado, assin
 expiração e token vinculado a usuário inexistente. O contexto de request do Playwright pode
 inspecionar `/api/auth/me` usando os mesmos cookies do navegador.
 
-## Verificações manuais
+## T039 automatizada e validações humanas futuras
 
-- Em Network/Application do navegador, confirmar que login e `/me` devolvem somente
-  `firstName`, `lastName` e `image`, nunca `id`, `email`, senha, hash, `role`, `status`, `isAdmin`,
-  timestamps ou relações.
-- Sob rede lenta, confirmar ausência de flash de `/workspace` ou `/dashboard` antes da decisão do
-  servidor.
-- Após logout, confirmar manualmente voltar/reload/navegação direta.
-- Em ambiente HTTPS controlado, confirmar `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/` e duração.
-- Com participantes ou representantes definidos pela equipe, cronometrar SC-006 e verificar a
-  compreensão de falhas de SC-007. Automação não substitui essas duas metas.
+`DECISAO_CONFIRMADA` — Em 2026-09-13, a equipe do HidroFlorestas substituiu a inspeção manual de
+T039 por automação Playwright para tudo que o navegador pode comprovar objetivamente. A cobertura
+HTTPS verifica respostas de login e `/api/auth/me`, conjunto exato do DTO, `Cache-Control:
+no-store`, cookie `Secure`/`HttpOnly`/`SameSite=Lax`/`Path=/` com duração aproximada de 604.800
+segundos, ausência de conteúdo protegido sob latência artificial e o ciclo de
+reload/logout/voltar/reload/acesso direto/logout repetido.
+
+- **SC-006 — `NAO_VERIFICADO`**: permanece a meta de pelo menos 90% das pessoas concluírem login e
+  alcançarem o workspace em até dois minutos, sem assistência.
+- **SC-007 — `NAO_VERIFICADO`**: permanece a meta de pelo menos 90% das pessoas compreenderem que
+  não estão autenticadas e que o acesso protegido não foi concedido.
+- Essas avaliações humanas foram adiadas para follow-up de UX/produto no backlog Code-First. O
+  adiamento não bloqueia a conclusão técnica de `IMP-001`; os resultados não foram executados nem
+  inferidos a partir da automação.
+
+## Evidência executada em 2026-09-13
+
+| Verificação | Resultado observado |
+|---|---|
+| Guard da fixture | 8/8 testes aprovados; adapter real autenticou; contagem inicial allowlisted `0` |
+| T039 em produção HTTPS | build e TypeScript do Next.js aprovados; certificado temporário; 2/2 Playwright aprovados |
+| Fixtures de T039 | setup `4`; teardown `PASS`; `remainingFixtureUsers: 0`; temporários removidos |
+| E2E preexistente | 10/10 em Chromium serial; teardown `PASS`; `remainingFixtureUsers: 0` |
+| Unitários | 34/34 aprovados |
+| Integração | 14/14 aprovados |
+| Lint | exit code `0`; `0 errors`; quatro warnings preexistentes |
+| Typecheck | `npm run typecheck` aprovado |
+| Build final | Prisma Client gerado; compilação e validação TypeScript do Next.js aprovadas |
+| Integridade do diff | `git diff --check` aprovado |
+
+Os quatro warnings preservados são `@typescript-eslint/no-unused-vars` em
+`src/app/api/auth/sign-up/route.ts`, `src/app/page.tsx`, `src/components/user-profile/index.tsx` e
+`src/components/white-box/index.tsx`. O E2E preexistente também emitiu o aviso não bloqueante do
+Next.js dev sobre futura configuração de `allowedDevOrigins`; a validação T039 usa produção HTTPS.
+Nenhuma evidência contém senha, URL de banco, JWT, cookie ou header sensível.
 
 ## Comportamento esperado consolidado
 
@@ -189,6 +212,7 @@ inspecionar `/api/auth/me` usando os mesmos cookies do navegador.
 - A sessão stateless não possui revogação individual de JWT copiado antes de expirar.
 - O primeiro E2E cobre Chromium; outros navegadores podem ser acrescentados somente por necessidade
   comprovada.
-- Atributo `Secure` exige verificação em HTTPS, não apenas no servidor local HTTP.
+- Atributo `Secure` foi verificado pela automação local em produção HTTPS temporária.
 - A disponibilidade do banco e os valores das variáveis pertencem à operação da equipe.
 - O upgrade de segurança do Next.js indicado no plano é trabalho compartilhado separado.
+- SC-006 e SC-007 permanecem `NAO_VERIFICADO` até a avaliação humana futura.
