@@ -1,0 +1,483 @@
+openapi: 3.1.0
+info:
+  title: HidroFlorestas IMP-003 API
+  version: 0.1.0
+  description: >-
+    Contratos fechados para contexto, papéis contextuais, cadastro e consulta de
+    áreas-ponto. Todos os endpoints exigem sessão autenticada e conta ACTIVE.
+servers:
+  - url: /
+paths:
+  /api/laboratories/{laboratoryId}/memberships:
+    get:
+      operationId: listLaboratoryMemberships
+      summary: Lista vínculos para gestão pelo proprietário
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+      responses:
+        '200':
+          description: Vínculos atuais e contexto autorizado.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/PrivateNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/InsufficientRole'
+        '404':
+          $ref: '#/components/responses/Inaccessible'
+
+  /api/laboratories/{laboratoryId}/memberships/{membershipId}:
+    patch:
+      operationId: changeLaboratoryMembershipRole
+      summary: Promove um MEMBER ou rebaixa um ADMIN
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/MembershipId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeMembershipRoleInput'
+      responses:
+        '200':
+          description: Papel alterado.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/PrivateNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipMutationResponse'
+        '400':
+          $ref: '#/components/responses/InvalidInput'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/InsufficientRole'
+        '404':
+          $ref: '#/components/responses/Inaccessible'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /api/laboratories/{laboratoryId}/areas:
+    get:
+      operationId: listLaboratoryAreas
+      summary: Lista as áreas do laboratório selecionado
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+      responses:
+        '200':
+          description: Áreas acessíveis, inclusive em laboratório inativo.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/PrivateNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/Inaccessible'
+    post:
+      operationId: createLaboratoryArea
+      summary: Cria uma área-ponto em laboratório ativo
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAreaInput'
+      responses:
+        '201':
+          description: Área criada atomicamente com autoria derivada da sessão.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/PrivateNoStore'
+            Location:
+              description: URL contextual do detalhe criado.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaMutationResponse'
+        '400':
+          $ref: '#/components/responses/InvalidInput'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/InsufficientRole'
+        '404':
+          $ref: '#/components/responses/Inaccessible'
+        '409':
+          $ref: '#/components/responses/ReadOnly'
+
+  /api/laboratories/{laboratoryId}/areas/{areaId}:
+    get:
+      operationId: getLaboratoryArea
+      summary: Consulta o detalhe de uma área no laboratório selecionado
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/AreaId'
+      responses:
+        '200':
+          description: Detalhe da área e contexto de leitura.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/PrivateNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaDetailResponse'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/Inaccessible'
+
+components:
+  parameters:
+    LaboratoryId:
+      name: laboratoryId
+      in: path
+      required: true
+      description: Referência opaca; não concede autorização isoladamente.
+      schema:
+        type: string
+        format: uuid
+    MembershipId:
+      name: membershipId
+      in: path
+      required: true
+      description: Identificador opaco do vínculo no mesmo laboratório.
+      schema:
+        type: string
+        format: uuid
+    AreaId:
+      name: areaId
+      in: path
+      required: true
+      description: Identificador opaco da área no mesmo laboratório.
+      schema:
+        type: string
+        format: uuid
+
+  headers:
+    PrivateNoStore:
+      description: Respostas autenticadas não podem ser reutilizadas como autorização.
+      schema:
+        type: string
+        const: no-store
+
+  responses:
+    InvalidInput:
+      description: Corpo inválido, incluindo chave desconhecida ou valor fora dos limites.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/PrivateNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthenticated:
+      description: Sessão ausente/inválida ou conta não ACTIVE.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/PrivateNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InsufficientRole:
+      description: O vínculo atual não possui a permissão solicitada.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/PrivateNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Inaccessible:
+      description: >-
+        Resposta uniforme para laboratório, vínculo, associação de área ou vínculo-alvo
+        inexistente/inacessível, sem confirmar a existência do recurso.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/PrivateNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ReadOnly:
+      description: Laboratório inativo; a consulta permanece disponível, mas a mutação é recusada.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/PrivateNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Papel atual difere de expectedRole ou laboratório está somente leitura.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/PrivateNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    LaboratoryMembershipRole:
+      type: string
+      enum: [OWNER, ADMIN, MEMBER]
+
+    MutableLaboratoryMembershipRole:
+      type: string
+      enum: [ADMIN, MEMBER]
+
+    LaboratoryStatus:
+      type: string
+      enum: [ACTIVE, INACTIVE]
+
+    LaboratoryContext:
+      type: object
+      additionalProperties: false
+      required: [id, name, status, membershipRole, readOnly]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/LaboratoryStatus'
+        membershipRole:
+          $ref: '#/components/schemas/LaboratoryMembershipRole'
+        readOnly:
+          type: boolean
+
+    LaboratoryPublicReference:
+      type: object
+      additionalProperties: false
+      required: [id, name, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/LaboratoryStatus'
+
+    Membership:
+      type: object
+      additionalProperties: false
+      required: [id, name, initials, role]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        initials:
+          type: string
+          minLength: 1
+        role:
+          $ref: '#/components/schemas/LaboratoryMembershipRole'
+
+    ChangeMembershipRoleInput:
+      type: object
+      additionalProperties: false
+      required: [expectedRole, role]
+      properties:
+        expectedRole:
+          $ref: '#/components/schemas/MutableLaboratoryMembershipRole'
+        role:
+          $ref: '#/components/schemas/MutableLaboratoryMembershipRole'
+      description: >-
+        Os valores precisam formar MEMBER→ADMIN ou ADMIN→MEMBER; valores iguais são
+        inválidos. OWNER nunca é aceito.
+
+    MembershipListResponse:
+      type: object
+      additionalProperties: false
+      required: [context, memberships]
+      properties:
+        context:
+          $ref: '#/components/schemas/LaboratoryContext'
+        memberships:
+          type: array
+          items:
+            $ref: '#/components/schemas/Membership'
+
+    MembershipMutationResponse:
+      type: object
+      additionalProperties: false
+      required: [membership]
+      properties:
+        membership:
+          $ref: '#/components/schemas/Membership'
+
+    CreateAreaInput:
+      type: object
+      additionalProperties: false
+      required: [name, latitude, longitude]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+        municipality:
+          type: [string, 'null']
+          minLength: 1
+          maxLength: 100
+        state:
+          type: [string, 'null']
+          minLength: 1
+          maxLength: 100
+        landType:
+          type: [string, 'null']
+          minLength: 1
+          maxLength: 100
+        description:
+          type: [string, 'null']
+          minLength: 1
+          maxLength: 2000
+      description: >-
+        Valores textuais são normalizados no servidor. userId, laboratoryRoomId,
+        creator, createdAt, IDs de coordenada, isActive, image e cep são recusados.
+
+    AreaSummary:
+      type: object
+      additionalProperties: false
+      required: [id, name, latitude, longitude, municipality, state]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+        municipality:
+          type: [string, 'null']
+        state:
+          type: [string, 'null']
+
+    AreaDetail:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - latitude
+        - longitude
+        - municipality
+        - state
+        - landType
+        - description
+        - createdAt
+        - laboratory
+        - readOnly
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+        municipality:
+          type: [string, 'null']
+        state:
+          type: [string, 'null']
+        landType:
+          type: [string, 'null']
+        description:
+          type: [string, 'null']
+        createdAt:
+          type: string
+          format: date-time
+        laboratory:
+          $ref: '#/components/schemas/LaboratoryPublicReference'
+        readOnly:
+          type: boolean
+
+    AreaListResponse:
+      type: object
+      additionalProperties: false
+      required: [context, areas]
+      properties:
+        context:
+          $ref: '#/components/schemas/LaboratoryContext'
+        areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaSummary'
+
+    AreaDetailResponse:
+      type: object
+      additionalProperties: false
+      required: [area]
+      properties:
+        area:
+          $ref: '#/components/schemas/AreaDetail'
+
+    AreaMutationResponse:
+      type: object
+      additionalProperties: false
+      required: [area]
+      properties:
+        area:
+          $ref: '#/components/schemas/AreaDetail'
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_INPUT
+                - UNAUTHENTICATED
+                - FORBIDDEN
+                - NOT_FOUND
+                - READ_ONLY
+                - CONFLICT
+            message:
+              type: string
