@@ -25,9 +25,9 @@ Entregar criação, listagem e configurações persistentes de laboratórios no 
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5, Node.js >=20.9, React 19.2.4  
-**Dependencies**: Next.js 16.1.6, Prisma 7.4.2, PostgreSQL/Neon, Tailwind CSS 4, Lucide React  
-**Testing**: `node:test`/`tsx`; Playwright E2E  
+**Language/Version**: TypeScript 5, Node.js >=20.9, React 19.2.4
+**Dependencies**: Next.js 16.1.6, Prisma 7.4.2, PostgreSQL/Neon, Tailwind CSS 4, Lucide React
+**Testing**: `node:test`/`tsx`; Playwright E2E
 **Constraints**: identidade somente de `requireAuth()`; DTOs por allowlist; máximo cinco vínculos; atomicidade; código único não exposto; detalhes somente para membros; ações de risco somente para a pessoa criadora; sem novas dependências
 **Scope**: criação, listagem, detalhes mínimos, desativação e exclusão protegidas
 
