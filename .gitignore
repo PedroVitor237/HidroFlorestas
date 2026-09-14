@@ -47,3 +47,9 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# IMP-002: migration incremental necessária para unicidade do código de laboratório.
+!prisma/migrations/
+prisma/migrations/*
+!prisma/migrations/20260907120000_unique_laboratory_access_code/
+!prisma/migrations/20260907120000_unique_laboratory_access_code/migration.sql

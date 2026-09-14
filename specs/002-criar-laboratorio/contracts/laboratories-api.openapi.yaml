@@ -1,0 +1,172 @@
+openapi: 3.1.0
+info: { title: HidroFlorestas Laboratories API, version: 0.1.0 }
+paths:
+  /api/laboratories:
+    get:
+      summary: List accessible laboratories
+      responses:
+        '200':
+          description: Accessible laboratories
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [success, laboratories]
+                properties:
+                  success: { type: boolean, const: true }
+                  laboratories: { type: array, maxItems: 5, items: { $ref: '#/components/schemas/PublicLaboratory' } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      summary: Create a laboratory for the authenticated principal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [name]
+              properties: { name: { type: string, minLength: 1, maxLength: 100 } }
+      responses:
+        '201':
+          description: Laboratory and initial membership created atomically
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [success, laboratory]
+                properties:
+                  success: { type: boolean, const: true }
+                  laboratory: { $ref: '#/components/schemas/PublicLaboratory' }
+        '400': { $ref: '#/components/responses/InvalidRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/laboratories/{laboratoryId}:
+    parameters:
+      - name: laboratoryId
+        in: path
+        required: true
+        schema: { type: string, minLength: 1 }
+    get:
+      summary: Get allowlisted details for an accessible laboratory
+      responses:
+        '200':
+          description: Laboratory details and allowlisted members
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [success, details]
+                properties:
+                  success: { type: boolean, const: true }
+                  details: { $ref: '#/components/schemas/LaboratoryDetails' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      summary: Deactivate a laboratory owned by the authenticated principal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RiskActionInput' }
+      responses:
+        '200':
+          description: Laboratory deactivated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DeactivateSuccess' }
+        '400': { $ref: '#/components/responses/InvalidRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      summary: Delete a laboratory owned by the authenticated principal when it has no dependent areas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RiskActionInput' }
+      responses:
+        '200':
+          description: Laboratory and memberships deleted atomically
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DeleteSuccess' }
+        '400': { $ref: '#/components/responses/InvalidRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+components:
+  schemas:
+    PublicLaboratory:
+      type: object
+      additionalProperties: false
+      required: [id, name, createdAt, status, isOwner]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        createdAt: { type: string, format: date-time }
+        status: { type: string, enum: [ACTIVE, INACTIVE] }
+        isOwner: { type: boolean }
+    LaboratoryMember:
+      type: object
+      additionalProperties: false
+      required: [name, initials]
+      properties:
+        name: { type: string }
+        initials: { type: string, minLength: 1 }
+    LaboratoryDetails:
+      type: object
+      additionalProperties: false
+      required: [id, name, createdAt, status, isOwner, members]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        createdAt: { type: string, format: date-time }
+        status: { type: string, enum: [ACTIVE, INACTIVE] }
+        isOwner: { type: boolean }
+        members: { type: array, items: { $ref: '#/components/schemas/LaboratoryMember' } }
+    RiskActionInput:
+      type: object
+      additionalProperties: false
+      required: [confirmationName]
+      properties:
+        confirmationName: { type: string }
+    DeactivateSuccess:
+      type: object
+      additionalProperties: false
+      required: [success, action]
+      properties:
+        success: { type: boolean, const: true }
+        action: { type: string, const: DEACTIVATED }
+    DeleteSuccess:
+      type: object
+      additionalProperties: false
+      required: [success, action]
+      properties:
+        success: { type: boolean, const: true }
+        action: { type: string, const: DELETED }
+    Failure:
+      type: object
+      additionalProperties: false
+      required: [success, code, message]
+      properties:
+        success: { type: boolean, const: false }
+        code: { type: string }
+        message: { type: string }
+  responses:
+    InvalidRequest: { description: Invalid allowlisted input, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    Unauthenticated: { description: Session is not authoritative, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    Forbidden: { description: Accessible laboratory is not owned by the principal, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    NotFound: { description: Laboratory is absent or inaccessible to the principal, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    Conflict: { description: Limit, concurrency, or dependent-data conflict, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }
+    InternalError: { description: Controlled internal failure, content: { application/json: { schema: { $ref: '#/components/schemas/Failure' } } } }

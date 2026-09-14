@@ -57,7 +57,7 @@ model LaboratoryRoom {
   user        User     @relation(fields: [userId], references: [id])
   imageBanner String   @default("")
   isActive    Boolean  @default(true)
-  accessCode  String
+  accessCode  String   @unique
 
   researchersLinked ResearchersLinked[]
   collectionAreas   CollectionArea[]

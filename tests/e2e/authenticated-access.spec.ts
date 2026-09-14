@@ -137,7 +137,7 @@ test.describe("authenticated access", () => {
     await expect(page).toHaveURL(/\/workspace$/);
     await expect(
       page.getByRole("heading", {
-        name: `Olá, ${AUTH_FIXTURE_USERS[0].firstName}! 👋 Bem-vindo ao Ambiente de Análises HIDROFLORESTAS`,
+        name: `Olá, ${AUTH_FIXTURE_USERS[0].firstName}! 👋 Ambiente de Análises HIDROFLORESTAS`,
         exact: true,
       }),
     ).toBeVisible();
