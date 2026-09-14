@@ -45,7 +45,7 @@
 
 - [X] T019 Executar Prisma format/validate/generate e registrar resultados em `specs/002-criar-laboratorio/quickstart.md`
 - [X] T020 Executar `npm run test:unit` e `npm run test:integration` e registrar resultados em `specs/002-criar-laboratorio/quickstart.md`
-- [ ] T021 Executar `npm run lint`, `npm run typecheck` e `npm run build` e registrar separadamente em `specs/002-criar-laboratorio/quickstart.md`
+- [X] T021 Executar `npm run lint`, `npm run typecheck` e `npm run build` e registrar separadamente em `specs/002-criar-laboratorio/quickstart.md`
 - [X] T022 Executar E2E/banco somente com ambiente isolado confirmado ou registrar bloqueio em `specs/002-criar-laboratorio/quickstart.md`
 - [X] T023 Validar navegador, móvel/amplo, teclado/foco e Network ou registrar bloqueios em `specs/002-criar-laboratorio/quickstart.md`
 - [X] T024 Reconsultar `origin/001-authenticated-access` sem merge/rebase e registrar risco de reconciliação em `specs/002-criar-laboratorio/plan.md`
@@ -80,6 +80,8 @@ T009 -> US1(T010-T012) -> US2(T013-T014) -> US3(T015-T018) -> T019-T025
 | FR-006–FR-009, SC-003–SC-004, SC-007 | T003–T004, T007–T014 |
 | FR-010–FR-013, SC-005–SC-006 | T015–T018, T023 |
 | FR-014 and stacked boundaries | T001, T024–T025 |
+| FR-015, SC-010 | T026–T030 |
+| FR-016–FR-019, SC-009 | T026–T031 |
 
 ## Implementation Strategy
 

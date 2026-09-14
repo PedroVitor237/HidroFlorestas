@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-07
 
-**Status**: Ready for planning
+**Status**: Reconciled and awaiting review; local automated gates pass, E2E runtime is blocked by external test-database connectivity, and human UX validation remains `NAO_VERIFICADO`
 
 **Input**: Especificar a entrega `IMP-002 — Criação mínima de laboratório` como feature vertical em stacked branch baseada em `origin/001-authenticated-access` (`1cfbe43ee28532ed347e0a7129a931adbbc7a802`).
 
@@ -153,6 +153,14 @@ Após a criação, a pessoa identifica claramente o laboratório como contexto d
 - Lacunas: `CF-GAP-006`, `CF-GAP-008`, `CF-GAP-009`, `CF-GAP-010`.
 - Requisitos Code-First: `CF-PRD-FR-003`, `CF-PRD-FR-004`, `CF-PRD-FR-011`, `CF-PRD-NFR-001`.
 - Casos e fluxos: `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-PFLOW-003`.
+
+## Reconciliation with development — 2026-09-13
+
+- `EVIDENCIA_IMPLEMENTACAO` — `origin/development` at `5fa63ce03d80aa47a28abbd94cfc29653076de20`, including PR #20 and `abe16c4c5533d4241e1d0b6e81351f7c1f42af8a`, was incorporated by a non-fast-forward merge kept uncommitted during review; the automatic merge had no conflicts.
+- `EVIDENCIA_IMPLEMENTACAO` — the IMP-001 public DTO remains exactly `{ firstName, lastName, image }`. Laboratory handlers obtain `id` only from the server-side `AuthenticatedPrincipal`, and `requireAuth()` revalidates the current identity and exact `ACTIVE` status for every protected API operation.
+- `EVIDENCIA_IMPLEMENTACAO` — destructive actions now scope the laboratory lookup by the authenticated membership before distinguishing ownership, so an unrelated authenticated user receives the same not-found behavior as for an unknown laboratory.
+- `EVIDENCIA_IMPLEMENTACAO` — ESLint 9.39.5, Next.js 16.1.6, `eslint-config-next` 16.1.6 and the ignore for `src/generated/prisma/**` were preserved. Lint completed with zero errors and only the four warnings already present in `development`; unit, integration, typecheck and build gates passed.
+- `NAO_VERIFICADO` — all 14 affected IMP-001/IMP-002 E2E scenarios were discovered. In runtime attempts, the database-independent negative scenario passed, while access to persistence timed out or returned the controlled internal failure before the relevant flows could complete. Selective laboratory and authentication teardown commands completed; an earlier post-cleanup count confirmed zero authentication fixture users, while the final recount was itself blocked by the provider timeout. Responsive behavior, focus handling, member-list scrolling and perceived UX were not human-validated and remain non-blocking follow-up evidence.
 
 ## Success Criteria *(mandatory)*
 

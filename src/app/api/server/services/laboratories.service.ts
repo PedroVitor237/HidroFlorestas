@@ -70,7 +70,10 @@ export const prismaLaboratoriesRepository: LaboratoriesRepository = {
   },
   async deactivate(userId, laboratoryId, confirmationName) {
     return prisma.$transaction(async (tx) => {
-      const laboratory = await tx.laboratoryRoom.findUnique({ where: { id: laboratoryId }, select: { name: true, userId: true } });
+      const laboratory = await tx.laboratoryRoom.findFirst({
+        where: { id: laboratoryId, researchersLinked: { some: { userId } } },
+        select: { name: true, userId: true },
+      });
       if (!laboratory) return "NOT_FOUND" as const;
       if (laboratory.userId !== userId) return "FORBIDDEN" as const;
       if (laboratory.name !== confirmationName) return "MISMATCH" as const;
@@ -80,7 +83,10 @@ export const prismaLaboratoriesRepository: LaboratoriesRepository = {
   },
   async delete(userId, laboratoryId, confirmationName) {
     return prisma.$transaction(async (tx) => {
-      const laboratory = await tx.laboratoryRoom.findUnique({ where: { id: laboratoryId }, select: { name: true, userId: true, _count: { select: { collectionAreas: true } } } });
+      const laboratory = await tx.laboratoryRoom.findFirst({
+        where: { id: laboratoryId, researchersLinked: { some: { userId } } },
+        select: { name: true, userId: true, _count: { select: { collectionAreas: true } } },
+      });
       if (!laboratory) return "NOT_FOUND" as const;
       if (laboratory.userId !== userId) return "FORBIDDEN" as const;
       if (laboratory.name !== confirmationName) return "MISMATCH" as const;

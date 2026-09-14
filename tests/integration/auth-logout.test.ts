@@ -1,27 +1,18 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { NextRequest } from "next/server";
-
 import { createLogoutHandler } from "../../src/app/api/auth/logout/route";
-
-function request(token?: string) {
-  return new NextRequest("http://localhost/api/auth/logout", {
-    method: "POST",
-    headers: token ? { cookie: `auth_token=${token}` } : undefined,
-  });
-}
 
 describe("POST /api/auth/logout", () => {
   it("idempotently expires the cookie for every session condition", async () => {
     const handler = createLogoutHandler({ nodeEnvironment: "test" });
 
-    for (const token of [undefined, "valid", "invalid", "expired"]) {
-      const first = await handler(request(token));
-      const repeated = await handler(request(token));
+    for (const sessionCondition of ["absent", "valid", "invalid", "expired"]) {
+      const first = await handler();
+      const repeated = await handler();
 
       for (const response of [first, repeated]) {
-        assert.equal(response.status, 200);
+        assert.equal(response.status, 200, sessionCondition);
         assert.deepEqual(await response.json(), { success: true });
         const cookie = response.headers.get("set-cookie") ?? "";
         assert.match(cookie, /^auth_token=/);
@@ -41,7 +32,7 @@ describe("POST /api/auth/logout", () => {
         throw new Error("internal cookie detail");
       },
     });
-    const response = await handler(request("valid"));
+    const response = await handler();
 
     assert.equal(response.status, 500);
     assert.deepEqual(await response.json(), {

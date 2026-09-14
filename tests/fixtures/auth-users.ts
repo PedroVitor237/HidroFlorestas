@@ -161,6 +161,30 @@ export async function runAuthFixtureCommand(
   }
 }
 
+export async function countAuthFixtureUsers(
+  environment: FixtureEnvironment,
+): Promise<number> {
+  const safeEnvironment = validateAuthFixtureEnvironment(environment);
+  neonConfig.webSocketConstructor = ws;
+  const adapter = new PrismaNeon({
+    connectionString: safeEnvironment.testDatabaseUrl,
+  });
+  const prisma = new PrismaClient({ adapter });
+
+  try {
+    return await prisma.user.count({
+      where: {
+        OR: AUTH_FIXTURE_USERS.map((user) => ({
+          id: user.id,
+          email: user.email,
+        })),
+      },
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
 function createPrismaFixtureActions(
   safeEnvironment: SafeFixtureEnvironment,
 ): AuthFixtureActions {

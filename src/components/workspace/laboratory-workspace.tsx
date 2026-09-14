@@ -9,7 +9,6 @@ import {
   FlaskConicalIcon,
   RefreshCw,
   SettingsIcon,
-  Trash2Icon,
   UsersIcon,
   XIcon,
 } from "lucide-react";

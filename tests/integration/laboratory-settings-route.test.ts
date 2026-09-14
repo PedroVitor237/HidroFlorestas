@@ -20,4 +20,25 @@ describe("/api/laboratories/[laboratoryId]", () => {
     assert.equal((await handlers.PATCH!(request("PATCH", "wrong"), context)).status, 400);
     assert.equal((await handlers.DELETE!(request("DELETE"), context)).status, 409);
   });
+
+  it("passes only the authenticated principal and maps inaccessible laboratories as not found", async () => {
+    const seen: unknown[][] = [];
+    const handlers = createLaboratorySettingsHandlers({
+      requireAuth: async () => principal,
+      service: {
+        details: async (...args) => { seen.push(args); return { success: false, reason: "NOT_FOUND" }; },
+        deactivate: async (...args) => { seen.push(args); return { success: false, reason: "NOT_FOUND" }; },
+        delete: async (...args) => { seen.push(args); return { success: false, reason: "NOT_FOUND" }; },
+      },
+    });
+
+    assert.equal((await handlers.GET!(request("GET"), context)).status, 404);
+    assert.equal((await handlers.PATCH!(request("PATCH"), context)).status, 404);
+    assert.equal((await handlers.DELETE!(request("DELETE"), context)).status, 404);
+    assert.deepEqual(seen, [
+      ["owner", "lab-id"],
+      ["owner", "lab-id", "Lab"],
+      ["owner", "lab-id", "Lab"],
+    ]);
+  });
 });

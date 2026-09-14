@@ -16,6 +16,8 @@ async function authenticate(context: BrowserContext, testInfo: TestInfo, userId:
 
 test.describe.configure({ mode: "serial" });
 test.describe("minimum laboratory creation", () => {
+  let createdLaboratoryId: string;
+
   test.beforeAll(async () => {
     await cleanupLaboratoryFixtures(process.env);
     await setupLaboratoryFixtures(process.env);
@@ -33,6 +35,7 @@ test.describe("minimum laboratory creation", () => {
     expect(response.status()).toBe(201);
     const body = await response.json();
     expect(body).toEqual({ success: true, laboratory: { id: expect.any(String), name, createdAt: expect.any(String), status: "ACTIVE", isOwner: true } });
+    createdLaboratoryId = body.laboratory.id;
     expect(JSON.stringify(body)).not.toContain("accessCode");
     await expect(page.getByRole("heading", { name })).toBeVisible();
     await page.reload();
@@ -62,5 +65,14 @@ test.describe("minimum laboratory creation", () => {
     await authenticate(context, testInfo, LABORATORY_SECOND_USER.id);
     await page.goto("/workspace");
     await expect(page.getByRole("heading", { name: `${LABORATORY_FIXTURE_PREFIX} Persistent` })).toHaveCount(0);
+
+    const details = await context.request.get(`/api/laboratories/${createdLaboratoryId}`);
+    const deactivate = await context.request.patch(`/api/laboratories/${createdLaboratoryId}`, {
+      data: { confirmationName: `${LABORATORY_FIXTURE_PREFIX} Persistent` },
+    });
+    const deletion = await context.request.delete(`/api/laboratories/${createdLaboratoryId}`, {
+      data: { confirmationName: `${LABORATORY_FIXTURE_PREFIX} Persistent` },
+    });
+    expect([details.status(), deactivate.status(), deletion.status()]).toEqual([404, 404, 404]);
   });
 });

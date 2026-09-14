@@ -59,3 +59,24 @@ Registrar cada gate com data, ambiente não sensível, resultado e limitação. 
 - `npm run build`: aprovado, incluindo `/api/laboratories/[laboratoryId]` e `/workspace`.
 - `git diff --check`: aprovado.
 - Navegador autenticado com banco isolado, rolagem da lista, foco e viewports: pendente; não havia ambiente isolado confirmado nesta execução.
+
+## Reconciliação com `origin/development` — 2026-09-13
+
+- Baseline: branch local e remota sincronizadas em `c5d3871f8333ea80c6ae7b49ebe67a973b05d5cb`; `origin/development` em `5fa63ce03d80aa47a28abbd94cfc29653076de20`, contendo `abe16c4c5533d4241e1d0b6e81351f7c1f42af8a` e o merge do PR #20.
+- Segurança: `safety/002-criar-laboratorio-pre-development-merge` criada localmente no HEAD original; `origin/development` incorporada por merge não fast-forward mantido sem commit durante as correções. O merge automático não apresentou conflitos.
+- `npm ci`: PASS; 538 pacotes instalados conforme o lockfile. O audit informativo relatou vulnerabilidades de dependências já resolvidas pelo lockfile, sem `npm audit fix` por estar fora do escopo desta reconciliação.
+- `npx prisma format --check`: PASS.
+- `npx prisma validate`: PASS.
+- `npx prisma generate`: PASS; Prisma Client 7.4.2 gerado somente no caminho ignorado.
+- `npm run lint`: PASS com `0 errors` e quatro warnings preexistentes em `development`; o único warning introduzido pela IMP-002 foi removido.
+- `npm run test:unit`: PASS, 42 testes em 8 suítes/arquivos, incluindo contratos e serviço de laboratório.
+- `npm run test:integration`: PASS, 22 testes em 6 suítes/arquivos, incluindo rejeição de criação sem sessão autoritativa e propagação exclusiva do principal autenticado nas configurações.
+- `npm run typecheck`: PASS.
+- `npm run build`: PASS com Next.js 16.1.6; o primeiro intento ficou bloqueado pelo sandbox ao buscar a fonte Poppins e o segundo passou com acesso de rede autorizado. As rotas `/api/laboratories`, `/api/laboratories/[laboratoryId]` e `/workspace` foram reconhecidas como dinâmicas.
+- `npx playwright test tests/e2e/create-laboratory.spec.ts --list`: PASS; quatro cenários da IMP-002 descobertos.
+- E2E da IMP-002: `NAO_VERIFICADO` por infraestrutura. O ambiente isolado passou pelos guards e o setup allowlisted concluiu, mas a conexão WebSocket com o provedor expirou no `beforeAll`, antes do primeiro cenário; três cenários não chegaram a iniciar. O teardown seletivo posterior passou e confirmou zero usuários-fixture de autenticação remanescentes.
+- E2E conjunto da IMP-001/IMP-002: uma tentativa posterior descobriu 14 cenários e executou o único cenário inicial independente de persistência com sucesso. O primeiro cenário de autenticação dependente do banco recebeu a resposta interna controlada após indisponibilidade do provedor; a IMP-002 voltou a expirar no `beforeAll`. Resultado: 1 passou, 2 foram reportados como falha por conectividade e 11 não executaram. O locator do heading do workspace foi reconciliado.
+- Limpeza E2E final: os comandos seletivos de laboratório e autenticação passaram. Uma contagem anterior após teardown confirmou zero usuários-fixture; a última recontagem ficou `NAO_VERIFICADO` porque a conexão expirou novamente. Nenhum valor de ambiente foi copiado ou exibido.
+- `git diff --check`: PASS após as correções, a atualização documental e o Converge; o staged diff será verificado novamente antes do commit.
+- `$speckit-converge`: PASS após corrigir o apontador local ignorado de `specs/001-authenticated-access` para `specs/002-criar-laboratorio`; 19 FRs, 10 cenários de aceitação, 10 SCs, decisões do plano e 7 princípios constitucionais foram avaliados, sem findings acionáveis e sem nova fase/tarefa anexada.
+- Navegador autenticado, rolagem da lista, trap/restauração de foco, teclado, viewport móvel/ampla, percepção e conclusão em até dois minutos: `NAO_VERIFICADO`; follow-up humano não bloqueante, sem aprovação inventada.

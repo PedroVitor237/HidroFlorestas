@@ -135,7 +135,12 @@ test.describe("authenticated access", () => {
     await expect(page).toHaveURL(/\/workspace$/);
     await page.reload();
     await expect(page).toHaveURL(/\/workspace$/);
-    await expect(page.getByText(AUTH_FIXTURE_USERS[0].firstName)).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: `Olá, ${AUTH_FIXTURE_USERS[0].firstName}! 👋 Ambiente de Análises HIDROFLORESTAS`,
+        exact: true,
+      }),
+    ).toBeVisible();
 
     await page.goto("/dashboard");
     await expect(page).toHaveURL(/\/dashboard$/);

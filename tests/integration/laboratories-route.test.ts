@@ -41,4 +41,19 @@ describe("/api/laboratories", () => {
       assert.equal(JSON.stringify(await response.json()).includes("database detail"), false);
     }
   });
+
+  it("does not invoke creation when the session is not authoritative", async () => {
+    let createCalls = 0;
+    const handlers = createLaboratoriesHandlers({
+      requireAuth: async () => { throw new AuthBoundaryError("UNAUTHORIZED"); },
+      service: {
+        listAccessible: async () => ({ success: true, laboratories: [] }),
+        create: async () => { createCalls += 1; return { success: false, reason: "INTERNAL_ERROR" }; },
+      },
+    });
+
+    const response = await handlers.POST(request({ name: "Lab" }));
+    assert.equal(response.status, 401);
+    assert.equal(createCalls, 0);
+  });
 });

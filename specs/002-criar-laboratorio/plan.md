@@ -4,7 +4,7 @@
 
 ## Summary
 
-Entregar criação e listagem persistentes de laboratórios no workspace para o principal autenticado pela `IMP-001`. A entrada pública contém somente `name`; o servidor deriva `principal.id`, aplica limite de cinco vínculos, cria laboratório e vínculo inicial atomicamente, gera código único não exposto e devolve DTO por allowlist. A listagem é filtrada por vínculo e substitui o mock.
+Entregar criação, listagem e configurações persistentes de laboratórios no workspace para o principal autenticado pela `IMP-001`. A entrada de criação contém somente `name`; o servidor deriva `principal.id`, aplica limite de cinco vínculos, cria laboratório e vínculo inicial atomicamente, gera código único não exposto e devolve DTOs por allowlist. A listagem e os detalhes são filtrados por vínculo; somente a pessoa criadora pode desativar ou excluir após confirmação textual exata, e a exclusão é recusada quando existem áreas dependentes.
 
 ## Stacked Branch Baseline
 
@@ -15,13 +15,21 @@ Entregar criação e listagem persistentes de laboratórios no workspace para o 
 - Riscos: mudança futura de `requireAuth()`, conflito no workspace e pendências E2E/lint/typecheck/build/manual/documentais da IMP-001.
 - Revalidação de 2026-09-07: `HEAD` e `origin/001-authenticated-access` permaneceram em `1cfbe43ee28532ed347e0a7129a931adbbc7a802`; nenhum merge ou rebase foi executado.
 
+## Development Reconciliation
+
+- `EVIDENCIA_IMPLEMENTACAO` — em 2026-09-13, `origin/development` apontava para `5fa63ce03d80aa47a28abbd94cfc29653076de20`, merge do PR #20, e continha o commit final da IMP-001 `abe16c4c5533d4241e1d0b6e81351f7c1f42af8a`.
+- A branch local e `origin/002-criar-laboratorio` estavam sincronizadas em `c5d3871f8333ea80c6ae7b49ebe67a973b05d5cb`; a referência local `safety/002-criar-laboratorio-pre-development-merge` preserva esse HEAD original.
+- `origin/development` foi incorporada com merge não fast-forward e sem commit durante revisão. Não houve conflito automático nem alteração adicional de schema ou migration.
+- O contrato público de `/api/auth/me` permaneceu exatamente `{ firstName, lastName, image }`; a IMP-002 consome `AuthenticatedPrincipal` no servidor para obter o identificador e não usa o DTO público como fonte de autoridade.
+- A reconciliação preservou ESLint 9.39.5, Next.js 16.1.6, `eslint-config-next` 16.1.6, o ignore do Prisma gerado e os scripts/testes das duas features.
+
 ## Technical Context
 
 **Language/Version**: TypeScript 5, Node.js >=20.9, React 19.2.4  
 **Dependencies**: Next.js 16.1.6, Prisma 7.4.2, PostgreSQL/Neon, Tailwind CSS 4, Lucide React  
 **Testing**: `node:test`/`tsx`; Playwright E2E  
-**Constraints**: identidade somente de `requireAuth()`; DTO mínimo; máximo cinco vínculos; atomicidade; código único não exposto; sem novas dependências  
-**Scope**: criação e listagem somente
+**Constraints**: identidade somente de `requireAuth()`; DTOs por allowlist; máximo cinco vínculos; atomicidade; código único não exposto; detalhes somente para membros; ações de risco somente para a pessoa criadora; sem novas dependências
+**Scope**: criação, listagem, detalhes mínimos, desativação e exclusão protegidas
 
 ## Constitution Check
 
@@ -44,20 +52,24 @@ Entregar criação e listagem persistentes de laboratórios no workspace para o 
 - Criação usa transação interativa serializável: conta vínculos, recusa em cinco, cria laboratório com `userId` da sessão e cria vínculo inicial. Conflitos serializáveis têm retry limitado.
 - Código é gerado criptograficamente e nunca serializado. `accessCode @unique` e migration incremental mínima garantem unicidade sob concorrência; aplicação remota não está autorizada.
 - O workspace consulta o servidor como fonte de verdade, exibe loading/erro/retry/vazio/lista, bloqueia dupla submissão e refaz a consulta após sucesso. Não há contexto ativo automático.
+- `GET /api/laboratories/[laboratoryId]` exige vínculo e retorna somente o DTO público do laboratório mais nomes/iniciais dos membros.
+- `PATCH` e `DELETE /api/laboratories/[laboratoryId]` exigem vínculo, propriedade e confirmação textual exata. O lookup por vínculo evita revelar a existência de laboratórios a usuários não relacionados; a exclusão remove vínculos e laboratório atomicamente e recusa áreas dependentes.
 
 ## Public Contract
 
 - Entrada: `{ name }`, sem campos extras.
-- DTO: `{ name, createdAt, status }`.
+- DTO de laboratório: `{ id, name, createdAt, status, isOwner }`; `id` é o identificador opaco necessário para endereçar as configurações e não identifica usuário.
+- Detalhes: DTO de laboratório mais `members: Array<{ name, initials }>`; nenhum email, identificador de usuário, código de acesso ou campo privilegiado é serializado.
 - Listagem: `{ success: true, laboratories: DTO[] }`; criação: `{ success: true, laboratory: DTO }`.
+- Detalhes: `{ success: true, details }`; ações: `{ success: true, action: "DEACTIVATED" | "DELETED" }`.
 - Falha: `{ success: false, code, message }`, sem detalhes internos.
-- Status: `200`, `201`, `400`, `401`, `409`, `500`; `Cache-Control: no-store`.
+- Status: `200`, `201`, `400`, `401`, `403`, `404`, `409`, `500`; `Cache-Control: no-store`.
 
 ## Testing Strategy
 
-- Unit: parser/serializer e serviço (sucesso, limite, repetição de nome, isolamento, rollback/conflito).
-- Integration: handlers injetados; autenticação, extras/`userId`, envelopes/status/no-store/allowlist.
-- E2E: fixture allowlisted e banco isolado; criação, reload, isolamento, limite, dupla submissão e UI.
+- Unit: parser/serializer e serviço (sucesso, limite, repetição de nome, isolamento, rollback/conflito, membros e ações de risco).
+- Integration: handlers injetados; autenticação, extras/`userId`, envelopes/status/no-store/allowlist, confirmação e propagação exclusiva do principal autenticado.
+- E2E: fixture allowlisted e banco isolado; criação, reload, isolamento, limite, dupla submissão, UI e respostas uniformes para laboratório sem vínculo.
 - Gates: Prisma format/validate/generate, unit, integration, lint, typecheck, build, E2E aplicável e diff check.
 - Manual: móvel/amplo, teclado/foco, mensagens e Network allowlist.
 
@@ -67,6 +79,7 @@ Entregar criação e listagem persistentes de laboratórios no workspace para o 
 prisma/schema.prisma
 prisma/migrations/<timestamp>_unique_laboratory_access_code/migration.sql
 src/app/api/laboratories/route.ts
+src/app/api/laboratories/[laboratoryId]/route.ts
 src/app/api/server/laboratories/laboratory.contracts.ts
 src/app/api/server/services/laboratories.service.ts
 src/types/laboratory.type.ts
@@ -75,6 +88,7 @@ src/app/(private)/workspace/page.tsx
 tests/unit/laboratory-contracts.test.ts
 tests/unit/laboratories-service.test.ts
 tests/integration/laboratories-route.test.ts
+tests/integration/laboratory-settings-route.test.ts
 tests/e2e/create-laboratory.spec.ts
 tests/fixtures/laboratories.ts
 ```

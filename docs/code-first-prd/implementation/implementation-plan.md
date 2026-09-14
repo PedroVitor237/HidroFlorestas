@@ -21,7 +21,7 @@ arquitetura futura.
 
 | Módulo | Estado observado |
 |---|---|
-| Identidade e sessão | Login, cadastro, consulta da sessão e logout possuem conexões estáticas; proteção e restauração são parciais e não foram validadas em runtime. |
+| Identidade e sessão | `IMP-001` tecnicamente concluída: login `ACTIVE`, restauração, proteção server-side e logout validados em runtime, inclusive produção HTTPS; SC-006/SC-007 permanecem `NAO_VERIFICADO` em follow-up humano. |
 | Laboratórios e workspace | Models e interface existem, mas a tela usa estado e conteúdo fixos e não há API de domínio conectada. |
 | Áreas e coordenadas | Models e lista visual existem; a lista é mockada, a criação é placeholder e não há API conectada. |
 | Coletas | Model e ação visual existem, sem fluxo persistido conectado. |
@@ -45,9 +45,9 @@ arquitetura futura.
 
 ## Ordem inicial recomendada
 
-1. **Acesso autenticado seguro**.
-2. **Criação mínima de laboratório**; sua especificação pode começar em paralelo após a
-   estabilização do contrato de autenticação.
+1. **Acesso autenticado seguro** — tecnicamente concluído e pronto para revisão.
+2. **Criação mínima de laboratório** — próximo candidato; sua especificação pode começar com o
+   contrato de autenticação tecnicamente estabilizado.
 3. **Cadastro e consulta de área**, somente depois de autenticação e contexto de laboratório.
 
 Coletas, dados ambientais, diagnóstico IHFR, acompanhamento e mapa entram depois conforme suas
@@ -114,7 +114,9 @@ Uma entrega está pronta quando o resultado do recorte e seus cenários de aceit
 os riscos concretos foram tratados ou registrados, dados sensíveis e campos privilegiados não são
 expostos, as tarefas estão reconciliadas com a implementação, o diff contém somente o escopo
 autorizado e a documentação afetada foi atualizada. Comandos executados, resultados, limitações e
-verificações omitidas devem constar na entrega.
+verificações omitidas devem constar na entrega. Para `IMP-001`, a equipe confirmou em 2026-09-13
+que SC-006/SC-007 permanecem `NAO_VERIFICADO` em follow-up de UX/produto e não bloqueiam a
+conclusão técnica.
 
 ## Atualização documental após cada entrega
 

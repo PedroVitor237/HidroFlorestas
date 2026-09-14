@@ -12,6 +12,7 @@
     "test:unit": "node --import=tsx --test tests/unit/*.test.ts",
     "test:integration": "node --import=tsx --test --test-concurrency=1 tests/integration/*.test.ts",
     "test:e2e": "playwright test",
+    "test:e2e:https": "node --import=tsx tests/e2e/run-auth-https.mjs",
     "test": "npm run test:unit && npm run test:integration",
     "typecheck": "tsc --noEmit"
   },
@@ -40,7 +41,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/ws": "^8.18.1",
-    "eslint": "^10",
+    "eslint": "9.39.5",
     "eslint-config-next": "16.1.6",
     "prisma": "^7.4.2",
     "tailwindcss": "^4",

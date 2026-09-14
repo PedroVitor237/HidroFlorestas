@@ -2,7 +2,7 @@
 
 **Feature**: `001-authenticated-access`
 **Data**: 2026-09-07
-**Estado**: pacote técnico aprovado para a feature; implementação não iniciada
+**Estado**: pacote técnico aprovado; implementação e validações técnicas concluídas em 2026-09-13
 
 ## Fontes e classificação
 
@@ -289,3 +289,19 @@ assíncrona no cliente (`src/proxy.ts:3-25` e `src/app/(private)/layout.tsx:1-17
 recomenda atualização da linha 16 para versão corrigida. A atualização do framework é mudança
 global e não foi incorporada silenciosamente nesta feature; deve ser coordenada separadamente
 antes de produção, sem bloquear a geração das tarefas de autenticação.
+
+## 15. Fechamento técnico automatizado
+
+- **Decisão (`DECISAO_CONFIRMADA`)**: a equipe do HidroFlorestas confirmou em 2026-09-13 que T039
+  será uma validação Playwright automatizada de tudo que o navegador puder observar objetivamente,
+  em aplicação de produção servida por HTTPS local temporário e loopback. A infraestrutura usa
+  Node.js, OpenSSL e Playwright já disponíveis, certificado efêmero fora da árvore Git e somente a
+  branch Neon E2E existente.
+- **Motivo**: tornar reproduzíveis atributos do cookie, tráfego HTTP, ausência de flash sob
+  latência e o ciclo pós-logout sem depender de uma inspeção manual irrepetível.
+- **Limite**: SC-006 e SC-007 continuam sendo avaliações humanas, com suas metas percentuais
+  intactas e estado `NAO_VERIFICADO`. O adiamento para UX/produto é não bloqueante para a conclusão
+  técnica de `IMP-001`, mas automação alguma pode ser apresentada como resultado dessas metas.
+- **Segurança operacional**: o runner deve validar o guard, autenticar com o adapter real, exigir
+  allowlist vazia, instalar cleanup antes do setup, usar apenas as quatro fixtures determinísticas,
+  executar teardown em `finally`, confirmar contagem final zero e sanitizar toda saída.
