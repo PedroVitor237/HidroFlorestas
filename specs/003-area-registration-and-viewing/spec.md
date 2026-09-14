@@ -170,7 +170,7 @@ Como qualquer membro vinculado, quero localizar uma área na listagem do laborat
 #### Listagem, detalhe e privacidade
 
 - **FR-030**: `OWNER`, `ADMIN` e `MEMBER` com vínculo atual MUST poder consultar as áreas do laboratório selecionado, inclusive quando o laboratório estiver inativo.
-- **FR-031**: A listagem MUST apresentar identificador estável, nome, latitude, longitude, município e UF quando informados, indicação espacial correspondente, acesso ao detalhe e indicação de somente leitura quando aplicável.
+- **FR-031**: A listagem MUST apresentar identificador estável, nome, latitude, longitude, município e UF quando informados, indicação espacial correspondente como coordenadas textuais — sem mapa agregado —, acesso ao detalhe e indicação de somente leitura quando aplicável.
 - **FR-032**: O detalhe MUST apresentar identificador estável, nome, latitude, longitude, mapa com um marcador no ponto persistido, município e UF quando informados, tipo de terreno quando informado, descrição quando informada, data de cadastro, identificação pública mínima do laboratório e indicação de somente leitura.
 - **FR-033**: A área criada MUST reaparecer na listagem e no detalhe a partir do estado persistido, inclusive após reload.
 - **FR-034**: A autoria da área MUST ser preservada internamente a partir do principal autenticado, mas o nome e o identificador do criador MUST NOT ser expostos na listagem, no detalhe nem em outros contratos públicos desta entrega.

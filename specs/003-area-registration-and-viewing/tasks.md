@@ -30,16 +30,16 @@
 
 - [ ] T006 Criar harness transacional de migration com validação de ambiente, banco descartável e teardown garantido em `tests/migration/migration-test-harness.ts`
 - [ ] T007 Adicionar o script isolado `test:migration` sem alterar versões ou scripts não relacionados em `package.json`
-- [ ] T008 [P] Criar testes de migration para reconciliação, preflight, backfills, IDs opacos, proprietário único, precisão decimal, opcionais, campos legados, abort antes do drop e rollback em `tests/migration/area-registration-migration.test.ts`
-- [ ] T009 [P] Criar testes unitários do preflight para criador sem vínculo, limite de cinco, vínculos inconsistentes, coordenadas inválidas/órfãs/compartilhadas e saída sem dados sensíveis, junto a um shell compilável que retorna `NOT_IMPLEMENTED`, em `tests/unit/area-migration-preflight.test.ts` e `scripts/imp-003-migration-preflight.ts`
-- [ ] T010 Executar T008–T009 no ambiente isolado, confirmar falha apenas pela ausência das invariantes planejadas — nunca por import, configuração, banco ou dependência quebrada — e registrar o RED em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T008 [P] Criar testes reais de migration/integração sobre o harness/SQL, sem importar o Prisma Client ainda não regenerado, para reconciliação, preflight, backfills, IDs opacos, proprietário único, precisão decimal, opcionais, campos legados, abort antes do drop e rollback; incluir a transação integrada da IMP-002 que remove vínculos, exclui o laboratório, confirma commit aceito pela trigger diferível e ausência de dados inválidos em `tests/migration/area-registration-migration.test.ts`
+- [ ] T009 [P] Criar e validar primeiro um shell compilável do preflight que retorna `NOT_IMPLEMENTED`; somente depois criar testes unitários para criador sem vínculo, limite de cinco, vínculos inconsistentes, coordenadas inválidas/órfãs/compartilhadas e saída sem dados sensíveis em `scripts/imp-003-migration-preflight.ts` e `tests/unit/area-migration-preflight.test.ts`
+- [ ] T010 Executar e registrar T008 e T009 separadamente por arquivo/camada no ambiente isolado, identificando para cada RED a invariante ausente esperada; falha de import, compilação, configuração, banco ou dependência não conta como RED funcional em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 - [ ] T011 Implementar o preflight bloqueante e sanitizado, sem corrigir dados automaticamente, em `scripts/imp-003-migration-preflight.ts`
 - [ ] T012 Modelar `LaboratoryMembershipRole`, `ResearchersLinked.id/role`, chave composta preservada, latitude `Decimal(8,6)`, longitude `Decimal(9,6)` e opcionais/legados de `CollectionArea` sem alterar `UserRole`, `User.role` ou `User.isAdmin` em `prisma/schema.prisma`
-- [ ] T013 Criar a migration transacional com backfill determinístico `OWNER`/`MEMBER`, nenhum `ADMIN` automático, índice parcial, trigger diferível, checks, conversão/validação das coordenadas e remoção tardia de `Coordinates` em `prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql`
+- [ ] T013 Criar a migration transacional com backfill determinístico `OWNER`/`MEMBER`, nenhum `ADMIN` automático, índice parcial, trigger diferível que exige exatamente um `OWNER` somente para laboratório ainda existente e ignora/trata laboratório já excluído na transação administrativa da IMP-002, checks, conversão/validação das coordenadas e remoção tardia de `Coordinates` em `prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql`
 - [ ] T014 Incluir exclusivamente a migration da IMP-003 na allowlist, preservando as regras existentes, em `.gitignore`
-- [ ] T015 Executar preflight e migration tests até GREEN em banco isolado, provar invariantes e rollback, confirmar teardown e registrar resultados/contagens em `specs/003-area-registration-and-viewing/implementation-evidence.md`
-- [ ] T016 Criar primeiro testes do guard de fixtures para ambiente isolado, prefixos/IDs allowlisted, ordem de exclusão e rejeição de banco inseguro, junto a exports compiláveis sem comportamento, em `tests/unit/area-fixture-guard.test.ts` e `tests/fixtures/areas.ts`
-- [ ] T017 Executar T016, confirmar RED pela ausência da fixture segura e registrar a causa esperada em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T015 Após T012–T014 e antes de fixtures, serviços ou testes que importem o novo Prisma Client, executar e registrar em ordem `prisma format`, `prisma validate` e `prisma generate`; então executar preflight e migration tests até GREEN em banco isolado, provar inclusive a exclusão administrativa da IMP-002 sem rejeição da trigger, confirmar rollback/teardown e registrar resultados/contagens em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T016 Criar e validar primeiro exports compiláveis sem comportamento da fixture; somente depois criar testes do guard para ambiente isolado, prefixos/IDs allowlisted, ordem de exclusão e rejeição de banco inseguro em `tests/fixtures/areas.ts` e `tests/unit/area-fixture-guard.test.ts`
+- [ ] T017 Executar e registrar T016 separadamente por arquivo/camada, confirmar RED funcional pela ausência da fixture segura e rejeitar como RED qualquer falha de import, compilação, configuração, banco ou dependência em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 - [ ] T018 Implementar usuários, vínculos, laboratórios ativo/inativo, áreas cruzadas, mutações controladas e teardown seletivo em `tests/fixtures/areas.ts`
 - [ ] T019 Reexecutar T016 até GREEN, executar setup/teardown em banco isolado, confirmar contagem final zero da allowlist e registrar em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 
@@ -55,12 +55,12 @@
 
 ### Tests for User Story 1 — escrever antes da implementação
 
-- [ ] T020 [P] [US1] Criar testes dos parsers, transições fechadas, identificador opaco, DTO `{id,name,initials,role}` e ausência de campos privilegiados, junto a exports compiláveis que retornam falha controlada, em `tests/unit/laboratory-membership-contracts.test.ts` e `src/app/api/server/laboratories/laboratory-membership.contracts.ts`
-- [ ] T021 [P] [US1] Criar testes do serviço para proprietário único, promoção, rebaixamento, compare-and-set, `OWNER` protegido, laboratório inativo e `UserRole.ADMIN` global sem privilégio contextual, junto a um shell injetável compilável, em `tests/unit/laboratory-memberships-service.test.ts` e `src/app/api/server/services/laboratory-memberships.service.ts`
-- [ ] T022 [P] [US1] Criar testes dos handlers GET/PATCH para autenticação, autorização, `404` uniforme, `403`, `409`, `no-store` e não inferência, junto a factories compiláveis sem comportamento, em `tests/integration/laboratory-memberships-route.test.ts`, `src/app/api/laboratories/[laboratoryId]/memberships/route.ts` e `src/app/api/laboratories/[laboratoryId]/memberships/[membershipId]/route.ts`
+- [ ] T020 [P] [US1] Criar e validar primeiro exports compiláveis que retornam falha controlada; somente depois criar testes dos parsers, transições fechadas, identificador opaco, DTO `{id,name,initials,role}` e ausência de campos privilegiados em `src/app/api/server/laboratories/laboratory-membership.contracts.ts` e `tests/unit/laboratory-membership-contracts.test.ts`
+- [ ] T021 [P] [US1] Criar e validar primeiro um shell injetável compilável; somente depois criar testes do serviço para proprietário único, promoção, rebaixamento, compare-and-set, `OWNER` protegido, laboratório inativo e `UserRole.ADMIN` global sem privilégio contextual em `src/app/api/server/services/laboratory-memberships.service.ts` e `tests/unit/laboratory-memberships-service.test.ts`
+- [ ] T022 [P] [US1] Criar e validar primeiro factories compiláveis sem comportamento; somente depois criar testes dos handlers GET/PATCH para autenticação, sequência de autorização, `404` uniforme, `403` em laboratório ativo, `409` para membro atual em laboratório inativo, `500 INTERNAL_ERROR` sanitizado sem detalhe/stack/dado privilegiado, `no-store` em todas as respostas e não inferência em `src/app/api/laboratories/[laboratoryId]/memberships/route.ts`, `src/app/api/laboratories/[laboratoryId]/memberships/[membershipId]/route.ts` e `tests/integration/laboratory-memberships-route.test.ts`
 - [ ] T023 [P] [US1] Acrescentar testes da criação atômica de laboratório com vínculo `OWNER`, limite cinco e rollback preservados em `tests/unit/laboratories-service.test.ts`
 - [ ] T024 [P] [US1] Criar cenário Playwright de proprietário promovendo/rebaixando, papéis sem controles, conflito e laboratório inativo somente leitura em `tests/e2e/laboratory-membership-roles.spec.ts`
-- [ ] T025 [US1] Executar T020–T024, confirmar RED somente pelos comportamentos de papel ausentes e registrar comandos/causas em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T025 [US1] Executar T020–T024 e registrar cada arquivo/camada separadamente, com a causa funcional esperada de cada RED; falha de import, browser, dependência ou infraestrutura não conta como RED em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 
 ### Implementation for User Story 1
 
@@ -69,8 +69,8 @@
 - [ ] T028 [US1] Implementar a matriz `MANAGE_ROLES` e a base reutilizável de autorização por vínculo atual em `src/app/api/server/areas/area.authorization.ts`
 - [ ] T029 [US1] Implementar repository port/Prisma, listagem mínima e compare-and-set transacional, bloqueando `OWNER` e qualquer mutação em laboratório inativo, em `src/app/api/server/services/laboratory-memberships.service.ts`
 - [ ] T030 [US1] Adaptar `createAtomic` para persistir o vínculo `OWNER` na mesma transação serializável sem alterar limite ou DTO da IMP-002 em `src/app/api/server/services/laboratories.service.ts`
-- [ ] T031 [US1] Implementar GET autenticado e `no-store` da lista de vínculos em `src/app/api/laboratories/[laboratoryId]/memberships/route.ts`
-- [ ] T032 [US1] Implementar PATCH autenticado, fechado e concorrente de papel em `src/app/api/laboratories/[laboratoryId]/memberships/[membershipId]/route.ts`
+- [ ] T031 [US1] Implementar GET autenticado e `no-store` da lista de vínculos, incluindo `500 INTERNAL_ERROR` sanitizado sem detalhe interno, stack trace ou dado privilegiado, em `src/app/api/laboratories/[laboratoryId]/memberships/route.ts`
+- [ ] T032 [US1] Implementar PATCH autenticado, fechado e concorrente de papel, incluindo `500 INTERNAL_ERROR` sanitizado e `no-store` em toda resposta, em `src/app/api/laboratories/[laboratoryId]/memberships/[membershipId]/route.ts`
 - [ ] T033 [US1] Implementar lista e controles acessíveis de promoção/rebaixamento com loading, sucesso, erro e conflito em `src/components/laboratories/laboratory-memberships.tsx`
 - [ ] T034 [US1] Implementar a página mínima de membros, sem convite/remoção/transferência e com modo somente leitura em `src/app/(private)/dashboard/laboratories/[laboratoryId]/members/page.tsx`
 - [ ] T035 [US1] Reexecutar testes unitários e de integração de T020–T023 até GREEN e registrar resultados reais em `specs/003-area-registration-and-viewing/implementation-evidence.md`
@@ -88,14 +88,14 @@
 
 ### Tests for User Story 2 — escrever antes da implementação
 
-- [ ] T037 [P] [US2] Criar testes da sequência principal→vínculo/laboratório→papel/estado→permissão→recurso, incluindo conta inelegível, revogação e matriz atual em `tests/unit/area-authorization.test.ts`
+- [ ] T037 [P] [US2] Criar testes da sequência principal autenticado/conta elegível→laboratório filtrado pelo vínculo→papel e estado do laboratório→permissão→recurso subordinado, incluindo conta inelegível, revogação, `404` inacessível, `409` para qualquer membro atual que tente mutação em laboratório inativo e `403` por papel insuficiente em laboratório ativo em `tests/unit/area-authorization.test.ts`
 - [ ] T038 [P] [US2] Criar testes de integração do contexto para laboratório válido, inativo, inexistente, inacessível, cruzado e revalidado sem cache em `tests/integration/laboratory-context-access.test.ts`
 - [ ] T039 [P] [US2] Criar cenários Playwright de escolha explícita, ausência de seleção automática, URL contextual, reload, links, revogação e `404` uniforme em `tests/e2e/laboratory-context.spec.ts`
-- [ ] T040 [US2] Executar T037–T039, confirmar RED pelos comportamentos contextuais ausentes e registrar a razão esperada em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T040 [US2] Executar T037–T039 e registrar cada arquivo/camada separadamente, identificando o comportamento contextual ausente de cada RED; falha de import, browser, dependência ou infraestrutura não conta como RED funcional em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 
 ### Implementation for User Story 2
 
-- [ ] T041 [US2] Completar `authorizeLaboratoryAccess` com `READ_AREAS`, `CREATE_AREA`, `MANAGE_ROLES`, fronteira `CREATE_COLLECTION`, `readOnly` e consulta subordinada em `src/app/api/server/areas/area.authorization.ts`
+- [ ] T041 [US2] Completar `authorizeLaboratoryAccess` na ordem principal autenticado/conta elegível→laboratório filtrado pelo vínculo→papel e estado→permissão→recurso subordinado, com `READ_AREAS`, `CREATE_AREA`, `MANAGE_ROLES`, fronteira `CREATE_COLLECTION`, `readOnly`, `404` inacessível, `409` para mutação por membro atual em laboratório inativo e `403` por papel insuficiente em laboratório ativo em `src/app/api/server/areas/area.authorization.ts`
 - [ ] T042 [US2] Implementar projeção server-side do laboratório selecionado com vínculo/papel atuais e nenhuma persistência em cookie/localStorage em `src/components/workspace/laboratory-context.tsx`
 - [ ] T043 [US2] Criar layout contextual dinâmico com identificação do laboratório, papel, status e somente leitura em `src/app/(private)/dashboard/laboratories/[laboratoryId]/layout.tsx`
 - [ ] T044 [US2] Alterar “ACESSAR LABORATÓRIO” para navegar explicitamente ao `laboratoryId`, preservando escolha após reload, em `src/components/workspace/laboratory-workspace.tsx`
@@ -118,29 +118,29 @@
 
 ### Tests for User Story 3 — escrever antes da implementação
 
-- [ ] T051 [P] [US3] Criar testes do parser/serializer fechado para normalização, limites de tamanho, opcionais nulos, ranges, não numéricos/não finitos, chaves extras e tolerância `1e-6`, junto a exports compiláveis de falha controlada, em `tests/unit/area-contracts.test.ts` e `src/app/api/server/areas/area.contracts.ts`
-- [ ] T052 [P] [US3] Criar testes do serviço para criação por `OWNER`/`ADMIN`, recusa de `MEMBER`/inativo, autoria/contexto derivados, decimal canônico, atomicidade e falha sem parcial, junto a um shell injetável compilável, em `tests/unit/areas-service.test.ts` e `src/app/api/server/services/areas.service.ts`
-- [ ] T053 [P] [US3] Criar testes do POST para corpo fechado, identidade/laboratório forjados, códigos 201/400/401/403/404/409, `Location`, `no-store` e DTO mínimo, junto a uma factory compilável sem comportamento, em `tests/integration/areas-route.test.ts` e `src/app/api/laboratories/[laboratoryId]/areas/route.ts`
-- [ ] T054 [P] [US3] Criar testes do estado do formulário para clique, digitação, marcador, submissão única e geolocalização concedida/negada/indisponível/timeout/inválida/tardia sem apagar correção, junto a um reducer compilável que retorna estado inicial, em `tests/unit/area-form-state.test.ts` e `src/components/areas/area-form-state.ts`
-- [ ] T055 [P] [US3] Criar cenários Playwright de criação como administrador, recusa de membro/inativo, mapa, manual, geolocalização, fallback sem tiles e nenhuma persistência antes da confirmação em `tests/e2e/area-registration.spec.ts`
-- [ ] T056 [US3] Executar T051–T055, confirmar RED por funcionalidades ausentes — não por dependência, import ou infraestrutura — e registrar causas em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T051 [P] [US3] Criar e validar primeiro exports compiláveis de falha controlada; somente depois criar testes do parser/serializer fechado para normalização, limites de tamanho, opcionais nulos, ranges, não numéricos/não finitos, chaves extras e tolerância `1e-6` em `src/app/api/server/areas/area.contracts.ts` e `tests/unit/area-contracts.test.ts`
+- [ ] T052 [P] [US3] Criar e validar primeiro um shell injetável compilável; somente depois criar testes do serviço para criação por `OWNER`/`ADMIN`, recusa de `MEMBER`/inativo conforme a ordem de autorização, autoria/contexto derivados, decimal canônico, atomicidade e falha sem parcial em `src/app/api/server/services/areas.service.ts` e `tests/unit/areas-service.test.ts`
+- [ ] T053 [P] [US3] Criar e validar primeiro uma factory compilável sem comportamento; somente depois criar testes do POST para corpo fechado, identidade/laboratório forjados, códigos 201/400/401/403/404/409/500, `500 INTERNAL_ERROR` sanitizado sem detalhe/stack/dado privilegiado, `Location`, `no-store` em toda resposta e DTO mínimo em `src/app/api/laboratories/[laboratoryId]/areas/route.ts` e `tests/integration/areas-route.test.ts`
+- [ ] T054 [P] [US3] Criar e validar primeiro um reducer compilável que retorna estado inicial; somente depois criar testes do estado do formulário para clique, digitação, marcador, submissão única e geolocalização concedida/negada/indisponível/timeout/inválida/tardia sem apagar correção em `src/components/areas/area-form-state.ts` e `tests/unit/area-form-state.test.ts`
+- [ ] T055 [P] [US3] Criar cenários Playwright de criação como administrador, recusa de membro/inativo, mapa, manual, geolocalização, fallback com tiles indisponíveis mantendo entrada manual e atribuição obrigatória, nenhuma persistência antes da confirmação e viewports móvel/intermediária/ampla em `tests/e2e/area-registration.spec.ts`
+- [ ] T056 [US3] Executar T051–T055 e registrar cada arquivo/camada separadamente, identificando a funcionalidade ausente esperada de cada RED; falha de dependência, import, browser ou infraestrutura não conta como RED funcional em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 
 ### Implementation for User Story 3
 
 - [ ] T057 [US3] Instalar somente `leaflet@1.9.4`, `react-leaflet@5.0.0` e tipos compatíveis necessários, revisando que nenhuma outra versão mudou incidentalmente, em `package.json` e `package-lock.json`
-- [ ] T058 [P] [US3] Implementar URL/atribuição configuráveis, fallback OSM apenas manual/dev e falha segura sem tiles em `src/components/areas/map-config.ts`
+- [ ] T058 [P] [US3] Implementar URL/atribuição configuráveis, preservar atribuição obrigatória visível, fallback OSM apenas manual/dev e falha segura sem tiles em `src/components/areas/map-config.ts`
 - [ ] T059 [P] [US3] Definir inputs e DTOs fechados de área sem autoria ou campos legados em `src/types/area.type.ts`
 - [ ] T060 [US3] Implementar parser, normalização, decimal/number serializer, mensagens e envelopes da área em `src/app/api/server/areas/area.contracts.ts`
 - [ ] T061 [P] [US3] Implementar repository port e criação transacional subordinada ao laboratório/principal autorizados em `src/app/api/server/services/areas.service.ts`
-- [ ] T062 [US3] Implementar POST autenticado com revalidação atual, allowlist, `Location` e `no-store` em `src/app/api/laboratories/[laboratoryId]/areas/route.ts`
+- [ ] T062 [US3] Implementar POST autenticado com revalidação atual, allowlist, `Location`, `no-store` em toda resposta e `500 INTERNAL_ERROR` sanitizado sem detalhe interno, stack trace ou dado privilegiado em `src/app/api/laboratories/[laboratoryId]/areas/route.ts`
 - [ ] T063 [P] [US3] Implementar estado canônico de coordenadas, token contra resposta tardia, descarte transitório e single-flight em `src/components/areas/area-form-state.ts`
-- [ ] T064 [US3] Implementar mapa client-only com clique, marcador próprio, sincronização e tiles atribuídos em `src/components/areas/area-map.client.tsx`
-- [ ] T065 [US3] Criar wrapper dinâmico `ssr: false` com fallback acessível e entrada manual independente em `src/components/areas/area-map.tsx`
+- [ ] T064 [US3] Implementar mapa client-only com uma única importação do CSS do Leaflet, container com altura/dimensões não nulas e responsivas, clique, marcador próprio, sincronização e tiles com atribuição obrigatória preservada em `src/components/areas/area-map.client.tsx`
+- [ ] T065 [US3] Criar wrapper dinâmico `ssr: false` com fallback acessível e entrada manual independente e funcional quando mapa ou tiles estiverem indisponíveis em `src/components/areas/area-map.tsx`
 - [ ] T066 [US3] Implementar formulário responsivo com labels, foco, opcionais, geolocalização explícita, mensagens e confirmação única em `src/components/areas/area-form.tsx`
 - [ ] T067 [US3] Implementar página de nova área vinculada ao contexto e bloqueada em modo somente leitura em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/new/page.tsx`
 - [ ] T068 [US3] Reexecutar T051–T054 até GREEN e registrar resultados unitários/de integração reais em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 - [ ] T069 [US3] Executar T055 com geolocalização controlada e tiles interceptados, garantir teardown e registrar GREEN ou classificação de infraestrutura em `specs/003-area-registration-and-viewing/implementation-evidence.md`
-- [ ] T070 [US3] Verificar em browser móvel/amplo que teclado, foco, mensagens, mapa e caminho manual permanecem operáveis e registrar evidência em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T070 [US3] Verificar em browser nas viewports móvel, tablet/intermediária e ampla que o container do mapa mantém dimensões não nulas e comportamento responsivo e que teclado, foco, mensagens, atribuição e caminho manual sem tiles permanecem operáveis; registrar evidência em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 - [ ] T071 [US3] Confirmar no banco isolado uma área por submissão, autoria correta, somente ponto final e ausência de coordenadas/áreas órfãs após falha; limpar fixtures e registrar contagens em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 
 **Checkpoint**: US3 cadastra área persistente sem depender de geolocalização ou disponibilidade de tiles.
@@ -155,24 +155,24 @@
 
 ### Tests for User Story 4 — escrever antes da implementação
 
-- [ ] T072 [P] [US4] Acrescentar testes de serviço para listagem completa sem paginação no contrato atual, ordenada/vazia, e detalhe filtrado por `{id,laboratoryRoomId}` com os três papéis e laboratório inativo em `tests/unit/areas-service.test.ts`
-- [ ] T073 [P] [US4] Acrescentar testes GET lista/detalhe para `404` uniforme, `no-store`, opcionais nulos, números e ausência de autoria/userId/e-mail/código/CEP/imagem em `tests/integration/areas-route.test.ts`
-- [ ] T074 [P] [US4] Criar cenários Playwright de lista, vazio, reload, detalhe, marcador, todos os papéis, somente leitura, cruzamento e regressão dos mocks em `tests/e2e/area-viewing.spec.ts`
-- [ ] T075 [US4] Executar T072–T074, confirmar RED pelos fluxos de consulta ausentes e registrar causas esperadas em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T072 [P] [US4] Acrescentar testes de serviço para listagem completa sem paginação no contrato atual, ordenada/vazia, com todos os campos de FR-031, latitude/longitude serializadas como números e detalhe filtrado por `{id,laboratoryRoomId}` com os três papéis e laboratório inativo em `tests/unit/areas-service.test.ts`
+- [ ] T073 [P] [US4] Acrescentar testes GET de lista/detalhe para `404` uniforme, `500 INTERNAL_ERROR` sanitizado sem detalhe/stack/dado privilegiado, `no-store` em toda resposta, todos os campos de FR-031, latitude/longitude numéricas, opcionais nulos no DTO, `readOnly` quando aplicável e ausência de autoria/userId/e-mail/código/CEP/imagem/estado funcional legado em `tests/integration/areas-route.test.ts`
+- [ ] T074 [P] [US4] Criar cenários Playwright de lista com coordenadas textuais e sem mapa agregado, opcionais exibidos somente quando presentes, vazio, reload, detalhe, marcador, todos os papéis, indicação somente leitura, cruzamento, viewports móvel/intermediária/ampla e regressão dos mocks em `tests/e2e/area-viewing.spec.ts`
+- [ ] T075 [US4] Executar T072–T074 e registrar cada arquivo/camada separadamente, identificando o fluxo de consulta ausente esperado de cada RED; falha de import, browser, dependência ou infraestrutura não conta como RED funcional em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 
 ### Implementation for User Story 4
 
-- [ ] T076 [US4] Implementar listagem ordenada e detalhe composto sem filtro pelo `isActive` legado em `src/app/api/server/services/areas.service.ts`
-- [ ] T077 [US4] Implementar GET de áreas com contexto, lista vazia, `readOnly` e `no-store` em `src/app/api/laboratories/[laboratoryId]/areas/route.ts`
-- [ ] T078 [US4] Implementar GET do detalhe subordinado ao laboratório com `404` uniforme e DTO mínimo em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/route.ts`
-- [ ] T079 [P] [US4] Implementar lista persistente acessível, estados loading/vazio/erro/sucesso e links contextuais em `src/components/areas/area-list.tsx`
+- [ ] T076 [US4] Implementar listagem ordenada com todos os campos de FR-031, latitude/longitude serializadas como números, e detalhe composto sem filtro pelo `isActive` legado em `src/app/api/server/services/areas.service.ts`
+- [ ] T077 [US4] Implementar GET de áreas com contexto, lista vazia, `readOnly`, `no-store` em toda resposta e `500 INTERNAL_ERROR` sanitizado sem detalhe interno, stack trace ou dado privilegiado em `src/app/api/laboratories/[laboratoryId]/areas/route.ts`
+- [ ] T078 [US4] Implementar GET do detalhe subordinado ao laboratório com `404` uniforme, DTO mínimo, `no-store` em toda resposta e `500 INTERNAL_ERROR` sanitizado em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/route.ts`
+- [ ] T079 [P] [US4] Implementar lista persistente acessível com identificador, nome, latitude/longitude textuais, município/UF somente quando presentes, link de detalhe, indicação somente leitura quando aplicável, nenhum mapa agregado nem campo privilegiado e estados loading/vazio/erro/sucesso em `src/components/areas/area-list.tsx`
 - [ ] T080 [US4] Substituir a página contextual provisória pela listagem real e ação “Nova Área” sem `alert` em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/page.tsx`
 - [ ] T081 [P] [US4] Acrescentar modo somente leitura com exatamente um marcador persistido ao mapa compartilhado em `src/components/areas/area-map.client.tsx`
 - [ ] T082 [US4] Implementar detalhe responsivo, opcionais somente quando presentes, contexto e indicação somente leitura em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/page.tsx`
-- [ ] T083 [US4] Remover componentes de lista mock sem uso e manter a rota legada apenas como redirecionamento contextual seguro em `src/app/(private)/dashboard/collects/collect-card.tsx`, `src/app/(private)/dashboard/collects/collects-grid.tsx` e `src/app/(private)/dashboard/collects/page.tsx`
+- [ ] T083 [US4] Remover os componentes de lista mock sem uso e verificar que nenhum import restante os referencia, sem recriar nem alterar o redirecionamento legado pertencente a T046, em `src/app/(private)/dashboard/collects/collect-card.tsx` e `src/app/(private)/dashboard/collects/collects-grid.tsx`
 - [ ] T084 [US4] Reexecutar T072–T073 até GREEN e registrar resultados unitários/de integração em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 - [ ] T085 [US4] Executar T074 com tiles interceptados, reload e teardown garantido; registrar GREEN ou bloqueio externo classificado em `specs/003-area-registration-and-viewing/implementation-evidence.md`
-- [ ] T086 [US4] Verificar listagem/detalhe em browser móvel/amplo, teclado, foco, opcionais, marcador e somente leitura e registrar em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T086 [US4] Verificar listagem/detalhe em browser nas viewports móvel, tablet/intermediária e ampla, incluindo teclado, foco, coordenadas textuais sem mapa agregado na lista, opcionais somente quando presentes, marcador no detalhe e indicação somente leitura; registrar em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 
 **Checkpoint**: US4 fecha o fluxo persistente completo sem edição ou exclusão de área.
 
@@ -182,11 +182,11 @@
 
 **Purpose**: provar sincronização das cinco operações e compatibilidade com IMP-001/002.
 
-- [ ] T087 Criar teste estrutural/de conformidade que exija OpenAPI 3.1 válido, cinco `operationId` únicos, refs resolvidas, schemas fechados, exemplos, erros, `no-store` e ausência de campos privilegiados em `tests/unit/area-openapi-contract.test.ts`
-- [ ] T088 Executar T087 e registrar RED especificamente pela ausência de exemplos contratuais, sem aceitar falha de parser/configuração, em `specs/003-area-registration-and-viewing/implementation-evidence.md`
-- [ ] T089 Sincronizar exemplos de sucesso/erro e descrições das cinco operações com DTOs/handlers, sem ampliar o contrato, em `specs/003-area-registration-and-viewing/contracts/area-registration-api.openapi.yaml`
+- [ ] T087 Criar teste estrutural/de conformidade que exija OpenAPI 3.1 válido, cinco `operationId` únicos, refs locais resolvidas, schemas fechados, exemplos, ausência de campos privilegiados e resposta `500` nas cinco operações com schema tipado `INTERNAL_ERROR`, mensagem sanitizada e `no-store` em `tests/unit/area-openapi-contract.test.ts`
+- [ ] T088 Executar T087 isoladamente e registrar RED pela causa contratual esperada por asserção, sem aceitar falha de import, parser, dependência ou configuração como RED funcional, em `specs/003-area-registration-and-viewing/implementation-evidence.md`
+- [ ] T089 Sincronizar exemplos de sucesso/erro e descrições das cinco operações com DTOs/handlers, incluindo `500 INTERNAL_ERROR` sanitizado, sem detalhe interno, stack trace ou dado privilegiado e com `no-store`, sem ampliar o contrato, em `specs/003-area-registration-and-viewing/contracts/area-registration-api.openapi.yaml`
 - [ ] T090 Reexecutar T087 até GREEN e registrar parser, refs, operações e schemas verificados em `specs/003-area-registration-and-viewing/implementation-evidence.md`
-- [ ] T091 [P] Acrescentar regressões para `/api/auth/me`, papéis globais, DTOs/limite/criação/consulta/desativação/exclusão da IMP-002 em `tests/unit/auth-contracts.test.ts`, `tests/unit/laboratory-contracts.test.ts`, `tests/unit/laboratories-service.test.ts` e `tests/integration/laboratory-settings-route.test.ts`
+- [ ] T091 [P] Acrescentar regressões para `/api/auth/me`, papéis globais e DTOs/limite/criação/consulta/desativação da IMP-002; para exclusão, executar a transação real integrada que remove os vínculos e depois o laboratório, confirmar commit aceito pela trigger e ausência de dados inválidos em `tests/unit/auth-contracts.test.ts`, `tests/unit/laboratory-contracts.test.ts`, `tests/unit/laboratories-service.test.ts` e `tests/integration/laboratory-settings-route.test.ts`
 - [ ] T092 Executar as regressões de T091 antes e depois da integração final e registrar resultados reais em `specs/003-area-registration-and-viewing/implementation-evidence.md`
 - [ ] T093 Conferir paridade entre OpenAPI, handlers, tipos e cenários, atualizando coordenadamente qualquer mudança necessária em `specs/003-area-registration-and-viewing/contracts/area-registration-api.openapi.yaml`, `tests/unit/area-openapi-contract.test.ts` e `specs/003-area-registration-and-viewing/quickstart.md`
 
@@ -256,7 +256,7 @@ Phase 1 (T001–T005)
 ### Blocking tasks
 
 - T004–T005 bloqueiam qualquer acesso a banco por falta de prova de isolamento/histórico.
-- T006–T015 bloqueiam código dependente do novo Prisma Client.
+- T006–T015 bloqueiam fixtures, serviços, testes e qualquer outro código dependente do novo Prisma Client; T015 gera o client intermediário somente depois das alterações estruturais de schema/migration.
 - T016–T019 bloqueiam testes E2E das histórias.
 - T020–T036 bloqueiam as permissões de US2–US4.
 - T041 bloqueia qualquer endpoint de área.
@@ -266,11 +266,12 @@ Phase 1 (T001–T005)
 
 ### TDD order inside every story
 
-1. Escrever os testes identificados no início da fase.
-2. Executar e registrar RED válido pela ausência do comportamento.
-3. Implementar somente o comportamento coberto.
-4. Reexecutar e registrar GREEN real.
-5. Executar o cenário independente e garantir limpeza.
+1. Criar o shell mínimo e validar que ele compila/importa sem executar ainda os testes comportamentais.
+2. Escrever os testes identificados no início da fase.
+3. Executar e registrar cada arquivo ou camada separadamente, identificando a causa funcional esperada do RED.
+4. Implementar somente o comportamento coberto.
+5. Reexecutar e registrar GREEN real por arquivo ou camada.
+6. Executar o cenário independente e garantir limpeza.
 
 Falha por import acidental, dependência ausente, banco/configuração incorretos, timeout externo ou infraestrutura não conta como RED válido.
 

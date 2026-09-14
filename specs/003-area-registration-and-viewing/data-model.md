@@ -78,7 +78,8 @@ model ResearchersLinked {
 
 - Chave composta existente impede dois vínculos da mesma conta com o mesmo laboratório.
 - Índice único parcial em `laboratoryRoomId WHERE role = 'OWNER'` impede mais de um proprietário.
-- Constraint trigger diferível exige ao final da transação um `OWNER` e correspondência com `LaboratoryRoom.userId`.
+- Constraint trigger diferível exige ao final da transação um `OWNER` e correspondência com `LaboratoryRoom.userId` somente para laboratórios que ainda existam.
+- A função da trigger ignora ou conclui sem erro quando o laboratório referenciado já foi excluído na mesma transação; assim, não rejeita a exclusão administrativa legítima da IMP-002, que remove todos os vínculos e depois o laboratório atomicamente.
 - Alteração pública nunca aceita `OWNER`; somente `MEMBER → ADMIN` e `ADMIN → MEMBER`.
 - Atualização usa condição simultânea `id`, `laboratoryRoomId` e `expectedRole`; zero linhas alteradas é conflito.
 
@@ -90,6 +91,7 @@ model ResearchersLinked {
 4. Atribuir `OWNER` quando `ResearchersLinked.userId = LaboratoryRoom.userId`; demais recebem `MEMBER`.
 5. Confirmar exatamente um proprietário por laboratório e nenhum `ADMIN` criado pelo backfill.
 6. Tornar campos obrigatórios, criar índice parcial e trigger diferível.
+7. Provar em teste de migration/integração real que a transação da IMP-002 remove os vínculos, exclui o laboratório, faz commit sem rejeição da trigger e não deixa dados inválidos.
 
 ## Entity: CollectionArea
 
@@ -173,6 +175,16 @@ Não é persistida. É produzida pelo guard após revalidação:
 
 O objeto interno pode carregar IDs necessários a consultas, mas os DTOs públicos seguem as allowlists do contrato.
 
+### Authorization evaluation order
+
+1. Validar o principal autenticado e a elegibilidade atual da conta.
+2. Buscar o laboratório exclusivamente por um vínculo atual do principal.
+3. Avaliar em conjunto o papel atual e o estado ativo/inativo do laboratório.
+4. Decidir a permissão da operação.
+5. Somente então buscar o recurso subordinado pelo par `{ id, laboratoryId }`.
+
+Essa ordem produz `404` para laboratório/vínculo/recurso inacessível, `409` para qualquer mutação tentada por membro atual em laboratório inativo e `403` para papel insuficiente em laboratório ativo.
+
 ## Permission State Machine
 
 | Current state | Action | Result |
@@ -182,7 +194,8 @@ O objeto interno pode carregar IDs necessários a consultas, mas os DTOs públic
 | `OWNER` | any public role mutation | rejected |
 | Any role, inactive laboratory | role mutation | rejected as read-only |
 | `OWNER` or `ADMIN`, active laboratory | create area | one persisted area |
-| `MEMBER`, any laboratory state | create area | forbidden |
+| `MEMBER`, active laboratory | create area | forbidden (`403`) |
+| Any current role, inactive laboratory | create area | rejected as read-only (`409`) |
 | Any current member, active/inactive laboratory | list/detail area | allowed |
 | Revoked/missing membership | any operation | inaccessible (`404` after authentication) |
 
