@@ -54,7 +54,7 @@ export const prismaLaboratoriesRepository: LaboratoriesRepository = {
         data: { name, userId, accessCode },
         select: { id: true, name: true, createdAt: true, isActive: true },
       });
-      await tx.researchersLinked.create({ data: { userId, laboratoryRoomId: laboratory.id } });
+      await tx.researchersLinked.create({ data: { userId, laboratoryRoomId: laboratory.id, role: "OWNER" } });
       return {
         kind: "CREATED" as const,
         laboratory: { id: laboratory.id, name: laboratory.name, createdAt: laboratory.createdAt, isActive: laboratory.isActive, userId },

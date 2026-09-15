@@ -80,7 +80,7 @@ export default function LandingPage() {
                 Itapecuru-Mirim, Maranhão
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-[1.15]">
                 Soluções Inteligentes para{" "}
                 <span className="text-blue-500">Segurança Hídrica</span> e{" "}
                 <span className="text-green-600">Restauração Florestal</span>
@@ -397,7 +397,7 @@ export default function LandingPage() {
 
               <div className="lg:col-span-5 grid grid-cols-2 gap-4">
                 <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                  <span className="text-2xl font-black text-green-400">
+                  <span className="text-2xl font-bold text-green-400">
                     ODS 6
                   </span>
                   <p className="text-xs text-slate-300 mt-1">
@@ -405,7 +405,7 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                  <span className="text-2xl font-black text-blue-400">
+                  <span className="text-2xl font-bold text-blue-400">
                     ODS 13
                   </span>
                   <p className="text-xs text-slate-300 mt-1">
@@ -413,7 +413,7 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                  <span className="text-2xl font-black text-amber-400">
+                  <span className="text-2xl font-bold text-amber-400">
                     ODS 15
                   </span>
                   <p className="text-xs text-slate-300 mt-1">
@@ -421,7 +421,7 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                  <span className="text-2xl font-black text-slate-200">
+                  <span className="text-2xl font-bold text-slate-200">
                     ODS 10
                   </span>
                   <p className="text-xs text-slate-300 mt-1">
