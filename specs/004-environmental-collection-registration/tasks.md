@@ -10,7 +10,7 @@
 
 **Inventory**: 110 tarefas contínuas, de T001 a T110.
 
-**Current lifecycle**: especificação, planejamento e geração de tarefas concluídos; findings da primeira análise em remediação documental. Uma nova análise independente precede a implementação, que continua bloqueada por T005/IMP-003.
+**Current lifecycle**: especificação, planejamento e geração de tarefas concluídos; primeira análise executada e remediada; segunda análise executada; três findings editoriais não bloqueantes corrigidos nesta alteração. A documentação aguarda somente confirmação final, se necessária; `$speckit-implement` não foi executado e a implementação permanece bloqueada por T005/IMP-003/T111.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -232,7 +232,7 @@
 
 ## Phase 9: Documentação, escopo e fechamento
 
-**Purpose**: consolidar apenas evidências observadas e preparar análise de consistência sem iniciar outra skill.
+**Purpose**: consolidar evidências observadas, validações realmente executadas, revisão do escopo, inspeção do diff, estado Git observado e pendências, preparando a entrega para revisão e PR quando externamente autorizados.
 
 - [ ] T107 Atualizar comandos, pré-condições, resultados reais, recovery e divergências coordenadamente em `specs/004-environmental-collection-registration/quickstart.md`, `specs/004-environmental-collection-registration/contracts/collection-registration-api.openapi.yaml` e `specs/004-environmental-collection-registration/implementation-evidence.md`; manter SC-002/SC-007 e qualquer métrica humana como `NAO_VERIFICADO` até avaliação representativa, sem tratar automação como substituta ou a pendência como bloqueio automático de implementação, PR ou merge
 - [ ] T108 Executar `git diff --check`, inspecionar arquivos gerados/ignorados e o diff completo; verificar secrets, ausência de `npm audit fix`, nenhuma dependência incidental, nenhum arquivo `docs/raw/**`/Code-First e nenhum modelo/campo/endpoint para medições, IHFR, rascunho, retomada, edição, exclusão, listagem, histórico, mapas, IANA ou horário impreciso em `specs/004-environmental-collection-registration/implementation-evidence.md`
@@ -348,7 +348,7 @@ T094–T110 permanecem sequenciais para preservar diagnóstico, teardown e estad
 | FR-019, FR-020, FR-021, FR-022 | T013–T023, T055–T070 |
 | FR-025 | T071–T084, T085–T088 |
 | FR-028 | T013, T017, T023, T055–T069, T071–T084, T093 |
-| FR-029, FR-030, FR-031, FR-032 | T004–T008, T013–T018, T026, T085–T093, T107–T110 |
+| FR-029, FR-030, FR-031, FR-032 | T004–T008, T013–T018, T026, T085–T093, T107–T109 |
 | SC-001, SC-004, SC-005 | T013–T023, T034–T042, T055–T070, T092 |
 | SC-002 | T070, T104, T107, T110 (`NAO_VERIFICADO` até avaliação humana representativa) |
 | SC-003 | T044–T053, T104 |
@@ -380,7 +380,7 @@ O primeiro resultado persistente surge em US3; o incremento de produto da IMP-00
 5. US3 → confirmação atômica, idempotente e imutável.
 6. US4 → detalhe contextual e somente leitura.
 7. Contratos/regressão → compatibilidade comprovada.
-8. Validação/fechamento → evidências, limpeza e prontidão para análise.
+8. Validação/fechamento → evidências, validações executadas, revisão do escopo, inspeção do diff, estado Git observado, pendências e preparação para revisão e PR quando externamente autorizados.
 
 ## Operational and Scope Boundaries
 
