@@ -8,7 +8,9 @@
 
 **Organization**: tarefas agrupadas por setup/gate, fundação de dados, quatro histórias priorizadas, contratos, validações e fechamento. `[P]` indica somente trabalho concorrente em arquivos distintos depois das dependências declaradas.
 
-**Inventory**: 109 tarefas contínuas, de T001 a T109.
+**Inventory**: 110 tarefas contínuas, de T001 a T110.
+
+**Current lifecycle**: especificação, planejamento e geração de tarefas concluídos; findings da primeira análise em remediação documental. Uma nova análise independente precede a implementação, que continua bloqueada por T005/IMP-003.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -28,7 +30,7 @@
 - [ ] T002 Registrar branch, HEAD, upstream, divergência, worktrees, status inicial e inventário dos caminhos previstos sem copiar valores de ambiente em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T003 Registrar versões efetivas de Node/npm, dependências, lockfile, scripts, Prisma, PostgreSQL/Neon e Playwright sem instalar ou atualizar pacotes em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T004 Confirmar por `package.json`, `package-lock.json` e APIs nativas que nenhuma nova dependência de produção ou desenvolvimento é necessária; registrar qualquer divergência como bloqueio e proibir `npm audit fix`, especialmente `--force`, em `specs/004-environmental-collection-registration/implementation-evidence.md`
-- [ ] T005 Comprovar no código integrado, migrations e resultados reais do T111 da IMP-003: `area.id` estável, relação área–laboratório, rotas contextuais, `authorizeLaboratoryAccess` testado, `OWNER`/`ADMIN`/`MEMBER`, `CREATE_COLLECTION`, ativo para mutação, leitura de inativo, autoria pelo principal, DTO mínimo de área e regressões IMP-001/002; se divergir, reconciliar antes `specs/004-environmental-collection-registration/plan.md`, `specs/004-environmental-collection-registration/data-model.md`, `specs/004-environmental-collection-registration/contracts/collection-registration-api.openapi.yaml` e registrar o bloqueio em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [ ] T005 Comprovar no código integrado, migrations e resultados reais do T111 da IMP-003: `area.id` estável, relação área–laboratório, rotas contextuais, `authorizeLaboratoryAccess` testado, `OWNER`/`ADMIN`/`MEMBER`, `CREATE_COLLECTION`, ativo para mutação, leitura de inativo, autoria pelo principal, DTO mínimo de área e regressões IMP-001/002; se houver divergência funcional de intenção, comportamento externo, permissão, escopo, requisito ou critério, interromper e retornar ao fluxo de especificação/clarificação/planejamento/tarefas; se a divergência for somente técnica, revisar coordenadamente os artefatos técnicos e tarefas afetados; em ambos os casos revisar `spec.md`, checklist, `plan.md`, `research.md`, `data-model.md`, OpenAPI, `quickstart.md` e `tasks.md`, atualizar apenas o que for afetado e registrar o bloqueio em `specs/004-environmental-collection-registration/implementation-evidence.md`, sem alterar silenciosamente contrato funcional
 - [ ] T006 Após T005, inspecionar o `prisma/schema.prisma`, histórico em `prisma/migrations/`, guard em `src/app/api/server/areas/area.authorization.ts`, serviços/adapters/DTOs de área e registrar a paridade efetivamente integrada em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T007 Auditar o guard fail-closed, recurso Neon dedicado, `playwright.config.ts`, `tests/fixtures/auth-users.ts`, `tests/fixtures/laboratories.ts`, fixtures IMP-003 e allowlists; provar recusa anterior à conexão quando ambiente não for teste, URLs coincidirem ou confirmação falhar, sem imprimir secrets/URLs, em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T008 Reconciliar migrations versionadas/aplicadas em modo somente leitura e registrar preflight, backup/snapshot/PITR, forward-fix e rollback como estratégia de recuperação; distinguir requisitos do desenvolvimento isolado dos gates futuros de deploy em `specs/004-environmental-collection-registration/implementation-evidence.md`
@@ -60,7 +62,7 @@
 - [ ] T023 [DB] Ensaiar falha transacional, restauração/forward-fix e rollback de aplicação; provar ausência de remoção ou reclassificação de `WaterData`, `SoilData`, `VegetationData`, `TerrainData` e `IHFRDiagnosis` em `tests/migration/collection-registration-migration.test.ts` e registrar em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T024 Criar shell compilável e fail-closed da fixture de coleta, compondo os guards/fixtures integrados sem conexão nem write, em `tests/fixtures/collections.ts`
 - [ ] T025 [P] Escrever testes da fixture para variáveis ausentes, URLs inválidas/iguais, confirmação incorreta, IDs/prefixos fora da allowlist, ordem de FKs, setup precedido de cleanup e teardown após falha em `tests/unit/collection-fixture-guard.test.ts`
-- [ ] T026 [P] Criar teste estrutural inicial para OpenAPI 3.1, duas operações exatas, refs locais, `operationId` únicos, exemplos, erros tipados, `no-store`, idempotência, tempo, schemas fechados e ausência de campos científicos/privilegiados em `tests/unit/collection-openapi-contract.test.ts`
+- [ ] T026 [P] Criar teste estrutural inicial para OpenAPI 3.1, duas operações exatas, refs locais, `operationId` únicos, exemplos, erros tipados, `no-store`, idempotência, tempo, schemas fechados, `Location` como URI canônica da API distinta da rota de interface, `400 INVALID_REQUEST` restrito a chave ausente/malformada/fora do perfil UUID, `409 CONFLICT` para chave já usada com tupla divergente e ausência de campos científicos/privilegiados em `tests/unit/collection-openapi-contract.test.ts`
 - [ ] T027 Executar T025 isoladamente e registrar RED funcional da fixture ainda ausente; executar T026 como baseline contratual e registrar seu resultado sem fabricar RED quando o artefato documental já estiver conforme em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T028 Implementar setup, transições de vínculo/estado, coletas determinísticas, concorrência e cleanup seletivo na ordem das FKs usando somente IDs/prefixos allowlisted em `tests/fixtures/collections.ts`
 - [ ] T029 Reexecutar `tests/unit/collection-fixture-guard.test.ts` até GREEN e registrar separadamente o resultado em `specs/004-environmental-collection-registration/implementation-evidence.md`
@@ -134,21 +136,21 @@
 ### Tests for User Story 3 — escrever antes da implementação
 
 - [ ] T054 [US3] Criar shells compiláveis e injetáveis que retornam `NOT_IMPLEMENTED` para serviço, factory POST e revisão em `src/app/api/server/services/collections.service.ts`, `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route.ts` e `src/components/collections/collection-review.tsx`
-- [ ] T055 [P] [US3] Escrever testes do serviço para `OWNER`/`ADMIN`/`MEMBER`, papel sem `CREATE_COLLECTION` quando aplicável, inativo, vínculo ausente/revogado, conta inelegível, laboratório/área inexistente ou cruzado, ordem principal→laboratório→papel/estado→permissão→área, autoria/confirmado server-side, atomicidade, clock e erro sanitizado em `tests/unit/collections-service.test.ts`
-- [ ] T056 [P] [US3] Escrever testes do POST para autenticação, params contextuais, body/header fechados, falsificação de laboratório/área/autor/ID/`confirmedAt`, `201/200/400/401/403/404/409/500`, `Location`, envelopes exatos e `no-store` em `tests/integration/collections-route.test.ts`
+- [ ] T055 [P] [US3] Escrever testes do serviço para `OWNER`/`ADMIN`/`MEMBER`, papel sem `CREATE_COLLECTION` quando aplicável, inativo, vínculo ausente/revogado, conta inelegível, laboratório/área inexistente ou cruzado, ordem principal→laboratório→papel/estado→permissão→área, autoria/confirmado server-side, chave inédita aceita, replay da mesma chave/autor/contexto/payload normalizado, conflito entre contextos ou payloads e isolamento entre autores, atomicidade, clock e erro sanitizado em `tests/unit/collections-service.test.ts`
+- [ ] T056 [P] [US3] Escrever testes do POST para autenticação, params contextuais, body/header fechados, chave idempotente ausente/malformada/fora do perfil em `400 INVALID_REQUEST`, chave UUID inédita aceita, chave usada com tupla divergente em `409 CONFLICT`, falsificação de laboratório/área/autor/ID/`confirmedAt`, `201/200/400/401/403/404/409/500`, `Location` contendo a URI canônica da API, envelopes exatos e `no-store` em `tests/integration/collections-route.test.ts`
 - [ ] T057 [P] [US3] Acrescentar testes de estado para revisão sem efeito externo, voltar/corrigir, confirmação explícita, single-flight, chave UUID estável em retry/timeout e chave nova somente para outra coleta intencional em `tests/unit/collection-form-state.test.ts`
-- [ ] T058 [P] [US3] Acrescentar cenários de revisão, nenhum POST prévio, sucesso, erro, perda de acesso, duplo clique, timeout/replay e submissões concorrentes ao subconjunto US3 em `tests/e2e/collection-registration.spec.ts`
+- [ ] T058 [P] [US3] Acrescentar cenários de revisão com indicação acessível de autoria derivada da sessão sem `userId`, email, papel global ou controle editável, nenhum POST prévio, sucesso, erro, perda de acesso, duplo clique, timeout/replay e submissões concorrentes ao subconjunto US3 em `tests/e2e/collection-registration.spec.ts`
 - [ ] T059 [US3] Executar T055–T058 separadamente e registrar RED pela ausência funcional esperada, nunca por import, Prisma, dependência, browser, banco ou infraestrutura, em `specs/004-environmental-collection-registration/implementation-evidence.md`
 
 ### Implementation for User Story 3
 
-- [ ] T060 [US3] Completar parser fechado de `Idempotency-Key`, mensagens e serializers de sucesso/erro sem aceitar autor, ID, laboratório, área ou `confirmedAt` no body em `src/app/api/server/collections/collection.contracts.ts`
+- [ ] T060 [US3] Completar parser fechado de `Idempotency-Key`, aceitando UUID válido inédito e retornando `400 INVALID_REQUEST` somente para chave ausente, malformada ou fora do perfil; manter `409 CONFLICT` para chave já usada com contexto/payload divergente e implementar mensagens e serializers de sucesso/erro sem aceitar autor, ID, laboratório, área ou `confirmedAt` no body em `src/app/api/server/collections/collection.contracts.ts`
 - [ ] T061 [US3] Implementar port/adapter Prisma e criação serializável que reutiliza `authorizeLaboratoryAccess`, revalida acesso/área na transação, gera ID/autoria/`confirmedAt`, persiste UTC+offset e converge `(userId,confirmationKey)` com retry limitado em `src/app/api/server/services/collections.service.ts`
 - [ ] T062 [US3] Implementar replay idêntico como `200` sem write, conflito de rota/ocorrência/offset como `409`, duas chaves distintas como duas coletas e reautorização antes de replay em `src/app/api/server/services/collections.service.ts`
 - [ ] T063 [US3] Implementar somente o POST autenticado com factory/DI, `Location`, `no-store`, allowlists, respostas tipadas e `500 INTERNAL_ERROR` sanitizado em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route.ts`
-- [ ] T064 [P] [US3] Implementar revisão acessível distinguindo ocorrência informada de laboratório/área derivados e ID/confirmação ainda não gerados em `src/components/collections/collection-review.tsx`
+- [ ] T064 [P] [US3] Implementar revisão acessível distinguindo ocorrência informada de laboratório/área derivados, exibindo “Será registrada por você” ou indicação equivalente de autoria derivada da sessão sem `userId`, email, papel global ou controle editável, e separando essa autoria prevista de ID/confirmação ainda não gerados, sem persistência em `src/components/collections/collection-review.tsx`
 - [ ] T065 [US3] Integrar edição↔revisão, confirmação single-flight e retry com a mesma chave sem `localStorage`/rascunho em `src/components/collections/collection-form-state.ts` e `src/components/collections/collection-form.tsx`
-- [ ] T066 [US3] Integrar o POST somente após confirmação e navegar pelo `Location` apenas depois de sucesso integral em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/new/page.tsx`
+- [ ] T066 [US3] Integrar o POST somente após confirmação; validar separadamente o `Location` como URI canônica da API e, depois de sucesso integral, construir a rota de interface `/dashboard/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}` exclusivamente com contexto já validado e `collection.id` do body tipado, sem abrir ou converter texto arbitrário do header, em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/new/page.tsx`
 - [ ] T067 [US3] Reexecutar `tests/unit/collections-service.test.ts`, `tests/unit/collection-contracts.test.ts` e `tests/unit/collection-form-state.test.ts` separadamente até GREEN em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T068 [US3] Reexecutar os cenários POST de `tests/integration/collections-route.test.ts` até GREEN e registrar paridade com `createEnvironmentalCollection` em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T069 [US3] [DB] Reexecutar concorrência, unicidade, atomicidade e triggers de update/delete em PostgreSQL isolado, provar um único registro e rollback sem parcial em `tests/migration/collection-registration-migration.test.ts` e registrar contagens em `specs/004-environmental-collection-registration/implementation-evidence.md`
@@ -182,7 +184,7 @@
 - [ ] T081 [US4] Reexecutar testes US4 de `tests/unit/collections-service.test.ts` e `tests/integration/collections-route.test.ts` separadamente até GREEN e registrar paridade com `getEnvironmentalCollection` em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T082 [US4] [Browser] Executar o subconjunto US4 em `tests/e2e/collection-registration.spec.ts` com teardown garantido e registrar GREEN ou bloqueio externo classificado em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T083 [US4] [Browser] Verificar detalhe por teclado/foco e viewports móvel, intermediária e ampla, incluindo estados loading/erro, inativo somente leitura e ausência de mutações/listagem, em `specs/004-environmental-collection-registration/implementation-evidence.md`
-- [ ] T084 [US4] [Browser] Executar o fluxo independente P1→P4 com duas áreas de dois laboratórios, reencontrar cada coleta somente pelo `Location` contextual e registrar ausência de dependência de `/dashboard/collects` em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [ ] T084 [US4] [Browser] Executar o fluxo independente P1→P4 com duas áreas de dois laboratórios, validar o `Location` da API e reencontrar cada coleta pela rota de interface construída separadamente com contexto e `collection.id`, registrando ausência de navegação direta pelo header e de dependência de `/dashboard/collects` em `specs/004-environmental-collection-registration/implementation-evidence.md`
 
 **Checkpoint**: US4 fecha o incremento vertical com detalhe contextual, mínimo e imutável.
 
@@ -192,9 +194,9 @@
 
 **Purpose**: provar que OpenAPI, handlers, testes e contratos herdados permanecem coerentes.
 
-- [ ] T085 Acrescentar ao teste OpenAPI a paridade de status, headers, envelopes, exemplos e DTOs observados nos handlers POST/GET, sem aceitar `PATCH`, `DELETE`, listagem ou rascunho, em `tests/unit/collection-openapi-contract.test.ts`
+- [ ] T085 Acrescentar ao teste OpenAPI a paridade de status, headers, envelopes, exemplos e DTOs observados nos handlers POST/GET, validando separadamente `Location` como URI canônica da API e a rota de interface construída do contexto mais `collection.id`, sem aceitar `PATCH`, `DELETE`, listagem ou rascunho, em `tests/unit/collection-openapi-contract.test.ts`
 - [ ] T086 Executar T085 isoladamente, registrar qualquer divergência por asserção contratual e não aceitar parser/import/configuração como falha funcional em `specs/004-environmental-collection-registration/implementation-evidence.md`
-- [ ] T087 Sincronizar qualquer mudança contratual necessária de forma coordenada e restrita em `specs/004-environmental-collection-registration/contracts/collection-registration-api.openapi.yaml`, `tests/unit/collection-openapi-contract.test.ts` e `specs/004-environmental-collection-registration/quickstart.md`
+- [ ] T087 Reconciliar somente divergências técnicas entre OpenAPI, handlers, testes e quickstart que preservem integralmente a intenção funcional; diante de mudança em comportamento externo, permissão, escopo, requisito ou critério, interromper a implementação e retornar ao fluxo de especificação/clarificação/planejamento/tarefas, revisando coordenadamente `spec.md`, checklist, `plan.md`, `research.md`, `data-model.md`, OpenAPI, `quickstart.md` e `tasks.md`, sem autorizar mudança contratual funcional silenciosa
 - [ ] T088 Reexecutar `tests/unit/collection-openapi-contract.test.ts` até GREEN e registrar OpenAPI 3.1, duas operações, refs, `operationId`, schemas fechados, exemplos, erros, `no-store`, idempotência e tempo em `specs/004-environmental-collection-registration/implementation-evidence.md`
 - [ ] T089 [P] Acrescentar regressões direcionadas de autenticação/conta elegível e DTO público sem ampliação da IMP-001 em `tests/unit/auth-contracts.test.ts` e `tests/integration/auth-me.test.ts`
 - [ ] T090 [P] Acrescentar regressões direcionadas de laboratório/vínculo/inatividade/criação/exclusão administrativa sem ampliação da IMP-002 em `tests/unit/laboratories-service.test.ts` e `tests/integration/laboratory-settings-route.test.ts`
@@ -232,9 +234,10 @@
 
 **Purpose**: consolidar apenas evidências observadas e preparar análise de consistência sem iniciar outra skill.
 
-- [ ] T107 Atualizar comandos, pré-condições, resultados reais, recovery e divergências coordenadamente em `specs/004-environmental-collection-registration/quickstart.md`, `specs/004-environmental-collection-registration/contracts/collection-registration-api.openapi.yaml` e `specs/004-environmental-collection-registration/implementation-evidence.md`; manter SC-002/SC-007 e qualquer métrica humana como `NAO_VERIFICADO` até avaliação representativa
+- [ ] T107 Atualizar comandos, pré-condições, resultados reais, recovery e divergências coordenadamente em `specs/004-environmental-collection-registration/quickstart.md`, `specs/004-environmental-collection-registration/contracts/collection-registration-api.openapi.yaml` e `specs/004-environmental-collection-registration/implementation-evidence.md`; manter SC-002/SC-007 e qualquer métrica humana como `NAO_VERIFICADO` até avaliação representativa, sem tratar automação como substituta ou a pendência como bloqueio automático de implementação, PR ou merge
 - [ ] T108 Executar `git diff --check`, inspecionar arquivos gerados/ignorados e o diff completo; verificar secrets, ausência de `npm audit fix`, nenhuma dependência incidental, nenhum arquivo `docs/raw/**`/Code-First e nenhum modelo/campo/endpoint para medições, IHFR, rascunho, retomada, edição, exclusão, listagem, histórico, mapas, IANA ou horário impreciso em `specs/004-environmental-collection-registration/implementation-evidence.md`
-- [ ] T109 Reconciliar checkboxes e evidências contra FR-001–FR-032, SC-001–SC-008, quatro testes independentes, dois `operationId`, gates Prisma, migration real, teardown e bloqueios; confirmar arquivos afetados, árvore limpa e prontidão para `$speckit-analyze` sem executar a skill em `specs/004-environmental-collection-registration/tasks.md` e `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [ ] T109 Reconciliar checkboxes e evidências contra FR-001–FR-032, SC-001–SC-008, quatro testes independentes, dois `operationId`, gates Prisma, migration real, teardown e bloqueios; registrar arquivos afetados, diff, estado Git observado, escopo, validações realmente executadas e pendências em `specs/004-environmental-collection-registration/tasks.md` e `specs/004-environmental-collection-registration/implementation-evidence.md`, reconhecendo a análise documental como gate anterior e sem exigir árvore limpa, commit, push, PR ou nova análise dentro da implementação
+- [ ] T110 Registrar para a equipe de produto/pesquisa do HidroFlorestas a avaliação futura de SC-002 e SC-007 após existir incremento executável em ambiente adequado, com participantes representativos, método e métricas dos critérios, mantendo ambos `NAO_VERIFICADO` até resultados reais e incorporando-os posteriormente à documentação/evidência sem substituir a avaliação por automação nem bloquear automaticamente implementação, PR ou merge
 
 ---
 
@@ -251,7 +254,7 @@ Phase 1 (T001–T008; T005 = gate T111 real)
                           └─> US4 (T071–T084) [detalhe]
                                 └─> Contratos/regressão (T085–T093)
                                       └─> Validações (T094–T106)
-                                            └─> Fechamento (T107–T109)
+                                            └─> Fechamento (T107–T110)
 ```
 
 ### User story dependencies
@@ -326,7 +329,7 @@ Após T075: T079 (componente) pode avançar em paralelo a T076–T078 por arquiv
 
 ```text
 Após T088: T089, T090 e T091 cobrem regressões de IMP-001, IMP-002 e IMP-003 em arquivos distintos.
-T094–T109 permanecem sequenciais para preservar diagnóstico, teardown e estado final inequívocos.
+T094–T110 permanecem sequenciais para preservar diagnóstico, teardown e estado final inequívocos.
 ```
 
 ---
@@ -345,12 +348,12 @@ T094–T109 permanecem sequenciais para preservar diagnóstico, teardown e estad
 | FR-019, FR-020, FR-021, FR-022 | T013–T023, T055–T070 |
 | FR-025 | T071–T084, T085–T088 |
 | FR-028 | T013, T017, T023, T055–T069, T071–T084, T093 |
-| FR-029, FR-030, FR-031, FR-032 | T004–T008, T013–T018, T026, T085–T093, T107–T109 |
+| FR-029, FR-030, FR-031, FR-032 | T004–T008, T013–T018, T026, T085–T093, T107–T110 |
 | SC-001, SC-004, SC-005 | T013–T023, T034–T042, T055–T070, T092 |
-| SC-002 | T070, T104, T107 (`NAO_VERIFICADO` até avaliação humana representativa) |
+| SC-002 | T070, T104, T107, T110 (`NAO_VERIFICADO` até avaliação humana representativa) |
 | SC-003 | T044–T053, T104 |
 | SC-006 | T055, T072–T084, T104 |
-| SC-007 | T064–T070, T104, T107 (`NAO_VERIFICADO` até avaliação humana representativa) |
+| SC-007 | T064–T070, T104, T107, T110 (`NAO_VERIFICADO` até avaliação humana representativa) |
 | SC-008 | T071–T084, T104 |
 | `createEnvironmentalCollection` | T026, T054–T070, T085–T088, T098 |
 | `getEnvironmentalCollection` | T026, T071–T088, T098 |

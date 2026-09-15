@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-14
 
-**Status**: Ready for Planning
+**Status**: Specification and planning complete; first analysis remediated; ready for independent re-analysis. Implementation remains blocked by the IMP-003 gate.
 
 **Input**: Especificar a entrega `IMP-004 — Registro de coleta ambiental`, permitindo que uma pessoa autenticada e autorizada registre, revise, confirme e consulte os metadados gerais de uma coleta ambiental vinculada a uma área acessível do laboratório explicitamente selecionado, sem antecipar medições ambientais, cálculo do IHFR nem funcionalidades posteriores.
 
@@ -196,6 +196,10 @@ Como membro autorizado, quero reencontrar a coleta no laboratório e na área co
 - **SC-006**: Em 100% dos testes com laboratório inativo, membros atuais conseguem realizar as leituras incluídas no escopo e nenhuma mutação de coleta é concluída.
 - **SC-007**: Pelo menos 90% dos participantes de teste distinguem corretamente, na revisão, o momento da ocorrência em campo, seu fuso, as informações derivadas e a associação da área antes de confirmar.
 - **SC-008**: Após uma confirmação bem-sucedida, 100% dos registros podem ser reencontrados pela consulta de detalhe no laboratório e na área corretos.
+
+### Human evaluation status
+
+`SC-002` and `SC-007` remain `NAO_VERIFICADO`. Their percentages require a future evaluation led by the HidroFlorestas product/research team, after an executable increment is available in an appropriate environment, using representative participants and recording the observed metrics in the feature evidence. Automated, integration and E2E tests support the journey but do not replace this evaluation. The absence of that post-implementation measurement does not automatically block implementation, PR or merge and must not be reported in advance as approval or failure.
 
 ## Assumptions
 

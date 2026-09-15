@@ -163,7 +163,10 @@ components:
         type: string
         const: no-store
     CollectionLocation:
-      description: Rota contextual do detalhe da coleta confirmada.
+      description: >-
+        URI canônica do recurso na API. Não é a rota da interface; o cliente constrói
+        a página de detalhe separadamente com o contexto validado e o collection.id
+        retornado no corpo.
       schema:
         type: string
       example: /api/laboratories/10000000-0000-4000-8000-000000000001/areas/20000000-0000-4000-8000-000000000001/collections/30000000-0000-4000-8000-000000000001
@@ -171,8 +174,9 @@ components:
   responses:
     InvalidInput:
       description: >-
-        Body, chave idempotente ou timestamp inválido, incluindo chave
-        desconhecida, horário sem offset, data futura ou precisão não aceita.
+        Body, timestamp ou chave idempotente inválidos. Para a chave, este status
+        cobre somente ausência, valor malformado ou fora do perfil UUID; uma chave
+        válida ainda não utilizada é o caso normal de criação e não é rejeitada.
       headers:
         Cache-Control:
           $ref: '#/components/headers/PrivateNoStore'
@@ -180,10 +184,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-          example:
-            error:
-              code: INVALID_INPUT
-              message: Informe uma data e horário de ocorrência válidos com fuso explícito.
+          examples:
+            invalidOccurrence:
+              value:
+                error:
+                  code: INVALID_REQUEST
+                  message: Informe uma data e horário de ocorrência válidos com fuso explícito.
+            invalidIdempotencyKey:
+              value:
+                error:
+                  code: INVALID_REQUEST
+                  message: Informe uma chave de confirmação UUID válida.
     Unauthenticated:
       description: Sessão ausente/inválida ou conta não elegível.
       headers:
@@ -343,7 +354,7 @@ components:
     ErrorCode:
       type: string
       enum:
-        - INVALID_INPUT
+        - INVALID_REQUEST
         - UNAUTHENTICATED
         - FORBIDDEN
         - NOT_FOUND

@@ -18,7 +18,7 @@ Antes de iniciar qualquer implementação ou validação funcional da IMP-004, c
 - isolamento uniforme para laboratório, vínculo e área;
 - autoria derivada exclusivamente da sessão.
 
-Se qualquer item divergir do contrato planejado, reconciliar `plan.md`, `data-model.md` e OpenAPI antes de criar código consumidor. Não criar um guard ou um schema alternativo para contornar a dependência.
+Se qualquer item divergir do contrato planejado, revisar coordenadamente `spec.md`, checklist, `plan.md`, `research.md`, `data-model.md`, OpenAPI, `quickstart.md` e `tasks.md` antes de criar código consumidor. Divergência funcional de intenção, comportamento externo, permissão, escopo, requisito ou critério interrompe a implementação e retorna ao fluxo de especificação e, quando necessário, esclarecimento, planejamento e tarefas. Divergência apenas técnica pode atualizar os artefatos técnicos e tarefas afetados, desde que preserve a intenção funcional. Não criar um guard, schema alternativo ou mudança contratual silenciosa para contornar a dependência.
 
 ## Ambiente seguro
 
@@ -48,6 +48,7 @@ Resultado esperado:
 
 - o OpenAPI 3.1 é parseável, possui exatamente dois `operationId`, referências resolvidas e schemas de objetos fechados;
 - o body aceita somente `{ occurredAt }` e o header exige `Idempotency-Key` UUID;
+- uma chave UUID válida inédita inicia normalmente a primeira confirmação; somente chave ausente, malformada ou fora do perfil retorna `400 INVALID_REQUEST`, enquanto chave já usada com contexto ou payload divergente retorna `409 CONFLICT`;
 - `occurredAt` aceita RFC 3339 com offset explícito e até milissegundos;
 - horário local sem offset, `-00:00`, segundo `60`, data impossível, precisão maior que três casas e instante futuro são rejeitados;
 - ocorrência igual ao relógio injetado é aceita;
@@ -99,7 +100,7 @@ node --import=tsx --test --test-concurrency=1 \
 
 Resultado esperado:
 
-- `POST /api/laboratories/{laboratoryId}/areas/{areaId}/collections` retorna `201`, `Location`, `Cache-Control: no-store` e `{ collection }`;
+- `POST /api/laboratories/{laboratoryId}/areas/{areaId}/collections` retorna `201`, `Location` com a URI canônica da API, `Cache-Control: no-store` e `{ collection }`;
 - replay idêntico retorna `200` com o mesmo ID e `Location`;
 - `GET /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}` retorna o detalhe contextual imutável;
 - `occurredAt` é apresentado no offset registrado e `confirmedAt` em UTC, como instantes distintos;
@@ -117,8 +118,9 @@ Resultado esperado:
 
 - a jornada parte do detalhe contextual da área e abre “Registrar coleta” apenas quando a mutação é permitida;
 - edição, revisão, correção e confirmação preservam foco, teclado e mensagens úteis;
+- a revisão informa de forma acessível que a coleta será registrada pela pessoa autenticada, sem `userId`, email, papel global ou autoria editável;
 - nenhum POST ocorre antes da confirmação explícita;
-- confirmação navega pelo `Location` ao detalhe somente leitura;
+- após a confirmação, a interface valida separadamente o `Location` da API e constrói a rota `/dashboard/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}` com o contexto validado e o ID retornado no body, sem navegar diretamente pelo header;
 - clique duplo, timeout e retry não criam duplicata;
 - perda de acesso, laboratório inativo e tentativa de cruzar contexto são tratados sem vazamento;
 - páginas funcionam em viewport móvel e ampla;
@@ -135,7 +137,7 @@ npm run typecheck
 npm run build
 ```
 
-Resultado esperado: suítes da IMP-001, IMP-002, IMP-003 e IMP-004 passam no ambiente seguro, sem ampliar o contrato desta feature. Métricas humanas da especificação continuam `NAO_VERIFICADO` até avaliação própria, mesmo com automação verde.
+Resultado esperado: suítes da IMP-001, IMP-002, IMP-003 e IMP-004 passam no ambiente seguro, sem ampliar o contrato desta feature. SC-002 e SC-007 continuam `NAO_VERIFICADO` mesmo com automação verde; a equipe de produto/pesquisa deverá avaliá-los futuramente com participantes representativos depois de existir incremento executável em ambiente adequado, registrar as métricas na evidência e não tratar a avaliação pendente como bloqueio automático de implementação, PR ou merge.
 
 ## Inspeção manual mínima
 

@@ -4,6 +4,8 @@
 
 **Input**: Feature specification from `/specs/004-environmental-collection-registration/spec.md`
 
+**Current lifecycle**: specification, planning and task generation are complete. The first `$speckit-analyze` was executed and its documentary findings were remediated; an independent re-analysis is required before implementation. T005 and the real IMP-003/T111 evidence remain blocking.
+
 ## Summary
 
 Entregar o registro geral e imutável de uma coleta ambiental dentro da cadeia explícita laboratório → área → coleta. `OWNER`, `ADMIN` e `MEMBER` poderão confirmar uma coleta em laboratório ativo; membros atuais poderão consultar seu detalhe também em laboratório inativo. O request contém somente o instante da ocorrência em RFC 3339 com offset e uma chave idempotente em header; identificador, laboratório, área, autoria e confirmação são definidos ou revalidados no servidor. A solução evolui `CollectionData`, preserva relações científicas legadas sem expô-las, reutiliza o guard contextual planejado pela IMP-003 e mantém a revisão exclusivamente em memória.
@@ -158,7 +160,9 @@ As únicas operações são:
 - `POST /api/laboratories/{laboratoryId}/areas/{areaId}/collections`;
 - `GET /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}`.
 
-O POST exige `Idempotency-Key` UUID criado uma vez por tentativa intencional e body fechado `{ occurredAt }`. A primeira criação retorna `201`, `Location` e o detalhe; replay idêntico retorna `200`, o mesmo `Location` e o mesmo registro. Reuso da chave pelo mesmo autor com rota ou ocorrência diferente retorna `409 CONFLICT`. Conteúdo igual com chaves diferentes representa coletas intencionalmente distintas e não é deduplicado.
+O POST exige `Idempotency-Key` UUID criado uma vez por tentativa intencional e body fechado `{ occurredAt }`. Uma chave válida inédita é o caso normal da primeira confirmação; somente chave ausente, malformada ou fora do perfil UUID retorna `400 INVALID_REQUEST`. A primeira criação retorna `201`, `Location` e o detalhe; replay idêntico retorna `200`, o mesmo `Location` e o mesmo registro. Reuso da chave pelo mesmo autor com rota ou ocorrência diferente retorna `409 CONFLICT`. Conteúdo igual com chaves diferentes representa coletas intencionalmente distintas e não é deduplicado.
+
+`Location` identifica a URI canônica do recurso na API, `/api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}`. A interface valida esse header separadamente, mas não o abre nem converte como texto confiável: após o sucesso, constrói `/dashboard/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}` com o contexto já validado e o `collection.id` do body tipado.
 
 O port do serviço expõe apenas criação atômica e detalhe. A transação revalida o contexto, busca chave existente, compara a tupla canônica ou cria a coleta. Unicidade `(userId, confirmationKey)` garante no máximo uma criação sob corrida; conflito único ou de serialização é relido/repetido de forma limitada e converge. Falha integral não deixa registro parcial. A interface desabilita submissão repetida, mas a garantia é do servidor/banco.
 
@@ -168,9 +172,9 @@ Todos os retornos usam o envelope planejado mais recente da IMP-003 (`{ collecti
 
 ### 5. Minimum interface
 
-O detalhe contextual de área da IMP-003 oferece “Registrar coleta” somente quando o contexto permite mutação. A nova página contém campos para a ocorrência, referência visível e não editável de laboratório/área e ações “Revisar” e “Voltar e corrigir”. Editar e revisar usam apenas estado React em memória; não há request de persistência, storage local ou rascunho. Qualquer alteração invalida a revisão anterior.
+O detalhe contextual de área da IMP-003 oferece “Registrar coleta” somente quando o contexto permite mutação. A nova página contém campos para a ocorrência, referência visível e não editável de laboratório/área e ações “Revisar” e “Voltar e corrigir”. A revisão informa de forma acessível que a coleta será registrada pela pessoa autenticada, por exemplo “Será registrada por você”, sem mostrar `userId`, email, papel global ou permitir autoria editável. Editar e revisar usam apenas estado React em memória; não há request de persistência, storage local ou rascunho. Qualquer alteração invalida a revisão anterior.
 
-Ao confirmar, a interface mantém a mesma chave idempotente até obter resultado final, bloqueia eventos repetidos em voo e navega pelo `Location` ao detalhe. Timeout oferece repetição segura da mesma ação, nunca uma chave nova automática. Nova chave nasce somente ao iniciar intencionalmente outra coleta.
+Ao confirmar, a interface mantém a mesma chave idempotente até obter resultado final e bloqueia eventos repetidos em voo. Depois do sucesso, usa o `collection.id` validado do body e o contexto já autorizado para construir a rota de interface; o `Location` da API é validado separadamente e nunca aberto ou reinterpretado como rota confiável. Timeout oferece repetição segura da mesma ação, nunca uma chave nova automática. Nova chave nasce somente ao iniciar intencionalmente outra coleta.
 
 O detalhe separa “Ocorrência em campo” e “Confirmação no sistema”, mostra identificador, laboratório, área e modo somente leitura, e não oferece edição/exclusão. Páginas cobrem loading, validação, erro, retry, perda de acesso, teclado, foco e viewports móvel/ampla. `/dashboard/collects` continua mock legado e não é convertido em listagem/histórico nesta feature.
 
@@ -191,7 +195,7 @@ O ciclo posterior de implementação deve ser mecanicamente TDD: criar shells m�
 
 Fixtures compõem o guard fail-closed já aprovado: `NODE_ENV=test`, `TEST_DATABASE_URL` explícita e diferente de `DATABASE_URL`, confirmação exata e IDs/prefixos allowlisted antes de qualquer conexão. Setup é precedido por cleanup; teardown roda em `finally`/`afterAll` mesmo após falha, remove somente registros allowlisted na ordem das FKs e confirma contagem final zero. Produção e banco compartilhado nunca são aceitos.
 
-Nenhum teste funcional, build, Prisma ou banco foi executado nesta etapa documental. Métricas humanas da spec permanecem `NAO_VERIFICADO` até avaliação própria.
+Nenhum teste funcional, build, Prisma ou banco foi executado nesta etapa documental. SC-002 e SC-007 permanecem `NAO_VERIFICADO` até avaliação com participantes representativos, conduzida futuramente pela equipe de produto/pesquisa depois de existir incremento executável em ambiente adequado. Automação não substitui essa avaliação, cujo resultado será incorporado à evidência da feature sem bloquear automaticamente implementação, PR ou merge.
 
 ## Implementation Phases
 

@@ -110,7 +110,7 @@ Este documento resolve as escolhas técnicas do planejamento. `EVIDENCIA_IMPLEME
 
 ## R-009 — Rotas, envelopes e DTOs
 
-**Decision (`DECISAO_DE_PLANEJAMENTO`)**: criar somente POST da coleção contextual e GET do detalhe contextual. Usar body `{ occurredAt }`, header `Idempotency-Key`, sucesso `{ collection }`, erros `{ error: { code, message } }`, `Location` em criação/replay e `Cache-Control: no-store` em todas as respostas. Fechar todos os schemas e serializar apenas coleta, área e laboratório públicos mínimos.
+**Decision (`DECISAO_DE_PLANEJAMENTO`)**: criar somente POST da coleção contextual e GET do detalhe contextual. Usar body `{ occurredAt }`, header `Idempotency-Key`, sucesso `{ collection }`, erros `{ error: { code, message } }`, `Location` em criação/replay e `Cache-Control: no-store` em todas as respostas. `Location` representa a URI canônica da API; a interface constrói sua própria rota com o contexto validado e o `collection.id` do body, sem abrir nem converter texto arbitrário do header. Fechar todos os schemas e serializar apenas coleta, área e laboratório públicos mínimos.
 
 **Rationale**: rotas aninhadas tornam laboratório/área explícitos sem aceitá-los como autoridade no body. O envelope e erros seguem o contrato planejado mais recente da IMP-003. A divergência com o envelope legado da IMP-002 será verificada no gate de integração, não resolvida silenciosamente agora.
 
