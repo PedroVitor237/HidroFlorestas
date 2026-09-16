@@ -123,7 +123,15 @@ export function validateAuthFixtureEnvironment(
     "DATABASE_URL",
   );
 
-  if (testDatabaseUrl === developmentDatabaseUrl) {
+  // Credentials and connection options do not identify a different database.
+  const targetIdentity = (value: string) => {
+    const url = new URL(value);
+    const host = url.hostname.endsWith(".neon.tech")
+      ? url.hostname.replace("-pooler.", ".")
+      : url.hostname;
+    return `${host}:${url.port || "5432"}/${decodeURIComponent(url.pathname)}`;
+  };
+  if (targetIdentity(testDatabaseUrl) === targetIdentity(developmentDatabaseUrl)) {
     throw new AuthFixtureGuardError(
       "TEST_DATABASE_URL must be different from DATABASE_URL",
     );

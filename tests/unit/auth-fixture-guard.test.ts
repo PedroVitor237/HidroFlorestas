@@ -178,3 +178,19 @@ describe("auth fixture database guard", () => {
     assert.deepEqual(calls.slice(1), ["setup", "disconnect"]);
   });
 });
+
+
+describe("fixture target identity", () => {
+  it("rejects the same database with different credentials, options and pooler alias", () => {
+    for (const target of [
+      "postgresql://other:secret@ep-example.us-east-1.aws.neon.tech/neondb?sslmode=require",
+      "postgresql://other:secret@ep-example-pooler.us-east-1.aws.neon.tech/neondb",
+    ]) {
+      assert.throws(() => validateAuthFixtureEnvironment({
+        ...validEnvironment,
+        DATABASE_URL: "postgresql://owner:password@ep-example.us-east-1.aws.neon.tech/neondb",
+        TEST_DATABASE_URL: target,
+      }), /different/);
+    }
+  });
+});
