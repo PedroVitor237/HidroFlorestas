@@ -2,7 +2,7 @@
 
 **Feature**: Cadastro e consulta espacial de área  
 **Branch**: `003-area-registration-and-viewing`  
-**Purpose**: roteiro futuro de implementação e validação; nenhum comando deste documento foi executado durante `$speckit-plan`.
+**Purpose**: roteiro reproduzível de implementação e validação, atualizado com os resultados observados em 2026-09-15.
 
 ## 1. Preconditions
 
@@ -29,7 +29,7 @@ Antes de iniciar a aplicação nova, executar o preflight em uma cópia represen
 
 Qualquer falha bloqueia o deploy; não corrigir ou descartar dados silenciosamente.
 
-## 3. Planned dependency integration
+## 3. Dependency integration
 
 Durante a implementação, adicionar versões compatíveis e registrar no lockfile:
 
@@ -47,7 +47,9 @@ NEXT_PUBLIC_MAP_ATTRIBUTION=Attribution required by the selected provider
 
 Produção não avança sem valores aprovados. Desenvolvimento manual de baixo volume pode usar o fallback documentado para OSM, com atribuição visível, sem prefetch/offline e respeitando cache/referer.
 
-## 4. Planned implementation order
+O teste automatizado intercepta o host público de tiles e confirma que entrada manual, formulário e marcador continuam funcionais sem resposta dos tiles. O provider de produção permanece um gate de deploy e precisa ser configurado pelas duas variáveis acima.
+
+## 4. Implementation order
 
 1. Migration de papéis, vínculo opaco e ponto direto na área.
 2. Adaptação da criação atômica da IMP-002 para gravar `OWNER`.
@@ -74,6 +76,21 @@ npm run build
 ```
 
 Também executar a verificação específica da migration definida nas tarefas, em banco descartável. Os testes de browser devem interceptar requests de tiles; nenhuma suíte automatizada deve acessar `tile.openstreetmap.org` nem um provedor real.
+
+Resultados observados na branch Neon isolada `imp-003-test`:
+
+| Comando/gate | Resultado |
+|---|---|
+| `npm run test:migration` | 5/5 cenários passaram em schemas temporários |
+| validação OpenAPI isolada | PASS, cinco operações e referências locais verificadas |
+| `npm run test:unit` | 17/17 arquivos passaram |
+| `npm run test:integration` | 9/9 arquivos passaram serialmente |
+| `npm run lint` | zero erros; quatro warnings preexistentes |
+| `npm run typecheck` | PASS |
+| quatro suítes E2E da IMP-003 | 12/12 cenários passaram em uma execução conjunta |
+| `npm run build` | PASS |
+
+O harness de migration usa o endpoint Neon direto e restaura `search_path` e `statement_timeout` antes de liberar a conexão. O E2E também usa o endpoint direto para impedir que configurações de sessão de um pooler sejam reutilizadas entre o schema temporário e o schema público.
 
 ## 6. Contract validation
 
@@ -186,3 +203,5 @@ Registrar na entrega:
 - regressão IMP-001/002;
 - provider/attribution operacionais;
 - SC-009 e SC-010 como `NAO_VERIFICADO` até validação humana real.
+
+No ensaio final, fixtures allowlisted terminaram em zero para usuários, laboratórios, vínculos e áreas; também foram observados zero vínculos/áreas órfãos e ausência da tabela legada `Coordinates`. Backup/PITR continua obrigatório antes de aplicar a migration em qualquer banco persistente que não seja descartável.

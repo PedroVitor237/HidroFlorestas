@@ -53,3 +53,11 @@ next-env.d.ts
 prisma/migrations/*
 !prisma/migrations/20260907120000_unique_laboratory_access_code/
 !prisma/migrations/20260907120000_unique_laboratory_access_code/migration.sql
+
+# IMP-003: migration de roles contextuais e area-ponto.
+!prisma/migrations/20260914000100_area_registration_and_membership_roles/
+!prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql
+
+# Browser test output can contain runtime data.
+/test-results/
+/playwright-report/

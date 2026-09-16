@@ -21,8 +21,8 @@ export default function Workspace() {
             <br />
             Ambiente de Análises
             <br />
-            <span className="font-black text-blue-500">HIDRO</span>
-            <span className="font-black text-green-600">FLORESTAS</span>
+            <span className="font-bold text-blue-500">HIDRO</span>
+            <span className="font-bold text-green-600">FLORESTAS</span>
           </h1>
         </header>
         <LaboratoryWorkspace />

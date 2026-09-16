@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import { it } from "node:test";
+import { assertLaboratoryPermission, AreaAccessError, type ContextRole } from "../../src/app/api/server/areas/area.authorization";
+it("enforces contextual roles and read-only precedence", () => {
+  for (const role of ["OWNER", "ADMIN", "MEMBER"] as ContextRole[]) {
+    assert.doesNotThrow(() => assertLaboratoryPermission(role, false, "READ_AREAS"));
+    assert.throws(() => assertLaboratoryPermission(role, false, "CREATE_AREA", true), (e) => e instanceof AreaAccessError && e.code === "READ_ONLY");
+    if (role === "MEMBER") assert.throws(() => assertLaboratoryPermission(role, true, "CREATE_AREA", true));
+    else assert.doesNotThrow(() => assertLaboratoryPermission(role, true, "CREATE_AREA", true));
+    if (role !== "OWNER") assert.throws(() => assertLaboratoryPermission(role, true, "MANAGE_ROLES"));
+  }
+});

@@ -40,14 +40,6 @@ enum UserStatus {
   BLOCKED
 }
 
-model Coordinates {
-  id        String @id @default(uuid())
-  latitude  String
-  longitude String
-
-  collectionAreas CollectionArea[]
-}
-
 model LaboratoryRoom {
   id          String   @id @default(uuid())
   name        String
@@ -63,7 +55,15 @@ model LaboratoryRoom {
   collectionAreas   CollectionArea[]
 }
 
+enum LaboratoryMembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
 model ResearchersLinked {
+  id               String                   @unique @default(uuid())
+  role             LaboratoryMembershipRole @default(MEMBER)
   userId           String
   laboratoryRoomId String
 
@@ -71,29 +71,32 @@ model ResearchersLinked {
   laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id])
 
   @@id([userId, laboratoryRoomId])
+  @@index([laboratoryRoomId, role])
 }
 
 model CollectionArea {
-  id                  String   @id @default(uuid())
-  name                String
-  image               String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  isActive            Boolean  @default(true)
-  userId              String
-  laboratoryRoomId    String
-  coordinatesId       String
-  municipality        String
-  state               String
-  cep                 String
-  landType            LandType
-  descriptionLandType String?
+  id               String   @id @default(uuid())
+  name             String
+  image            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  isActive         Boolean  @default(true)
+  userId           String
+  laboratoryRoomId String
+  latitude         Decimal  @db.Decimal(8, 6)
+  longitude        Decimal  @db.Decimal(9, 6)
+  municipality     String?
+  state            String?
+  cep              String?
+  landType         String?
+  description      String?  @map("descriptionLandType")
 
   user           User           @relation(fields: [userId], references: [id])
-  coordinates    Coordinates    @relation(fields: [coordinatesId], references: [id])
   laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id])
 
   collectionData CollectionData[]
+
+  @@index([laboratoryRoomId, createdAt])
 }
 
 enum LandType {
