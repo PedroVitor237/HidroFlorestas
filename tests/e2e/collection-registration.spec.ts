@@ -139,8 +139,17 @@ test("US3 reviews derived authorship and confirms once after a double click", as
   await expect(review.getByText(/person-0@|OWNER|ADMIN|MEMBER|userId/i)).toHaveCount(0);
   expect(postCount).toBe(0);
   const confirm = page.getByRole("button", { name: "Confirmar coleta" });
+  const confirmationResponse = page.waitForResponse(
+    (response) =>
+      response.request().method() === "POST" &&
+      response.url().endsWith(`/api/laboratories/${laboratoryId}/areas/${areaId}/collections`),
+  );
   await confirm.dblclick();
-  await expect(page).toHaveURL(new RegExp(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/[0-9a-f-]{36}$`));
+  expect((await confirmationResponse).status()).toBe(201);
+  await expect(page).toHaveURL(
+    new RegExp(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/[0-9a-f-]{36}$`),
+    { timeout: 15_000 },
+  );
   expect(postCount).toBe(1);
   expect((await countCollectionFixtures(process.env)).collections).toBe(3);
 });

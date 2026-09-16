@@ -23,3 +23,9 @@ it("all three handlers sanitize failures and preserve no-store",async()=>{
  for(const r of [await handlers.GET(new Request("http://localhost"),route),await handlers.POST(req,route),await createAreaDetailHandler(deps)(new Request("http://localhost"),route)]){assert.equal(r.status,status);assert.equal(r.headers.get("cache-control"),"no-store");assert.equal((await r.text()).includes("private SQL"),false);}
  }
 });
+it("keeps inactive area detail readable with the inherited read-only DTO",async()=>{
+ const inactive={...area,laboratory:{...area.laboratory,status:"INACTIVE" as const},readOnly:true};
+ const deps={requireAuth:async()=>principal,service:{list:async()=>({context:{...context,status:"INACTIVE" as const,readOnly:true},areas:[]}),create:async()=>({area:inactive}),detail:async()=>({area:inactive})}};
+ const response=await createAreaDetailHandler(deps)(new Request("http://localhost"),route);
+ assert.equal(response.status,200);assert.equal(response.headers.get("cache-control"),"no-store");assert.deepEqual(await response.json(),{area:inactive});
+});

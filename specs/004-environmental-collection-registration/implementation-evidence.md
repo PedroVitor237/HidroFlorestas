@@ -288,3 +288,68 @@ T005 está comprovada: a IMP-003 está contida na branch, T111 possui implementa
 - Acessibilidade/responsividade: GREEN por teclado/foco nos viewports 390, 768 e 1440 px; componentes dedicados de loading e erro/retry foram adicionados e o typecheck os validou.
 - Fluxo independente P1→P4: GREEN em duas áreas de dois laboratórios e dois autores contextuais. Cada `Location` foi validado como URI canônica da API; a interface navegou para rota construída de contexto + `collection.id`, sem abrir o header e sem depender de `/dashboard/collects`.
 - Teardown: os cenários concluíram com o `afterAll` allowlisted; coletas criadas dinamicamente passaram a ser limpas pela tupla allowlisted de usuário/laboratório/área, mantendo as demais tabelas fora do escopo.
+
+## T085–T093 — contrato e regressões direcionadas
+
+- OpenAPI isolado: GREEN. OpenAPI 3.1, exatamente dois paths/operações, `createEnvironmentalCollection` e `getEnvironmentalCollection`, refs locais resolvidas, schemas fechados, exemplos temporais, idempotência UUID, `Location` de API, `no-store` e matrizes de status em paridade.
+- Handlers: verificação estática GREEN para somente POST de criação e GET de detalhe; nenhum PATCH/PUT/DELETE/listagem, campo científico ou navegação pelo `Location`.
+- Divergências técnicas: o quickstart ainda se declarava “planejado” e não carregava `.env.e2e.local`; foi reconciliado sem mudança funcional. Nenhuma divergência de intenção, permissão, requisito ou escopo foi encontrada.
+- IMP-001: 2 arquivos GREEN; conta elegível e DTO público continuam sem identidade interna, privilégio ou dados de coleta.
+- IMP-002: 2 arquivos GREEN; criação/escopo permanecem derivados do principal e exclusão com dados continua `409 LABORATORY_HAS_DATA`.
+- IMP-003: 3 arquivos GREEN; os três papéis recebem `CREATE_COLLECTION` em laboratório ativo, inatividade precede a permissão mutável, e detalhe de área inativa permanece legível/somente leitura.
+- Nenhuma regressão bloqueante foi observada nessas execuções direcionadas.
+
+## T094–T106 — gates automatizados finais
+
+- Prisma format (T094): PASS; schema já formatado e sem diff adicional.
+- Prisma validate (T095): PASS com ambiente seguro carregado sem imprimir credenciais.
+- Prisma generate (T096): PASS; somente artefatos gerados e ignorados, sem arquivo rastreado inesperado.
+- Migration (T097): 9/9 testes GREEN, reunindo 5 testes herdados e 4 da IMP-004. Invariantes, recovery, rollback e remoção dos schemas temporários foram aprovados.
+- OpenAPI isolado (T098): GREEN; OpenAPI 3.1, duas operações, referências, schemas fechados, exemplos, headers e respostas permaneceram em paridade.
+- Unidade (T099): 97/97 testes GREEN, 33 testes de topo em 16 suítes.
+- Integração (T100): 37/37 testes GREEN, 14 testes de topo em 9 suítes, execução serial no PostgreSQL de teste autorizado.
+- Lint (T101): PASS com zero erros e quatro warnings já presentes na baseline; um erro novo de JSX dentro de `try` foi corrigido antes do resultado final.
+- Typecheck (T102): PASS independente.
+- Build (T103): PASS; as rotas POST/GET e as páginas de criação/detalhe da IMP-004 foram compiladas.
+- E2E (T104): uma execução completa inicial revelou timeout funcional na espera da navegação do primeiro cenário US3, depois de US1/US2 GREEN. O teste passou a aguardar explicitamente a resposta POST `201` e a usar janela de navegação compatível com a latência observada. O cenário afetado ficou 1/1 GREEN e a tentativa final limitada terminou 10/10 GREEN em Chromium serial, um worker e zero retries.
+- Teardown (T105): o `afterAll` allowlisted aprovou após o cenário isolado e após a suíte completa. Uma verificação explícita adicional sofreu um `ErrorEvent` transitório; a única repetição autorizada concluiu PASS.
+- Estado final (T106): `users=0`, `laboratories=0`, `memberships=0`, `areas=0` e `collections=0`. Consultas sanitizadas retornaram zero órfãos de coleta, área e vínculo. A revisão do helper confirmou que cleanup e mutações auxiliares permanecem limitados aos IDs, tuplas e prefixo da fixture IMP-004; nenhuma allowlist foi ampliada.
+- O aviso de origem cruzada de desenvolvimento do Next.js para `/_next/*` permaneceu não bloqueante e não alterou nenhum resultado funcional.
+
+## T107 — documentação e recovery
+
+- O quickstart foi reconciliado com a implementação real e passou a carregar `.env.e2e.local` explicitamente após limpar as variáveis relevantes do processo pai.
+- Pré-condições, guard, comandos de migration, integração e Chromium, resultados esperados e estado real dos gates foram atualizados sem registrar valores de ambiente.
+- O OpenAPI não exigiu alteração: o teste isolado confirmou paridade integral com os handlers e DTOs observados.
+- Recovery registrado: falhas funcionais RED foram corrigidas por TDD; falhas transitórias de infraestrutura foram classificadas, seguidas de teardown, e nunca transformadas em aprovação.
+- SC-002 e SC-007 permanecem `NAO_VERIFICADO`; automação não foi usada como substituta da avaliação representativa.
+
+## T108 — revisão de diff, segurança e escopo
+
+- `git diff --check`: PASS.
+- Diff completo desde o HEAD inicial autorizado: 40 arquivos afetados pela IMP-004; nenhum arquivo em `docs/raw/**` ou `docs/code-first-prd/**`.
+- Dependências: `package-lock.json` inalterado e `package.json` alterou somente o script de migration para executar os testes em série; nenhuma dependência foi instalada ou adicionada e nenhum `npm audit fix` foi executado.
+- Artefatos locais: `.env.e2e.local`, `.specify/feature.json`, `src/generated/` e `test-results/` permanecem ignorados; os dois primeiros não são rastreados nem aparecem no diff/status normal.
+- Secrets: nenhum bloco de chave privada, literal de JWT ou atribuição de variável secreta foi adicionado. As únicas connection strings rastreadas detectadas são valores sintéticos locais do teste unitário do guard; nenhuma credencial do ambiente E2E foi persistida.
+- Escopo: foram adicionados somente os endpoints POST de confirmação e GET de detalhe, sem PATCH/PUT/DELETE/listagem. Não foi criado modelo, campo ou endpoint de medição, IHFR, rascunho, retomada, edição, exclusão, histórico, mapa, zona IANA ou horário impreciso. As referências às tabelas científicas preexistentes na migration e nos testes servem exclusivamente para provar preservação e ausência de perda.
+- O diff final preserva os contratos funcionais das IMP-001/002/003; regressões direcionadas permaneceram GREEN.
+
+## T109 — reconciliação final
+
+| Recorte | Evidência final |
+|---|---|
+| FR-001–FR-008 | guard contextual, elegibilidade, laboratório explícito, papéis, inatividade, revalidação e isolamento aprovados em unidade, integração e E2E US1/US4 |
+| FR-009–FR-016 | ID/autoria server-side, ocorrência com offset, confirmação distinta, parser estrito e preservação de tentativa aprovados em unidade e E2E US2 |
+| FR-017–FR-022 | revisão, confirmação explícita, atomicidade, idempotência, concorrência, retry e erros sanitizados aprovados em unidade, integração, migration e E2E US3 |
+| FR-023–FR-027 | ciclo P1→P4 e detalhe mínimo contextual, inclusive inativo, aprovados em integração e E2E US4 |
+| FR-028–FR-032 | imutabilidade no banco/API/UI e limites de escopo verificados por migration, OpenAPI, handlers, diff e regressões herdadas |
+| SC-001, SC-003–SC-006, SC-008 | cobertura automatizada GREEN nos quatro testes independentes e na suíte final 10/10 |
+| SC-002 e SC-007 | `NAO_VERIFICADO`; avaliação humana futura permanece em T110 |
+
+- Quatro testes independentes: US1 contexto sem persistência; US2 validação temporal em memória; US3 confirmação única/idempotente; US4 detalhe contextual imutável — todos GREEN.
+- Contrato: exatamente dois `operationId`, `createEnvironmentalCollection` e `getEnvironmentalCollection`, confirmados pelo gate OpenAPI.
+- Gates: format, validate, generate, migration real, OpenAPI, unidade, integração, lint, typecheck, build, Chromium, teardown e contagens finais possuem resultados próprios e GREEN.
+- Revalidação após o fechamento documental e o ajuste de sincronização E2E: lint novamente PASS com zero erros e os mesmos quatro warnings da baseline; typecheck novamente PASS.
+- Checkboxes: T001–T109 concluídas com evidência; T110 permanece aberta e `NAO_VERIFICADO` conforme instrução explícita.
+- Estado Git observado antes do checkpoint final: branch `004-environmental-collection-registration`, HEAD `ab32d2c31437f0bed6d726f0842f8166f17cb2db`, local/remoto `0/0`, com somente os 13 arquivos esperados desta fase modificados. Os quatro checkpoints GREEN anteriores são `472fd7b`, `5f52b97`, `2790021` e `ab32d2c`.
+- A análise documental permaneceu um gate anterior; nenhuma nova análise, PR ou merge foi exigida para declarar a implementação validada.

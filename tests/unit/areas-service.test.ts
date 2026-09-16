@@ -28,3 +28,8 @@ it("derives creator and laboratory in the transaction",async()=>{
  const args=calls[0].args as {data:{userId:string;laboratoryRoomId:string}};
  assert.equal(args.data.userId,"server-user");assert.equal(args.data.laboratoryRoomId,lab);
 });
+it("keeps area detail readable and marked read-only in an inactive laboratory",async()=>{
+ const {service}=setup("MEMBER",false,true,"ACTIVE");
+ const result=await service.detail("server-user",lab,id);
+ assert.equal(result.area.readOnly,true);assert.equal(result.area.laboratory.status,"INACTIVE");
+});

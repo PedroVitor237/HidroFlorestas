@@ -2,7 +2,7 @@
 
 ## Estado e objetivo
 
-Este documento é o guia de execução para validar a IMP-004 quando ela for implementada. Nesta etapa, a feature está **planejada, não implementada**: os comandos funcionais abaixo não foram executados e não devem ser usados para interpretar o código atual como aderente ao contrato.
+Este documento é o guia de execução da IMP-004 implementada. Os resultados observados e as contagens pertencem a [implementation-evidence.md](./implementation-evidence.md); os comandos abaixo devem carregar explicitamente `.env.e2e.local` quando usam PostgreSQL ou navegador.
 
 Os critérios normativos estão em [spec.md](./spec.md), as decisões técnicas em [plan.md](./plan.md), a persistência em [data-model.md](./data-model.md) e a interface HTTP em [contracts/collection-registration-api.openapi.yaml](./contracts/collection-registration-api.openapi.yaml).
 
@@ -33,9 +33,15 @@ Use somente um PostgreSQL descartável e identificado como teste. Antes de qualq
 
 Não copie credenciais para este documento nem imprima URLs de conexão nos logs. Setup deve começar com cleanup allowlisted; teardown deve executar em `finally`/`afterAll`, respeitar a ordem das chaves estrangeiras e confirmar contagem final zero mesmo quando um cenário falhar.
 
-## Sequência planejada de validação
+## Sequência de validação
 
-Os nomes de arquivos abaixo são os alvos definidos no plano. Eles só serão executáveis depois da implementação correspondente.
+Não imprima as variáveis do arquivo. O padrão usado nesta implementação limpa as variáveis relevantes do processo pai e deixa o Node carregar localmente o arquivo ignorado pelo Git.
+
+Execute os comandos que usam PostgreSQL ou navegador na mesma sessão controlada, depois deste preâmbulo:
+
+```bash
+unset DATABASE_URL TEST_DATABASE_URL TEST_DATABASE_CONFIRMATION NODE_ENV JWT_SECRET E2E_USER_PASSWORD PLAYWRIGHT_BASE_URL
+```
 
 ### 1. Contrato, tempo e estado de interface
 
@@ -77,7 +83,7 @@ Resultado esperado:
 ### 3. Migration em PostgreSQL descartável
 
 ```bash
-node --import=tsx --test --test-concurrency=1 \
+node --env-file=.env.e2e.local --import=tsx --test --test-concurrency=1 \
   tests/migration/collection-registration-migration.test.ts
 ```
 
@@ -96,7 +102,7 @@ Resultado esperado:
 ### 4. Rotas contextuais
 
 ```bash
-node --import=tsx --test --test-concurrency=1 \
+node --env-file=.env.e2e.local --import=tsx --test --test-concurrency=1 \
   tests/integration/collections-route.test.ts
 ```
 
@@ -113,7 +119,8 @@ Resultado esperado:
 ### 5. Jornada no navegador
 
 ```bash
-npx playwright test tests/e2e/collection-registration.spec.ts --workers=1
+node --env-file=.env.e2e.local node_modules/@playwright/test/cli.js test \
+  tests/e2e/collection-registration.spec.ts --workers=1
 ```
 
 Resultado esperado:
@@ -132,8 +139,8 @@ Resultado esperado:
 
 ```bash
 npm run test:unit
-npm run test:integration
-npm run test:e2e -- --workers=1
+node --env-file=.env.e2e.local --import=tsx --test --test-concurrency=1 tests/integration/*.test.ts
+node --env-file=.env.e2e.local node_modules/@playwright/test/cli.js test tests/e2e/collection-registration.spec.ts --workers=1
 npm run lint
 npm run typecheck
 npm run build
@@ -153,8 +160,6 @@ Depois das suítes, confirme no navegador e nas respostas HTTP:
 - requests autenticados e erros usam `Cache-Control: no-store`;
 - logs não contêm cookie, token, chave idempotente, URL de banco ou stack retornada ao cliente.
 
-## Validação desta etapa de planejamento
+## Estado de verificação
 
-Nesta execução do `$speckit-plan`, realizar somente verificações estáticas dos documentos: presença dos cinco artefatos, ausência de placeholders e clarificações abertas, parse do YAML, resolução de referências OpenAPI, unicidade dos `operationId`, schemas fechados, escopo dos dois endpoints, coerência de links e diff restrito a `specs/004-environmental-collection-registration/**`.
-
-Não executar nesta etapa: instalação, Prisma, migration, banco, servidor, build, lint, typecheck, testes unitários/integrados/E2E ou alteração de código.
+Migration, unidade, integração, lint, typecheck, build, os subconjuntos E2E US1–US4 e a suíte E2E completa com dez cenários foram executados durante a implementação. Consulte o ledger para resultados, falhas intermediárias, recovery e teardown. SC-002 e SC-007 permanecem `NAO_VERIFICADO` até avaliação humana representativa.

@@ -41,4 +41,18 @@ describe("/api/laboratories/[laboratoryId]", () => {
       ["owner", "lab-id", "Lab"],
     ]);
   });
+
+  it("preserves the IMP-002 conflict envelope when collections prevent deletion", async () => {
+    const handlers = createLaboratorySettingsHandlers({
+      requireAuth: async () => principal,
+      service: {
+        details: async () => ({ success: false, reason: "NOT_FOUND" }),
+        deactivate: async () => ({ success: true }),
+        delete: async () => ({ success: false, reason: "LABORATORY_HAS_DATA" }),
+      },
+    });
+    const response = await handlers.DELETE!(request("DELETE"), context);
+    assert.equal(response.status, 409);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+  });
 });

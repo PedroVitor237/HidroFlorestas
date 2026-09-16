@@ -57,4 +57,11 @@ describe("LaboratoriesService", () => {
     assert.deepEqual(await service.deactivate("principal-id", "id-Lab", "wrong"), { success: false, reason: "CONFIRMATION_MISMATCH" });
     assert.deepEqual(await service.delete("principal-id", "id-Lab", "Lab"), { success: false, reason: "LABORATORY_HAS_DATA" });
   });
+
+  it("keeps administrative deletion blocked when persisted collection data exists", async () => {
+    const repository = baseRepository();
+    repository.delete = async () => "HAS_DATA";
+    const result = await new LaboratoriesService(repository).delete("owner", "laboratory", "Laboratory");
+    assert.deepEqual(result, { success: false, reason: "LABORATORY_HAS_DATA" });
+  });
 });

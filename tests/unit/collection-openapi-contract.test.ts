@@ -71,4 +71,51 @@ describe("IMP-004 OpenAPI", () => {
     assert.equal(post.responses.patch, undefined);
     assert.equal(post.responses.delete, undefined);
   });
+
+  it("matches observed POST/GET statuses, envelopes, examples and DTO fields", async () => {
+    const document = YAML.parse(await readFile(contractPath, "utf8"));
+    const createPath = "/api/laboratories/{laboratoryId}/areas/{areaId}/collections";
+    const detailPath = `${createPath}/{collectionId}`;
+    assert.deepEqual(Object.keys(document.paths).sort(), [createPath, detailPath].sort());
+    assert.deepEqual(
+      Object.keys(document.paths[createPath].post.responses).sort(),
+      ["200", "201", "400", "401", "403", "404", "409", "500"],
+    );
+    assert.deepEqual(
+      Object.keys(document.paths[detailPath].get.responses).sort(),
+      ["200", "401", "404", "500"],
+    );
+    assert.deepEqual(
+      Object.keys(document.components.schemas.CollectionDetail.properties).sort(),
+      ["area", "confirmedAt", "id", "laboratory", "occurredAt", "readOnly"],
+    );
+    assert.deepEqual(
+      Object.keys(document.components.schemas.CollectionResponse.properties),
+      ["collection"],
+    );
+    assert.deepEqual(
+      Object.keys(document.components.schemas.ErrorResponse.properties),
+      ["error"],
+    );
+    assert.ok(document.components.examples.CollectionSuccess.value.collection.occurredAt);
+    assert.ok(document.components.examples.CollectionSuccess.value.collection.confirmedAt);
+  });
+
+  it("keeps handlers and UI limited to POST, GET detail and separately-built navigation", async () => {
+    const [postSource, getSource, formSource] = await Promise.all([
+      readFile("src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route.ts", "utf8"),
+      readFile("src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/route.ts", "utf8"),
+      readFile("src/components/collections/collection-form.tsx", "utf8"),
+    ]);
+    assert.match(postSource, /export const POST/);
+    assert.doesNotMatch(postSource, /export const (GET|PATCH|PUT|DELETE)/);
+    assert.match(getSource, /export const GET/);
+    assert.doesNotMatch(getSource, /export const (POST|PATCH|PUT|DELETE)/);
+    assert.match(formSource, /headers\.get\("Location"\)/);
+    assert.match(formSource, /router\.push\(`\/dashboard\/laboratories\/\$\{context\.laboratory\.id\}/);
+    assert.doesNotMatch(formSource, /router\.push\([^)]*Location/i);
+    const allSources = `${postSource}\n${getSource}`;
+    for (const forbidden of ["WaterData", "SoilData", "VegetationData", "TerrainData", "IHFR"])
+      assert.equal(allSources.includes(forbidden), false, forbidden);
+  });
 });

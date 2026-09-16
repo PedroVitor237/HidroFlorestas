@@ -4,6 +4,8 @@ import { assertLaboratoryPermission, AreaAccessError, type ContextRole } from ".
 it("enforces contextual roles and read-only precedence", () => {
   for (const role of ["OWNER", "ADMIN", "MEMBER"] as ContextRole[]) {
     assert.doesNotThrow(() => assertLaboratoryPermission(role, false, "READ_AREAS"));
+    assert.doesNotThrow(() => assertLaboratoryPermission(role, true, "CREATE_COLLECTION", true));
+    assert.throws(() => assertLaboratoryPermission(role, false, "CREATE_COLLECTION", true), (e) => e instanceof AreaAccessError && e.code === "READ_ONLY");
     assert.throws(() => assertLaboratoryPermission(role, false, "CREATE_AREA", true), (e) => e instanceof AreaAccessError && e.code === "READ_ONLY");
     if (role === "MEMBER") assert.throws(() => assertLaboratoryPermission(role, true, "CREATE_AREA", true));
     else assert.doesNotThrow(() => assertLaboratoryPermission(role, true, "CREATE_AREA", true));
