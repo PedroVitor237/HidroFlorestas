@@ -120,3 +120,98 @@ test("US2 validates an explicit temporal offset in memory without POST", async (
   expect(postCount).toBe(0);
   expect((await countCollectionFixtures(process.env)).collections).toBe(1);
 });
+
+test("US3 reviews derived authorship and confirms once after a double click", async ({ page, context }, info) => {
+  const laboratoryId = COLLECTION_FIXTURES.laboratoryIds[0];
+  const areaId = COLLECTION_FIXTURES.areaIds[0];
+  let postCount = 0;
+  page.on("request", (request) => {
+    if (request.method() === "POST" && request.url().endsWith(`/api/laboratories/${laboratoryId}/areas/${areaId}/collections`)) {
+      postCount += 1;
+    }
+  });
+  await login(context, info, 0);
+  await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/new`);
+  await page.getByLabel("Ocorrência em campo").fill("2026-09-15T09:00:00-03:00");
+  await page.getByRole("button", { name: "Revisar coleta" }).click();
+  const review = page.getByRole("region", { name: "Revisão" });
+  await expect(review.getByText("Será registrada por você", { exact: true })).toBeVisible();
+  await expect(review.getByText(/person-0@|OWNER|ADMIN|MEMBER|userId/i)).toHaveCount(0);
+  expect(postCount).toBe(0);
+  const confirm = page.getByRole("button", { name: "Confirmar coleta" });
+  await confirm.dblclick();
+  await expect(page).toHaveURL(new RegExp(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/[0-9a-f-]{36}$`));
+  expect(postCount).toBe(1);
+  expect((await countCollectionFixtures(process.env)).collections).toBe(2);
+});
+
+test("US3 retries a failed confirmation with the same key and surfaces access loss", async ({ page, context }, info) => {
+  const laboratoryId = COLLECTION_FIXTURES.laboratoryIds[0];
+  const areaId = COLLECTION_FIXTURES.areaIds[0];
+  const keys: string[] = [];
+  let attempt = 0;
+  await page.route(`**/api/laboratories/${laboratoryId}/areas/${areaId}/collections`, async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    keys.push(route.request().headers()["idempotency-key"] ?? "");
+    attempt += 1;
+    if (attempt === 1) {
+      await route.abort("timedout");
+      return;
+    }
+    await route.fulfill({
+      status: 404,
+      contentType: "application/json",
+      body: JSON.stringify({
+        error: {
+          code: "NOT_FOUND",
+          message: "Recurso não encontrado.",
+        },
+      }),
+    });
+  });
+  await login(context, info, 0);
+  await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/new`);
+  await page.getByLabel("Ocorrência em campo").fill("2026-09-15T09:00:00-03:00");
+  await page.getByRole("button", { name: "Revisar coleta" }).click();
+  await page.getByRole("button", { name: "Confirmar coleta" }).click();
+  const review = page.getByRole("region", { name: "Revisão" });
+  await expect(review.getByRole("alert")).toContainText(/tente novamente/i);
+  await page.getByRole("button", { name: /tentar novamente/i }).click();
+  await expect(review.getByRole("alert")).toContainText(/acesso|não encontrado/i);
+  assertKeysAreStable(keys);
+});
+
+test("US3 converges concurrent real POSTs and rejects a divergent replay", async ({ context }, info) => {
+  const laboratoryId = COLLECTION_FIXTURES.laboratoryIds[0];
+  const areaId = COLLECTION_FIXTURES.areaIds[0];
+  const api = `/api/laboratories/${laboratoryId}/areas/${areaId}/collections`;
+  const key = "40000000-0000-4000-8000-000000000433";
+  const before = (await countCollectionFixtures(process.env)).collections;
+  await login(context, info, 0);
+  const options = {
+    headers: { "Idempotency-Key": key },
+    data: { occurredAt: "2026-09-15T08:30:00-03:00" },
+  };
+  const responses = await Promise.all([
+    context.request.post(api, options),
+    context.request.post(api, options),
+  ]);
+  expect(responses.map((response) => response.status()).sort()).toEqual([200, 201]);
+  const payloads = await Promise.all(responses.map((response) => response.json()));
+  expect(payloads[0].collection.id).toBe(payloads[1].collection.id);
+  expect((await countCollectionFixtures(process.env)).collections).toBe(before + 1);
+
+  const conflict = await context.request.post(api, {
+    headers: { "Idempotency-Key": key },
+    data: { occurredAt: "2026-09-15T08:31:00-03:00" },
+  });
+  expect(conflict.status()).toBe(409);
+  expect((await conflict.json()).error.code).toBe("CONFLICT");
+  expect((await countCollectionFixtures(process.env)).collections).toBe(before + 1);
+});
+
+function assertKeysAreStable(keys: string[]) {
+  expect(keys).toHaveLength(2);
+  expect(keys[0]).not.toBe("");
+  expect(keys[1]).toBe(keys[0]);
+}

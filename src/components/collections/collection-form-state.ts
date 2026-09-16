@@ -52,3 +52,23 @@ export function reviewCollectionAttempt(
 export function editCollectionAttempt(attempt: CollectionAttempt): CollectionAttempt {
   return { ...attempt, phase: "editing", error: null };
 }
+
+export function beginCollectionSubmission(attempt: CollectionAttempt): CollectionAttempt {
+  if (attempt.phase === "submitting") return attempt;
+  if (attempt.phase !== "reviewing") throw new Error("REVIEW_REQUIRED");
+  return { ...attempt, phase: "submitting", error: null };
+}
+
+export function failCollectionSubmission(
+  attempt: CollectionAttempt,
+  message: string,
+): CollectionAttempt {
+  return { ...attempt, phase: "reviewing", error: message };
+}
+
+export function startNewCollectionAttempt(
+  attempt: CollectionAttempt,
+  createKey: () => string = () => crypto.randomUUID(),
+): CollectionAttempt {
+  return createCollectionAttempt(attempt.context, createKey);
+}

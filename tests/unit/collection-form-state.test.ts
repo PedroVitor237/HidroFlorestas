@@ -2,9 +2,12 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  beginCollectionSubmission,
   createCollectionAttempt,
   editCollectionAttempt,
+  failCollectionSubmission,
   reviewCollectionAttempt,
+  startNewCollectionAttempt,
   updateCollectionOccurrence,
 } from "../../src/components/collections/collection-form-state";
 
@@ -66,6 +69,42 @@ describe("collection form state", () => {
     assert.equal(corrected.phase, "editing");
     assert.equal(corrected.occurredAt, "2026-09-15T08:59:59.123-03:00");
     assert.equal(corrected.error, null);
+  });
+
+  it("submits only an explicitly reviewed attempt and is single-flight", () => {
+    const review = reviewCollectionAttempt(
+      updateCollectionOccurrence(
+        createCollectionAttempt(context, () => "stable-key"),
+        "2026-09-15T09:00:00-03:00",
+      ),
+    );
+    const submitting = beginCollectionSubmission(review);
+    assert.equal(submitting.phase, "submitting");
+    assert.equal(submitting.idempotencyKey, "stable-key");
+    assert.equal(beginCollectionSubmission(submitting), submitting);
+    assert.throws(() => beginCollectionSubmission(createCollectionAttempt(context, () => "key")));
+  });
+
+  it("keeps the same key for retry and creates a new key only for another intentional attempt", () => {
+    const review = reviewCollectionAttempt(
+      updateCollectionOccurrence(
+        createCollectionAttempt(context, () => "stable-key"),
+        "2026-09-15T09:00:00-03:00",
+      ),
+    );
+    const failed = failCollectionSubmission(
+      beginCollectionSubmission(review),
+      "Não foi possível confirmar. Tente novamente.",
+    );
+    assert.equal(failed.phase, "reviewing");
+    assert.equal(failed.idempotencyKey, "stable-key");
+    assert.match(failed.error ?? "", /tente novamente/i);
+
+    const next = startNewCollectionAttempt(failed, () => "new-key");
+    assert.equal(next.phase, "editing");
+    assert.equal(next.idempotencyKey, "new-key");
+    assert.equal(next.occurredAt, "");
+    assert.deepEqual(next.context, context);
   });
 
   it("contains no storage or write operation", async () => {

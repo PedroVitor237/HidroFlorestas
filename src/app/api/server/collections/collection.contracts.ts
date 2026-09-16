@@ -8,6 +8,15 @@ export type ParsedCollectionOccurrence = {
   occurredAt: string;
 };
 
+export type SerializableCollectionDetail = {
+  id: string;
+  occurredAt: string;
+  confirmedAt: Date;
+  area: { id: string; name: string };
+  laboratory: { id: string; name: string; status: "ACTIVE" | "INACTIVE" };
+  readOnly: boolean;
+};
+
 export type CollectionTemporalErrorReason = "REQUIRED" | "FORMAT" | "FUTURE";
 
 export class CollectionContractError extends Error {
@@ -84,7 +93,42 @@ export function parseCollectionInput(
 }
 
 export function serializeCollectionDetail(
-  _value: unknown,
+  value: SerializableCollectionDetail,
 ): CollectionDetailDto {
-  throw new CollectionContractError("NOT_IMPLEMENTED");
+  return {
+    id: value.id,
+    occurredAt: value.occurredAt,
+    confirmedAt: value.confirmedAt.toISOString(),
+    area: { id: value.area.id, name: value.area.name },
+    laboratory: { ...value.laboratory },
+    readOnly: value.readOnly,
+  };
+}
+
+const UUID_PROFILE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function parseIdempotencyKey(value: string | null): string {
+  if (!value || !UUID_PROFILE.test(value)) invalid("FORMAT");
+  return value.toLowerCase();
+}
+
+export function collectionSuccess(collection: CollectionDetailDto) {
+  return { collection };
+}
+
+const errorMessages = {
+  INVALID_REQUEST: "A solicitação de coleta é inválida.",
+  UNAUTHENTICATED: "Autenticação necessária.",
+  FORBIDDEN: "Você não possui permissão para esta operação.",
+  NOT_FOUND: "Recurso não encontrado.",
+  READ_ONLY: "O laboratório está em modo somente leitura.",
+  CONFLICT: "A chave de confirmação já foi usada com outros dados.",
+  INTERNAL_ERROR: "Não foi possível concluir a operação.",
+} as const;
+
+export type CollectionHttpErrorCode = keyof typeof errorMessages;
+
+export function collectionError(code: CollectionHttpErrorCode) {
+  return { error: { code, message: errorMessages[code] } };
 }

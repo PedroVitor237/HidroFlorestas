@@ -252,3 +252,22 @@ T005 está comprovada: a IMP-003 está contida na branch, T111 possui implementa
 - Teardown: `afterAll` aprovado com `users=0`, `laboratories=0`, `memberships=0`, `areas=0`, `collections=0`.
 - Uma tentativa anterior ao GREEN foi classificada como infraestrutura: timeout ao iniciar a transação do setup, antes do cenário. Após limites explícitos da fixture, a repetição única passou.
 - Checkpoint conjunto US1+US2: `collection-registration.spec.ts` completo em Chromium, 3/3 GREEN, um worker e zero retries; o teardown e as contagens finais foram aprovados pelo `afterAll`.
+
+## T059 — RED funcional de US3
+
+- Serviço: RED válido no shell `NOT_IMPLEMENTED`; testes carregaram e alcançaram a primeira criação esperada.
+- POST: RED válido em resposta controlada 501 do shell; factory, imports e Request/Response funcionaram.
+- Estado: RED válido nas transições compiláveis de submissão ainda `NOT_IMPLEMENTED`.
+- Chromium US3: RED válido na ausência da indicação “Será registrada por você”; browser, servidor, autenticação, fixture e banco estavam operacionais.
+- Teardown do RED E2E: `afterAll` concluiu e validou as cinco contagens em zero.
+- `npm run typecheck`: GREEN antes das execuções RED.
+
+## T067–T070 — GREEN de US3
+
+- Unidade, executada por arquivo: `collections-service.test.ts`, `collection-contracts.test.ts` e `collection-form-state.test.ts` GREEN. Foram comprovados papéis contextuais, ordem de autorização, autoria/ID/confirmação server-side, replay, conflito, isolamento por autor, erro sanitizado, parser fechado, revisão, single-flight e chave estável.
+- Integração injetada: `collections-route.test.ts` GREEN; `createEnvironmentalCollection` ficou em paridade com `201/200/400/401/403/404/409/500`, envelope fechado, `Location` canônico de API e `no-store`.
+- PostgreSQL isolado: migration IMP-004 4/4 GREEN. Constraints de tupla/offset/FK contextual, unicidade por autor, triggers de `UPDATE`/`DELETE`, preservação legada e abort transacional sem parcial foram aprovados; cada schema temporário foi removido pelo harness.
+- Concorrência real pelo POST: dois requests simultâneos com a mesma chave/autor/contexto/payload convergiram em `201` e `200`, retornaram o mesmo ID e elevaram a contagem em exatamente uma linha; replay divergente retornou `409` e não alterou a contagem.
+- Chromium US3: GREEN em execuções limitadas para confirmação real com duplo clique (um POST), timeout/retry com a mesma chave, perda de acesso e concorrência/replay real. Nenhum POST ocorreu antes da confirmação explícita.
+- Uma tentativa posterior de agregação dos três cenários encontrou timeout externo de rede antes do primeiro teste; foi classificada como infraestrutura e não repetida indefinidamente.
+- Teardown explícito após a falha externa: PASS, com `users=0`, `laboratories=0`, `memberships=0`, `areas=0`, `collections=0`.

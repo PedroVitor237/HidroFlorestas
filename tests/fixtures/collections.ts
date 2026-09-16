@@ -76,7 +76,6 @@ export function createCollectionFixtureActions(
         try {
           await tx.collectionData.deleteMany({
             where: {
-              id: { in: collectionIds },
               collectionAreaId: { in: areaIds },
               laboratoryRoomId: { in: laboratoryIds },
               userId: { in: userIds },
@@ -188,7 +187,11 @@ export function createCollectionFixtureActions(
         }),
         areas: await prisma.collectionArea.count({ where: { id: { in: areaIds } } }),
         collections: await prisma.collectionData.count({
-          where: { id: { in: collectionIds } },
+          where: {
+            collectionAreaId: { in: areaIds },
+            laboratoryRoomId: { in: laboratoryIds },
+            userId: { in: userIds },
+          },
         }),
       };
     },
