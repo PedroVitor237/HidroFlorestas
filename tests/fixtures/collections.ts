@@ -174,6 +174,18 @@ export function createCollectionFixtureActions(
             confirmationKey: "40000000-0000-4000-8000-000000000431",
           },
         });
+        await tx.collectionData.create({
+          data: {
+            id: collectionIds[1],
+            collectionAreaId: areaIds[1],
+            laboratoryRoomId: laboratoryIds[1],
+            userId: userIds[0],
+            occurredAt: new Date("2026-09-15T13:30:00.000Z"),
+            occurrenceOffset: "+01:30",
+            confirmedAt: new Date("2026-09-15T13:35:00.000Z"),
+            confirmationKey: "40000000-0000-4000-8000-000000000432",
+          },
+        });
       }, { maxWait: 15_000, timeout: 30_000 });
     },
     async count() {

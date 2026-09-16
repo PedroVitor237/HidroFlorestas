@@ -50,7 +50,7 @@ test("US1 starts only from the explicit authorized area without persistence", as
       await expect(registration).toContainText("IMP-004 E2E area 0");
     });
   }
-  expect((await countCollectionFixtures(process.env)).collections).toBe(1);
+  expect((await countCollectionFixtures(process.env)).collections).toBe(2);
 });
 
 test("US1 rejects crossed, missing, revoked, ineligible and inactive mutation contexts", async ({ page, context }, info) => {
@@ -118,7 +118,7 @@ test("US2 validates an explicit temporal offset in memory without POST", async (
   await expect(page.getByRole("heading", { name: "Revisão" })).toBeVisible();
   await expect(page.getByText("2026-09-15T09:00:00.123-03:00", { exact: true })).toBeVisible();
   expect(postCount).toBe(0);
-  expect((await countCollectionFixtures(process.env)).collections).toBe(1);
+  expect((await countCollectionFixtures(process.env)).collections).toBe(2);
 });
 
 test("US3 reviews derived authorship and confirms once after a double click", async ({ page, context }, info) => {
@@ -142,7 +142,7 @@ test("US3 reviews derived authorship and confirms once after a double click", as
   await confirm.dblclick();
   await expect(page).toHaveURL(new RegExp(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/[0-9a-f-]{36}$`));
   expect(postCount).toBe(1);
-  expect((await countCollectionFixtures(process.env)).collections).toBe(2);
+  expect((await countCollectionFixtures(process.env)).collections).toBe(3);
 });
 
 test("US3 retries a failed confirmation with the same key and surfaces access loss", async ({ page, context }, info) => {
@@ -208,6 +208,83 @@ test("US3 converges concurrent real POSTs and rejects a divergent replay", async
   expect(conflict.status()).toBe(409);
   expect((await conflict.json()).error.code).toBe("CONFLICT");
   expect((await countCollectionFixtures(process.env)).collections).toBe(before + 1);
+});
+
+test("US4 reads a minimal immutable detail for current roles and inactive laboratories", async ({ page, context }, info) => {
+  const [laboratoryId, inactiveLaboratoryId] = COLLECTION_FIXTURES.laboratoryIds;
+  const [areaId, inactiveAreaId] = COLLECTION_FIXTURES.areaIds;
+  const [collectionId, inactiveCollectionId] = COLLECTION_FIXTURES.collectionIds;
+  for (const userIndex of [0, 1, 2]) {
+    await login(context, info, userIndex);
+    await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}`);
+    await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
+    await expect(page.getByText("2026-09-15T09:00:00.000-03:00", { exact: true })).toBeVisible();
+    await expect(page.getByText("2026-09-15T12:05:00.000Z", { exact: true })).toBeVisible();
+    await expect(page.getByText(/userId|confirmationKey|observations|IHFR/i)).toHaveCount(0);
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
+  }
+  await login(context, info, 0);
+  await page.goto(`/dashboard/laboratories/${inactiveLaboratoryId}/areas/${inactiveAreaId}/collections/${inactiveCollectionId}`);
+  await expect(page.getByText(/somente leitura/i).last()).toBeVisible();
+  await expect(page.getByText("2026-09-15T15:00:00.000+01:30", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /editar|excluir/i })).toHaveCount(0);
+});
+
+test("US4 hides crossed, missing and revoked collection contexts", async ({ page, context }, info) => {
+  const [laboratoryId, otherLaboratoryId] = COLLECTION_FIXTURES.laboratoryIds;
+  const [areaId, otherAreaId] = COLLECTION_FIXTURES.areaIds;
+  const collectionId = COLLECTION_FIXTURES.collectionIds[0];
+  await login(context, info, 3);
+  expect((await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}`))?.status()).toBe(404);
+  await login(context, info, 0);
+  await page.goto(`/dashboard/laboratories/${otherLaboratoryId}/areas/${otherAreaId}/collections/${collectionId}`);
+  await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toHaveCount(0);
+  expect((await context.request.get(`/api/laboratories/${otherLaboratoryId}/areas/${otherAreaId}/collections/${collectionId}`)).status()).toBe(404);
+  const missing = "00000000-0000-4000-8000-000000000999";
+  await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/${missing}`);
+  await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toHaveCount(0);
+  expect((await context.request.get(`/api/laboratories/${laboratoryId}/areas/${areaId}/collections/${missing}`)).status()).toBe(404);
+});
+
+test("US4 detail remains keyboard-usable across responsive viewports", async ({ page, context }, info) => {
+  const laboratoryId = COLLECTION_FIXTURES.laboratoryIds[0];
+  const areaId = COLLECTION_FIXTURES.areaIds[0];
+  const collectionId = COLLECTION_FIXTURES.collectionIds[0];
+  await login(context, info, 0);
+  for (const width of [390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}`);
+    const detail = page.getByRole("article");
+    await expect(detail).toBeVisible();
+    expect((await detail.boundingBox())?.width).toBeLessThanOrEqual(width);
+    await page.keyboard.press("Tab");
+    expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
+  }
+});
+
+test("US4 completes independent form-to-detail flows in two laboratory contexts", async ({ page, context }, info) => {
+  const cases = [
+    { userIndex: 0, laboratoryId: COLLECTION_FIXTURES.laboratoryIds[0], areaId: COLLECTION_FIXTURES.areaIds[0], occurredAt: "2026-09-15T07:00:00-03:00" },
+    { userIndex: 3, laboratoryId: COLLECTION_FIXTURES.laboratoryIds[2], areaId: COLLECTION_FIXTURES.areaIds[2], occurredAt: "2026-09-15T06:00:00-03:00" },
+  ];
+  const before = (await countCollectionFixtures(process.env)).collections;
+  for (const current of cases) {
+    await login(context, info, current.userIndex);
+    await page.goto(`/dashboard/laboratories/${current.laboratoryId}/areas/${current.areaId}/collections/new`);
+    await page.getByLabel("Ocorrência em campo").fill(current.occurredAt);
+    await page.getByRole("button", { name: "Revisar coleta" }).click();
+    const responsePromise = page.waitForResponse((response) =>
+      response.request().method() === "POST" && response.url().endsWith(`/api/laboratories/${current.laboratoryId}/areas/${current.areaId}/collections`),
+    );
+    await page.getByRole("button", { name: "Confirmar coleta" }).click();
+    const response = await responsePromise;
+    const payload = await response.json();
+    expect(response.headers()["location"]).toBe(`/api/laboratories/${current.laboratoryId}/areas/${current.areaId}/collections/${payload.collection.id}`);
+    await expect(page).toHaveURL(`/dashboard/laboratories/${current.laboratoryId}/areas/${current.areaId}/collections/${payload.collection.id}`);
+    await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
+  }
+  expect((await countCollectionFixtures(process.env)).collections).toBe(before + 2);
 });
 
 function assertKeysAreStable(keys: string[]) {

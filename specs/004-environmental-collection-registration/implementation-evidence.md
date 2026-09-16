@@ -271,3 +271,20 @@ T005 está comprovada: a IMP-003 está contida na branch, T111 possui implementa
 - Chromium US3: GREEN em execuções limitadas para confirmação real com duplo clique (um POST), timeout/retry com a mesma chave, perda de acesso e concorrência/replay real. Nenhum POST ocorreu antes da confirmação explícita.
 - Uma tentativa posterior de agregação dos três cenários encontrou timeout externo de rede antes do primeiro teste; foi classificada como infraestrutura e não repetida indefinidamente.
 - Teardown explícito após a falha externa: PASS, com `users=0`, `laboratories=0`, `memberships=0`, `areas=0`, `collections=0`.
+
+## T075 — RED funcional de US4
+
+- Serviço: RED funcional no método `detail` ainda `NOT_IMPLEMENTED`, com typecheck e imports íntegros.
+- GET: RED funcional na factory controlada 501, sem falha de Request/Response ou configuração.
+- Chromium: RED funcional na ausência do heading “Detalhe da coleta”; browser, servidor, autenticação, fixture e banco operaram normalmente.
+- Teardown do RED E2E: concluído pelo `afterAll`, sem estado residual reportado.
+
+## T081–T084 — GREEN de US4
+
+- Serviço e GET, por arquivo: `collections-service.test.ts` e `collections-route.test.ts` GREEN; `getEnvironmentalCollection` reautoriza antes da busca, usa a tupla coleção/área/laboratório, aceita leitura inativa e retorna DTO fechado com `no-store`.
+- Chromium: detalhe mínimo GREEN para `OWNER`, `ADMIN` e `MEMBER`, reload independente do formulário, ocorrência reconstruída no offset persistido e confirmação em UTC.
+- Laboratório inativo: GREEN em somente leitura, sem ações de edição/exclusão/listagem.
+- Isolamento: vínculo ausente, contexto cruzado e ID inexistente não renderizaram o detalhe; a API canônica retornou `404` uniforme.
+- Acessibilidade/responsividade: GREEN por teclado/foco nos viewports 390, 768 e 1440 px; componentes dedicados de loading e erro/retry foram adicionados e o typecheck os validou.
+- Fluxo independente P1→P4: GREEN em duas áreas de dois laboratórios e dois autores contextuais. Cada `Location` foi validado como URI canônica da API; a interface navegou para rota construída de contexto + `collection.id`, sem abrir o header e sem depender de `/dashboard/collects`.
+- Teardown: os cenários concluíram com o `afterAll` allowlisted; coletas criadas dinamicamente passaram a ser limpas pela tupla allowlisted de usuário/laboratório/área, mantendo as demais tabelas fora do escopo.

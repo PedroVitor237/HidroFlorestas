@@ -1,6 +1,6 @@
 import { Prisma, type PrismaClient } from "@/generated/prisma";
 import type { CollectionDetailDto } from "@/types/collection.type";
-import { AreaAccessError, authorizeLaboratoryAccess, type LaboratoryContext } from "../areas/area.authorization";
+import { AreaAccessError, authorizeLaboratoryAccess, validResourceId, type LaboratoryContext } from "../areas/area.authorization";
 import { serializeCollectionDetail, type ParsedCollectionOccurrence } from "../collections/collection.contracts";
 import { prisma } from "../lib/prisma";
 
@@ -21,6 +21,7 @@ export type CollectionTransaction = {
   raw?: Prisma.TransactionClient;
   findByKey(userId: string, confirmationKey: string): Promise<CollectionRecord | null>;
   findArea(areaId: string, laboratoryId: string): Promise<{ id: string; name: string } | null>;
+  findDetail(collectionId: string, areaId: string, laboratoryId: string): Promise<CollectionRecord | null>;
   create(data: Omit<CollectionRecord, "area" | "laboratory">): Promise<CollectionRecord>;
 };
 
@@ -32,6 +33,7 @@ export type CollectionAuthorization = (
   userId: string,
   laboratoryId: string,
   transaction: CollectionTransaction,
+  mode: "CREATE" | "READ",
 ) => Promise<LaboratoryContext>;
 
 export type CreateCollectionCommand = {
@@ -95,7 +97,7 @@ export class CollectionsService {
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         return await this.dependencies.store.transaction(async (transaction) => {
-          const context = await this.dependencies.authorize(command.userId, command.laboratoryId, transaction);
+          const context = await this.dependencies.authorize(command.userId, command.laboratoryId, transaction, "CREATE");
           const area = await transaction.findArea(command.areaId, command.laboratoryId);
           if (!area) throw new CollectionServiceError("NOT_FOUND");
           const existing = await transaction.findByKey(command.userId, command.confirmationKey);
@@ -122,6 +124,28 @@ export class CollectionsService {
       }
     }
     throw new CollectionServiceError("INTERNAL_ERROR");
+  }
+
+  async detail(
+    userId: string,
+    laboratoryId: string,
+    areaId: string,
+    collectionId: string,
+  ): Promise<{ collection: CollectionDetailDto }> {
+    try {
+      return await this.dependencies.store.transaction(async (transaction) => {
+        const context = await this.dependencies.authorize(userId, laboratoryId, transaction, "READ");
+        if (!validResourceId(areaId) || !validResourceId(collectionId)) {
+          throw new CollectionServiceError("NOT_FOUND");
+        }
+        const record = await transaction.findDetail(collectionId, areaId, laboratoryId);
+        if (!record) throw new CollectionServiceError("NOT_FOUND");
+        return { collection: toDetail(record, context) };
+      });
+    } catch (error) {
+      if (error instanceof AreaAccessError || error instanceof CollectionServiceError) throw error;
+      throw new CollectionServiceError("INTERNAL_ERROR");
+    }
   }
 }
 
@@ -177,6 +201,21 @@ export class PrismaCollectionStore implements CollectionStore {
           select: { id: true, name: true },
         });
       },
+      async findDetail(collectionId, areaId, laboratoryId) {
+        const found = await raw.collectionData.findFirst({
+          where: {
+            id: collectionId,
+            collectionAreaId: areaId,
+            laboratoryRoomId: laboratoryId,
+            occurredAt: { not: null },
+            occurrenceOffset: { not: null },
+            confirmedAt: { not: null },
+            confirmationKey: { not: null },
+          },
+          select: recordSelection,
+        });
+        return found ? completeRecord(found) : null;
+      },
       async create(data) {
         return completeRecord(await raw.collectionData.create({ data, select: recordSelection }));
       },
@@ -186,10 +225,10 @@ export class PrismaCollectionStore implements CollectionStore {
 
 export const collectionsService = new CollectionsService({
   store: new PrismaCollectionStore(),
-  authorize: async (userId, laboratoryId, transaction) => {
+  authorize: async (userId, laboratoryId, transaction, mode) => {
     if (!transaction.raw) throw new CollectionServiceError("INTERNAL_ERROR");
     return authorizeLaboratoryAccess(
-      { id: userId }, laboratoryId, "CREATE_COLLECTION", transaction.raw, true,
+      { id: userId }, laboratoryId, mode === "CREATE" ? "CREATE_COLLECTION" : "READ_AREAS", transaction.raw, mode === "CREATE",
     );
   },
   clock: () => new Date(),

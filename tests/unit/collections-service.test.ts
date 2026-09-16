@@ -24,7 +24,7 @@ const occurrence = {
   occurredAt: "2026-09-15T09:00:00.000-03:00",
 };
 
-function harness(options: { role?: ContextRole; area?: boolean; records?: CollectionRecord[] } = {}) {
+function harness(options: { role?: ContextRole; active?: boolean; area?: boolean; records?: CollectionRecord[] } = {}) {
   const events: string[] = [];
   const records = options.records ?? [];
   const transaction: CollectionTransaction = {
@@ -37,6 +37,11 @@ function harness(options: { role?: ContextRole; area?: boolean; records?: Collec
       return options.area === false || areaId !== ids.area || laboratoryId !== ids.laboratory
         ? null
         : { id: ids.area, name: "Área" };
+    },
+    async findDetail(collectionId, areaId, laboratoryId) {
+      events.push("detail");
+      return records.find((record) =>
+        record.id === collectionId && record.collectionAreaId === areaId && record.laboratoryRoomId === laboratoryId) ?? null;
     },
     async create(data) {
       events.push("create");
@@ -63,9 +68,9 @@ function harness(options: { role?: ContextRole; area?: boolean; records?: Collec
       return {
         id: ids.laboratory,
         name: "Laboratório",
-        status: "ACTIVE",
+        status: options.active === false ? "INACTIVE" : "ACTIVE",
         membershipRole: options.role ?? "OWNER",
-        readOnly: false,
+        readOnly: options.active === false,
       };
     },
     clock: () => new Date("2026-09-15T12:05:00.000Z"),
@@ -164,5 +169,62 @@ describe("collections service creation", () => {
     });
     await assert.rejects(() => failing.create(command), (error) =>
       error instanceof CollectionServiceError && error.code === "INTERNAL_ERROR" && !error.message.includes("database"));
+  });
+});
+
+describe("collections service detail", () => {
+  const record: CollectionRecord = {
+    id: ids.collection,
+    userId: ids.user,
+    laboratoryRoomId: ids.laboratory,
+    collectionAreaId: ids.area,
+    occurredAt: occurrence.occurredAtUtc,
+    occurrenceOffset: occurrence.occurrenceOffset,
+    confirmedAt: new Date("2026-09-15T12:05:00.000Z"),
+    confirmationKey: ids.key,
+    area: { id: ids.area, name: "Área" },
+    laboratory: { id: ids.laboratory, name: "Laboratório", isActive: true },
+  };
+
+  it("allows every current role in active or inactive laboratories with a minimal DTO", async () => {
+    for (const role of ["OWNER", "ADMIN", "MEMBER"] as const) {
+      for (const active of [true, false]) {
+        const { service, events } = harness({ role, active, records: [record] });
+        const result = await service.detail(ids.user, ids.laboratory, ids.area, ids.collection);
+        assert.deepEqual(events, ["transaction", "authorize", "detail"]);
+        assert.equal(result.collection.readOnly, !active);
+        assert.equal(result.collection.occurredAt, occurrence.occurredAt);
+        assert.equal(result.collection.confirmedAt, "2026-09-15T12:05:00.000Z");
+        for (const forbidden of ["userId", "confirmationKey", "observations", "createdAt", "updatedAt"])
+          assert.equal(JSON.stringify(result).includes(forbidden), false);
+      }
+    }
+  });
+
+  it("uses the full laboratory, area and collection tuple and returns uniform not-found", async () => {
+    for (const [laboratoryId, areaId, collectionId] of [
+      [ids.laboratory, ids.area, "00000000-0000-4000-8000-000000000999"],
+      [ids.laboratory, "00000000-0000-4000-8000-000000000999", ids.collection],
+    ]) {
+      const { service } = harness({ records: [record] });
+      await assert.rejects(
+        () => service.detail(ids.user, laboratoryId, areaId, collectionId),
+        (error) => error instanceof CollectionServiceError && error.code === "NOT_FOUND",
+      );
+    }
+  });
+
+  it("reauthorizes before lookup so revoked and ineligible principals cannot read", async () => {
+    for (const code of ["UNAUTHENTICATED", "NOT_FOUND"] as const) {
+      let lookedUp = false;
+      const service = new CollectionsService({
+        store: { transaction: async (operation) => operation({ findDetail: async () => { lookedUp = true; return record; } } as unknown as CollectionTransaction) },
+        authorize: async () => { throw new AreaAccessError(code); },
+        clock: () => new Date(),
+        createId: () => ids.collection,
+      });
+      await assert.rejects(() => service.detail(ids.user, ids.laboratory, ids.area, ids.collection));
+      assert.equal(lookedUp, false);
+    }
   });
 });

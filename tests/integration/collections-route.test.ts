@@ -5,6 +5,7 @@ import { AreaAccessError } from "../../src/app/api/server/areas/area.authorizati
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
 import { CollectionServiceError } from "../../src/app/api/server/services/collections.service";
 import { createCollectionHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route";
+import { createCollectionDetailHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/route";
 
 const laboratoryId = "00000000-0000-4000-8000-000000000411";
 const areaId = "00000000-0000-4000-8000-000000000421";
@@ -89,6 +90,45 @@ describe("POST collection route", () => {
         service: { create: async () => { throw failure; } },
       });
       const response = await handlers.POST(request(), context());
+      assert.equal(response.status, status);
+      const payload = await response.json();
+      assert.equal(payload.error.code, code);
+      assert.equal(JSON.stringify(payload).includes("database"), false);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+    }
+  });
+});
+
+describe("GET collection detail route", () => {
+  const detailContext = () => ({ params: Promise.resolve({ laboratoryId, areaId, collectionId }) });
+
+  it("returns the closed contextual DTO with no-store", async () => {
+    let received: unknown;
+    const handlers = createCollectionDetailHandlers({
+      requireAuth: async () => ({ id: userId, firstName: "A", lastName: "B", image: "", isAdmin: false }),
+      service: { detail: async (...parameters: unknown[]) => { received = parameters; return { collection }; } },
+    });
+    const response = await handlers.GET(new Request("http://local.test/detail"), detailContext());
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+    assert.deepEqual(await response.json(), { collection });
+    assert.deepEqual(received, [userId, laboratoryId, areaId, collectionId]);
+  });
+
+  it("maps unauthenticated, missing/crossed and internal failures uniformly", async () => {
+    for (const [failure, status, code] of [
+      [new AuthBoundaryError("UNAUTHORIZED"), 401, "UNAUTHENTICATED"],
+      [new CollectionServiceError("NOT_FOUND"), 404, "NOT_FOUND"],
+      [new Error("database secret"), 500, "INTERNAL_ERROR"],
+    ] as const) {
+      const handlers = createCollectionDetailHandlers({
+        requireAuth: async () => {
+          if (failure instanceof AuthBoundaryError) throw failure;
+          return { id: userId, firstName: "A", lastName: "B", image: "", isAdmin: false };
+        },
+        service: { detail: async () => { throw failure; } },
+      });
+      const response = await handlers.GET(new Request("http://local.test/detail"), detailContext());
       assert.equal(response.status, status);
       const payload = await response.json();
       assert.equal(payload.error.code, code);
