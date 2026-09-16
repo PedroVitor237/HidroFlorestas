@@ -77,6 +77,14 @@ T027 — fixture/OpenAPI:
 - T030: setup real no banco autorizado produziu contagens allowlisted `users=4`, `laboratories=3`, `memberships=7`, `areas=3`, `collections=1`; teardown em `finally` encerrou todas em zero. Um segundo ensaio induziu falha depois do setup e o cleanup interno novamente terminou com todas as cinco contagens em zero.
 - T031: diff da fundação revisado; `package-lock.json` sem alterações, migration IMP-004 explicitamente allowlisted, nenhum campo científico novo e nenhuma remoção. O SQL só foi considerado completo após preflight 7/7, migration IMP-004 4/4, regressão serial IMP-003+IMP-004 9/9 e fixture real com teardown zero. `git diff --check`: PASS.
 
+T035 — RED US1:
+
+- estado unitário: código 1, 1/3; as duas falhas funcionais são `NOT_IMPLEMENTED` nas transições de tentativa/revisão, enquanto a ausência de storage/write já passa;
+- Chromium serial: código 1, 0/1 na primeira versão do subconjunto; página contextual respondeu, mas o heading “Registrar coleta” não existia no shell. Browser, servidor, sessão, banco e fixture estavam disponíveis, portanto o RED é comportamental;
+- teardown após o RED: `users=0`, `laboratories=0`, `memberships=0`, `areas=0`, `collections=0`.
+
+T041 — GREEN US1 unitário/regressão: `collection-form-state.test.ts` 3/3; regressão `area-authorization`, `areas-service` e `areas-route` 3/3 arquivos, todos código 0. Contexto permanece derivado do serviço integrado e não há storage/write no estado volátil.
+
 ### Migration e segurança de banco
 
 Nenhuma conexão nem write de banco foi realizado nesta execução.
@@ -216,3 +224,31 @@ Não houve acesso a Neon, migration, E2E remoto, instalação, atualização de 
 T005 está comprovada: a IMP-003 está contida na branch, T111 possui implementação e evidência reais, os contratos necessários estão disponíveis, a divergência técnica foi reconciliada e não existe divergência funcional ou dependência crítica ausente para iniciar a implementação planejada.
 
 `T005_COMPROVADO_IMP_004_LIBERADA_PARA_IMPLEMENTACAO`
+
+## T042 — GREEN do navegador para US1
+
+- Execução: `collection-registration.spec.ts --grep "US1 starts"`, Chromium, um worker e zero retries, com `.env.e2e.local` carregado explicitamente e guard ativo.
+- Resultado final: 1/1 cenário aprovado para `OWNER`, `ADMIN` e `MEMBER`; URL, laboratório e área contextuais foram verificados e a contagem permaneceu em uma única coleta de fixture, sem persistência pelo formulário.
+- RED funcional intermediário: o navegador reportou `Illegal invocation` porque `crypto.randomUUID` havia sido desacoplado de `crypto`. A chamada foi vinculada por `() => crypto.randomUUID()` e coberta por teste unitário.
+- Regressão unitária: `collection-form-state.test.ts` aprovado após a correção.
+- Teardown: executado pelo `afterAll`; asserção final aprovada com `users=0`, `laboratories=0`, `memberships=0`, `areas=0`, `collections=0`.
+- Aviso não bloqueante: Next.js registrou aviso de origem cruzada de desenvolvimento para assets `/_next/*`; não houve falha funcional ou de infraestrutura.
+
+## T047 — RED funcional de US2
+
+- T044, contratos temporais: RED válido; o shell compilou e respondeu `NOT_IMPLEMENTED` ao primeiro comportamento esperado. Não houve falha de import ou runtime.
+- T045, estado do formulário: RED válido; o estado ainda avançava uma ocorrência vazia para revisão em vez de mantê-la editável com erro compreensível.
+- T046, Chromium: RED válido; browser, servidor, autenticação, banco e fixture iniciaram, mas o submit vazio não produziu alerta temporal. O teste falhou na primeira asserção comportamental esperada.
+- Teardown do RED E2E: `afterAll` concluiu sem erro e confirmou as cinco contagens zeradas.
+
+## T052–T053 — GREEN de US2
+
+- `collection-contracts.test.ts`: GREEN; body fechado, validação civil, RFC 3339, offsets `Z`/numéricos, limites, precisão, igualdade com clock, futuro, UTC e preservação do offset aprovados.
+- `collection-form-state.test.ts`: GREEN; regressão US1 e validações de edição/revisão, preservação e invalidação aprovadas.
+- `collection-fixture-guard.test.ts`: GREEN após explicitar `maxWait=15000` e `timeout=30000` nas transações allowlisted de setup/teardown; nenhuma operação ou allowlist foi ampliada.
+- `npm run typecheck`: GREEN após corrigir dois estreitamentos em testes da própria IMP-004.
+- Chromium US2: 1/1 GREEN, um worker, zero retries. Vazio, formato inválido e futuro permaneceram editáveis com mensagens acessíveis; valor válido avançou para revisão preservando texto e offset.
+- Persistência: nenhum POST foi observado e a contagem permaneceu na única coleta da fixture durante o cenário.
+- Teardown: `afterAll` aprovado com `users=0`, `laboratories=0`, `memberships=0`, `areas=0`, `collections=0`.
+- Uma tentativa anterior ao GREEN foi classificada como infraestrutura: timeout ao iniciar a transação do setup, antes do cenário. Após limites explícitos da fixture, a repetição única passou.
+- Checkpoint conjunto US1+US2: `collection-registration.spec.ts` completo em Chromium, 3/3 GREEN, um worker e zero retries; o teardown e as contagens finais foram aprovados pelo `afterAll`.

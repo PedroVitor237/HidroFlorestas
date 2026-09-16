@@ -81,20 +81,20 @@
 
 ### Tests for User Story 1 — escrever antes da implementação
 
-- [ ] T032 [US1] Criar shells compiláveis com estado `NOT_IMPLEMENTED` para tipos, estado do formulário, formulário e página contextual em `src/types/collection.type.ts`, `src/components/collections/collection-form-state.ts`, `src/components/collections/collection-form.tsx` e `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/new/page.tsx`
-- [ ] T033 [P] [US1] Escrever testes de estado para laboratório/área explícitos e não editáveis, troca de contexto invalidando revisão, ausência de rascunho/storage/write e preservação da tentativa em `tests/unit/collection-form-state.test.ts`
-- [ ] T034 [P] [US1] Escrever cenários de navegador para entrada pelo detalhe da área, `OWNER`/`ADMIN`/`MEMBER`, dois laboratórios, URL contextual, IDs cruzados/inexistentes, vínculo ausente/revogado, conta inelegível e laboratório inativo sem ação mutável em `tests/e2e/collection-registration.spec.ts`
-- [ ] T035 [US1] Executar T033 e o subconjunto US1 de T034 separadamente, registrar RED pela ausência comportamental esperada e rejeitar falha de import, browser, banco, pacote ou infraestrutura como RED válido em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [X] T032 [US1] Criar shells compiláveis com estado `NOT_IMPLEMENTED` para tipos, estado do formulário, formulário e página contextual em `src/types/collection.type.ts`, `src/components/collections/collection-form-state.ts`, `src/components/collections/collection-form.tsx` e `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/new/page.tsx`
+- [X] T033 [P] [US1] Escrever testes de estado para laboratório/área explícitos e não editáveis, troca de contexto invalidando revisão, ausência de rascunho/storage/write e preservação da tentativa em `tests/unit/collection-form-state.test.ts`
+- [X] T034 [P] [US1] Escrever cenários de navegador para entrada pelo detalhe da área, `OWNER`/`ADMIN`/`MEMBER`, dois laboratórios, URL contextual, IDs cruzados/inexistentes, vínculo ausente/revogado, conta inelegível e laboratório inativo sem ação mutável em `tests/e2e/collection-registration.spec.ts`
+- [X] T035 [US1] Executar T033 e o subconjunto US1 de T034 separadamente, registrar RED pela ausência comportamental esperada e rejeitar falha de import, browser, banco, pacote ou infraestrutura como RED válido em `specs/004-environmental-collection-registration/implementation-evidence.md`
 
 ### Implementation for User Story 1
 
-- [ ] T036 [P] [US1] Definir tipos fechados do contexto e tentativa volátil sem autoria, confirmação, medição ou campo de área editável em `src/types/collection.type.ts`
-- [ ] T037 [P] [US1] Implementar estado inicial e transições de contexto em memória, sem `localStorage`, `sessionStorage` ou request, em `src/components/collections/collection-form-state.ts`
-- [ ] T038 [US1] Implementar formulário acessível que apresenta laboratório e área como referências não editáveis e mantém o primeiro write indisponível nesta etapa em `src/components/collections/collection-form.tsx`
-- [ ] T039 [US1] Proteger acesso direto e renderizar a página com contexto obtido/revalidado pelos contratos integrados da IMP-003, sem duplicar `authorizeLaboratoryAccess`, em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/new/page.tsx`
-- [ ] T040 [US1] Expor “Registrar coleta” no detalhe da área apenas quando a decisão contextual integrada permitir `CREATE_COLLECTION`, sem guardar autorização no cliente, em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/page.tsx`
-- [ ] T041 [US1] Reexecutar `tests/unit/collection-form-state.test.ts` até GREEN e executar regressão dos testes de contexto/área da IMP-003, registrando resultados reais em `specs/004-environmental-collection-registration/implementation-evidence.md`
-- [ ] T042 [US1] [Browser] Executar uma tentativa limitada do subconjunto US1 em `tests/e2e/collection-registration.spec.ts`, garantir teardown e registrar GREEN ou bloqueio de infraestrutura distinto de falha funcional em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [X] T036 [P] [US1] Definir tipos fechados do contexto e tentativa volátil sem autoria, confirmação, medição ou campo de área editável em `src/types/collection.type.ts`
+- [X] T037 [P] [US1] Implementar estado inicial e transições de contexto em memória, sem `localStorage`, `sessionStorage` ou request, em `src/components/collections/collection-form-state.ts`
+- [X] T038 [US1] Implementar formulário acessível que apresenta laboratório e área como referências não editáveis e mantém o primeiro write indisponível nesta etapa em `src/components/collections/collection-form.tsx`
+- [X] T039 [US1] Proteger acesso direto e renderizar a página com contexto obtido/revalidado pelos contratos integrados da IMP-003, sem duplicar `authorizeLaboratoryAccess`, em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/new/page.tsx`
+- [X] T040 [US1] Expor “Registrar coleta” no detalhe da área apenas quando a decisão contextual integrada permitir `CREATE_COLLECTION`, sem guardar autorização no cliente, em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/page.tsx`
+- [X] T041 [US1] Reexecutar `tests/unit/collection-form-state.test.ts` até GREEN e executar regressão dos testes de contexto/área da IMP-003, registrando resultados reais em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [X] T042 [US1] [Browser] Executar uma tentativa limitada do subconjunto US1 em `tests/e2e/collection-registration.spec.ts`, garantir teardown e registrar GREEN ou bloqueio de infraestrutura distinto de falha funcional em `specs/004-environmental-collection-registration/implementation-evidence.md`
 
 **Checkpoint**: US1 inicia a jornada no contexto correto e continua sem qualquer persistência.
 
@@ -108,20 +108,20 @@
 
 ### Tests for User Story 2 — escrever antes da implementação
 
-- [ ] T043 [US2] Criar shell compilável de contratos com parser/serializer retornando falha `NOT_IMPLEMENTED` e relógio injetável em `src/app/api/server/collections/collection.contracts.ts`
-- [ ] T044 [P] [US2] Escrever testes para body fechado `{ occurredAt }`, RFC 3339, `Z`/offset numérico, data impossível, ausência de offset, `-00:00`, segundo `60`, offset fora de `-14:00`–`+14:00`, fração acima de três dígitos, igualdade ao relógio, futuro, UTC normalizado e offset original preservado em `tests/unit/collection-contracts.test.ts`
-- [ ] T045 [P] [US2] Acrescentar testes de formulário para erros compreensíveis por data/horário/fuso, preservação dos demais valores, alteração que invalida revisão e nenhuma correção/arredondamento/truncamento silencioso em `tests/unit/collection-form-state.test.ts`
-- [ ] T046 [P] [US2] Acrescentar cenários temporais do formulário, teclado, foco e persistência zero ao subconjunto US2 em `tests/e2e/collection-registration.spec.ts`
-- [ ] T047 [US2] Executar T044–T046 por arquivo/camada e registrar cada RED funcional; import quebrado, client desatualizado, browser indisponível, banco incorreto ou infraestrutura externa não conta como RED em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [X] T043 [US2] Criar shell compilável de contratos com parser/serializer retornando falha `NOT_IMPLEMENTED` e relógio injetável em `src/app/api/server/collections/collection.contracts.ts`
+- [X] T044 [P] [US2] Escrever testes para body fechado `{ occurredAt }`, RFC 3339, `Z`/offset numérico, data impossível, ausência de offset, `-00:00`, segundo `60`, offset fora de `-14:00`–`+14:00`, fração acima de três dígitos, igualdade ao relógio, futuro, UTC normalizado e offset original preservado em `tests/unit/collection-contracts.test.ts`
+- [X] T045 [P] [US2] Acrescentar testes de formulário para erros compreensíveis por data/horário/fuso, preservação dos demais valores, alteração que invalida revisão e nenhuma correção/arredondamento/truncamento silencioso em `tests/unit/collection-form-state.test.ts`
+- [X] T046 [P] [US2] Acrescentar cenários temporais do formulário, teclado, foco e persistência zero ao subconjunto US2 em `tests/e2e/collection-registration.spec.ts`
+- [X] T047 [US2] Executar T044–T046 por arquivo/camada e registrar cada RED funcional; import quebrado, client desatualizado, browser indisponível, banco incorreto ou infraestrutura externa não conta como RED em `specs/004-environmental-collection-registration/implementation-evidence.md`
 
 ### Implementation for User Story 2
 
-- [ ] T048 [US2] Implementar parser allowlisted e valor temporal canônico com validação civil explícita, normalização UTC, offset separado e relógio injetável em `src/app/api/server/collections/collection.contracts.ts`
-- [ ] T049 [US2] Completar tipos de entrada, erro e projeção temporal sem identificador IANA nem horário desconhecido/impreciso em `src/types/collection.type.ts`
-- [ ] T050 [US2] Implementar transições de edição/validação/revisão temporal em memória, preservando entradas recuperáveis em `src/components/collections/collection-form-state.ts`
-- [ ] T051 [US2] Implementar controles e mensagens acessíveis da ocorrência com fuso explícito, sem depender do fuso do browser como autoridade, em `src/components/collections/collection-form.tsx`
-- [ ] T052 [US2] Reexecutar `tests/unit/collection-contracts.test.ts` e `tests/unit/collection-form-state.test.ts` separadamente até GREEN e registrar regressão US1 em `specs/004-environmental-collection-registration/implementation-evidence.md`
-- [ ] T053 [US2] [Browser] Executar o subconjunto US2 de `tests/e2e/collection-registration.spec.ts`, confirmar nenhum POST e teardown garantido, registrando resultado independente em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [X] T048 [US2] Implementar parser allowlisted e valor temporal canônico com validação civil explícita, normalização UTC, offset separado e relógio injetável em `src/app/api/server/collections/collection.contracts.ts`
+- [X] T049 [US2] Completar tipos de entrada, erro e projeção temporal sem identificador IANA nem horário desconhecido/impreciso em `src/types/collection.type.ts`
+- [X] T050 [US2] Implementar transições de edição/validação/revisão temporal em memória, preservando entradas recuperáveis em `src/components/collections/collection-form-state.ts`
+- [X] T051 [US2] Implementar controles e mensagens acessíveis da ocorrência com fuso explícito, sem depender do fuso do browser como autoridade, em `src/components/collections/collection-form.tsx`
+- [X] T052 [US2] Reexecutar `tests/unit/collection-contracts.test.ts` e `tests/unit/collection-form-state.test.ts` separadamente até GREEN e registrar regressão US1 em `specs/004-environmental-collection-registration/implementation-evidence.md`
+- [X] T053 [US2] [Browser] Executar o subconjunto US2 de `tests/e2e/collection-registration.spec.ts`, confirmar nenhum POST e teardown garantido, registrando resultado independente em `specs/004-environmental-collection-registration/implementation-evidence.md`
 
 **Checkpoint**: US2 produz uma ocorrência revisável e inequívoca sem persistir nem introduzir IANA.
 

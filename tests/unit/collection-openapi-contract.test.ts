@@ -31,8 +31,8 @@ describe("IMP-004 OpenAPI", () => {
   it("defines exactly create and detail operations with resolvable local refs", async () => {
     const document = YAML.parse(await readFile(contractPath, "utf8"));
     assert.equal(document.openapi, "3.1.0");
-    const operations = Object.values(document.paths).flatMap((path: Record<string, unknown>) =>
-      Object.entries(path).filter(([method]) => ["get", "post", "patch", "delete", "put"].includes(method)),
+    const operations = Object.values(document.paths).flatMap((path) =>
+      Object.entries(path as Record<string, unknown>).filter(([method]) => ["get", "post", "patch", "delete", "put"].includes(method)),
     );
     assert.deepEqual(
       operations.map(([, operation]) => (operation as { operationId: string }).operationId).sort(),

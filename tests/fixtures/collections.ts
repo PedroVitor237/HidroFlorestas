@@ -49,16 +49,20 @@ export type CollectionFixtureActionsFactory = (
 const fixtureEmail = (index: number) =>
   `person-${index}@imp004.hidroflorestas.invalid`;
 
-export function createCollectionFixtureActions(
-  testDatabaseUrl: string,
-): CollectionFixtureActions {
+export function createCollectionFixtureClient(testDatabaseUrl: string) {
   neonConfig.webSocketConstructor = ws;
-  const prisma = new PrismaClient({
+  return new PrismaClient({
     adapter: new PrismaNeon({
       connectionString: withPublicSchema(testDatabaseUrl),
       connectionTimeoutMillis: 15_000,
     }),
   });
+}
+
+export function createCollectionFixtureActions(
+  testDatabaseUrl: string,
+): CollectionFixtureActions {
+  const prisma = createCollectionFixtureClient(testDatabaseUrl);
   const userIds = [...COLLECTION_FIXTURES.userIds];
   const laboratoryIds = [...COLLECTION_FIXTURES.laboratoryIds];
   const areaIds = [...COLLECTION_FIXTURES.areaIds];
@@ -107,7 +111,7 @@ export function createCollectionFixtureActions(
         for (const [index, id] of userIds.entries()) {
           await tx.user.deleteMany({ where: { id, email: fixtureEmail(index) } });
         }
-      });
+      }, { maxWait: 15_000, timeout: 30_000 });
     },
     async setup(password: string) {
       const passwordHash = await bcrypt.hash(password, 10);
@@ -171,7 +175,7 @@ export function createCollectionFixtureActions(
             confirmationKey: "40000000-0000-4000-8000-000000000431",
           },
         });
-      });
+      }, { maxWait: 15_000, timeout: 30_000 });
     },
     async count() {
       return {

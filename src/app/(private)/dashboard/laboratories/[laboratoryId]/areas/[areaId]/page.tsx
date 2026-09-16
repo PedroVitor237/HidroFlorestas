@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
+import { ArrowLeft, CalendarDays, ClipboardPlus, MapPin } from "lucide-react";
 import { requireAuth } from "@/app/api/server/middlewares/auth.middleware";
 import { areasService } from "@/app/api/server/services/areas.service";
 import { AreaAccessError } from "@/app/api/server/areas/area.authorization";
@@ -52,6 +52,14 @@ export default async function AreaDetail({
         <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 font-medium text-amber-900">
           Laboratório inativo — somente leitura.
         </p>
+      )}
+      {!area.readOnly && (
+        <Link
+          className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800"
+          href={`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/new`}
+        >
+          <ClipboardPlus size={20} /> Registrar coleta
+        </Link>
       )}
       <div className="grid gap-6 lg:grid-cols-[1.35fr_.65fr]">
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
