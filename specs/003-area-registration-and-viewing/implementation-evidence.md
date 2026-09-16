@@ -158,3 +158,14 @@ Esta seção atualiza o estado acima, que registra a primeira interrupção.
 - Regressões finais: 17/17 arquivos unitários e 9/9 arquivos de integração passaram; contratos de autenticação, papéis globais e operações da IMP-002 permaneceram verdes. A transação real de exclusão administrativa está coberta no teste de migration e confirma commit aceito pela trigger diferível.
 - Paridade final: OpenAPI, handlers, tipos públicos e quickstart descrevem as mesmas cinco operações, códigos de erro, DTOs fechados, contexto, coordenadas e política `no-store`.
 - O bloqueio anterior está resolvido. A IMP-003 satisfaz os gates técnicos automatizados; `SC-009` e `SC-010` continuam `NAO_VERIFICADO` por dependerem de participantes reais, conforme previsto, sem bloquear a conclusão técnica.
+
+## Correção dos gates finais em 2026-09-15
+
+- A checagem independente do commit `7d95079d6ff794f63aabc5fb6b717cc7da8eb66d` mostrou que a afirmação anterior de quatro warnings não correspondia ao HEAD inspecionado: `npm run lint` retornou código `0`, zero erros e cinco warnings. O warning adicional era o import não utilizado `ArrowLeft` em `src/app/(private)/dashboard/laboratories/[laboratoryId]/layout.tsx`.
+- A correção removeu exclusivamente `ArrowLeft` da lista de imports, sem alterar JSX, estilos, navegação ou comportamento. Depois da correção, `npm run lint` retornou código `0`, zero erros e exatamente os quatro warnings históricos: `error` em `src/app/api/auth/sign-up/route.ts:37`, `ShieldCheck` em `src/app/page.tsx:10`, `useAuth` em `src/components/user-profile/index.tsx:1` e `className` em `src/components/white-box/index.tsx:12`.
+- `npm ci` retornou código `0` e instalou 544 pacotes somente a partir do lockfile existente. Foram observados warnings de depreciação para `prebuild-install@7.1.3` e `eslint@9.39.5`, além de aviso de retirada do endpoint de advisory; nenhum `npm audit fix` ou `--force` foi executado. `package.json` e `package-lock.json` permaneceram inalterados.
+- `npm ls leaflet react-leaflet yaml --depth=0` retornou código `0` e confirmou `leaflet@1.9.4`, `react-leaflet@5.0.0` e `yaml@2.8.1`.
+- `npm run typecheck` retornou código `0` após a instalação determinística.
+- A primeira execução de `npm run build` retornou código `1` antes da compilação porque o sandbox não conseguiu acessar `fonts.googleapis.com` para obter Poppins. A repetição do mesmo comando com acesso de rede autorizado retornou código `0`: Prisma Client `7.4.2` gerado, aplicação compilada, TypeScript aprovado e 22 rotas/páginas produzidas.
+- `git diff --check` retornou código `0` depois da atualização completa deste ledger.
+- As evidências Neon de migration `5/5`, E2E `12/12`, teardown zerado e integridade final pertencem ao commit pai `7d95079d6ff794f63aabc5fb6b717cc7da8eb66d` e foram reutilizadas. Não houve novo acesso à branch Neon: o único delta de código posterior é a remoção de um import sem uso, sem efeito funcional sobre migration, integração ou E2E.

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, MapPinned, Users } from "lucide-react";
+import { MapPinned, Users } from "lucide-react";
 import { getLaboratoryContext } from "@/components/workspace/laboratory-context";
 export const dynamic = "force-dynamic";
 export default async function LaboratoryLayout({
