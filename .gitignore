@@ -58,6 +58,10 @@ prisma/migrations/*
 !prisma/migrations/20260914000100_area_registration_and_membership_roles/
 !prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql
 
+# IMP-004: migration aditiva de metadados gerais da coleta.
+!prisma/migrations/20260915000100_collection_registration_metadata/
+!prisma/migrations/20260915000100_collection_registration_metadata/migration.sql
+
 # Browser test output can contain runtime data.
 /test-results/
 /playwright-report/

@@ -117,7 +117,7 @@ describe("GET /api/auth/me", () => {
       "image",
       "lastName",
     ]);
-    for (const field of ["id", "email", "status", "isAdmin", "password", "token"]) {
+    for (const field of ["id", "email", "status", "isAdmin", "password", "token", "confirmationKey", "collectionAreaId"]) {
       assert.equal(JSON.stringify(body).includes(`\"${field}\"`), false, field);
     }
   });

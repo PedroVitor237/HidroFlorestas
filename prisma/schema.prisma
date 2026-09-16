@@ -53,6 +53,7 @@ model LaboratoryRoom {
 
   researchersLinked ResearchersLinked[]
   collectionAreas   CollectionArea[]
+  collectionData    CollectionData[]
 }
 
 enum LaboratoryMembershipRole {
@@ -96,6 +97,7 @@ model CollectionArea {
 
   collectionData CollectionData[]
 
+  @@unique([id, laboratoryRoomId])
   @@index([laboratoryRoomId, createdAt])
 }
 
@@ -111,21 +113,30 @@ enum LandType {
 }
 
 model CollectionData {
-  id               String   @id @default(uuid())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id               String    @id @default(uuid())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   collectionAreaId String
+  laboratoryRoomId String
   userId           String
   observations     String?
+  occurredAt       DateTime? @db.Timestamptz(3)
+  occurrenceOffset String?   @db.VarChar(6)
+  confirmedAt      DateTime? @db.Timestamptz(3)
+  confirmationKey  String?
 
-  user           User           @relation(fields: [userId], references: [id])
-  collectionArea CollectionArea @relation(fields: [collectionAreaId], references: [id])
+  user           User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id], onDelete: Restrict)
+  collectionArea CollectionArea @relation(fields: [collectionAreaId, laboratoryRoomId], references: [id, laboratoryRoomId], onDelete: Restrict)
 
   waterData      WaterData[]
   soilData       SoilData[]
   vegetationData VegetationData[]
   terrainData    TerrainData[]
   diagnoses      IHFRDiagnosis[]
+
+  @@unique([userId, confirmationKey])
+  @@index([collectionAreaId, laboratoryRoomId])
 }
 
 model IHFRDiagnosis {

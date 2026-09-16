@@ -5,6 +5,7 @@ import { Pool, neonConfig, type PoolClient } from "@neondatabase/serverless";
 import ws from "ws";
 
 export const migrationPath = "prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql";
+export const collectionMigrationPath = "prisma/migrations/20260915000100_collection_registration_metadata/migration.sql";
 
 export function migrationTestEnvironment() {
   dotenv.config({ path: ".env", quiet: true });
@@ -21,11 +22,17 @@ export function migrationTestEnvironment() {
 }
 
 /** Each case commits against a fresh schema; finally drops only that generated schema. */
-export async function withMigrationDatabase(run: (client: PoolClient) => Promise<void>) {
+export async function withMigrationDatabase(
+  run: (client: PoolClient) => Promise<void>,
+  schemaPrefix = "imp003_test",
+) {
   const connectionString = migrationTestEnvironment();
   neonConfig.webSocketConstructor = ws;
   const pool = new Pool({ connectionString, connectionTimeoutMillis: 15_000, max: 1 });
-  const schema = `imp003_test_${randomUUID().replaceAll("-", "")}`;
+  if (!/^imp00[34]_test$/.test(schemaPrefix)) {
+    throw new Error("Migration schema prefix is not allowlisted");
+  }
+  const schema = `${schemaPrefix}_${randomUUID().replaceAll("-", "")}`;
   let client: PoolClient | undefined;
   try {
     client = await pool.connect();
@@ -52,4 +59,8 @@ export async function withMigrationDatabase(run: (client: PoolClient) => Promise
 
 export async function applyAreaMigration(client: PoolClient) {
   await client.query(await readFile(migrationPath, "utf8"));
+}
+
+export async function applyCollectionMigration(client: PoolClient) {
+  await client.query(await readFile(collectionMigrationPath, "utf8"));
 }
