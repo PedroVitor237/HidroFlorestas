@@ -15,7 +15,7 @@
     "test:e2e:https": "node --import=tsx tests/e2e/run-auth-https.mjs",
     "test": "npm run test:unit && npm run test:integration",
     "typecheck": "tsc --noEmit",
-    "test:migration": "node --import=tsx tests/migration/area-registration-migration.test.ts"
+    "test:migration": "node --import=tsx --test --test-concurrency=1 tests/migration/*.test.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

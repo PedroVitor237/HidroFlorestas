@@ -1,5 +1,126 @@
 # Evidências de integração e gate da IMP-004
 
+## Ledger da implementação
+
+Esta seção acompanha a execução de `$speckit-implement` iniciada em 2026-09-16. Os registros históricos da integração e da comprovação de T005 abaixo permanecem preservados.
+
+### Baseline da execução
+
+- Data: 2026-09-16, fuso `America/Fortaleza`.
+- Branch: `004-environmental-collection-registration`.
+- HEAD inicial: `adee2d027d32d1b169c1c76a810193e79bf65324` (`docs(spec): reconcile IMP-004 with integrated IMP-003`).
+- Upstream: `origin/004-environmental-collection-registration`, no mesmo commit após `git fetch origin`.
+- Divergência inicial: `0/0`.
+- Working tree inicial: limpa.
+- `origin/development` é ancestral do HEAD.
+- Worktrees observados: o worktree atual da IMP-004 e os worktrees separados `docs/developer-guide` e `fix/eslint-9-compat`; nenhum deles foi alterado por esta execução.
+- Inventário inicial dos caminhos de coleção previstos sob `prisma/`, `scripts/`, `src/` e `tests/`: nenhum arquivo específico da IMP-004 existia; os caminhos serão criados estritamente na ordem de `tasks.md`.
+- `.specify/feature.json`: apontador local não rastreado, ignorado por `.specify/.gitignore:6`, corrigido localmente para a IMP-004 antes da retomada e ausente do status/diff.
+- Runtime e ferramentas instaladas: Node `v20.19.2`, npm `9.2.0`, TypeScript `5.9.3`, Prisma CLI/Client `7.4.2`, Playwright `1.51.1`; `psql` não está instalado localmente.
+- Stack focal instalada: Next.js `16.1.6`, React/React DOM `19.2.4`, `@neondatabase/serverless` `1.0.2`, `@prisma/adapter-neon` `7.7.0`, `tsx` `4.21.0`, ESLint `9.39.5` e `yaml` `2.8.1`.
+- Scripts observados: `dev`, `build`, `start`, `create-super-admin`, `lint`, `test:fixtures:auth`, `test:unit`, `test:integration`, `test:e2e`, `test:e2e:https`, `test`, `typecheck` e `test:migration`; este último executa a suíte de migration da IMP-003 e será reutilizado/ajustado somente em T009.
+- Lockfile: `package-lock.json` presente e não alterado.
+- `npm ls --depth=0 --json`: executado com código 0; registrou um pacote local extraneous preexistente (`@emnapi/runtime@1.8.1`), sem alteração de dependências ou lockfile.
+- Baseline de lint: `npm run lint`, código 0, `0` erros e `4` warnings históricos — `src/app/api/auth/sign-up/route.ts` (`error`), `src/app/page.tsx` (`ShieldCheck`), `src/components/user-profile/index.tsx` (`useAuth`) e `src/components/white-box/index.tsx` (`className`). Nenhum warning da IMP-004 existe neste baseline.
+- Dependências para a IMP-004: `package.json` e `package-lock.json` permaneceram sem diff. UUID usa `node:crypto.randomUUID`; URL, `Date`, `fetch` e `structuredClone` nativos estão disponíveis; `node:test`, `tsx`, `yaml`, Prisma/Neon e Playwright já cobrem as camadas planejadas. Nenhuma dependência nova é necessária.
+- Política desta execução: não executar `npm audit fix`, `npm audit fix --force`, atualização global de Next.js/ESLint nem alteração incidental do lockfile. A auditoria global permanece fora do escopo em `chore/dependency-security-audit`.
+
+### Gate herdado da IMP-003
+
+T005 permanece comprovado pelas evidências históricas deste documento.
+
+Inspeção T006 concluída no baseline `adee2d0`:
+
+- `prisma/schema.prisma` mantém `LaboratoryMembershipRole` separado de `UserRole`; `CollectionArea.id` é UUID opaco, `laboratoryRoomId` é obrigatório e a área possui relação direta com `LaboratoryRoom`; `CollectionData` ainda está no modelo legado e não contém antecipadamente campos da IMP-004.
+- O histórico contém a migration inicial, a unicidade de código da IMP-002 e `20260914000100_area_registration_and_membership_roles`; a migration IMP-003 é transacional, faz preflight antes de mudanças, cria papéis contextuais, recupera `OWNER`, materializa latitude/longitude e preserva a fronteira administrativa testada.
+- `authorizeLaboratoryAccess` revalida conta `ACTIVE`, vínculo pelo par usuário–laboratório, papel e estado; `CREATE_COLLECTION` integra o tipo fechado `AreaPermission`. A chamada consumidora obrigatória permanece `authorizeLaboratoryAccess(principal, laboratoryId, "CREATE_COLLECTION", tx, true)`.
+- `assertLaboratoryPermission` aplica `READ_ONLY` antes da matriz de papel quando `mutate=true`; `CREATE_COLLECTION` não possui restrição adicional e, portanto, aceita `OWNER`, `ADMIN` e `MEMBER`. `User.role` e `User.isAdmin` não participam da decisão.
+- `AreasService` usa transações, deriva autoria da sessão, filtra detalhe por `{ id, laboratoryRoomId }` e serializa DTO por allowlist. Rotas usam factories injetáveis, `requireAuth`, envelopes `{ area }`/`{ error }`, `Cache-Control: no-store` e erro `500` sanitizado.
+- O OpenAPI integrado da IMP-003 possui cinco operações contextuais, schemas fechados, respostas uniformes e leitura de área em laboratório inativo. Testes unitários e de integração confirmam o guard, a ordem contextual, autoria derivada, filtros compostos e ausência de campos privilegiados.
+- Nenhuma divergência funcional ou técnica nova foi encontrada contra o mapeamento já reconciliado em T005.
+
+### Arquivos previstos
+
+Os caminhos autorizados são os enumerados em `plan.md` e `tasks.md`. O inventário observado será consolidado por fase, sem incorporar arquivos alheios à IMP-004.
+
+- T009: `test:migration` foi preservado sobre `node:test`/`tsx` e ajustado somente para execução serial de `tests/migration/*.test.ts`, permitindo manter a regressão IMP-003 e incluir a suíte IMP-004 sem versões ou scripts alheios alterados.
+- T010: o harness IMP-003 foi reutilizado com prefixos de schema restritos a `imp003_test`/`imp004_test` e aplicação explícita da migration IMP-004; validação do ambiente continua anterior à conexão e o `finally` continua removendo exclusivamente o schema temporário gerado.
+- T011: criado shell compilável e puro do preflight com retorno controlado `NOT_IMPLEMENTED`; ele não importa Prisma Client, não lê ambiente e não abre conexão.
+- T019: a primeira tentativa de `npx prisma format` detectou relação inversa duplicada em `User` (P1012) e não foi aceita. O campo foi corrigido para `LaboratoryRoom`; repetição concluída com código 0 e `git diff --check` aprovado.
+- T020: `prisma validate` executado com `.env.e2e.local` herdado pelo processo, código 0; schema válido, sem conexão nem exposição de URL.
+- T021: `prisma generate` executado após format/validate, código 0, Client `7.4.2` gerado em `src/generated/prisma`; somente artefatos ignorados esperados foram produzidos e o lockfile permaneceu intacto.
+
+### Ciclos RED/GREEN
+
+T014 — RED da fundação:
+
+- `node --import=tsx tests/unit/collection-migration-preflight.test.ts`: código 1, 0/7; causa comportamental explícita `NOT_IMPLEMENTED` do shell do preflight. A repetição inicial com `--test` ocultou detalhes do reporter, por isso a execução diagnóstica direta foi usada e não foi contada separadamente como RED.
+- `node --env-file=.env.e2e.local --import=tsx tests/migration/collection-registration-migration.test.ts`: código 1, 0/4; conexão somente ao banco autorizado, quatro schemas temporários com teardown. Causas comportamentais: 0/5 colunas novas, `laboratoryRoomId` ausente, DDL/constraints ausentes e preflight transacional inexistente. O SQL-shell existia, portanto não houve falha por arquivo/migration ausente.
+- RED aceito: testes compilaram, o banco autorizado respondeu e as falhas correspondem exclusivamente ao comportamento ainda não implementado.
+
+T022 — GREEN da fundação:
+
+- preflight unitário: código 0, 7/7;
+- migration IMP-004 em schemas temporários: código 0, 4/4, com teardown por `finally` em todos os casos;
+- o reset via Prisma CLI foi tentado com saída capturada/sanitizada e recusado pela camada de datasource/configuração, sem executar migrations; não foi contado como validação;
+- recuperação aplicada somente em `TEST_DATABASE_URL`: schema público descartável reconstruído e quatro migrations versionadas aplicadas em ordem, com histórico e checksums registrados; código 0;
+- preflight conectado após reconstrução: código 0, `collections=0`, todos os cinco grupos científicos `=0`, sem órfãos ou drift;
+- nenhum valor de ambiente, URL ou credencial foi registrado.
+
+T023 — recovery e preservação: migration reexecutada em quatro schemas temporários, código 0, 4/4. O caso legado manteve uma linha em cada `WaterData`, `SoilData`, `VegetationData`, `TerrainData` e `IHFRDiagnosis`; o caso órfão abortou antes das colunas aditivas e comprovou rollback. A recuperação do alvo descartável foi exercitada pela reconstrução versionada; para ambientes com dados, permanece obrigatório forward-fix ou snapshot/PITR ensaiado.
+
+T027 — fixture/OpenAPI:
+
+- `collection-fixture-guard.test.ts`: RED funcional, código 1, 2/4; guard e allowlists passam, mas setup/cleanup/disconnect ainda retornam `NOT_IMPLEMENTED` em vez da sequência esperada. Nenhuma conexão foi criada pelo shell.
+- `collection-openapi-contract.test.ts`: baseline documental, código 0, 3/3; OpenAPI 3.1, dois `operationId`, refs locais, schemas fechados, UUID idempotente, `Location` de API e `no-store` já estavam conformes. Nenhum RED foi fabricado.
+- T029: após implementar a fixture, `collection-fixture-guard.test.ts` passou com código 0, 4/4; guard anterior à factory, allowlists exclusivas, cleanup antes do setup e disconnect em sucesso/falha foram comprovados sem conexão real.
+- T030: setup real no banco autorizado produziu contagens allowlisted `users=4`, `laboratories=3`, `memberships=7`, `areas=3`, `collections=1`; teardown em `finally` encerrou todas em zero. Um segundo ensaio induziu falha depois do setup e o cleanup interno novamente terminou com todas as cinco contagens em zero.
+- T031: diff da fundação revisado; `package-lock.json` sem alterações, migration IMP-004 explicitamente allowlisted, nenhum campo científico novo e nenhuma remoção. O SQL só foi considerado completo após preflight 7/7, migration IMP-004 4/4, regressão serial IMP-003+IMP-004 9/9 e fixture real com teardown zero. `git diff --check`: PASS.
+
+### Migration e segurança de banco
+
+Nenhuma conexão nem write de banco foi realizado nesta execução.
+
+Auditoria T007:
+
+- `playwright.config.ts` força a validação fail-closed antes de iniciar browser/servidor, usa Chromium serial (`workers: 1`, `retries: 0`) e só redireciona o servidor para `TEST_DATABASE_URL` depois do guard.
+- `validateAuthFixtureEnvironment` exige `NODE_ENV=test`, `TEST_DATABASE_URL`, `DATABASE_URL`, confirmação exata e destinos PostgreSQL distintos por identidade normalizada; não existe fallback para `DATABASE_URL`.
+- Fixtures de autenticação, laboratório e área usam IDs/e-mails/prefixos delimitados, operações contextuais e cleanup filho-primeiro. A fixture de área declara a ordem `CollectionArea` → `ResearchersLinked` → `LaboratoryRoom` → `User`.
+- Comando `node --import=tsx --test tests/unit/auth-fixture-guard.test.ts tests/unit/area-fixture-guard.test.ts`: código 0, `2/2` arquivos aprovados. Os testes comprovaram recusa antes da factory/conexão/write para variável ausente, `NODE_ENV` incorreto, confirmação incorreta, URL inválida/igual (inclusive alias pooler), ausência de senha e ausência de `TEST_DATABASE_URL`.
+- Inspeção local sanitizada, sem valores: `.env` existe; `.env.test.local` não existe; `NODE_ENV=test` não está configurado; `TEST_DATABASE_URL` não está configurada; a confirmação exigida não está configurada; `E2E_USER_PASSWORD` não está configurada. `DATABASE_URL` de desenvolvimento está configurada, mas não foi exibida nem usada.
+- Não há recurso PostgreSQL/Neon isolado explicitamente autorizado para a IMP-004. A antiga infraestrutura da IMP-003 não foi reutilizada.
+
+T008 retomada após autorização explícita do recurso em `.env.e2e.local` para migration, fixtures, integração e E2E da IMP-004. O guard foi revalidado antes da conexão: `NODE_ENV=test`, ambas as URLs presentes e distintas, PostgreSQL/Neon reconhecido, SSL configurado, confirmação exata e senha E2E presente; nenhum valor foi impresso.
+
+Reconciliação somente leitura do alvo autorizado:
+
+- conexão de leitura: PASS;
+- `_prisma_migrations`: presente, uma entrada concluída, nenhuma inacabada ou revertida;
+- migration aplicada observada: `20260523010444_init`;
+- migrations versionadas no repositório `20260523005224_init`, `20260907120000_unique_laboratory_access_code` e `20260914000100_area_registration_and_membership_roles`: não registradas como aplicadas nesse alvo;
+- marcadores estruturais: `Coordinates` ainda existe e `CollectionArea.coordinatesId` está presente; papel contextual e latitude/longitude da IMP-003 não estão materializados;
+- conclusão: drift de baseline descartável, sem dados a preservar conforme autorização da equipe. Não aplicar IMP-004 incrementalmente sobre esse estado.
+
+Estratégia de desenvolvimento: reconstruir/resetar exclusivamente o destino de `TEST_DATABASE_URL` a partir do histórico versionado antes de integração/E2E; testes de migration usam schema temporário, DDL transacional, preflight e teardown. Estratégia de deploy futuro permanece separada: backup/snapshot/PITR antes de produção, preflight anterior a writes e forward-fix ou restauração ensaiada após existirem coletas IMP-004; nunca drop automático de colunas/dados científicos.
+
+### Validações automatizadas
+
+Pendente. Resultados serão registrados somente após execução real e separados por camada.
+
+### Métricas humanas
+
+SC-002 e SC-007 permanecem `NAO_VERIFICADO`. A avaliação futura pertence à equipe de produto/pesquisa e não será substituída por automação.
+
+### Bloqueios e recuperações
+
+O apontador local ignorado `.specify/feature.json` inicialmente referenciava a IMP-003. Após autorização explícita, somente seu valor `feature_directory` foi ajustado localmente para `specs/004-environmental-collection-registration`; o arquivo não é rastreado, não aparece no status/diff e não será commitado.
+
+O bloqueio de T008 foi resolvido pela autorização explícita do recurso em `.env.e2e.local`. O drift observado pertence ao alvo descartável e será eliminado apenas dentro de `TEST_DATABASE_URL`, conforme a estratégia registrada acima.
+
+### Estado final
+
+Implementação retomada após T008. T110 permanece futura e `NAO_VERIFICADO`.
+
 ## Estado desta comprovação
 
 - Data da comprovação: 2026-09-16.
