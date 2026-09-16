@@ -10,15 +10,15 @@ Este documento resolve as escolhas técnicas do planejamento. `EVIDENCIA_IMPLEME
 
 ## R-001 — Baseline arquitetural e gate da IMP-003
 
-**Decision (`DECISAO_DE_PLANEJAMENTO`)**: manter o monólito Next.js e condicionar toda implementação da IMP-004 à integração e comprovação do gate T111 da IMP-003. Reutilizar o `authorizeLaboratoryAccess` no mesmo módulo planejado, sem fallback ou guard paralelo.
+**Decision (`DECISAO_DE_PLANEJAMENTO`)**: manter o monólito Next.js e reutilizar o `authorizeLaboratoryAccess` integrado e comprovado por T005, sem fallback ou guard paralelo. Para criação, usar a assinatura real com `"CREATE_COLLECTION"`, a transação corrente e `mutate=true`.
 
-**Rationale**: handlers com factory/DI, contratos fechados, serviços com ports pequenos co-localizados e Prisma transacional já são padrões integrados em `src/app/api/laboratories/route.ts`, `src/app/api/server/laboratories/laboratory.contracts.ts` e `src/app/api/server/services/laboratories.service.ts`. Porém, papéis contextuais, área nova, rotas e guard ainda só existem em `specs/003-area-registration-and-viewing/**`; o schema atual conserva `ResearchersLinked` sem papel e `CollectionArea` legada. Consumir esses contratos antes da implementação da IMP-003 produziria uma arquitetura fictícia.
+**Rationale**: handlers com factory/DI, contratos fechados, serviços com ports pequenos co-localizados e Prisma transacional são padrões integrados. A IMP-003 agora fornece papéis contextuais, área nova, rotas e guard em código. O literal `CREATE_COLLECTION` integra o tipo fechado de permissões; as três funções contextuais são aceitas e o argumento `mutate=true` aplica a precedência de laboratório inativo. A área continua sendo consultada no serviço pelo par `{ id, laboratoryId }` depois da decisão contextual.
 
 **Alternatives considered**:
 
 - Implementar um guard temporário de coleta sobre o schema atual: rejeitado por duplicar autorização e criar comportamento incompatível.
-- Integrar ou reimplementar a IMP-003 dentro da IMP-004: rejeitado por violar escopo, branch e trabalho em equipe.
-- Planejar somente depois da IMP-003 implementada: rejeitado porque o contrato documental já permite design, desde que a implementação fique bloqueada.
+- Integrar ou reimplementar a IMP-003 dentro da IMP-004: rejeitado por violar escopo, branch e trabalho em equipe; a integração ocorreu por merge de `development`.
+- Inferir atividade somente do nome `CREATE_COLLECTION`: rejeitado; a assinatura real exige `mutate=true` para aplicar `READ_ONLY`.
 
 ## R-002 — Representação temporal na API
 

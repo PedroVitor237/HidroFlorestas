@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-14
 
-**Status**: Specification and planning complete; first analysis remediated; ready for independent re-analysis. Implementation remains blocked by the IMP-003 gate.
+**Status**: Specification and planning complete; analyses remediated; T005 comprovado após integração da IMP-003; ready for implementation.
 
 **Input**: Especificar a entrega `IMP-004 — Registro de coleta ambiental`, permitindo que uma pessoa autenticada e autorizada registre, revise, confirme e consulte os metadados gerais de uma coleta ambiental vinculada a uma área acessível do laboratório explicitamente selecionado, sem antecipar medições ambientais, cálculo do IHFR nem funcionalidades posteriores.
 

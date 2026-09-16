@@ -6,9 +6,9 @@ Este documento é o guia de execução para validar a IMP-004 quando ela for imp
 
 Os critérios normativos estão em [spec.md](./spec.md), as decisões técnicas em [plan.md](./plan.md), a persistência em [data-model.md](./data-model.md) e a interface HTTP em [contracts/collection-registration-api.openapi.yaml](./contracts/collection-registration-api.openapi.yaml).
 
-## Pré-requisito bloqueante
+## Pré-requisito comprovado
 
-Antes de iniciar qualquer implementação ou validação funcional da IMP-004, confirmar que a IMP-003 está integrada e que seu gate T111 registrou `IMP_004_LIBERADA_PARA_IMPLEMENTACAO` ou evidência equivalente. A base integrada deve fornecer e comprovar:
+T005 foi comprovado em 2026-09-16 após a integração da IMP-003. A evidência está em [implementation-evidence.md](./implementation-evidence.md). Antes de iniciar a implementação, preserve a base integrada, que fornece:
 
 - `CollectionArea` vinculada diretamente a laboratório;
 - papéis contextuais `OWNER`, `ADMIN` e `MEMBER`;
@@ -17,6 +17,8 @@ Antes de iniciar qualquer implementação ou validação funcional da IMP-004, c
 - leitura contextual em laboratório ativo ou inativo;
 - isolamento uniforme para laboratório, vínculo e área;
 - autoria derivada exclusivamente da sessão.
+
+Na criação, o mapeamento técnico obrigatório é `authorizeLaboratoryAccess(principal, laboratoryId, "CREATE_COLLECTION", tx, true)`: o literal representa a permissão dos três papéis e `mutate=true` aplica o bloqueio de laboratório inativo. A área é consultada depois pelo par `{ id, laboratoryId }`; não duplicar o guard.
 
 Se qualquer item divergir do contrato planejado, revisar coordenadamente `spec.md`, checklist, `plan.md`, `research.md`, `data-model.md`, OpenAPI, `quickstart.md` e `tasks.md` antes de criar código consumidor. Divergência funcional de intenção, comportamento externo, permissão, escopo, requisito ou critério interrompe a implementação e retorna ao fluxo de especificação e, quando necessário, esclarecimento, planejamento e tarefas. Divergência apenas técnica pode atualizar os artefatos técnicos e tarefas afetados, desde que preserve a intenção funcional. Não criar um guard, schema alternativo ou mudança contratual silenciosa para contornar a dependência.
 

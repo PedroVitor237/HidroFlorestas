@@ -206,7 +206,7 @@ The DTO never includes `userId`, author identity, membership role, access code, 
 
 ### Mandatory predecessor gate
 
-Before generating or applying IMP-004 DDL, confirm the implemented schema matches the IMP-003 target: contextual roles, opaque area ID, direct area–laboratory association and guard contract are integrated and tested. The current baseline does not satisfy this gate.
+Before generating or applying IMP-004 DDL, preserve the implemented IMP-003 baseline confirmed by T005: contextual roles, opaque area ID, direct area–laboratory association and guard contract are integrated and tested. The current baseline satisfies this predecessor gate. The composite candidate key `@@unique([id, laboratoryRoomId])` remains an additive change owned by the IMP-004 migration for its tenant-safe foreign key.
 
 ### Preflight
 

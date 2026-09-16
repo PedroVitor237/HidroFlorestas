@@ -4,7 +4,7 @@
 
 **Input**: Feature specification from `/specs/004-environmental-collection-registration/spec.md`
 
-**Current lifecycle**: specification, planning and task generation are complete. The first `$speckit-analyze` was executed and its documentary findings were remediated; an independent re-analysis is required before implementation. T005 and the real IMP-003/T111 evidence remain blocking.
+**Current lifecycle**: specification, planning and task generation are complete. Analyses were remediated, the IMP-003 was integrated, and T005 was proved on 2026-09-16. Implementation is released but has not started.
 
 ## Summary
 
@@ -26,7 +26,7 @@ Entregar o registro geral e imutável de uma coleta ambiental dentro da cadeia e
 
 **Performance Goals**: nenhuma meta técnica nova foi aprovada; a jornada deve continuar responsiva, sem chamadas externas e com uma única confirmação em voo na interface, preservando os resultados mensuráveis da spec
 
-**Constraints**: implementação bloqueada até a IMP-003; contexto e autorização revalidados no servidor; nenhum rascunho persistente; coleta confirmada imutável; dois endpoints apenas; DTOs fechados; `no-store`; nenhum dado científico; nenhum acesso a banco nesta etapa
+**Constraints**: contexto e autorização revalidados no servidor; nenhum rascunho persistente; coleta confirmada imutável; dois endpoints apenas; DTOs fechados; `no-store`; nenhum dado científico; implementação deve reutilizar o guard integrado com o mapeamento técnico comprovado em T005
 
 **Scale/Scope**: quatro histórias, três papéis contextuais, duas páginas, duas operações HTTP, uma evolução de entidade e uma migration; sem listagem, histórico, edição, exclusão ou medições
 
@@ -114,16 +114,11 @@ tests/
 
 ## Baseline, Divergence and Implementation Gate
 
-O planejamento partiu de `626a98e9cd76ccf69604b7262b8ce5dc602497fa`, sincronizado `0/0` com `origin/004-environmental-collection-registration`. Na preparação, `origin/development` estava em `f440282a9aefbbb85b5199d0610fdb9ecab3dc87` e `origin/003-area-registration-and-viewing` em `7b71346b571afc32feac452545022da14fcfa549`; nenhuma havia avançado além dos baselines registrados e nenhuma foi integrada.
+O planejamento partiu de `626a98e9cd76ccf69604b7262b8ce5dc602497fa`. Em 2026-09-16, a branch documental em `a44ac7ab3d4ead5adae977e53fd9cb9dfe05368e` recebeu `origin/development` `190e9afd06222b5155fcdee79741771edb592706` pelo merge `653a923a2e8d40804f9cbf75798e07098b83c65d`, sem conflitos. O HEAD `106e25f984df56384896729bf786e44104166570` da IMP-003 e seu merge são ancestrais da branch.
 
-`EVIDENCIA_IMPLEMENTACAO`: o código atual integra a IMP-001/002, mas ainda não contém `LaboratoryMembershipRole`, o ponto direto de `CollectionArea`, as rotas contextuais de área nem `authorizeLaboratoryAccess`. `CONTRATO_PLANEJADO`: esses elementos estão fechados nos artefatos da IMP-003. Portanto, documentação e tarefas da IMP-004 podem avançar, mas qualquer implementação fica bloqueada até:
+`EVIDENCIA_IMPLEMENTACAO`: o código integrado contém `LaboratoryMembershipRole`, ponto direto e associação obrigatória de `CollectionArea` ao laboratório, rotas contextuais, `authorizeLaboratoryAccess`, autoria derivada e DTOs mínimos. T111 e as validações reais da IMP-003 estão registrados em [implementation-evidence.md](./implementation-evidence.md). T005 está comprovado e a implementação pode iniciar pelo fluxo previsto, sem criar fallback ou guard paralelo.
 
-1. a IMP-003 estar implementada e integrada na base de trabalho;
-2. schema e migration da IMP-003 estarem reconciliados com os ambientes alvo;
-3. testes de papéis, contexto, área, isolamento e laboratório inativo passarem;
-4. o gate T111 da IMP-003 registrar `IMP_004_LIBERADA_PARA_IMPLEMENTACAO` ou estado equivalente, com `area.id`, relação área–laboratório, guard, `CREATE_COLLECTION`, autoria e DTO mínimo comprovados.
-
-Não criar fallback sobre o schema atual nem duplicar o guard para contornar esse gate.
+`MAPEAMENTO_TECNICO`: o guard integrado separa a permissão da natureza mutável da operação. A criação da coleta deve chamar `authorizeLaboratoryAccess(principal, laboratoryId, "CREATE_COLLECTION", tx, true)`. O literal concede a operação aos três `LaboratoryMembershipRole`; `mutate=true` exige laboratório ativo e produz `READ_ONLY` antes da consulta subordinada da área.
 
 ## Design and Delivery Strategy
 
@@ -147,7 +142,7 @@ Rollback de aplicação é compatível porque código anterior ignora as novas c
 
 ### 3. Authorization and isolation
 
-O handler autentica com `requireAuth`; o serviço usa o mesmo `authorizeLaboratoryAccess` da IMP-003. Na criação, solicita `CREATE_COLLECTION` e, dentro da mesma transação da persistência, revalida conta, laboratório filtrado pelo vínculo, papel/estado e área pelo par `{ id, laboratoryId }`. Os três papéis criam em laboratório ativo; membro atual de laboratório inativo recebe `409 READ_ONLY`; papel sem permissão em laboratório ativo permanece `403`, ainda que não exista hoje nessa matriz.
+O handler autentica com `requireAuth`; o serviço usa o mesmo `authorizeLaboratoryAccess` integrado pela IMP-003. Na criação, chama `authorizeLaboratoryAccess(principal, laboratoryId, "CREATE_COLLECTION", tx, true)` e, dentro da mesma transação da persistência, revalida conta, laboratório filtrado pelo vínculo, papel/estado e área pelo par `{ id, laboratoryId }`. Os três papéis criam em laboratório ativo; membro atual de laboratório inativo recebe `409 READ_ONLY`; papel sem permissão em laboratório ativo permanece `403`, ainda que não exista hoje nessa matriz.
 
 Para detalhe, o guard recebe a permissão de leitura de coleta no mesmo módulo, permite qualquer papel atual em laboratório ativo ou inativo e busca a coleta simultaneamente por `collectionId`, `areaId` e `laboratoryId`. Laboratório, vínculo, área ou coleta ausente/cruzado converge em `404 NOT_FOUND`. Replay idempotente também revalida acesso antes de devolver o registro, impedindo que uma chave restaure acesso revogado.
 
@@ -199,7 +194,7 @@ Nenhum teste funcional, build, Prisma ou banco foi executado nesta etapa documen
 
 ## Implementation Phases
 
-1. Comprovar o gate T111 e integrar a IMP-003; reconciliar schema, migration e contratos reais.
+1. Consumir o gate T005 já comprovado e preservar o mapeamento reconciliado do guard integrado.
 2. Criar preflight e migration expand-first da coleta, com testes PostgreSQL descartáveis antes do código consumidor.
 3. Criar shells compiláveis para contrato, serviço, handlers, tipos, estado de formulário e fixtures.
 4. Implementar parsing temporal, DTO fechado e matriz de testes unitários RED/GREEN.
