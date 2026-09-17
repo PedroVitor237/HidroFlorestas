@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-17
 
-**Status**: Especificação finalizada e pronta para planejamento; projeções de IMP-005/006 permanecem condicionadas à integração e aos gates de origem.
+**Status**: Especificação, plano e tarefas concluídos; primeira análise cruzada remediada documentalmente em 2026-09-17, com nova análise independente pendente. Projeções de IMP-005/006 permanecem condicionadas à integração e aos gates de origem.
 
 **Input**: IMP-007 — permitir que um participante acompanhe o ciclo do laboratório explicitamente selecionado por meio de um resumo e de um histórico básicos, rastreáveis e derivados dos registros de origem, sem criar uma fonte paralela de verdade.
 
@@ -90,6 +90,7 @@ Como participante autorizado, quero consultar o acompanhamento sem expor dados d
 - Coleta possui instante de ocorrência diferente do instante de confirmação: o evento “coleta confirmada” é ordenado pela confirmação, e a ocorrência pode ser mostrada separadamente sem substituir o instante do evento.
 - Item de origem existe, mas seu destino deixa de ser autorizado: o dashboard não revela o registro e a navegação aplica a mesma resposta de recurso inexistente/inacessível.
 - Falha parcial entre resumo e histórico: cada região identifica seu próprio estado; uma falha não transforma a outra em zero nem mistura dados antigos de contexto diferente.
+- Registro novo é confirmado entre páginas: o cursor não cria snapshot. Uma continuação para itens mais antigos não repete itens já vistos; ao voltar para uma parte mais recente, essa parte é consultada novamente e pode refletir a nova origem. Refresh reinicia a travessia na primeira parte e inclui as fontes então elegíveis.
 - Conteúdo planejado da IMP-005 ou IMP-006 existe apenas em documentos ou estruturas legadas: não aparece como total, evento, diagnóstico ou conclusão até haver contrato implementado, integrado e reconciliado.
 
 ## Requirements *(mandatory)*
@@ -138,6 +139,8 @@ Como participante autorizado, quero consultar o acompanhamento sem expor dados d
 - **SC-007**: Em verificação nas larguras de 320 px, 768 px e 1280 px, 100% das informações essenciais e destinos permanecem visíveis e operáveis sem rolagem horizontal do conteúdo principal.
 - **SC-008**: Em verificação apenas por teclado e com tecnologia assistiva, 100% dos controles do fluxo principal recebem foco perceptível, têm nome compreensível e comunicam os estados sem depender somente de cor.
 - **SC-009**: Em teste moderado de cada cenário principal com participantes representativos, pelo menos 90% identificam o laboratório, distinguem o estado da visão e localizam um registro de origem sem ajuda.
+
+**Estado de validação humana**: a parcela de SC-008 que exige tecnologia assistiva permanece `NAO_VERIFICADO` até execução manual registrada; testes automatizados de teclado, foco e ARIA não a substituem. SC-009 também permanece `NAO_VERIFICADO` e depende de estudo moderado separado com participantes representativos.
 
 ## Assumptions
 

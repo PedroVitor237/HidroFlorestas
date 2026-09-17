@@ -7,6 +7,7 @@
 - `EVIDENCIA_IMPLEMENTACAO` — `origin/development` continua na baseline `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`; não houve avanço desde a criação da feature.
 - `EVIDENCIA_IMPLEMENTACAO` — IMP-003 `106e25f984df56384896729bf786e44104166570` e IMP-004 `7c977147797ca8a8c167033fee6e7a8ab46f673f` estão integradas.
 - `FATO_DOCUMENTADO` — IMP-005 `1235387ded9854be20a92f8639a502a80a2bd952` e IMP-006 `f5f6e27de2a81d64fa6e829d44d68669ba447739` estão publicadas, mas não integradas.
+- `FATO_DOCUMENTADO` — a primeira análise cruzada dos artefatos foi concluída e seus sete findings foram remediados documentalmente em 2026-09-17; uma nova análise independente permanece pendente.
 
 ## R-001 — Dashboard contextual
 
@@ -90,7 +91,7 @@
 
 **Decision**: ordenar por `eventAt DESC`, `typeRank ASC` (`AREA_CREATED=0`, `COLLECTION_CONFIRMED=1`) e `sourceId DESC`; buscar até 21 candidatos por fonte após o cursor, mesclar e devolver 20.
 
-**Rationale**: Prisma não oferece união tipada entre models. Duas consultas limitadas evitam carga integral e, com predicado lexicográfico por fonte, preservam uma ordem total determinística. O cursor inclui versão e a última chave, é validado, mas não é credencial.
+**Rationale**: Prisma não oferece união tipada entre models. Duas consultas limitadas evitam carga integral e, com predicado lexicográfico por fonte, preservam uma ordem total determinística quando as fontes não mudam. O cursor inclui versão e a última chave, é validado, mas não é credencial nem snapshot. Uma inserção mais recente feita entre páginas não entra na continuação para itens mais antigos; voltar ou atualizar reconsulta a parte correspondente e pode refletir a inserção. Testes unitários e E2E devem caracterizar essa semântica sem prometer isolamento de snapshot.
 
 **Alternatives considered**:
 
@@ -149,14 +150,15 @@
 
 ## R-012 — Validação proporcional
 
-**Decision**: combinar unidade, contrato, integração e E2E; executar regressões IMP-003/004 na implementação. SC-009 permanece avaliação humana posterior.
+**Decision**: combinar unidade, contrato, integração e E2E; executar regressões IMP-003/004 na implementação; verificar separadamente com tecnologia assistiva real a parcela humana de SC-008. SC-009 permanece avaliação moderada humana posterior e distinta.
 
-**Rationale**: merge/cursor e privacidade são determinísticos em unidade; autorização/HTTP exigem integração; navegação, estados, teclado e viewports exigem E2E. Teste automatizado não simula resultado de pesquisa moderada.
+**Rationale**: merge/cursor e privacidade são determinísticos em unidade; autorização/HTTP exigem integração; navegação, estados, teclado, ARIA e viewports possuem cobertura automatizável em E2E. Playwright não substitui interação com tecnologia assistiva real, assim como automação não simula resultado de pesquisa moderada.
 
 **Alternatives considered**:
 
 - somente E2E: rejeitado por baixa precisão para algoritmo de cursor;
 - somente unidade: rejeitado por não provar handlers, navegação ou isolamento conectado;
+- declarar SC-008 aprovada apenas por Playwright: rejeitado por não produzir evidência de tecnologia assistiva real;
 - declarar SC-009 aprovado por inspeção: rejeitado por falta de participantes/evidência.
 
 ## Conclusão da pesquisa

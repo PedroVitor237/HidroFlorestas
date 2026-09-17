@@ -81,13 +81,17 @@ Validação:
 1. percorrer todas as partes por “Mais antigos”;
 2. retornar por “Mais recentes”;
 3. repetir a travessia sem alterar fontes;
-4. ativar um item de área e um de coleta.
+4. após carregar a primeira parte, confirmar uma nova origem com instante mais recente e então avançar usando o cursor já recebido;
+5. verificar que a continuação para itens mais antigos não repete itens já vistos; voltar por “Mais recentes” e registrar que a parte é reconsultada e pode refletir a inserção, pois não há snapshot;
+6. executar refresh, confirmar reinício na primeira parte e presença da nova origem na ordem total;
+7. ativar um item de área e um de coleta.
 
 Esperado:
 
 - ordem por confirmação/criação, não por ocorrência nem atualização;
 - cada identidade aparece exatamente uma vez e na mesma ordem;
 - máximo de 20 itens por resposta;
+- cursor funciona como fronteira keyset, não como snapshot: mutações podem alterar partes reconsultadas, mas a continuação estrita não repete itens anteriores;
 - destinos chegam em uma ativação aos detalhes contextuais corretos;
 - nenhum item de atualização, exclusão, análise ou edição do dashboard aparece.
 
@@ -130,9 +134,9 @@ Inspecionar respostas e interface.
 
 Esperado: ausentes nome/email/avatar/ID de autor, observações, coordenadas, chaves, hashes, payload ambiental, score/classe IHFR, mapa, gráficos, IA e qualquer texto que sugira auditoria persistida.
 
-## Cenário G — acessibilidade e responsividade
+## Cenário G — acessibilidade automatizável e responsividade
 
-Executar em 320 px, 768 px e 1280 px, depois navegar somente por teclado e inspecionar nomes/estados com tecnologia assistiva disponível.
+Executar o E2E em 320 px, 768 px e 1280 px e navegar somente por teclado. Inspecionar programaticamente nomes, papéis, estados ARIA, ordem/foco e mensagens textuais. Esta etapa não constitui evidência de tecnologia assistiva real.
 
 Esperado:
 
@@ -141,6 +145,20 @@ Esperado:
 - foco perceptível e ordem coerente;
 - botões de retry/paginação e links têm nomes acessíveis;
 - loading, erro, vazio, atualização e somente leitura não dependem de cor/ícone.
+
+## Cenário H — verificação manual com tecnologia assistiva para SC-008
+
+Estado inicial: `NAO_VERIFICADO`.
+
+Depois de existir build utilizável, uma pessoa responsável deve registrar em evidência versionada ou vinculada:
+
+1. responsável e data;
+2. sistema operacional, navegador, tecnologia assistiva e versões;
+3. percurso executado no fluxo principal, incluindo resumo, histórico, paginação, retry, vazio, erro e somente leitura;
+4. resultado por controle e estado, com foco, nome anunciado, papel, valor/estado e entendimento sem depender de cor ou ícone;
+5. desvios encontrados, correções e nova execução quando aplicável.
+
+SC-008 só muda de `NAO_VERIFICADO` após essa evidência real. Playwright, inspeção de DOM ou checklist do agente não substituem a execução com tecnologia assistiva.
 
 ## 4. Regressões IMP-003/004
 
@@ -153,10 +171,12 @@ npx playwright test tests/e2e/collection-registration.spec.ts
 
 Esperado: listagem/detalhe de áreas, confirmação/detalhe de coletas, cadeia contextual, inatividade, revogação e isolamento mantêm o comportamento integrado.
 
-## 5. Avaliação humana de SC-009
+## 5. Avaliação humana distinta de SC-009
 
 Após existir build utilizável, a equipe de produto/pesquisa deve moderar cada cenário principal com participantes representativos e registrar método, amostra e resultado. A meta é pelo menos 90% identificarem laboratório, estado e origem sem ajuda. Não substituir essa evidência por teste automatizado ou inspeção do agente.
 
+Estado inicial: `NAO_VERIFICADO`. Esta avaliação não é a verificação técnica com tecnologia assistiva de SC-008 e deve manter método, amostra, responsável e evidência próprios.
+
 ## Critério de encerramento futuro
 
-A implementação só estará pronta quando suites, build, cenários E2E, limpeza de fixtures, diff e gates constitucionais passarem; SC-009 deve ter estado explicitamente registrado, mesmo quando sua avaliação ficar agendada separadamente por depender de participantes.
+A implementação do MVP só estará pronta quando suites, build, cenários E2E, limpeza de fixtures, diff, gates constitucionais e a verificação manual de tecnologia assistiva de SC-008 passarem. SC-009 deve ter estado explicitamente registrado e permanece `NAO_VERIFICADO` enquanto sua avaliação moderada estiver pendente ou apenas agendada; isso não autoriza presumir aprovação.

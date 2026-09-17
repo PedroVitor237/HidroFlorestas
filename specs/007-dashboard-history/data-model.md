@@ -152,7 +152,9 @@ O cursor representa a última chave retornada; não contém `userId` ou dados pe
 2. no mesmo instante, `AREA_CREATED` antes de `COLLECTION_CONFIRMED`;
 3. no mesmo instante e tipo, `sourceId` descendente.
 
-O primeiro request não possui cursor. O próximo request usa o cursor do último item apresentado e retorna somente chaves posteriores nessa ordem. O cliente pode retornar a uma parte anterior usando a pilha local de cursores; refresh reinicia na primeira parte. Não há número de página estável quando fontes mudam.
+O primeiro request não possui cursor. O próximo request usa o cursor do último item apresentado e retorna somente chaves posteriores nessa ordem. O cliente pode retornar a uma parte anterior usando a pilha local de cursores; cada retorno reconsulta essa parte, e refresh descarta a pilha e reinicia na primeira parte.
+
+O cursor não materializa snapshot nem congela o conjunto. Uma origem confirmada depois da leitura inicial, com chave mais recente que o cursor corrente, não aparece ao avançar para itens mais antigos e não deve duplicar item já apresentado. Ao voltar para uma parte mais recente ou executar refresh, a consulta usa as fontes atuais e pode incluir a nova origem, deslocando itens entre partes. Estabilidade integral e ausência de omissão são garantidas por SC-003 somente quando as fontes não mudam; sob mutação, a garantia é ordem total por resposta e continuação estrita após a chave fornecida.
 
 ## Estados da interface
 

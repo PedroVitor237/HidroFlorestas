@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: IMP-007 Dashboard e histórico básico
-  version: 1.0.0
+  version: 1.0.1
   description: >-
     Contrato de leitura contextual derivado de áreas e coletas confirmadas.
     Não representa uma API de auditoria nem inclui dados ambientais ou diagnóstico.
@@ -9,6 +9,18 @@ servers:
   - url: /
 security:
   - cookieAuth: []
+x-contract-validation-examples:
+  valid:
+    compositeId: AREA_CREATED:10000000-0000-4000-8000-000000000201
+    areaDestination: /dashboard/laboratories/10000000-0000-4000-8000-000000000101/areas/10000000-0000-4000-8000-000000000201
+    collectionDestination: /dashboard/laboratories/10000000-0000-4000-8000-000000000101/areas/10000000-0000-4000-8000-000000000201/collections/10000000-0000-4000-8000-000000000301
+  invalid:
+    - AREA_CREATED:---
+    - /dashboard/laboratories/---/areas/---
+    - /dashboard/laboratories/10000000-0000-4000-8000-000000000999/areas/10000000-0000-4000-8000-000000000201
+  invariants:
+    - O sufixo de id corresponde ao id da origem do item.
+    - Os segmentos de destination correspondem a context.id, area.id e, quando aplicável, collection.id do mesmo DTO.
 paths:
   /api/laboratories/{laboratoryId}/dashboard/summary:
     get:
@@ -151,6 +163,8 @@ components:
       type: string
       format: uuid
       pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+      examples: [10000000-0000-4000-8000-000000000101]
+      x-invalidExamples: ['---', 'not-a-uuid', '10000000-0000-0000-0000-000000000101']
     LaboratoryContext:
       type: object
       additionalProperties: false
@@ -195,7 +209,8 @@ components:
           properties:
             areas:
               type: string
-              pattern: '^/dashboard/laboratories/[0-9a-fA-F-]+/areas$'
+              pattern: '^/dashboard/laboratories/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/areas$'
+              examples: [/dashboard/laboratories/10000000-0000-4000-8000-000000000101/areas]
     AreaReference:
       type: object
       additionalProperties: false
@@ -221,7 +236,8 @@ components:
       properties:
         id:
           type: string
-          pattern: '^AREA_CREATED:[0-9a-fA-F-]+$'
+          pattern: '^AREA_CREATED:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+          examples: [AREA_CREATED:10000000-0000-4000-8000-000000000201]
         type:
           type: string
           const: AREA_CREATED
@@ -235,7 +251,8 @@ components:
           $ref: '#/components/schemas/AreaReference'
         destination:
           type: string
-          pattern: '^/dashboard/laboratories/[0-9a-fA-F-]+/areas/[0-9a-fA-F-]+$'
+          pattern: '^/dashboard/laboratories/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/areas/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+          examples: [/dashboard/laboratories/10000000-0000-4000-8000-000000000101/areas/10000000-0000-4000-8000-000000000201]
     CollectionConfirmedItem:
       type: object
       additionalProperties: false
@@ -243,7 +260,8 @@ components:
       properties:
         id:
           type: string
-          pattern: '^COLLECTION_CONFIRMED:[0-9a-fA-F-]+$'
+          pattern: '^COLLECTION_CONFIRMED:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+          examples: [COLLECTION_CONFIRMED:10000000-0000-4000-8000-000000000301]
         type:
           type: string
           const: COLLECTION_CONFIRMED
@@ -262,7 +280,8 @@ components:
           $ref: '#/components/schemas/CollectionReference'
         destination:
           type: string
-          pattern: '^/dashboard/laboratories/[0-9a-fA-F-]+/areas/[0-9a-fA-F-]+/collections/[0-9a-fA-F-]+$'
+          pattern: '^/dashboard/laboratories/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/areas/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/collections/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+          examples: [/dashboard/laboratories/10000000-0000-4000-8000-000000000101/areas/10000000-0000-4000-8000-000000000201/collections/10000000-0000-4000-8000-000000000301]
     HistoryItem:
       oneOf:
         - $ref: '#/components/schemas/AreaCreatedItem'

@@ -34,3 +34,4 @@
 - Validation iteration 1 (2026-09-17): all 16 items passed.
 - The open source-retention policy does not block this increment because IMP-007 creates no independent retained activity record; immutable or forensic audit history remains explicitly out of scope.
 - IMP-005/006 projections are conditional and excluded from the implementable minimum until their real contracts are integrated and reconciled.
+- Post-analysis remediation (2026-09-17): the seven cross-artifact findings were addressed without changing feature scope; an independent rerun of `$speckit-analyze` remains pending. SC-008 assistive-technology evidence and SC-009 moderated-study evidence remain `NAO_VERIFICADO` until their respective human validations occur.

@@ -4,7 +4,7 @@
 
 **Input**: `specs/007-dashboard-history/spec.md`
 
-**Status**: planejamento concluído para o incremento mínimo; extensões IMP-005/006 permanecem condicionadas à integração e à reconciliação de seus contratos reais.
+**Status**: planejamento e tarefas concluídos; remediação documental da primeira análise cruzada aplicada em 2026-09-17, com nova análise independente pendente. Extensões IMP-005/006 permanecem condicionadas à integração e à reconciliação de seus contratos reais.
 
 ## Summary
 
@@ -60,6 +60,7 @@ specs/007-dashboard-history/
 ├── research.md
 ├── data-model.md
 ├── quickstart.md
+├── accessibility-evidence.md          # criado somente por T065 após verificação humana real
 ├── contracts/
 │   └── dashboard-api.openapi.yaml
 └── tasks.md                         # somente por $speckit-tasks
@@ -134,7 +135,7 @@ O histórico é uma união em memória de duas projeções limitadas:
 
 A ordem total é `eventAt DESC`, depois tipo (`AREA_CREATED` antes de `COLLECTION_CONFIRMED`) e `sourceId DESC`. A identidade pública estável é `${type}:${sourceId}`. O cursor opaco codifica e valida exatamente a última chave `(eventAt,type,sourceId)`; não concede acesso e nunca substitui a autorização.
 
-Cada fonte consulta no máximo 21 candidatos posteriores ao cursor usando seu próprio instante e ID. O serviço combina, aplica a ordem total e devolve 20; o 21º determina `nextCursor`. Esse algoritmo evita leitura sem limite, duplicação e omissão entre tipos. O cliente mantém o cursor atual e a pilha de cursores anteriores na URL/estado da página, oferecendo “Mais antigos” e “Mais recentes”; refresh volta à primeira parte e relê as fontes. Inserções posteriores não entram retroativamente em uma travessia já iniciada; o contrato garante estabilidade quando as fontes não mudam, como exige SC-003.
+Cada fonte consulta no máximo 21 candidatos posteriores ao cursor usando seu próprio instante e ID. O serviço combina, aplica a ordem total e devolve 20; o 21º determina `nextCursor`. Esse algoritmo evita leitura sem limite e, quando as fontes não mudam, duplicação ou omissão entre tipos. O cursor é uma fronteira keyset, não um token de snapshot: uma origem confirmada depois da primeira leitura e mais recente que a chave corrente não aparece ao avançar para itens mais antigos; ao voltar, a parte anterior é consultada novamente e pode refletir a inserção. Refresh descarta a pilha, volta à primeira parte e relê todas as fontes elegíveis. Os testes devem comprovar a continuação sem repetição, o retorno reconsultado e a entrada da nova origem após refresh, sem prometer estabilidade de snapshot quando as fontes mudam.
 
 ### 3. Autorização, isolamento e perda de acesso
 
@@ -160,15 +161,16 @@ Resumo e histórico são regiões independentes com loading (`role=status`), vaz
 
 | Camada | Cobertura planejada |
 |---|---|
-| Unidade — contratos | Cursor válido/inválido, allowlists, serialização ISO, identidade/destino, ausência dos campos proibidos e mensagens sanitizadas. |
-| Unidade — serviço | Contagens, critério de confirmação completa, duas fontes, ordem/empate/cursor, limite 20, remoção da fonte, inativo, revogação e isolamento. |
-| Contrato | OpenAPI 3.1 válido, dois `operationId`, schemas fechados, status, exemplos, cursor e `no-store`. |
+| Unidade — contratos | Cursor válido/inválido, allowlists, serialização ISO, identidade/destino, correspondência entre IDs/contexto/destinos, ausência dos campos proibidos e mensagens sanitizadas. |
+| Unidade — serviço | Contagens, critério de confirmação completa, duas fontes, ordem/empate/cursor, limite 20, inserção entre páginas, remoção da fonte, inativo, revogação e isolamento. |
+| Contrato | OpenAPI 3.1 válido, refs locais resolvidas, dois `operationId`, schemas fechados, UUIDs estritos, exemplos positivos/negativos, status, cursor e `no-store`. |
 | Integração | `requireAuth`, params/cursor, revalidação por chamada, `200/400/401/404/500`, laboratório cruzado, perda de vínculo e falha independente. |
 | UI | loading diferente de zero/vazio, retry, descarte de resposta tardia, pilha de cursores, links e omissão de ações em inativo. |
-| E2E | quatro histórias, matriz de dois laboratórios, mais de 20 itens/empates, refresh após criação/confirmação, destinos em uma ativação, teclado e 320/768/1280 px. |
+| E2E | quatro histórias, matriz de dois laboratórios, mais de 20 itens/empates, inserção entre páginas, refresh após criação/confirmação, destinos em uma ativação, teclado/ARIA e 320/768/1280 px. |
+| Verificação humana — acessibilidade | Tecnologia assistiva real em ambiente registrado, separada do Playwright, com procedimento, resultados por controle/estado e evidência; SC-008 fica `NAO_VERIFICADO` até essa execução. |
 | Regressão | `test:unit`, `test:integration`, cenários E2E de área e coleta, `lint`, `typecheck` e `build` na futura implementação. |
 
-SC-009 requer teste moderado com participantes representativos e permanece validação humana futura; automação não inventa seu resultado nem bloqueia a geração de tarefas. Nenhum teste funcional, build, Prisma ou banco é executado nesta etapa documental.
+SC-008 exige, além da automação, verificação manual com tecnologia assistiva e permanece `NAO_VERIFICADO` nessa parcela até evidência registrada. SC-009 requer teste moderado distinto com participantes representativos e também permanece validação humana futura; nenhuma dessas evidências pode ser inventada pela automação. Nenhum teste funcional, build, Prisma ou banco é executado nesta etapa documental.
 
 ## Requirements Traceability
 
@@ -177,15 +179,15 @@ SC-009 requer teste moderado com participantes representativos e permanece valid
 | FR-001, FR-002, FR-012 | guard e queries contextuais em cada endpoint; `401/404` sem inferência | integração e E2E com dois laboratórios/revogação |
 | FR-003, FR-010 | resumo transitório, tupla confirmada e `no-store` | unidade, integração e retorno/refresh E2E |
 | FR-004, FR-005, FR-006, FR-008, FR-014 | duas projeções, datas reais, identidade derivada e destinos completos | unidade de serializer/ordem e E2E de origem |
-| FR-007 | cursor keyset, 20 itens e desempate total | unidade e travessia E2E com empate e mais de 20 itens |
+| FR-007 | cursor keyset, 20 itens, desempate total e semântica sem snapshot | unidade e travessia E2E com empate, mais de 20 itens e inserção entre páginas |
 | FR-009 | endpoints/componentes independentes e estados explícitos | UI e E2E de loading/vazio/falha/retry |
 | FR-011 | contexto `readOnly`, leitura preservada e mutações omitidas | integração e E2E de laboratório inativo |
 | FR-013 | DTOs fechados sem PII, observações, coordenadas ou ciência | contrato, serializer e inspeção E2E |
 | FR-015, FR-016 | somente pontos de reconciliação futura; zero tipo atual | contrato aceita apenas dois tipos e revisão documental |
-| FR-017, FR-018 | fluxo responsivo, semântica, teclado, foco e mensagens textuais | E2E 320/768/1280 e tecnologia assistiva |
+| FR-017, FR-018 | fluxo responsivo, semântica, teclado, foco e mensagens textuais | E2E 320/768/1280 para aspectos automatizáveis e verificação humana separada com tecnologia assistiva |
 | FR-019 | serviço estritamente de leitura, sem ciência/mapa/gráficos/IA | diff, contrato e regressão |
 
-SC-001–SC-008 são cobertos pelos cenários automatizáveis detalhados em [quickstart.md](quickstart.md). SC-009 exige avaliação humana registrada.
+SC-001–SC-008 possuem cobertura automatizável detalhada em [quickstart.md](quickstart.md), mas a parcela de tecnologia assistiva de SC-008 exige evidência humana separada. SC-009 exige avaliação moderada humana distinta. Ambas permanecem `NAO_VERIFICADO` até suas execuções correspondentes.
 
 ## Implementation Phases
 
@@ -193,8 +195,8 @@ SC-001–SC-008 são cobertos pelos cenários automatizáveis detalhados em [qui
 2. Implementar o serviço de leitura sobre o guard e os models existentes, sem schema ou persistência nova.
 3. Implementar os dois route handlers com factories injetáveis, erros sanitizados e `no-store`.
 4. Criar a landing contextual e regiões independentes de resumo/histórico; remover o mock do fluxo e atualizar navegação.
-5. Completar contrato, integração, E2E, acessibilidade, responsividade e regressões IMP-003/004.
-6. Registrar evidências da implementação e reler IMP-005/006 somente se alguma delas tiver sido integrada antes da execução.
+5. Completar contrato, integração, E2E, acessibilidade automatizável, responsividade e regressões IMP-003/004.
+6. Registrar a verificação manual com tecnologia assistiva, manter SC-009 explicitamente pendente e reler IMP-005/006 somente se alguma delas tiver sido integrada antes da execução.
 
 ## Future Reconciliation Points
 
