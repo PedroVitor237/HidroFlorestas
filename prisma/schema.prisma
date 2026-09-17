@@ -40,14 +40,6 @@ enum UserStatus {
   BLOCKED
 }
 
-model Coordinates {
-  id        String @id @default(uuid())
-  latitude  String
-  longitude String
-
-  collectionAreas CollectionArea[]
-}
-
 model LaboratoryRoom {
   id          String   @id @default(uuid())
   name        String
@@ -61,9 +53,18 @@ model LaboratoryRoom {
 
   researchersLinked ResearchersLinked[]
   collectionAreas   CollectionArea[]
+  collectionData    CollectionData[]
+}
+
+enum LaboratoryMembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
 }
 
 model ResearchersLinked {
+  id               String                   @unique @default(uuid())
+  role             LaboratoryMembershipRole @default(MEMBER)
   userId           String
   laboratoryRoomId String
 
@@ -71,29 +72,33 @@ model ResearchersLinked {
   laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id])
 
   @@id([userId, laboratoryRoomId])
+  @@index([laboratoryRoomId, role])
 }
 
 model CollectionArea {
-  id                  String   @id @default(uuid())
-  name                String
-  image               String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  isActive            Boolean  @default(true)
-  userId              String
-  laboratoryRoomId    String
-  coordinatesId       String
-  municipality        String
-  state               String
-  cep                 String
-  landType            LandType
-  descriptionLandType String?
+  id               String   @id @default(uuid())
+  name             String
+  image            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  isActive         Boolean  @default(true)
+  userId           String
+  laboratoryRoomId String
+  latitude         Decimal  @db.Decimal(8, 6)
+  longitude        Decimal  @db.Decimal(9, 6)
+  municipality     String?
+  state            String?
+  cep              String?
+  landType         String?
+  description      String?  @map("descriptionLandType")
 
   user           User           @relation(fields: [userId], references: [id])
-  coordinates    Coordinates    @relation(fields: [coordinatesId], references: [id])
   laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id])
 
   collectionData CollectionData[]
+
+  @@unique([id, laboratoryRoomId])
+  @@index([laboratoryRoomId, createdAt])
 }
 
 enum LandType {
@@ -108,21 +113,30 @@ enum LandType {
 }
 
 model CollectionData {
-  id               String   @id @default(uuid())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id               String    @id @default(uuid())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   collectionAreaId String
+  laboratoryRoomId String
   userId           String
   observations     String?
+  occurredAt       DateTime? @db.Timestamptz(3)
+  occurrenceOffset String?   @db.VarChar(6)
+  confirmedAt      DateTime? @db.Timestamptz(3)
+  confirmationKey  String?
 
-  user           User           @relation(fields: [userId], references: [id])
-  collectionArea CollectionArea @relation(fields: [collectionAreaId], references: [id])
+  user           User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id], onDelete: Restrict)
+  collectionArea CollectionArea @relation(fields: [collectionAreaId, laboratoryRoomId], references: [id, laboratoryRoomId], onDelete: Restrict)
 
   waterData      WaterData[]
   soilData       SoilData[]
   vegetationData VegetationData[]
   terrainData    TerrainData[]
   diagnoses      IHFRDiagnosis[]
+
+  @@unique([userId, confirmationKey])
+  @@index([collectionAreaId, laboratoryRoomId])
 }
 
 model IHFRDiagnosis {

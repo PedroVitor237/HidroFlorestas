@@ -15,6 +15,23 @@ export type LaboratoryDetailsDto = PublicLaboratoryDto & {
   members: LaboratoryMemberDto[];
 };
 
+export type LaboratoryMembershipRole = "OWNER" | "ADMIN" | "MEMBER";
+
+export type LaboratoryContextDto = {
+  id: string;
+  name: string;
+  status: "ACTIVE" | "INACTIVE";
+  membershipRole: LaboratoryMembershipRole;
+  readOnly: boolean;
+};
+
+export type LaboratoryMembershipDto = {
+  id: string;
+  name: string;
+  initials: string;
+  role: LaboratoryMembershipRole;
+};
+
 export type LaboratoryFailureCode =
   | "INVALID_REQUEST"
   | "UNAUTHENTICATED"

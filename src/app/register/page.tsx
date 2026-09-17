@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-import { Eye, EyeOff, LockKeyhole, Mail, User } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 
-import LogoHF from '@/assets/logo/logo-hf.png';
-import Logo from '@/assets/logo/logo.png';
-import RegisterBackground from '@/assets/auth/register-background.png';
+import LogoHF from "@/assets/logo/logo-hf.png";
+import Logo from "@/assets/logo/logo.png";
+import RegisterBackground from "@/assets/auth/register-background.png";
 
-import { useAuth } from '@/contexts/auth.context';
+import { useAuth } from "@/contexts/auth.context";
 
 export default function RegisterPage() {
   const { signUp } = useAuth();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,12 +53,7 @@ export default function RegisterPage() {
       {/* Header */}
       <header className="h-[100px] border-b border-black/10 bg-white">
         <div className="mx-auto flex h-full max-w-7xl items-center px-6">
-          <Image
-            src={LogoHF}
-            alt="HidroFlorestas"
-            width={220}
-            priority
-          />
+          <Image src={LogoHF} alt="HidroFlorestas" width={220} priority />
         </div>
       </header>
 
@@ -71,7 +66,7 @@ export default function RegisterPage() {
               alt="Background"
               fill
               priority
-             className="object-cover object-center"
+              className="object-cover object-center"
             />
 
             {/* Camada Translucida */}
@@ -86,7 +81,7 @@ export default function RegisterPage() {
                 className="mb-8"
               />
 
-              <h2 className="text-center text-6xl font-black">
+              <h2 className="text-center text-6xl font-bold">
                 <span className="text-[#0084DD]">HIDRO</span>
                 <span className="text-[#00B51A]">FLORESTAS</span>
               </h2>
@@ -95,17 +90,12 @@ export default function RegisterPage() {
                 STARTUP & INOVAÇÃO
               </p>
             </div>
-            
           </div>
 
           {/* Formulário */}
           <div className="w-full md:w-[45%] bg-white p-8 md:p-12">
             <div className="flex justify-center">
-              <Image
-                src={LogoHF}
-                alt="HidroFlorestas"
-                width={200}
-              />
+              <Image src={LogoHF} alt="HidroFlorestas" width={200} />
             </div>
 
             <hr className="my-6 border-black/20" />
@@ -185,7 +175,7 @@ export default function RegisterPage() {
                 <LockKeyhole size={22} className="text-[#858585]" />
 
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -197,11 +187,7 @@ export default function RegisterPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="cursor-pointer text-[#858585]"
                 >
-                  {showPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
@@ -215,9 +201,7 @@ export default function RegisterPage() {
                   onChange={() => setShowPassword(!showPassword)}
                 />
 
-                <span className="text-sm text-[#858585]">
-                  Mostrar senha
-                </span>
+                <span className="text-sm text-[#858585]">Mostrar senha</span>
               </label>
             </div>
 
@@ -241,11 +225,11 @@ export default function RegisterPage() {
                 active:scale-[0.98]
               "
             >
-              {loading ? 'CRIANDO...' : 'CRIAR CONTA'}
+              {loading ? "CRIANDO..." : "CRIAR CONTA"}
             </button>
 
             <div className="mt-8 text-center text-[16px] text-[#3E3E3E]">
-              Já tem uma conta?{' '}
+              Já tem uma conta?{" "}
               <Link
                 href="/login"
                 className="font-semibold text-[#A1640B] underline"

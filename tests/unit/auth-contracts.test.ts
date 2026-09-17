@@ -91,6 +91,8 @@ describe("authentication contracts", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       token: "secret-token",
+      confirmationKey: "private-key",
+      collectionAreaId: "private-area",
     };
     const serialized = serializePublicUser(internalUser);
 
@@ -104,6 +106,16 @@ describe("authentication contracts", () => {
       "image",
       "lastName",
     ]);
+  });
+
+  it("does not widen the IMP-001 public DTO for collection registration", () => {
+    const internal = {
+      firstName: "Ana", lastName: "Silva", image: "", id: "internal", email: "private@example.test",
+      password: "hash", status: "ACTIVE", role: "USER", isAdmin: false,
+      confirmationKey: "private", collectionAreaId: "private",
+    };
+    const serialized = serializePublicUser(internal);
+    assert.deepEqual(serialized, { firstName: "Ana", lastName: "Silva", image: "" });
   });
 
   it("parses only exact public auth envelopes", () => {
