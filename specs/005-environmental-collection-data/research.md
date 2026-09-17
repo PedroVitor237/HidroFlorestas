@@ -1,17 +1,17 @@
 # Research: Dados ambientais da coleta
 
 **Date**: 2026-09-15
-**Status**: Pesquisa documental/técnica concluída no recorte permitido; G1–G3 permanecem abertos. Não é liberação para implementação.
+**Status**: Pesquisa finalizada; G1–G3 fechados para a captura v1. Não constitui validação científica do cálculo IHFR.
 
 A solicitação atual permite explicitamente registrar gates científicos no planejamento. Isso limita a regra geral da skill de resolver desconhecidos: nenhuma pesquisa técnica substitui aprovação científica ou de produto. As decisões abaixo são `RECOMENDACAO`, salvo quando identificadas como fato ou evidência. Fontes e SHAs em [source-review.md](source-review.md).
 
 ## R-001 — Base real e integração
 
-**Decision (`RECOMENDACAO`)**: consumir a coleta IMP-004 somente após integração comprovada de suas dependências IMP-003 e de seu próprio contrato. Não criar fallback sobre os models legados nem importar implementação da branch documental.
+**Decision (`RECOMENDACAO`)**: consumir diretamente a coleta IMP-004 já integrada a `development`, após reconciliar a ancestralidade da branch IMP-005. Não criar fallback sobre os models legados nem copiar uma segunda implementação do guard, das rotas ou da coleta.
 
-**Rationale**: `EVIDENCIA_IMPLEMENTACAO` — development contém `requireAuth`, serviço de laboratórios, validação por allowlist e handlers com dependências injetáveis. Não contém `authorizeLaboratoryAccess`, `LaboratoryMembershipRole`, rotas contextuais de áreas/coletas ou os campos novos de confirmação. `git diff f440282 a44ac7ab -- src prisma package.json` não apresentou diferenças nesses caminhos; o HEAD IMP-004 é fonte de planejamento, não implementação adicional.
+**Rationale**: `EVIDENCIA_IMPLEMENTACAO` — `origin/development` em `37fb3a4` contém `authorizeLaboratoryAccess`, `LaboratoryMembershipRole`, rotas contextuais, serviço injetável, campos temporais, idempotência, FK contextual e trigger de imutabilidade trazidos pela IMP-004 `7c97714`.
 
-**Alternatives considered**: desenvolver um guard provisório foi descartado por duplicação e incompatibilidade; exigir integração antes de escrever documentação foi descartado porque a solicitação autoriza o plano condicionado. G1 continua aberto.
+**Alternatives considered**: desenvolver um guard provisório continua descartado por duplicação e incompatibilidade. G1 está fechado; a branch IMP-005 ainda precisa reconciliar sua ancestralidade antes de implementação.
 
 ## R-002 — Autoridade científica
 
@@ -33,7 +33,7 @@ A solicitação atual permite explicitamente registrar gates científicos no pla
 
 **Decision (`RECOMENDACAO`)**: planejar persistência dos dados subordinados sem atualizar a linha de `CollectionData` confirmada. Nunca enfraquecer a imutabilidade para anexar medições.
 
-**Rationale**: `FATO_DOCUMENTADO` — data-model/plan da IMP-004 planejam trigger contra UPDATE/DELETE de coleta confirmada. Um caminho que toque o pai, inclusive seu `updatedAt`, pode contrariar esse contrato. Após G2/G3, avaliar inserção direta no dependente com referência revalidada, na mesma unidade transacional exigida pelo ciclo aprovado. A inclusão de filhos não deve alterar ocorrência, confirmação, autor ou território. Teste PostgreSQL deve provar a compatibilidade, não presumir comportamento de escrita aninhada.
+**Rationale**: `FATO_DOCUMENTADO` — data-model/plan da IMP-004 planejam trigger contra UPDATE/DELETE de coleta confirmada. Um caminho que toque o pai, inclusive seu `updatedAt`, pode contrariar esse contrato. A resolução vigente exige inserção direta no dependente com referência revalidada e transação própria. A inclusão não deve alterar ocorrência, confirmação, autor ou território. Teste PostgreSQL deve provar a compatibilidade, não presumir comportamento de escrita aninhada.
 
 **Alternatives considered**: PATCH da coleta, desabilitar trigger, recriar coleta ou reutilizar `observations` como JSON científico foram descartados por violar escopo e integridade. O formato definitivo do dependente permanece bloqueado por G2.
 
@@ -57,7 +57,7 @@ A solicitação atual permite explicitamente registrar gates científicos no pla
 
 **Decision (`RECOMENDACAO`)**: manter o monólito existente, autenticação e guard compartilhados, handlers finos, serviço com dependências injetáveis e projeções por allowlist. Documentar agora contrato de fronteira e interface em Markdown, sem OpenAPI com payload fictício.
 
-**Rationale**: `src/app/api/laboratories/route.ts`, `src/app/api/server/laboratories/laboratory.contracts.ts` e `src/app/api/server/services/laboratories.service.ts` demonstram esses padrões. A IMP-004 planeja envelopes diferentes do atual `{ success, ... }`: reconciliar após G1 sem alterar as rotas anteriores. O DTO fechado IMP-004 não pode receber campos científicos silenciosamente.
+**Rationale**: a IMP-004 implementa handlers finos, serviço injetável, `{ collection }`, `{ error: { code, message } }`, `Cache-Control: no-store` e DTO fechado. A IMP-005 deve preservar essas convenções sem acrescentar campos científicos ao detalhe da coleta.
 
 **Alternatives considered**: serviço externo de ciência, biblioteca de formulário orientada a schema, framework genérico de medições ou arquitetura de mapas não são justificados por este recorte. Nenhuma dependência será adicionada nesta etapa.
 
@@ -65,12 +65,27 @@ A solicitação atual permite explicitamente registrar gates científicos no pla
 
 **Decision (`RECOMENDACAO`)**: futuras validações devem separar testes de contrato científico, autorização, integridade transacional, UI, banco real e regressão; usar ferramentas já declaradas no repositório. O quickstart distingue comandos existentes de alvos futuros.
 
-**Rationale**: scripts locais usam `node:test` com `tsx`, Playwright, lint, typecheck e build. Fixtures existentes têm guard de ambiente e cleanup por allowlist; estendê-las apenas depois de G1–G3. Repetição, preservação de pai e constraints exigem comprovação em PostgreSQL isolado. Runtime não foi executado nesta pesquisa.
+**Rationale**: a IMP-004 comprovou `node:test`, integração, Playwright, migration em PostgreSQL isolado, lint, typecheck, build, fixtures allowlisted e teardown zerado. A IMP-005 deve estender esses padrões somente depois de G2–G3, acrescentando vetores científicos aprovados.
 
 **Alternatives considered**: tratar documentação, mocks ou teste simulado como prova de integração foi descartado. Não gerar medições sintéticas com significado científico inventado apenas para obter testes verdes.
 
 ## Resultado da pesquisa
 
 - Conhecidos: arquitetura local, ferramentas declaradas, fronteiras herdadas, divergência de integração e risco concreto da trigger.
-- Pendentes: G1 é integração verificável; G2 exige autoridade científica/dados; G3 exige decisão de produto/dados. Não foram resolvidos por pesquisa ou promovidos a decisões confirmadas.
+- G1 foi fechado pela implementação `7c97714` e pelo merge `37fb3a4`.
+- `DECISAO_CONFIRMADA` em 2026-09-17: G2 foi fechado para captura técnica pelo contrato `ihfr-measurement-v1`; G3 foi fechado com os três papéis vinculados, conjunto único/integral/imutável, revisão, confirmação atômica e idempotência própria.
+- As alternativas pendentes registradas em R-002, R-003, R-005 e R-006 preservam a justificativa histórica anterior à decisão. A resolução vigente está nos contratos v1, em `spec.md` e em `data-model.md`.
+- Fórmulas, pesos, limiares e validação científica do IHFR continuam fora da IMP-005; o contrato matemático fixa somente a interface versionada para a IMP-006.
+
+## R-009 — Forma recomendada do contrato matemático
+
+**Decision (`RECOMENDACAO`)**: separar três artefatos versionados: (1) contrato de medição, com variáveis, tipos, unidades, precisão, ausências e aplicabilidade; (2) contrato matemático, com funções, normalizações, pesos, limiares e política de dados faltantes; e (3) versão do algoritmo executável. A versão de qualquer um não deve substituir as demais.
+
+**Rationale**: essa separação permite evoluir o formulário sem reinterpretar medições antigas e evoluir o cálculo sem alterar o dado observado. Cada diagnóstico futuro deve registrar as versões exatas consumidas e um hash do manifesto aplicável.
+
+**Alternatives considered**: fórmulas hardcoded na UI, pesos em colunas soltas e uso exclusivo de `IHFRDiagnosis.algorithmVersion` foram descartados como fonte única, pois misturam ciência, captura e execução e dificultam reprodução.
+
+**RECOMENDACAO de estrutura**: representar o contrato matemático como manifesto declarativo e imutável, revisado pela autoridade científica, contendo IDs estáveis de entradas, unidade canônica, domínio, função de transformação/normalização, regra de composição, pesos cuja soma e escala sejam explicitadas, limiares inclusivos/exclusivos, tratamento de ausente/desconhecido/não aplicável, regra de qualidade/confiança e saídas. Manter casos dourados válidos, limites e inválidos em JSON/CSV independente da linguagem.
+
+**RECOMENDACAO de execução**: começar com um avaliador puro e determinístico dentro do monólito, sem acesso direto ao banco, alimentado por DTO validado e manifesto fixo. TypeScript reduz custo de integração inicial; Python só deve ser adotado se a complexidade científica ou bibliotecas exigirem, conforme TD-009/TD-012. Em ambos os casos, os mesmos vetores dourados devem provar paridade.
 - A skill solicitou pesquisa por agente. Um agente realizou inspeção parcial e apontou o risco da imutabilidade, mas foi interrompido por limite de uso; a conferência e a consolidação foram concluídas pelo agente principal nas fontes locais.

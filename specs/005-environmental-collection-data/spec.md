@@ -4,18 +4,19 @@
 
 **Created**: 2026-09-15
 
-**Status**: Especificação documental validada para planejamento condicionado; implementação bloqueada pelos gates G1–G3.
+**Status**: Especificação finalizada e pronta para geração de tarefas; G1–G3 resolvidos no recorte da IMP-005.
 
 **Input**: IMP-005 — permitir que uma coleta existente receba os dados ambientais exigidos pelo contrato científico aplicável, preservando laboratório → área → coleta → dados ambientais. Executar somente specify e plan, com commits e publicação da branch, sem implementação.
 
 ## Authority and Scope
 
 - `DECISAO_CONFIRMADA` — a solicitação desta tarefa, em 2026-09-15, autoriza o incremento de dados ambientais vinculados a uma coleta existente, preservação de origem/autoria, isolamento, laboratório inativo somente leitura e exclusão de IHFR. A mesma solicitação autoriza documentação com dependências explícitas; não aprova conteúdo científico ausente.
-- `FATO_DOCUMENTADO` — a spec da IMP-004 registra decisões confirmadas pela equipe em 2026-09-14: coleta em uma área de laboratório explícito, autoria derivada da pessoa autenticada, ocorrência e confirmação distintas, coleta confirmada imutável, leitura contextual, conta elegível e vínculo atual. Fonte consultada: commit `a44ac7ab3d4ead5adae977e53fd9cb9dfe05368e`, `specs/004-environmental-collection-registration/spec.md`, seções Authority, FR-001–FR-008, FR-010–FR-012 e FR-023–FR-030. São contratos documentais herdados, não prova de integração.
+- `EVIDENCIA_IMPLEMENTACAO` — a IMP-004 foi implementada e validada em `7c977147797ca8a8c167033fee6e7a8ab46f673f` e incorporada a `origin/development` pelo merge `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`. A coleta existe em área e laboratório explícitos, deriva autoria da sessão, separa ocorrência de confirmação, preserva offset, usa idempotência por autor, mantém o registro confirmado imutável e oferece leitura contextual inclusive em laboratório inativo. A evidência fecha G1, mas não aprova ciência nem permissões específicas da IMP-005.
 - `FATO_DOCUMENTADO` — `IMP-005`, `CF-PRD-FR-007`, `CF-UC-011` e `CF-PFLOW-005` descrevem registrar dados conforme contrato científico. Conservam o estado de direção candidata/em revisão. `CF-PRD-FR-014` é usado somente para preservar associação espacial pela área; não autoriza localização própria da medição.
 - `EVIDENCIA_IMPLEMENTACAO` — existem estruturas técnicas para quatro grupos ambientais; sua presença não aprova grupos, campos, unidades, cardinalidades, nulabilidade, precisão ou faixas. O inventário técnico pertence ao plano.
 - `PENDENCIA_DE_DECISAO` — `CF-PD-005`/`CF-Q-011` e `PD-002`/`PD-004` não fornecem contrato científico validado nem autoridade designada suficiente para resolver suas lacunas. Documentos históricos não suprem essa aprovação.
-- `RECOMENDACAO` — revisão explícita, gravação integral e repetição segura do envio dos dados são propostas locais de experiência e integridade para esta entrega. Os mecanismos da confirmação da coleta na IMP-004 não são automaticamente estendidos às medições. G3 exige confirmação do ciclo antes de implementar.
+- `FATO_DOCUMENTADO` — revisão explícita, gravação integral e repetição segura foram inicialmente propostas; a decisão de 2026-09-17 abaixo as confirma com chave idempotente própria, sem reutilizar automaticamente a confirmação da IMP-004.
+- `DECISAO_CONFIRMADA` — em 2026-09-17, a autoridade técnica desta sessão aprovou finalizar a IMP-005 usando a recomendação de contratos separados e versionados. A entrega adota um conjunto ambiental integral e imutável por coleta, quatro grupos técnicos v1, revisão/confirmar, idempotência própria, acesso de escrita para `OWNER`/`ADMIN`/`MEMBER` vinculados em laboratório ativo e leitura contextual em laboratório inativo. A decisão aprova o contrato de captura e a fronteira matemática; não afirma validação científica do cálculo IHFR.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -25,7 +26,7 @@ Como participante autorizado, quero informar os dados ambientais aplicáveis a u
 
 **Why this priority**: É o resultado central da IMP-005 e evita observações sem origem ou com significado científico inventado.
 
-**Independent Test**: Com coleta acessível preparada pela IMP-004, contrato aprovado e permissões/ciclo definidos por G2/G3, preencher um conjunto válido, concluir o registro e reabrir seu resultado no mesmo contexto. Não depende da história de consulta implementada para verificar persistência em teste isolado.
+**Independent Test**: Com coleta acessível preparada pela IMP-004, preencher um conjunto válido conforme `ihfr-measurement-v1`, concluir o ciclo aprovado e reabrir seu resultado no mesmo contexto. Não depende da história de consulta implementada para verificar persistência em teste isolado.
 
 **Acceptance Scenarios**:
 
@@ -79,12 +80,18 @@ Os requisitos abaixo definem o resultado e as invariantes. Onde dependem de ciê
 - **FR-011**: Laboratório inativo MUST permitir somente leitura a quem conservar acesso e permissão; qualquer tentativa de escrita MUST ser recusada, inclusive por acesso direto.
 - **FR-012**: Recursos inexistentes e inacessíveis MUST ter comportamento indistinguível. Leitura, envio e recuperação MUST revalidar acesso e MUST NOT expor autoria interna, credenciais ou detalhes privilegiados por padrão.
 - **FR-013**: A entrega MUST NOT calcular, classificar ou diagnosticar IHFR nem alterar ciência para viabilizar o formulário. A disponibilidade de dados para incrementos posteriores não autoriza executá-los.
+- **FR-014**: Cada coleta MUST aceitar no máximo um conjunto ambiental v1 confirmado, contendo integralmente os quatro grupos água, solo, vegetação e terreno; ausência permitida em campo opcional MUST permanecer distinguível de zero e falso.
+- **FR-015**: `OWNER`, `ADMIN` e `MEMBER` com vínculo atual MUST poder registrar e consultar o conjunto; laboratório inativo MUST impedir registro e manter leitura autorizada. A autoria MUST derivar da sessão e ser preservada historicamente.
+- **FR-016**: O fluxo MUST revisar em memória antes de confirmar, persistir o conjunto em uma transação atômica e usar chave idempotente própria por autor, distinta de `confirmationKey` da coleta.
+- **FR-017**: O conjunto confirmado MUST ser imutável nesta entrega; edição, complementação e exclusão ficam fora do escopo. Replay idêntico MUST recuperar o mesmo resultado e replay divergente MUST produzir conflito sem alterar o registro.
+- **FR-018**: Cada conjunto MUST registrar `measurementContractVersion = "ihfr-measurement-v1"`; a referência não pode ser substituída por `algorithmVersion` nem pela versão futura do contrato matemático.
+- **FR-019**: O contrato de medição v1 MUST seguir [measurement-contract-v1.md](contracts/measurement-contract-v1.md), e a fronteira para cálculo posterior MUST seguir [math-contract-v1.md](contracts/math-contract-v1.md), sem executar fórmulas nesta entrega.
 
 ### Key Entities
 
 - **Coleta existente**: registro confirmado da IMP-004, com identidade, ocorrência, confirmação, autoria histórica e vínculo territorial preservados.
-- **Dados ambientais associados**: observações registradas para essa coleta conforme contrato aplicável. Composição e multiplicidade científica permanecem pendentes em G2; não se define uma entidade por grupo presumido.
-- **Referência do contrato científico**: identifica as regras aprovadas usadas no registro, com granularidade, vigência e compatibilidade a decidir pela autoridade competente. Não equivale à versão de cálculo.
+- **Dados ambientais associados**: conjunto integral único e imutável, composto pelos grupos água, solo, vegetação e terreno conforme `ihfr-measurement-v1`.
+- **Referência do contrato de medição**: identifica as regras v1 usadas no registro e permanece separada da versão futura do contrato matemático e do algoritmo.
 - **Contexto de acesso**: pessoa elegível, vínculo atual, papel, estado do laboratório e permissões específicas, independentes de autoria histórica.
 
 ## Success Criteria *(mandatory)*
@@ -106,18 +113,18 @@ Esses critérios são metas verificáveis, não resultados alcançados. Os conju
 
 | Gate | Classificação e fonte | Evidência exigida para liberação | Impacto atual |
 |---|---|---|---|
-| G1 — Coleta integrada | `FATO_DOCUMENTADO`: IMP-004 plan/quickstart e sua dependência da IMP-003 | Coleta confirmada integrada, guard contextual compartilhado, papéis, leitura/inatividade, metadados imutáveis e testes de isolamento comprovados; reconciliar contratos com a base real | Bloqueia implementação consumidora; documentação da IMP-004 não substitui código integrado |
-| G2 — Ciência e dados | `PENDENCIA_DE_DECISAO`: CF-PD-005, CF-Q-011, PD-002, PD-004 | Autoridade científica/dados identificada; fonte validada; grupos, variáveis, tipos semânticos, unidades, cardinalidades, obrigatoriedade, ausências, precisão/faixas/validações, referência de versão, aplicabilidade e evolução aprovados; exemplos válidos/inválidos | Bloqueia formulário científico, validação, contrato de payload e desenho físico definitivo |
-| G3 — Permissões e ciclo dos dados | `PENDENCIA_DE_DECISAO`: CF-PD-003/006 e limites de CREATE_COLLECTION na IMP-004 | Autoridade de produto/dados aprova quem registra/consulta, se há restrição ao autor, unidade do registro, revisão/confirmação, primeira gravação, repetição/conflito, eventual complementação e autoria própria | Bloqueia semântica das operações e autorização específica; não reabre a matriz já aprovada para criar a coleta |
+| G1 — Coleta integrada | `EVIDENCIA_IMPLEMENTACAO`: IMP-004 `7c97714`, merge PR #24 `37fb3a4` e `implementation-evidence.md` | Coleta confirmada integrada, guard contextual, papéis, leitura/inatividade, idempotência, imutabilidade e isolamento comprovados | **FECHADO** em 2026-09-16; a IMP-005 deve consumir os contratos reais sem ampliá-los silenciosamente |
+| G2 — Ciência e dados | `DECISAO_CONFIRMADA`: instrução de 2026-09-17 e contratos v1 desta feature | Quatro grupos e campos técnicos v1, unidades explícitas quando conhecidas, nulabilidade, faixas estruturais, versão e exemplos fixados; cálculo científico separado | **FECHADO para captura v1**; validade científica do IHFR permanece responsabilidade da IMP-006/autoridade científica |
+| G3 — Permissões e ciclo dos dados | `DECISAO_CONFIRMADA`: instrução de 2026-09-17 | Três papéis vinculados registram/leem; conjunto único, integral, imutável, confirmado e idempotente; inativo somente leitura | **FECHADO** para a IMP-005 |
 
-`RECOMENDACAO`: em G3, avaliar registro inicial com revisão em memória, confirmação integral e recuperação da mesma tentativa. Não presumir rascunho persistido, complementação ou atualização. Recomendações não liberam gates.
+O ciclo confirmado usa revisão em memória, confirmação integral e recuperação da mesma tentativa. Não há rascunho persistido, complementação ou atualização nesta entrega.
 
-O escopo e os gates podem ser especificados responsavelmente sem escolher respostas científicas. O planejamento é condicionado, não está pronto para tarefas executáveis ou implementação enquanto G1–G3 permanecerem abertos. Responsáveis nominais e prazos não foram especificados.
+O escopo está pronto para tarefas executáveis. O contrato v1 é uma decisão técnica/de dados para captura; não deve ser apresentado como validação científica do IHFR nem usado para calcular diagnóstico nesta feature.
 
 ### Fora do escopo
 
-Cálculo, classificação e diagnóstico IHFR; pesos, fórmulas, limiares e recomendações científicas; dashboards, gráficos, mapas agregados, histórico/acompanhamento geral; edição ou exclusão de coletas confirmadas; IMP-006/007/008; escolha de Python, Plotly, Leaflet, OpenStreetMap ou integração científica; offline, sincronização, sensores, hardware, importação em massa; código, schema, migrations e tarefas executáveis.
+Cálculo, classificação e diagnóstico IHFR; pesos, fórmulas, limiares e recomendações científicas; dashboards, gráficos, mapas agregados, histórico/acompanhamento geral; edição ou exclusão de coletas confirmadas; IMP-006/007/008; escolha de Python, Plotly, Leaflet, OpenStreetMap ou integração científica; offline, sincronização, sensores, hardware e importação em massa.
 
 ### Fontes e baseline
 
-Base Git: `origin/development` em `f440282a9aefbbb85b5199d0610fdb9ecab3dc87`. Fonte IMP-004: `origin/004-environmental-collection-registration` em `a44ac7ab3d4ead5adae977e53fd9cb9dfe05368e`, consultada somente por leitura. Não houve merge, rebase ou cherry-pick. Requisitos Code-First e governança citados foram consultados no mesmo SHA da IMP-004; classificação e limites preservados. A solicitação atual prevalece sobre o macrofluxo histórico que reunia coleta e medições numa única confirmação.
+Base original da branch: `origin/development` em `f440282a9aefbbb85b5199d0610fdb9ecab3dc87`. Reconciliação atual: `origin/004-environmental-collection-registration` em `7c977147797ca8a8c167033fee6e7a8ab46f673f`, contida em `origin/development` no merge `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`. A branch IMP-005 ainda não foi atualizada/rebaseada; esta revisão documental não altera ancestralidade Git. A solicitação atual prevalece sobre o macrofluxo histórico que reunia coleta e medições numa única confirmação.

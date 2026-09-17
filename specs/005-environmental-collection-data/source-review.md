@@ -2,6 +2,10 @@
 
 **Date**: 2026-09-15
 
+## Atualização de decisão — 2026-09-17
+
+`DECISAO_CONFIRMADA`: a autoridade técnica do projeto aprovou a sugestão de separar contrato de medição, contrato matemático e versão do algoritmo. Para a IMP-005, aprovou-se o contrato técnico `ihfr-measurement-v1`, um conjunto integral e imutável por coleta, acesso de OWNER/ADMIN/MEMBER vinculados, revisão antes da confirmação e idempotência própria. Essa decisão fecha G2/G3 para captura e não afirma validação científica das fórmulas do IHFR.
+
 ## Preparação Git
 
 - Estado inicial observado: `003-area-registration-and-viewing`, árvore sem alterações rastreadas/não ignoradas.
@@ -71,6 +75,16 @@ AGENTS.md, constituição e SOURCE_AUTHORITY do HEAD IMP-004 foram comparados co
 
 Skills aplicadas: somente `speckit-specify` e `speckit-plan`. Templates resolvidos pelos scripts locais; `setup-plan.sh --json` executado. Não existem hooks em `.specify/extensions.yml`. O seletor local `.specify/feature.json` foi atualizado e permanece ignorado, sem inclusão forçada.
 
-A verificação documental cobre presença dos oito artefatos, links, ausência de placeholders, revisão do diff, escopo e conteúdo sensível. Código, schema, migrations, tasks IMP-005, análise Spec Kit, coverage, implementação e PR estão fora da execução. Testes funcionais, Prisma, banco, build e navegador não foram executados; critérios funcionais não estão comprovados.
+A verificação inicial cobriu os oito artefatos então existentes. Na atualização de 2026-09-17 foram acrescentados contratos de medição/matemático e `tasks.md`. Código, schema, migrations, análise Spec Kit, coverage, implementação e PR continuam fora desta execução. Testes funcionais, Prisma, banco, build e navegador não foram executados; critérios funcionais não estão comprovados.
 
 Após G2/G3, o registro de resolução poderá exigir atualização de PENDING_DECISIONS, DOCUMENT_REGISTER ou TECH_DECISIONS, conforme assunto. Esses caminhos não foram alterados porque a autorização atual limita a entrega aos documentos da feature e auxiliares das skills. Não há decisão científica nova a promover aos registros globais.
+
+## Atualização de integração — 2026-09-16
+
+- `git fetch origin --prune` atualizou a IMP-004 de `a44ac7ab3d4ead5adae977e53fd9cb9dfe05368e` para `7c977147797ca8a8c167033fee6e7a8ab46f673f` e `origin/development` para `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`.
+- `git merge-base --is-ancestor origin/004-environmental-collection-registration origin/development` retornou sucesso: a IMP-004 está integrada pelo PR #24.
+- `EVIDENCIA_IMPLEMENTACAO`: schema, migration, guard contextual, POST de confirmação, GET de detalhe, idempotência por autor, FK área/laboratório, trigger de imutabilidade, fixtures, testes unitários, integração, migration, E2E, lint, typecheck e build constam do commit e de `specs/004-environmental-collection-registration/implementation-evidence.md`.
+- Contratos herdados reais: `occurredAt` RFC 3339 com offset preservado; `confirmedAt` do servidor; `confirmationKey` UUID por autor; pai confirmado sem UPDATE/DELETE; envelopes `{ collection }`/`{ error }`; `Cache-Control: no-store`; laboratório inativo somente leitura; inexistente e inacessível retornam comportamento uniforme.
+- G1 foi fechado nos artefatos IMP-005. G2 e G3 permanecem abertos porque a IMP-004 não aprova taxonomia científica, unidades, precisão, ausência, versionamento do contrato de medição, permissão específica para medições nem ciclo de complementação/correção.
+- A branch local IMP-005 continua descendendo da base original `f440282`; nenhuma reconciliação Git, merge, rebase ou cherry-pick foi realizada nesta atualização documental.
+- O histórico acima, datado de 2026-09-15, foi preservado como fotografia da primeira análise; esta seção o sucede e não o reescreve retroativamente.

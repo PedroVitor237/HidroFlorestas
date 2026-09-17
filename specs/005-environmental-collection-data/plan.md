@@ -4,13 +4,13 @@
 
 **Input**: `specs/005-environmental-collection-data/spec.md`
 
-**Status**: Planejamento documental condicionado concluído; implementação não liberada. G1–G3 permanecem abertos.
+**Status**: Planejamento finalizado; G1–G3 resolvidos para a captura v1 e feature pronta para tarefas.
 
 ## Summary
 
-Associar dados ambientais a uma coleta existente, preservando a cadeia laboratório → área → coleta → dados e a imutabilidade dos metadados da IMP-004. O plano separa invariantes já definidas, baseline técnico observado e escolhas que dependem de aprovação científica/de produto. O conteúdo científico, o modelo físico e a semântica final de escrita não são completados por suposição.
+Associar dados ambientais a uma coleta existente, preservando a cadeia laboratório → área → coleta → dados e a imutabilidade dos metadados da IMP-004. O plano separa invariantes, baseline técnico e a captura técnica v1 aprovada. Fórmulas e validação científica do IHFR permanecem fora do recorte.
 
-`RECOMENDACAO`: reutilizar autenticação, autorização contextual quando integrada, handlers finos, serviço testável e DTOs fechados. Nenhuma tecnologia ou dependência nova é necessária para esta etapa documental. Resultado da pesquisa em [research.md](research.md); contratos de fronteira em [contracts/environmental-data-boundary.md](contracts/environmental-data-boundary.md).
+`RECOMENDACAO`: reutilizar autenticação e autorização contextual integradas, handlers finos, serviço testável e DTOs fechados. Nenhuma tecnologia ou dependência nova é necessária para esta etapa documental. Resultado da pesquisa em [research.md](research.md); contratos de fronteira em [contracts/environmental-data-boundary.md](contracts/environmental-data-boundary.md).
 
 ## Technical Context
 
@@ -18,7 +18,7 @@ Associar dados ambientais a uma coleta existente, preservando a cadeia laborató
 
 **Primary Dependencies**: Next.js `^16.1.6`, Prisma/client `^7.4.2`, adapter Neon `^7.7.0`, Tailwind `^4`, Sonner `^2.0.7`; nenhuma instalação ou atualização nesta entrega.
 
-**Storage**: PostgreSQL declarado em `prisma/schema.prisma`, adapter Neon conectado em `src/app/api/server/lib/prisma.ts`; estado de banco/migrations não consultado. Modelo científico definitivo depende de G2/G3.
+**Storage**: PostgreSQL declarado em `prisma/schema.prisma`, adapter Neon conectado em `src/app/api/server/lib/prisma.ts`; conjunto ambiental versionado em entidade própria com payload JSON canônico fechado.
 
 **Testing**: `node:test` com `tsx`; Playwright; scripts existentes `test:unit`, `test:integration`, `test:e2e`, `lint`, `typecheck`, `build`. Nenhum executado nesta etapa documental.
 
@@ -30,7 +30,7 @@ Associar dados ambientais a uma coleta existente, preservando a cadeia laborató
 
 **Constraints**: autenticação e escopo no servidor; inativo somente leitura; inexistente/inacessível indistinguíveis; pai confirmado imutável; nenhuma exposição automática de legado ou campo interno; gates científicos não contornáveis.
 
-**Scale/Scope**: registro e consulta de dados de uma coleta contextual; multiplicidade de observações/grupos ainda em G2. Sem diagnóstico, agregação, mapas ou histórico geral.
+**Scale/Scope**: registro e consulta de no máximo um conjunto integral por coleta contextual. Sem diagnóstico, agregação, mapas ou histórico geral.
 
 ## Constitution Check
 
@@ -38,15 +38,15 @@ Gate documental avaliado antes da pesquisa e reavaliado após o design condicion
 
 | Princípio | Antes da Phase 0 | Após Phase 1 |
 |---|---|---|
-| I — Hierarquia | Atendido: solicitação atual, contratos herdados e fontes em revisão separados | Atendido: ciência permanece G2; schema não foi promovido |
-| II — Entrega vertical | Atendido: registrar/consultar dados de uma coleta | Atendido: jornada delimitada; execução depende G1–G3 |
+| I — Hierarquia | Atendido: solicitação atual, contratos herdados e fontes em revisão separados | Atendido: captura v1 aprovada sem promover schema legado nem fórmula científica |
+| II — Entrega vertical | Atendido: registrar/consultar dados de uma coleta | Atendido: jornada delimitada e pronta para implementação após reconciliação da branch |
 | III — Feature própria | Atendido: branch exata e diretório IMP-005 | Atendido: apenas documentação da feature e seletor local da skill |
 | IV — Evidência | Atendido: SHAs da base e IMP-004 fixados | Atendido: inventário de fontes e divergências; nada declarado implementado |
 | V — Qualidade/segurança | Atendido: isolamento e legado identificados | Atendido: matriz de validação planejada; checks documentais realizados |
-| VI — Evolução documental | Atendido: raw/governança preservados | Atendido: decisões pendentes registradas localmente; nenhum histórico reescrito |
+| VI — Evolução documental | Atendido: raw/governança preservados | Atendido: resolução G2/G3 registrada localmente; nenhum histórico reescrito |
 | VII — Equipe/branch | Atendido: derivação de origin/development | Atendido: sem merge/rebase/cherry-pick, schema ou infraestrutura paralela |
 
-**Gate de implementação: BLOQUEADO**. O usuário autoriza expressamente planejamento com pendências; a regra geral da skill sobre desconhecidos não autoriza resolvê-los por inferência. O design é completo no limite documental permitido, sem contrato científico executável. G2/G3 não são simples detalhes técnicos dispensáveis.
+**Gate de implementação: APROVADO PARA TASKS**. G1 foi fechado pela implementação integrada da IMP-004; G2/G3 foram resolvidos pela decisão de 2026-09-17 e pelos contratos v1. A IMP-005 implementa captura versionada, não cálculo IHFR.
 
 ## Project Structure
 
@@ -61,10 +61,13 @@ specs/005-environmental-collection-data/
 ├── data-model.md
 ├── quickstart.md
 ├── source-review.md
-└── contracts/environmental-data-boundary.md
+├── contracts/environmental-data-boundary.md
+├── contracts/measurement-contract-v1.md
+├── contracts/math-contract-v1.md
+└── tasks.md
 ```
 
-Não criar `tasks.md` nesta execução. `.specify/feature.json` seleciona esta feature e é ignorado pelo repositório; será mantido localmente sem alterar `.gitignore` nem forçar inclusão.
+`.specify/feature.json` seleciona esta feature e é ignorado pelo repositório; será mantido localmente sem alterar `.gitignore` nem forçar inclusão.
 
 ### Source Code (repository root)
 
@@ -72,61 +75,66 @@ Caminhos reais inspecionados, sem modificações:
 
 ```text
 prisma/schema.prisma
-src/app/api/laboratories/route.ts
+prisma/migrations/20260915000100_collection_registration_metadata/migration.sql
+src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route.ts
+src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/route.ts
 src/app/api/server/auth/auth.core.ts
 src/app/api/server/middlewares/auth.middleware.ts
-src/app/api/server/laboratories/laboratory.contracts.ts
-src/app/api/server/services/laboratories.service.ts
+src/app/api/server/areas/area.authorization.ts
+src/app/api/server/collections/collection.contracts.ts
+src/app/api/server/services/collections.service.ts
 src/app/api/server/lib/prisma.ts
-tests/unit/
-tests/integration/
-tests/e2e/
-tests/fixtures/
+src/types/collection.type.ts
+tests/unit/collection-*.test.ts
+tests/integration/collections-route.test.ts
+tests/e2e/collection-registration.spec.ts
+tests/fixtures/collections.ts
+tests/migration/collection-registration-migration.test.ts
 ```
 
-**Structure Decision (`RECOMENDACAO`)**: manter essas camadas. Depois dos gates, o serviço de dados ambientais e seus contratos poderão ficar ao lado dos serviços existentes, e a interface partirá do detalhe contextual de coleta da IMP-004. Nomes definitivos de arquivos consumidores e endpoints serão fechados após ciência e ciclo; nenhum esqueleto de código é gerado agora.
+**Structure Decision (`DECISAO_CONFIRMADA`)**: manter essas camadas; criar contratos/serviço de dados ambientais ao lado dos existentes, API contextual em `.../collections/[collectionId]/environmental-data`, tipos públicos dedicados e formulário iniciado pelo detalhe da coleta. Persistir metadados e payload canônico fechado em entidade própria, sem modificar a coleta imutável e sem usar as quatro tabelas legadas como contrato normativo.
 
 ## Baseline and Divergence
 
-Base exata: `f440282a9aefbbb85b5199d0610fdb9ecab3dc87` (`origin/development`). Fonte documental: `a44ac7ab3d4ead5adae977e53fd9cb9dfe05368e` (`origin/004-environmental-collection-registration`), mesmo SHA informado na solicitação. Estado inicial: branch `003-area-registration-and-viewing`, sem alterações rastreadas ou não ignoradas. Após a troca, `test-results/` preexistente ficou não ignorado porque a regra só existia na branch anterior; seus arquivos não pertencem a esta entrega.
+Base original da branch: `f440282a9aefbbb85b5199d0610fdb9ecab3dc87`. Baseline integrado observado em 2026-09-16: IMP-004 `7c977147797ca8a8c167033fee6e7a8ab46f673f`, já ancestral de `origin/development` `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`. A branch IMP-005 permanece tecnicamente baseada no commit original até reconciliação Git autorizada. `test-results/` e `coverage-review.md` preexistentes não pertencem a esta atualização.
 
 | Assunto | Development observado | Contrato documentado da IMP-004 | Consequência IMP-005 |
 |---|---|---|---|
 | Autenticação/laboratórios | `requireAuth`, conta ACTIVE, serviço persistente de laboratório | Reutiliza autenticação; espera guard da IMP-003 | Reutilizar; não criar autorização temporária |
-| Vínculo/papéis | `ResearchersLinked` sem papel contextual | OWNER/ADMIN/MEMBER e guard compartilhado da IMP-003 | G1 exige integração/testes reais |
-| Área | model legado com Coordinates e associação ao laboratório | Área contextual estabilizada pela IMP-003 | Não importar automaticamente contrato planejado como código existente |
-| Coleta | `CollectionData` com área, autor, timestamps técnicos e observações | Novos tempos/offset, laboratório, confirmationKey, FK composta e trigger | G1 exige coleta confirmada disponível e imutável |
-| Interfaces | Envelope de laboratório `{ success, ... }`; sem rotas de coleta | `{ collection }` e `{ error: { code, message } }`, no-store | Verificar paridade após integração; preservar DTO IMP-004 fechado |
-| Ciência | Quatro models legados, FK única por coleta, sem versão do contrato | Relações preservadas, medições excluídas | G2 bloqueia payload, validação, cardinalidade normativa e migração |
+| Vínculo/papéis | OWNER/ADMIN/MEMBER integrados ao guard contextual | `CREATE_COLLECTION` disponível aos três papéis em laboratório ativo; mutabilidade separada da permissão | Criar capacidade explícita de dados ambientais para os três papéis; não depender semanticamente de `CREATE_COLLECTION` |
+| Área | Área subordinada por `{id, laboratoryId}` e leitura contextual | FK/consulta contextual implementadas | Reutilizar a cadeia; não aceitar área ou laboratório do payload como autoridade |
+| Coleta | `CollectionData` contém laboratório, área, autor, `occurredAt`, `occurrenceOffset`, `confirmedAt` e `confirmationKey` | FK composta, idempotência por autor e trigger bloqueando UPDATE/DELETE | Consumir como pai imutável; filhos não podem tocar `updatedAt` nem reutilizar `confirmationKey` |
+| Interfaces | POST de confirmação e GET de detalhe executáveis | `{ collection }`, `{ error: { code, message } }`, `no-store`, `Location` de API | Criar contrato próprio da IMP-005 e preservar DTO fechado da coleta |
+| Ciência | Quatro models legados, FK única por coleta, sem versão do contrato | Relações preservadas, medições excluídas | Preservar legado e implementar `ihfr-measurement-v1` em entidade própria |
 
-A IMP-004 depende do gate T111 da IMP-003 por sua T005; não declarou implementação executada. Nenhum comando nesta tarefa integrou essas branches.
+A IMP-004 incorporou a IMP-003, concluiu seus gates automatizados e foi integrada a `development`. Esta revisão apenas observa os commits remotos; não faz merge, rebase ou cherry-pick na branch IMP-005.
 
 ## Phase 0 — Research Outcome
 
-[research.md](research.md) registra alternativas, razões e conclusões R-001–R-008. Fontes científicas históricas pertinentes foram consultadas por rastreabilidade e mantidas como históricas. Não há aprovação suficiente para fechar conteúdo científico. O resultado responsável é explicitar G2/G3, não marcar a pesquisa como validação científica.
+[research.md](research.md) registra alternativas, razões e conclusões R-001–R-009. Fontes científicas históricas permanecem históricas. A decisão atual fecha o contrato técnico de captura e o ciclo, sem marcar o conteúdo como fórmula cientificamente validada.
 
 ## Phase 1 — Conditional Design
 
 1. **Contexto**: autenticar, resolver laboratório pelo vínculo atual, verificar papel/estado/permissão e resolver área/coleta/dados subordinados. Revalidar na gravação e recuperação; nunca usar estado do cliente como autoridade.
-2. **Fronteira de ciência**: somente campos e regras de G2 podem integrar formulário, serialização e validação. Ausência do contrato bloqueia a capacidade; não criar endpoint genérico que aceite qualquer JSON.
-3. **Persistência**: manter pai confirmado intacto. Após G2/G3, planejar dependentes e integridade referencial sem UPDATE do pai e sem reutilizar sua chave de confirmação. Revalidar a mesma cadeia de origem no limite da gravação.
+2. **Fronteira de ciência**: formulário, parser fechado e serializer seguem `ihfr-measurement-v1`; a persistência JSON não torna o endpoint genérico e qualquer campo extra é recusado.
+3. **Persistência**: criar `EnvironmentalMeasurementSet` um-para-um com a coleta, contendo autor, versão, payload canônico, hash, confirmação e chave idempotente própria. Manter o pai confirmado intacto e proteger o conjunto contra UPDATE/DELETE.
 4. **Consulta**: projeção mínima contextual, referência de contrato no nível aprovado, distinção entre ausência e valor; leitura de laboratório inativo conforme permissão. Legado não é automaticamente publicado como válido.
-5. **Interface**: acesso contextual pelo detalhe da coleta, estados carregando/sem dados/erro/somente leitura e mensagens acessíveis. Revisão/confirmar/retry são recomendações sujeitas ao ciclo G3, não cópia obrigatória da IMP-004.
-6. **Compatibilidade**: manter GET/POST e DTO existentes da IMP-004. Qualquer nova superfície de dados deve ter contrato próprio após G2/G3; nenhuma extensão silenciosa de schema fechado ou de permissão.
+5. **Interface**: acesso contextual pelo detalhe da coleta, formulário dos quatro grupos, revisão em memória, confirmação, retry com chave estável e estados carregando/sem dados/erro/somente leitura.
+6. **Compatibilidade**: manter GET/POST e DTO existentes da IMP-004. A nova superfície possui contrato próprio e não amplia silenciosamente o DTO da coleta nem reutiliza sua chave idempotente.
 
 ## Gates and Resumption
 
 | Gate | Situação | Critério de saída | Autoridade/evidência |
 |---|---|---|---|
-| G1 | Aberto | IMP-003/004 integradas, schema/guard/rotas/migrations reconciliados e testes de isolamento, inatividade e imutabilidade aprovados | Equipe de implementação; commits e resultados executados, não só documentação |
-| G2 | Aberto | Contrato aplicável validado, versionamento no nível autorizado, mapeamento e exemplos científicos completos | Responsáveis científicos/dados a designar; origem e aprovação registradas |
-| G3 | Aberto | Matriz de permissão e ciclo definidos, unidade de escrita/repetição/concorrência, autoria própria e eventual complementação decididos | Produto/dados a designar; decisão explícita registrada |
+| G1 | **Fechado** | Satisfeito por `7c97714` e merge `37fb3a4`: schema, guard, rotas, migrations, isolamento, inatividade, idempotência e imutabilidade validados | Evidência de implementação da IMP-004 e ancestralidade em `origin/development` |
+| G2 | **Fechado para captura v1** | `measurement-contract-v1.md` fixa grupos, campos, tipos, unidades, nulabilidade, faixas estruturais, versão e casos; `math-contract-v1.md` separa cálculo futuro | Decisão técnica/de dados de 2026-09-17; não equivale a validação científica do IHFR |
+| G3 | **Fechado** | OWNER/ADMIN/MEMBER vinculados; conjunto único, integral, imutável, confirmado e idempotente; inativo somente leitura | Decisão explícita de 2026-09-17 |
 
-Depois da liberação: revisar coordenadamente spec, checklist, pesquisa, modelo, contrato e quickstart; somente então fechar payload e estratégia física e solicitar/seguir a etapa de tarefas em execução futura autorizada. Nenhuma skill posterior é disparada por este plano.
+Próxima etapa: gerar `tasks.md`, executar análise de consistência e somente então implementar após reconciliar a branch com `origin/development`.
 
 ## Validation Strategy
 
-Documentação atual: revisão completa do diff, referências locais e em SHA fixo, headings e placeholders, escopo de arquivos, `git diff --check`, ausência de código/schema/migration/tasks e inspeção de conteúdo sensível.
+Documentação atual: revisão completa do diff, referências locais e em SHA fixo, headings e placeholders, escopo de arquivos, `git diff --check`, ausência de código/schema/migration e inspeção de conteúdo sensível.
 
 Futura execução: [quickstart.md](quickstart.md) descreve testes independentes das duas histórias, matriz de acesso e ambiente seguro. Ciência usa exemplos aprovados; concorrência e proteção do pai usam PostgreSQL real isolado. Automação não substitui avaliação humana SC-006. Cada resultado será registrado separadamente.
 
@@ -134,12 +142,12 @@ Futura execução: [quickstart.md](quickstart.md) descreve testes independentes 
 
 | Risco | Mitigação |
 |---|---|
-| Schema virar ciência normativa | G2, inventário classificado e ausência de payload fictício |
-| Permissão de coleta virar permissão de medição | G3 e matriz explícita antes do guard consumidor |
-| Escrita de filhos tocar pai imutável | Serviço não atualiza coleta; ensaio com trigger real após G1 |
+| Schema virar ciência normativa | Contrato de medição explícito, legado classificado e cálculo separado |
+| Permissão de coleta virar permissão de medição | Capacidade explícita de dados ambientais no guard consumidor |
+| Escrita de filhos tocar pai imutável | Serviço não atualiza coleta; testes futuros devem provar compatibilidade com a trigger real já integrada |
 | Backfill atribuir versão a legado sem prova | Nenhuma reclassificação automática; decisão de dados e preflight futuro |
-| Mudança de contrato durante preenchimento | Regra de vigência aprovada em G2; impedir reinterpretação silenciosa |
-| Resultado desconhecido criar duplicatas | Definir identidade da operação em G3, distinta da confirmação IMP-004 |
+| Mudança de contrato durante preenchimento | Versão fixada no servidor; impedir reinterpretação silenciosa |
+| Resultado desconhecido criar duplicatas | Chave própria e hash canônico, distintos da confirmação IMP-004 |
 | Branch base errada ou conteúdo preexistente publicado | Base fixada, stage por caminhos exatos e revisão dos dois commits |
 
 ## Complexity Tracking
@@ -148,4 +156,4 @@ Nenhuma exceção constitucional proposta. Não há novas camadas, dependências
 
 ## Execution Boundary
 
-Somente `$speckit-specify` e `$speckit-plan`. `setup-plan.sh --json` executado; `.specify/extensions.yml` ausente antes/depois das etapas. Sem tasks, analyze, coverage, implement, código, Prisma, migrations, build/testes funcionais ou PR. Registros globais não alterados: após decisões G2/G3, será necessário registrar sua resolução em governança sob autorização dos caminhos correspondentes, preservando histórico.
+`$speckit-specify`, `$speckit-plan`, `$speckit-tasks` e a análise de consistência executados; `.specify/extensions.yml` ausente. Sem implement, código, Prisma, migrations, build/testes funcionais ou PR. Registros globais não alterados: a resolução G2/G3 deverá ser refletida na governança quando esses caminhos forem autorizados, preservando histórico.
