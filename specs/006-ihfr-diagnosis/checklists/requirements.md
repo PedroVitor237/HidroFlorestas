@@ -37,4 +37,6 @@ Os gates G1–G3 são precondições materiais explícitas, não marcadores ocul
 
 A IMP-005 foi consultada no commit remoto fixo `d3fade93e71473b88e44bb473fb2adb9718f2f4c` e classificada como planejada, ainda não integrada. A reconciliação com qualquer avanço posterior é requisito antes da implementação da IMP-006.
 
+Iteração 2: 16/16 critérios documentais permanecem atendidos após a revisão cruzada com a IMP-005 em `1235387ded9854be20a92f8639a502a80a2bd952`. A spec agora distingue respostas técnicas/de dados, contratos ainda não integrados e pendências científicas. G1 continua aberto até implementação e integração da IMP-005; G2 continua aberto porque `ihfr-math-contract-v1` não contém fórmula ativa nem aprovação científica; G3 foi reduzido apenas pelos padrões planejados de captura, imutabilidade, idempotência e recuperação, sem definir o produtor ou a auditoria do diagnóstico.
+
 Hooks: `.specify/extensions.yml` ausente; nenhum hook anterior ou posterior a specify foi executado.
