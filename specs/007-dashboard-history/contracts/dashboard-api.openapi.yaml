@@ -1,0 +1,314 @@
+openapi: 3.1.0
+info:
+  title: IMP-007 Dashboard e histórico básico
+  version: 1.0.0
+  description: >-
+    Contrato de leitura contextual derivado de áreas e coletas confirmadas.
+    Não representa uma API de auditoria nem inclui dados ambientais ou diagnóstico.
+servers:
+  - url: /
+security:
+  - cookieAuth: []
+paths:
+  /api/laboratories/{laboratoryId}/dashboard/summary:
+    get:
+      operationId: getLaboratoryDashboardSummary
+      summary: Consultar resumo do laboratório selecionado
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+      responses:
+        '200':
+          description: Resumo atual autorizado, inclusive para laboratório inativo.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummary'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/laboratories/{laboratoryId}/dashboard/history:
+    get:
+      operationId: getLaboratoryDashboardHistory
+      summary: Consultar uma parte do histórico derivado
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - name: cursor
+          in: query
+          required: false
+          description: >-
+            Cursor opaco retornado pela parte anterior. O tamanho da parte é fixo
+            em no máximo 20 itens.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 512
+            pattern: '^[A-Za-z0-9_-]+$'
+      responses:
+        '200':
+          description: Parte atual autorizada em ordem determinística.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryPage'
+        '400':
+          description: Cursor ausente de estrutura válida ou fora do contrato.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+              examples:
+                invalidCursor:
+                  value:
+                    error:
+                      code: INVALID_CURSOR
+                      message: O cursor do histórico é inválido.
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
+  parameters:
+    LaboratoryId:
+      name: laboratoryId
+      in: path
+      required: true
+      description: UUID do laboratório explicitamente selecionado.
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  headers:
+    NoStore:
+      description: A resposta não pode ser armazenada ou reutilizada entre contextos.
+      schema:
+        type: string
+        const: no-store
+  responses:
+    Unauthenticated:
+      description: Sessão ausente/inválida ou conta inelegível.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          examples:
+            unauthenticated:
+              value:
+                error:
+                  code: UNAUTHENTICATED
+                  message: Faça login para continuar.
+    NotFound:
+      description: Laboratório inexistente, inválido ou inacessível; casos indistinguíveis.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          examples:
+            notFound:
+              value:
+                error:
+                  code: NOT_FOUND
+                  message: Recurso não encontrado.
+    InternalError:
+      description: Falha interna sanitizada.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          examples:
+            internalError:
+              value:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Não foi possível carregar o dashboard.
+  schemas:
+    Uuid:
+      type: string
+      format: uuid
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+    LaboratoryContext:
+      type: object
+      additionalProperties: false
+      required: [id, name, status, membershipRole, readOnly]
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+        membershipRole:
+          type: string
+          enum: [OWNER, ADMIN, MEMBER]
+        readOnly:
+          type: boolean
+    DashboardSummary:
+      type: object
+      additionalProperties: false
+      required: [context, totals, links]
+      properties:
+        context:
+          $ref: '#/components/schemas/LaboratoryContext'
+        totals:
+          type: object
+          additionalProperties: false
+          required: [areas, confirmedCollections]
+          properties:
+            areas:
+              type: integer
+              minimum: 0
+            confirmedCollections:
+              type: integer
+              minimum: 0
+        links:
+          type: object
+          additionalProperties: false
+          required: [areas]
+          properties:
+            areas:
+              type: string
+              pattern: '^/dashboard/laboratories/[0-9a-fA-F-]+/areas$'
+    AreaReference:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+    CollectionReference:
+      type: object
+      additionalProperties: false
+      required: [id]
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+    AreaCreatedItem:
+      type: object
+      additionalProperties: false
+      required: [id, type, label, eventAt, area, destination]
+      properties:
+        id:
+          type: string
+          pattern: '^AREA_CREATED:[0-9a-fA-F-]+$'
+        type:
+          type: string
+          const: AREA_CREATED
+        label:
+          type: string
+          const: Área criada
+        eventAt:
+          type: string
+          format: date-time
+        area:
+          $ref: '#/components/schemas/AreaReference'
+        destination:
+          type: string
+          pattern: '^/dashboard/laboratories/[0-9a-fA-F-]+/areas/[0-9a-fA-F-]+$'
+    CollectionConfirmedItem:
+      type: object
+      additionalProperties: false
+      required: [id, type, label, eventAt, occurredAt, area, collection, destination]
+      properties:
+        id:
+          type: string
+          pattern: '^COLLECTION_CONFIRMED:[0-9a-fA-F-]+$'
+        type:
+          type: string
+          const: COLLECTION_CONFIRMED
+        label:
+          type: string
+          const: Coleta confirmada
+        eventAt:
+          type: string
+          format: date-time
+        occurredAt:
+          type: string
+          format: date-time
+        area:
+          $ref: '#/components/schemas/AreaReference'
+        collection:
+          $ref: '#/components/schemas/CollectionReference'
+        destination:
+          type: string
+          pattern: '^/dashboard/laboratories/[0-9a-fA-F-]+/areas/[0-9a-fA-F-]+/collections/[0-9a-fA-F-]+$'
+    HistoryItem:
+      oneOf:
+        - $ref: '#/components/schemas/AreaCreatedItem'
+        - $ref: '#/components/schemas/CollectionConfirmedItem'
+      discriminator:
+        propertyName: type
+        mapping:
+          AREA_CREATED: '#/components/schemas/AreaCreatedItem'
+          COLLECTION_CONFIRMED: '#/components/schemas/CollectionConfirmedItem'
+    HistoryPage:
+      type: object
+      additionalProperties: false
+      required: [context, items, page]
+      properties:
+        context:
+          $ref: '#/components/schemas/LaboratoryContext'
+        items:
+          type: array
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/HistoryItem'
+        page:
+          type: object
+          additionalProperties: false
+          required: [nextCursor]
+          properties:
+            nextCursor:
+              oneOf:
+                - type: string
+                  minLength: 1
+                  maxLength: 512
+                  pattern: '^[A-Za-z0-9_-]+$'
+                - type: 'null'
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum: [INVALID_CURSOR, UNAUTHENTICATED, NOT_FOUND, INTERNAL_ERROR]
+            message:
+              type: string
+              minLength: 1
