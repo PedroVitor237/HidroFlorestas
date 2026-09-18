@@ -53,7 +53,7 @@ description: "Tarefas executáveis da IMP-008 — mapa e visualização territor
 
 ### Endpoint GET e OpenAPI
 
-- [ ] T012 [P] Escrever o teste estático OpenAPI em `tests/unit/territorial-map-openapi-contract.test.ts` para OpenAPI 3.1, refs locais, único `operationId`, objetos fechados, UUID, exemplos, somente GET, status `200/401/404/500` e `Cache-Control: no-store` em todas as respostas
+- [ ] T012 [P] Escrever o teste estático OpenAPI em `tests/unit/territorial-map-openapi-contract.test.ts` para OpenAPI 3.1, refs locais, único `operationId`, objetos fechados, UUID, exemplos, somente GET, status `200/401/404/500`, `Cache-Control: no-store` em todas as respostas, `components.securitySchemes.cookieAuth` compatível com a autenticação integrada (`apiKey` no cookie `auth_token`) e exigência global `security: [{ cookieAuth: [] }]`, rejeitando qualquer override que torne operação territorial pública
 - [ ] T013 Escrever testes de integração do handler em `tests/integration/territorial-map-route.test.ts` para principal derivado da sessão, parâmetros contextuais, envelope exato, `no-store`, `401` para sessão/conta inelegível, `404` indistinguível para UUID/laboratório/vínculo inacessível ou revogado, `200` inativo e `500` sanitizado; executar junto de `tests/unit/territorial-map-openapi-contract.test.ts` e registrar RED somente do comportamento ausente
 - [ ] T014 Implementar a factory e o GET contextual em `src/app/api/laboratories/[laboratoryId]/territorial-map/route.ts`, mapear erros sem revelar existência e alinhar o DTO à fonte `specs/008-territorial-map/contracts/territorial-map-api.openapi.yaml`, sempre com `Cache-Control: no-store`
 - [ ] T015 Executar `tests/unit/territorial-map-openapi-contract.test.ts` e `tests/integration/territorial-map-route.test.ts` até GREEN, incluindo laboratório inativo, perda de elegibilidade, vínculo revogado, recurso cruzado e falha inesperada sanitizada
@@ -170,9 +170,9 @@ description: "Tarefas executáveis da IMP-008 — mapa e visualização territor
 
 **Purpose**: fechar contrato, escala proporcional, regressões, qualidade, escopo, evidência humana e reconciliações futuras sem ampliar a feature.
 
-- [ ] T044 Escrever e executar a matriz proporcional de 100 áreas/1.000 coletas em `tests/unit/territorial-map-service.test.ts`, verificando uma projeção sem N+1, seleção fechada, payload integral, zero cruzamento e metas técnicas registradas; se houver evidência de gargalo, registrar recomendação sem criar índice, migration, paginação, cluster ou PostGIS nesta feature
-- [ ] T045 Executar a suíte unitária completa com `npm run test:unit`, cobrindo `tests/unit/territorial-map-contracts.test.ts`, `tests/unit/territorial-map-openapi-contract.test.ts`, `tests/unit/territorial-map-service.test.ts`, `tests/unit/territorial-map-state.test.ts` e regressões unitárias das IMP-003/004
-- [ ] T046 Executar a suíte de integração completa com `npm run test:integration`, incluindo `tests/integration/territorial-map-route.test.ts`, `tests/integration/areas-route.test.ts` e `tests/integration/collections-route.test.ts`
+- [ ] T044 Escrever e executar em `tests/unit/territorial-map-service.test.ts` a prova estrutural em memória com 100 áreas/1.000 coletas confirmadas e ruído de outro laboratório, verificando ausência de N+1, seleção fechada, payload integral, zero cruzamento e tamanho do DTO, sem declarar p95 do endpoint, latência de PostgreSQL ou resultado de `EXPLAIN`
+- [ ] T045 Em aplicação isolada e PostgreSQL de teste descartável, carregar a mesma matriz proporcional, executar o procedimento reproduzível de `quickstart.md` com 10 aquecimentos e 100 leituras autenticadas sequenciais, calcular o p95 real contra a meta técnica de 500 ms, medir a lista sem tiles, executar `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` da query parametrizada e registrar ambiente, comandos, amostras, plano, tamanho do payload, resultados e limitações em `specs/008-territorial-map/implementation-evidence.md`; resultado não executado permanece `NAO_VERIFICADO`, e evidência de gargalo gera recomendação sem autorizar automaticamente índice, migration, paginação, cluster ou PostGIS
+- [ ] T046 Executar separadamente a suíte unitária completa com `npm run test:unit`, cobrindo os quatro testes territoriais e regressões unitárias das IMP-003/004, e depois a suíte de integração completa com `npm run test:integration`, incluindo `tests/integration/territorial-map-route.test.ts`, `tests/integration/areas-route.test.ts` e `tests/integration/collections-route.test.ts`, sem mascarar falha entre os dois comandos
 - [ ] T047 Executar `npx playwright test tests/e2e/territorial-map.spec.ts` com todas as requests de tile interceptadas e confirmar SC-001–SC-007 automatizável e SC-009 sem depender de serviço cartográfico público
 - [ ] T048 Executar as regressões E2E integradas `tests/e2e/area-registration.spec.ts`, `tests/e2e/area-viewing.spec.ts` e `tests/e2e/collection-registration.spec.ts`, preservando mapas, rotas, autorização, temporalidade e fallback das IMP-003/004
 - [ ] T049 Executar separadamente `npm run typecheck` contra `tsconfig.json` e todos os arquivos alterados em `src/**` e `tests/**`, sem combinar este gate com lint ou build
@@ -197,7 +197,7 @@ description: "Tarefas executáveis da IMP-008 — mapa e visualização territor
 - **Phase 4 — US2**: depende de T024; T026 e T027 podem ser escritos em paralelo após T025; T029 e T030 são sequenciais porque UI depende do DTO/query confirmado.
 - **Phase 5 — US3**: depende de T031; T033 e T034 podem ser escritos em paralelo após T032; T036 precede T037 para que o estado de dados esteja isolado do cartográfico.
 - **Phase 6 — US4**: depende de T038; testes precedem implementação e GREEN.
-- **Phase 7 — Gates**: depende de T043; T045–T055 são executados em ordem para manter evidência inequívoca e não mascarar falhas entre gates.
+- **Phase 7 — Gates**: depende de T043; T044 prova estrutura em memória, T045 mede endpoint/PostgreSQL reais e T046–T055 seguem em ordem para manter evidência inequívoca e não mascarar falhas entre gates.
 
 ### User Story Dependencies
 

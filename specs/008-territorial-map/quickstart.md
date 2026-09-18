@@ -35,6 +35,7 @@ git diff --check
 Resultados esperados:
 
 - OpenAPI 3.1 parseia, possui refs locais resolvidas e exatamente `getTerritorialMap`;
+- `components.securitySchemes.cookieAuth` usa `type: apiKey`, `in: cookie` e `name: auth_token`, e a exigência global `security: [{ cookieAuth: [] }]` protege a operação sem override público;
 - objetos do contrato são fechados;
 - a API possui somente GET e os status `200/401/404/500`;
 - todas as respostas declaram `Cache-Control: no-store`;
@@ -161,6 +162,10 @@ Nas larguras 320, 768 e 1280 px:
 
 ## 6. Performance validation
 
+Nenhum resultado numérico está pré-aprovado. A implementação deve registrar comandos, ambiente e resultados reais em `specs/008-territorial-map/implementation-evidence.md`.
+
+### 6.1 Structural in-memory proof
+
 Gerar fixture sintética protegida com 100 áreas e 1.000 coletas confirmadas no mesmo laboratório, além de ruído em outro laboratório.
 
 Verificar:
@@ -169,10 +174,23 @@ Verificar:
 - seleção fechada de campos;
 - zero linha de outro laboratório;
 - payload integral sem truncamento;
-- tamanho do JSON registrado como evidência, sem conter campos proibidos;
-- p95 do endpoint até a meta técnica de 500 ms no ambiente identificado;
-- lista interativa até a meta de 2 s após resposta, sem aguardar tiles;
-- inspeção de query/`EXPLAIN` somente no banco descartável da implementação.
+- tamanho do JSON registrado como evidência, sem conter campos proibidos.
+
+Esta prova roda em `tests/unit/territorial-map-service.test.ts`; ela não pode declarar p95 do endpoint, latência de PostgreSQL ou resultado de `EXPLAIN`.
+
+### 6.2 Real endpoint and PostgreSQL measurement
+
+Usar ambiente isolado, sem tráfego concorrente, com aplicação no commit avaliado e PostgreSQL de teste descartável. Registrar versão de Node.js e PostgreSQL, modo de execução, recursos de CPU/memória disponíveis, commit, configuração não sensível e comandos reproduzíveis. Preparar no banco o mesmo laboratório com 100 áreas e 1.000 coletas confirmadas, além de ruído em outro laboratório; não reutilizar dados pessoais ou ambiente de produção.
+
+Procedimento:
+
+1. confirmar autorização contextual, payload integral e tiles fora da medição;
+2. executar 10 leituras autenticadas de aquecimento, sem incluí-las na estatística;
+3. executar 100 leituras autenticadas sequenciais do endpoint e calcular p95 sobre essas 100 durações, usando relógio monotônico;
+4. comparar o p95 observado com a meta técnica do plano de até 500 ms, sem declarar SLA;
+5. executar `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` da mesma projeção parametrizada, somente no PostgreSQL descartável, e registrar plano, cardinalidades e buffers sem dados sensíveis;
+6. medir a lista interativa até a meta técnica de 2 s após a resposta, sem aguardar tiles;
+7. registrar valores, ambiente, limitações, tamanho do JSON e evidências em `specs/008-territorial-map/implementation-evidence.md`.
 
 Falha da meta não autoriza automaticamente índice, paginação ou cluster: registrar evidência e decidir a menor otimização sem comprometer FR-012.
 

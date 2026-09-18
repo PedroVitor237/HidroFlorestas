@@ -38,10 +38,10 @@ As metas de desempenho acima são `RECOMENDACAO_TECNICA` verificável na impleme
 |---|---|---|
 | I. Hierarquia de fontes | PASS — a spec pronta governa o recorte; Code-First, IMP-003/004 e código integrado foram usados conforme seus estados. | PASS — decisões técnicas estão classificadas em `research.md`; branches não integradas não foram tratadas como capacidade. |
 | II. Entregas verticais | PASS — mapa, lista e navegação formam um incremento pequeno sustentado por fontes integradas. | PASS — dados ambientais, IHFR, histórico, filtros e geometrias futuras permanecem fora e não bloqueiam o mínimo. |
-| III. Especificação por funcionalidade | PASS — planejamento limitado a `specs/008-territorial-map/**`. | PASS — plano, pesquisa, modelo, contrato e quickstart estão no diretório; `tasks.md` não foi criado. |
+| III. Especificação por funcionalidade | PASS — planejamento limitado a `specs/008-territorial-map/**`. | PASS — registro histórico da Fase 1: plano, pesquisa, modelo, contrato e quickstart foram concluídos antes da criação de `tasks.md`. Estado atual: `tasks.md` contém T001–T055 e a análise da baseline `389adeed` já foi realizada; esta revisão segue para nova análise independente. |
 | IV. Evidência e rastreabilidade | PASS — spec registra requisitos, baseline, Code-First e dependências publicadas. | PASS — artefatos distinguem `EVIDENCIA_IMPLEMENTACAO`, `DECISAO_DE_PLANEJAMENTO`, `PENDENCIA_DE_DECISAO` e reconciliação futura. |
 | V. Qualidade e segurança proporcionais | PASS — riscos centrais são isolamento, minimização, coordenadas, fallback e acessibilidade. | PASS — guard integrado, query contextual, DTO fechado, `no-store`, lista independente e matriz de testes cobrem os riscos sem auditoria geral. |
-| VI. Documentação evolutiva | PASS — `docs/raw/**` e registros históricos não serão alterados. | PASS — Leaflet é escolha local desta feature, não arquitetura cartográfica definitiva; a nova direção futura de Plotly está registrada no pacote da IMP-008 e requer reconciliação posterior de `TD-010`, fora do escopo documental autorizado nesta execução. |
+| VI. Documentação evolutiva | PASS — `docs/raw/**` e registros históricos não serão alterados. | PASS — Leaflet é escolha local desta feature, não arquitetura cartográfica definitiva; a direção futura de Plotly está registrada no pacote da IMP-008 e reconciliada em `TD-010` e nos registros Code-First diretamente pertinentes, sem declarar implementação. |
 | VII. Trabalho em equipe | PASS — branch própria, baseline remota sincronizada e sem integração automática. | PASS — design evita schema/configuração global novos e concentra futuras alterações em arquivos da feature e pequeno compartilhamento de configuração de mapa. |
 
 Não há violação constitucional a justificar. As decisões ainda abertas foram mantidas fora do incremento ou como pontos explícitos de reconciliação.
@@ -61,7 +61,7 @@ specs/008-territorial-map/
 │   └── territorial-map-api.openapi.yaml
 ├── checklists/
 │   └── requirements.md
-└── tasks.md                 # criado somente por $speckit-tasks
+└── tasks.md                 # T001–T055 criadas por $speckit-tasks
 ```
 
 ### Source Code (repository root)
@@ -166,7 +166,7 @@ Cor/posição não codificam estado único. Contagem, indisponibilidade, modo so
 
 Todas as respostas territoriais, inclusive erro, usam `Cache-Control: no-store`; o fetch usa `cache: "no-store"`; não há cache de servidor, SWR, local storage, service worker ou reutilização entre laboratórios. Isso não se aplica aos tiles: o navegador deve respeitar os headers do provedor, sem `no-cache`, proxy ou prefetch, conforme a política da fonte.
 
-A consulta é limitada semanticamente a um laboratório autorizado e a coletas confirmadas, com `select` fechado e sem N+1. Não haverá truncamento silencioso, pois FR-012 exige todas as áreas alcançáveis e não existe decisão de paginação/clustering. A matriz de 100/1.000 mede a hipótese de pequeno volume. O índice atual de área por `(laboratoryRoomId, createdAt)` e o de coleta por `(collectionAreaId, laboratoryRoomId)` são suficientes para iniciar; qualquer índice lab-wide, paginação ou infraestrutura espacial depende de evidência de `EXPLAIN`/latência/volume na implementação futura.
+A consulta é limitada semanticamente a um laboratório autorizado e a coletas confirmadas, com `select` fechado e sem N+1. Não haverá truncamento silencioso, pois FR-012 exige todas as áreas alcançáveis e não existe decisão de paginação/clustering. A prova unitária em memória usa a matriz de 100 áreas/1.000 coletas para verificar cardinalidade, isolamento, seleção fechada e ausência de N+1, mas não mede p95 do endpoint nem substitui PostgreSQL. Em etapa separada, uma instância isolada da aplicação e um PostgreSQL descartável com o mesmo conjunto proporcional medem o endpoint e produzem `EXPLAIN` da query real conforme [quickstart.md](./quickstart.md). O índice atual de área por `(laboratoryRoomId, createdAt)` e o de coleta por `(collectionAreaId, laboratoryRoomId)` são suficientes para iniciar; qualquer índice lab-wide, paginação ou infraestrutura espacial depende dessa evidência registrada de `EXPLAIN`/latência/volume.
 
 ### 8. Estratégia de testes
 
@@ -175,14 +175,15 @@ A consulta é limitada semanticamente a um laboratório autorizado e a coletas c
 | Unidade — contrato/serializer | validade e limites inclusive extremos; `location: null`; seis casas; reconstrução temporal; allowlist; contagem derivada; ausência de campos proibidos. |
 | Unidade — serviço | guard antes da query; todos os papéis; ativo/inativo; filtro por laboratório e tupla confirmada; zero/uma/múltiplas; contexto cruzado/revogado; consulta sem N+1; falha sanitizada. |
 | Unidade — estado de UI | loading/vazio/erro/sucesso; retry; invalidação de request; seleção mapa/lista; formatação; ciclos de tile disponível/degradado/indisponível. |
-| Contrato | OpenAPI 3.1 válido; refs resolvidas; um `operationId`; schemas fechados; UUIDs; exemplos; `200/401/404/500`; `no-store`; GET único. |
+| Contrato | OpenAPI 3.1 válido; refs resolvidas; um `operationId`; autenticação global `cookieAuth` compatível com o contrato integrado; nenhuma operação pública; schemas fechados; UUIDs; exemplos; `200/401/404/500`; `no-store`; GET único. |
 | Integração | factory do handler, params, principal derivado, status/envelopes/cache; inacessível indistinguível; inativo `200`; DTO não vaza contexto proibido. |
 | Interface/E2E | mapa/lista/painel; fit inicial; pontos coincidentes; links em uma ativação; loading/vazio/retry; troca de lab/resposta tardia; localização inválida; tile abortado/config ausente/módulo falho; teclado, ARIA e 320/768/1280 px. |
-| Desempenho | fixture sintética 100 áreas/1.000 coletas, tamanho do DTO, número de operações e meta técnica sem tiles; sem benchmark contra serviço público. |
+| Desempenho estrutural | teste unitário em memória com 100 áreas/1.000 coletas para cardinalidade, isolamento, seleção fechada, tamanho do DTO e ausência de N+1; não produz p95 nem plano PostgreSQL. |
+| Desempenho real | aplicação e PostgreSQL descartáveis em ambiente isolado; 10 aquecimentos e 100 leituras autenticadas sequenciais do endpoint, p95 calculado sobre as 100 amostras, inspeção `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` da query real e registro completo em `implementation-evidence.md`; tiles excluídos. |
 | Regressão | testes unitários/integração e E2E de IMP-003/004, mais lint, typecheck e build na fase de implementação. |
 | Humana | tecnologia assistiva real para a parcela de SC-007 e teste moderado de SC-008; ambos permanecem `NAO_VERIFICADO` até evidência registrada. |
 
-Nenhum teste funcional, build, Prisma ou banco é executado nesta etapa de planejamento.
+Nenhum teste funcional, build, Prisma ou banco é executado nesta revisão documental. As medições acima pertencem exclusivamente à futura implementação e nenhum resultado numérico é antecipado.
 
 ## Requirements Traceability
 

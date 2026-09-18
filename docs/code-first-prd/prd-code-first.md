@@ -200,7 +200,7 @@ O PRD mantém a visão, o escopo e a jornada de alto nível. A especificação s
 
 ### Mapa no núcleo do MVP
 
-`DIRECAO_CONFIRMADA_PARA_RASCUNHO` — O mapa integra o núcleo do primeiro MVP nas funções estabelecidas em `CF-PRD-FR-013`, `CF-PRD-FR-014` e `CF-PRD-FR-015`. Biblioteca, provedor, arquitetura, representação geométrica, camadas, precisão, privacidade e interações continuam decisões técnicas ou de UX abertas; OpenStreetMap, Plotly e Leaflet não são promovidos (`CF-PD-007`, `CF-CAP-011`, `TD-008`, `TD-010`, `TD-011`, `TD-014`).
+`DIRECAO_CONFIRMADA_PARA_RASCUNHO` — O mapa integra o núcleo do primeiro MVP nas funções estabelecidas em `CF-PRD-FR-013`, `CF-PRD-FR-014` e `CF-PRD-FR-015`. Leaflet/React-Leaflet são a escolha local planejada para o mapa mínimo da IMP-008; provedor, arquitetura definitiva, representação geométrica adicional, camadas, precisão, privacidade e interações continuam decisões técnicas ou de UX abertas. `TD-010` confirma Plotly somente para gráficos analíticos futuros posteriores à IMP-009, sem implementação ou integração definida (`CF-PD-007`, `CF-CAP-011`, `TD-008`, `TD-010`, `TD-011`, `TD-014`).
 
 ## Requisitos funcionais candidatos
 
@@ -248,7 +248,7 @@ Nenhum requisito deste rascunho define matemática do IHFR. `CF-PRD-FR-008`, `CF
 
 ### Mapas
 
-`DIRECAO_CONFIRMADA_PARA_RASCUNHO` — `CF-PD-007` confirma o mapa como parte do núcleo do primeiro MVP para cadastro e representação espacial de áreas, associação espacial de coletas e dados e visualização territorial de coletas, gráficos e resultados IHFR aplicáveis. O placeholder e as coordenadas do schema evidenciam apenas implementação parcial; biblioteca, provedor, arquitetura, geometria, camadas, precisão e interação seguem abertos (`CF-CAP-011`, `CF-GAP-021`, `CF-GAP-022`, `TD-008`, `TD-010`, `TD-011`, `TD-014`).
+`DIRECAO_CONFIRMADA_PARA_RASCUNHO` — `CF-PD-007` confirma o mapa como parte do núcleo do primeiro MVP para cadastro e representação espacial de áreas, associação espacial de coletas e dados e visualização territorial de coletas, gráficos e resultados IHFR aplicáveis. O mapa mínimo foi planejado com Leaflet/React-Leaflet; provedor, arquitetura definitiva, geometrias adicionais, camadas, precisão e interação futura seguem abertos. Plotly é direção confirmada apenas para gráficos analíticos futuros posteriores à IMP-009, condicionados aos contratos integrados e à aprovação científica aplicável (`CF-CAP-011`, `CF-GAP-021`, `CF-GAP-022`, `TD-008`, `TD-010`, `TD-011`, `TD-014`).
 
 ### IA
 
@@ -309,7 +309,7 @@ Rastreabilidade: `CF-PD-001`, `CF-PD-004`, `CF-PD-007`, `CF-PRD-FR-001`, `CF-PRD
 | `TD-006` | Lucide React | não aprova regras visuais ou de acessibilidade |
 | `TD-007` | Vercel como direção atual de hospedagem | não comprova deploy nem resolve hospedagem futura |
 
-Todas as linhas usam `DECISAO_DE_TRABALHO_PARA_RASCUNHO`. OpenStreetMap (`TD-008`), Python (`TD-009`), Plotly (`TD-010`), Leaflet (`TD-011`), integração Next.js/Python (`TD-012`), hospedagem futura (`TD-013`) e arquitetura de mapas (`TD-014`) permanecem alternativas técnicas em avaliação posterior, com classificação `NAO_ESPECIFICADO` neste PRD; não são dependências para definir ou aprovar conceitualmente o produto.
+Todas as linhas usam `DECISAO_DE_TRABALHO_PARA_RASCUNHO`. OpenStreetMap (`TD-008`), Python (`TD-009`), integração Next.js/Python (`TD-012`), hospedagem futura (`TD-013`) e arquitetura definitiva de mapas (`TD-014`) permanecem alternativas técnicas em avaliação posterior. Leaflet/React-Leaflet são a escolha planejada para o mapa mínimo da IMP-008, e Plotly (`TD-010`) é direção confirmada para gráficos analíticos futuros posteriores à IMP-009; sua arquitetura de execução, integração, entradas e gráficos concretos permanecem `NAO_ESPECIFICADO`. Nenhuma dessas escolhas prova implementação ou autoriza dependência nova.
 
 ## Rastreabilidade local dos requisitos candidatos
 

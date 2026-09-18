@@ -144,9 +144,9 @@
 
 ## R-012 — Limites, índices e metas proporcionais
 
-**Decision (`DECISAO_DE_PLANEJAMENTO`)**: não adicionar índice, paginação, cluster ou PostGIS. Medir uma matriz sintética de 100 áreas/1.000 coletas confirmadas, inspecionar o número de operações e o plano da query durante implementação; abrir otimização separada apenas com evidência.
+**Decision (`DECISAO_DE_PLANEJAMENTO`)**: não adicionar índice, paginação, cluster ou PostGIS. Separar a prova estrutural unitária em memória, com matriz sintética de 100 áreas/1.000 coletas confirmadas, da medição real em aplicação isolada e PostgreSQL descartável. Somente a segunda mede p95 do endpoint e produz `EXPLAIN` da query real; abrir otimização separada apenas com evidência registrada.
 
-**Rationale**: os índices existentes cobrem área por laboratório e coleta por área/laboratório. Não existe volumetria real ou meta normativa que justifique migration. Truncar violaria a necessidade de tornar todas as áreas alcançáveis.
+**Rationale**: os índices existentes cobrem área por laboratório e coleta por área/laboratório. Um double unitário prova cardinalidade, seleção e ausência de N+1, mas não representa rede, handler, Prisma ou PostgreSQL. Não existe volumetria real ou resultado medido que justifique migration. Truncar violaria a necessidade de tornar todas as áreas alcançáveis.
 
 **Alternatives considered**:
 
@@ -183,7 +183,7 @@
 
 **Decision (`DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO`)**: por solicitação explícita da equipe nesta atualização de 2026-09-18, adotar Plotly como direção futura para gráficos e visualizações analíticas relacionados aos registros exibidos no contexto territorial. A implementação será sempre posterior à IMP-009, em entrega própria ainda sem identificador atribuído, e poderá ocorrer em paralelo com a IMP-010 sem depender dela nem representar aprovação antecipada.
 
-**Rationale**: a decisão separa a finalidade analítica futura do motor cartográfico do mapa mínimo. O backlog já atribui IMP-009 e IMP-010 a outras entregas, portanto nenhum novo `IMP-*` foi inferido. O registro global `TD-010` permanece fora do escopo autorizado desta atualização e deverá ser reconciliado posteriormente sem apagar seu histórico.
+**Rationale**: a decisão separa a finalidade analítica futura do motor cartográfico do mapa mínimo. O backlog já atribui IMP-009 e IMP-010 a outras entregas, portanto nenhum novo `IMP-*` foi inferido. `TD-010` e os registros Code-First diretamente pertinentes foram reconciliados nesta atualização autorizada, preservando o estado anterior de avaliação no histórico e sem declarar implementação.
 
 **Conditions and open choices**:
 

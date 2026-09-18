@@ -4,7 +4,9 @@
 
 **Created**: 2026-09-18
 
-**Status**: Ready for Planning
+**Status**: Ready for Independent Re-analysis
+
+**Delivery State**: `tasks.md` contém T001–T055 e a análise de consistência da baseline `389adeed05011109ef35441dff24a24abd25ce72` foi concluída. Os findings documentais foram encaminhados nesta revisão; nenhuma implementação foi iniciada e uma nova análise independente deve verificar o commit publicado antes do código.
 
 **Input**: IMP-008 — permitir que o usuário represente áreas e relacione visualmente coletas, dados e resultados aplicáveis aos respectivos registros de origem, preservando o laboratório selecionado, a autorização contextual e os limites dos contratos efetivamente integrados.
 
@@ -237,7 +239,7 @@ IMP-009 e IMP-010 já possuem itens próprios no backlog. A condição de implem
 | Isolamento, privacidade e minimização | `CF-PRD-NFR-001` a `CF-PRD-NFR-005`; contratos integrados das IMP-003/004 | Revalidação server-side, resposta indistinguível, projeção mínima e nenhum campo pessoal desnecessário. |
 | Acessibilidade e qualidade visual | `CF-PRD-NFR-006`; critérios já especificados pela IMP-007 publicada | Lista equivalente, teclado, estados explícitos, responsividade e atribuição acessível. |
 | Decisões cartográficas | `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-011`, `TD-014` | Leaflet/React-Leaflet é escolha local do mapa mínimo; provedor e arquitetura definitiva permanecem abertos. |
-| Gráficos analíticos futuros | solicitação explícita da equipe nesta atualização de 2026-09-18; `TD-010` ainda requer reconciliação no registro global | Plotly é direção futura após a IMP-009, sem implementação, dependência ou gráfico na IMP-008 e sem tratar IMP-005/006/007 como integradas. |
+| Gráficos analíticos futuros | solicitação explícita da equipe nesta atualização de 2026-09-18; `TD-010` reconciliado no registro global | Plotly é direção futura após a IMP-009, sem implementação, dependência ou gráfico na IMP-008 e sem tratar IMP-005/006/007 como integradas. |
 
 ### Scope Assumptions
 

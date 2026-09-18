@@ -6,6 +6,8 @@ info:
     Projeção territorial transitória e somente leitura das áreas e coletas
     confirmadas do laboratório autorizado. Não cria geometria, histórico ou
     coordenada própria de coleta.
+security:
+  - cookieAuth: []
 paths:
   /api/laboratories/{laboratoryId}/territorial-map:
     get:
@@ -72,6 +74,11 @@ paths:
                   code: INTERNAL_ERROR
                   message: Não foi possível carregar a visão territorial.
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
   parameters:
     LaboratoryId:
       name: laboratoryId

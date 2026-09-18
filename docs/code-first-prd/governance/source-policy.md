@@ -105,7 +105,7 @@ Nesta iniciativa, a regra de trabalho se aplica às seguintes direções, sem al
 | Lucide React | `TD-006` | Biblioteca conectada em componentes e telas; não aprova regras visuais ou de acessibilidade. |
 | Vercel como direção atual de hospedagem | `TD-007` | Direção relatada coerente com a aplicação Next.js e sem divergência material localizada; não prova deploy, ambiente ou estratégia futura. |
 
-OpenStreetMap, Plotly, Leaflet, Python e a integração Next.js/Python permanecem alternativas abertas: não estão implementados nem confirmados.
+OpenStreetMap, Python e a integração Next.js/Python permanecem alternativas abertas. Leaflet/React-Leaflet são a escolha local planejada para o mapa mínimo da IMP-008. `TD-010` confirma Plotly somente como direção de gráficos e visualizações analíticas futuros, em entrega posterior à IMP-009; Plotly não está implementado, e arquitetura de execução, frontend versus Plotly Python, entradas e gráficos concretos permanecem abertos.
 
 ## Figma como evidência complementar
 
