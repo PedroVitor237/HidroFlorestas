@@ -82,16 +82,17 @@ Validação:
 2. retornar por “Mais recentes”;
 3. repetir a travessia sem alterar fontes;
 4. após carregar a primeira parte, confirmar uma nova origem com instante mais recente e então avançar usando o cursor já recebido;
-5. verificar que a continuação para itens mais antigos não repete itens já vistos; voltar por “Mais recentes” e registrar que a parte é reconsultada e pode refletir a inserção, pois não há snapshot;
-6. executar refresh, confirmar reinício na primeira parte e presença da nova origem na ordem total;
+5. verificar que a continuação estrita para itens mais antigos não inclui automaticamente a nova origem nem repete itens já vistos nessa sequência; confirmar a ordem total de cada resposta; voltar por “Mais recentes” e registrar que a parte é reconsultada e pode refletir a inserção, pois não há snapshot nem estabilidade de partes reconsultadas;
+6. executar refresh, confirmar o início de uma nova travessia na primeira parte e a presença da nova origem, se ainda elegível, na ordem total das fontes atuais;
 7. ativar um item de área e um de coleta.
 
 Esperado:
 
 - ordem por confirmação/criação, não por ocorrência nem atualização;
-- cada identidade aparece exatamente uma vez e na mesma ordem;
+- em uma travessia completa sem mutações, cada identidade aparece exatamente uma vez e na mesma ordem;
 - máximo de 20 itens por resposta;
-- cursor funciona como fronteira keyset, não como snapshot: mutações podem alterar partes reconsultadas, mas a continuação estrita não repete itens anteriores;
+- cursor funciona como fronteira keyset sobre as fontes atuais, não como snapshot: ao avançar, a continuação estrita preserva a sequência já percorrida sem repetição e cada resposta mantém a ordem total; a origem mais recente não é incluída automaticamente na travessia iniciada antes da inserção;
+- partes reconsultadas não são estáveis sob mutação; refresh inicia outra travessia e usa as fontes então elegíveis, podendo incluir a nova origem na ordem total corrente;
 - destinos chegam em uma ativação aos detalhes contextuais corretos;
 - nenhum item de atualização, exclusão, análise ou edição do dashboard aparece.
 

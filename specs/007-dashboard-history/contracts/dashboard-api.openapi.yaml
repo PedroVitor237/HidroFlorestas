@@ -54,8 +54,13 @@ paths:
           in: query
           required: false
           description: >-
-            Cursor opaco retornado pela parte anterior. O tamanho da parte é fixo
-            em no máximo 20 itens.
+            Cursor opaco que representa a última chave da parte anterior e funciona
+            como fronteira keyset sobre as fontes atuais. A continuação retorna somente
+            chaves estritamente posteriores na ordem total e não mantém nem materializa
+            um snapshot. Uma origem mais recente inserida após a leitura inicial não entra
+            automaticamente na continuação já iniciada para itens mais antigos; partes
+            reconsultadas podem mudar, e um refresh reinicia a travessia sobre as fontes
+            então elegíveis. O tamanho da parte é fixo em no máximo 20 itens.
           schema:
             type: string
             minLength: 1

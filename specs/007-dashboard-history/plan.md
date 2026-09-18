@@ -40,7 +40,7 @@ Gate avaliado antes da pesquisa e reavaliado após o design.
 |---|---|---|
 | I — Hierarquia de fontes | PASS — solicitação e spec governam o recorte; código integrado comprova somente contratos atuais. | PASS — models integrados sustentam o mínimo; IMP-005/006 aparecem apenas como planejamento futuro identificado por SHA. |
 | II — Entregas verticais | PASS — resumo e histórico de áreas/coletas são um resultado pequeno e verificável. | PASS — nenhuma dependência futura ou aprovação científica foi transformada em pré-requisito. |
-| III — Especificação por funcionalidade | PASS — branch e diretório próprios confirmados pelo setup oficial. | PASS — plano, pesquisa, modelo, contrato e quickstart permanecem em `specs/007-dashboard-history/**`; `tasks.md` não foi criado. |
+| III — Especificação por funcionalidade | PASS — branch e diretório próprios confirmados pelo setup oficial. | PASS — plano, pesquisa, modelo, contrato, quickstart e as tarefas T001–T065 já geradas permanecem em `specs/007-dashboard-history/**`. |
 | IV — Evidência e rastreabilidade | PASS — baseline integrada, mocks atuais e branches futuras estão separados. | PASS — cada dado, instante, critério de inclusão e extensão futura aponta à fonte e à classificação aplicável. |
 | V — Qualidade e segurança proporcionais | PASS — isolamento, perda de acesso, privacidade, paginação e estados de UI são os riscos centrais. | PASS — guard único, queries contextuais, DTOs mínimos, `no-store` e matriz de testes cobrem esses riscos. |
 | VI — Documentação evolutiva | PASS — nenhum artefato histórico ou governança global será alterado. | PASS — não há promoção do schema legado ou da ciência; reconciliações futuras estão explícitas. |
