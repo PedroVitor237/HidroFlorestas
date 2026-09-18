@@ -294,7 +294,8 @@ Cobertura planejada: **35/35 requisitos funcionais** e **9/9 critérios de suces
 ### Future reconciliation (não bloqueante)
 
 - IMP-005/006/007 não fornecem código nem contratos runtime a esta execução.
-- Não antecipar camada ambiental, IHFR, dashboard, gráfico, filtro, polígono, PostGIS, Plotly, Python, schema, migration, índice ou dependência.
+- Não antecipar camada ambiental, IHFR, dashboard, gráfico, filtro, polígono, PostGIS, implementação de Plotly, Python, schema, migration, índice ou dependência.
+- Plotly é direção para gráficos analíticos em entrega própria sempre posterior à IMP-009, possivelmente paralela à IMP-010 sem depender dela; a forma de integração será planejada nessa entrega futura, após os contratos pertinentes estarem integrados e, para IHFR, após aprovação científica aplicável. Essa decisão não altera T001–T055 nem trata IMP-005/006/007 como integradas.
 - Índice/paginação/agregação só entram em trabalho futuro após evidência registrada de volume, `EXPLAIN` ou latência e decisão de produto/UX compatível com FR-012.
 
 ## Notes

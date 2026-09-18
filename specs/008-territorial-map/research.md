@@ -89,7 +89,7 @@
 **Alternatives considered**:
 
 - Reusar `AreaMap` sem alteração: rejeitado porque seu contrato é ponto único/editável.
-- Plotly: rejeitado por não resolver melhor mapa interativo de pontos/tiles e por permanecer em avaliação.
+- Plotly no mapa mínimo: rejeitado por não resolver melhor o mapa interativo de pontos/tiles; sua escolha posterior para gráficos analíticos tem finalidade e entrega distintas.
 - MapLibre ou nova biblioteca: rejeitado por peso e duplicidade sem caso de uso.
 - Canvas/CSS próprio: rejeitado por interação, acessibilidade e manutenção.
 
@@ -179,6 +179,21 @@
 - Reservar risco/cor IHFR: rejeitado por falta de ciência aprovada.
 - Fazer dashboard hospedar/fornecer o mapa: rejeitado por dependência invertida e não integrada.
 
+## R-015 — Direção futura para gráficos analíticos
+
+**Decision (`DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO`)**: por solicitação explícita da equipe nesta atualização de 2026-09-18, adotar Plotly como direção futura para gráficos e visualizações analíticas relacionados aos registros exibidos no contexto territorial. A implementação será sempre posterior à IMP-009, em entrega própria ainda sem identificador atribuído, e poderá ocorrer em paralelo com a IMP-010 sem depender dela nem representar aprovação antecipada.
+
+**Rationale**: a decisão separa a finalidade analítica futura do motor cartográfico do mapa mínimo. O backlog já atribui IMP-009 e IMP-010 a outras entregas, portanto nenhum novo `IMP-*` foi inferido. O registro global `TD-010` permanece fora do escopo autorizado desta atualização e deverá ser reconciliado posteriormente sem apagar seu histórico.
+
+**Conditions and open choices**:
+
+- o mapa mínimo da IMP-008 continua em Leaflet/React-Leaflet, sustentado apenas por áreas e coletas integradas;
+- T001–T055 não recebem instalação, implementação, critério ou dependência de Plotly;
+- dados ambientais exigem integração e reconciliação dos contratos pertinentes antes de alimentar gráficos;
+- IHFR exige também implementação, integração e aprovação científica aplicável;
+- o planejamento da entrega futura decidirá integração no frontend ou via Plotly Python;
+- a decisão não introduz Python, PostGIS, segundo motor cartográfico, dependência ou gráfico nesta feature e não trata IMP-005/006/007 como integradas.
+
 ## Conclusão da pesquisa
 
-Todas as incertezas técnicas necessárias ao mapa mínimo foram resolvidas sem `NEEDS CLARIFICATION`. A escolha de Leaflet vale para esta entrega por reuso proporcional do baseline; não atualiza `TD-011`/`TD-014` nem aprova a arquitetura cartográfica definitiva. Outras geometrias, camadas, filtros, compartilhamento, generalização e simbologia permanecem `PENDENCIA_DE_DECISAO`.
+Todas as incertezas técnicas necessárias ao mapa mínimo foram resolvidas sem `NEEDS CLARIFICATION`. A escolha de Leaflet vale para esta entrega por reuso proporcional do baseline; não atualiza `TD-011`/`TD-014` nem aprova a arquitetura cartográfica definitiva. Plotly foi escolhido somente como direção de uma entrega analítica futura posterior à IMP-009, cuja integração técnica permanece aberta. Outras geometrias, camadas, filtros, compartilhamento, generalização e simbologia permanecem `PENDENCIA_DE_DECISAO`.

@@ -24,7 +24,7 @@ Entregar uma visão territorial somente leitura por laboratório, sustentada dir
 
 **Performance Goals**: uma leitura autorizada e uma projeção sem N+1; renderização inicial enquadra todos os pontos válidos; meta técnica de planejamento de p95 até 500 ms para o endpoint e interação textual em até 2 s numa matriz de 100 áreas/1.000 coletas confirmadas, excluindo latência de tiles externos
 
-**Constraints**: reautorização server-side por leitura; isolamento por laboratório; laboratório inativo somente leitura; DTO fechado; coordenadas com no máximo seis casas; dados privados `no-store`; tiles com cache HTTP do provedor preservado; mapa não pode ser caminho único; sem filtros, clusters, camadas científicas, PostGIS, Plotly ou Python
+**Constraints**: reautorização server-side por leitura; isolamento por laboratório; laboratório inativo somente leitura; DTO fechado; coordenadas com no máximo seis casas; dados privados `no-store`; tiles com cache HTTP do provedor preservado; mapa não pode ser caminho único; sem filtros, clusters, camadas científicas, PostGIS, implementação de Plotly ou Python nesta feature
 
 **Scale/Scope**: quatro histórias, uma rota de página, um endpoint GET, uma projeção transitória, um mapa agregado e uma lista equivalente; fontes atuais pequenas e sem evidência de necessidade de paginação ou infraestrutura espacial
 
@@ -41,7 +41,7 @@ As metas de desempenho acima são `RECOMENDACAO_TECNICA` verificável na impleme
 | III. Especificação por funcionalidade | PASS — planejamento limitado a `specs/008-territorial-map/**`. | PASS — plano, pesquisa, modelo, contrato e quickstart estão no diretório; `tasks.md` não foi criado. |
 | IV. Evidência e rastreabilidade | PASS — spec registra requisitos, baseline, Code-First e dependências publicadas. | PASS — artefatos distinguem `EVIDENCIA_IMPLEMENTACAO`, `DECISAO_DE_PLANEJAMENTO`, `PENDENCIA_DE_DECISAO` e reconciliação futura. |
 | V. Qualidade e segurança proporcionais | PASS — riscos centrais são isolamento, minimização, coordenadas, fallback e acessibilidade. | PASS — guard integrado, query contextual, DTO fechado, `no-store`, lista independente e matriz de testes cobrem os riscos sem auditoria geral. |
-| VI. Documentação evolutiva | PASS — `docs/raw/**` e registros históricos não serão alterados. | PASS — não há decisão global confirmada que exija mudar `TECH_DECISIONS.md`; Leaflet é escolha local desta feature, não arquitetura cartográfica definitiva. |
+| VI. Documentação evolutiva | PASS — `docs/raw/**` e registros históricos não serão alterados. | PASS — Leaflet é escolha local desta feature, não arquitetura cartográfica definitiva; a nova direção futura de Plotly está registrada no pacote da IMP-008 e requer reconciliação posterior de `TD-010`, fora do escopo documental autorizado nesta execução. |
 | VII. Trabalho em equipe | PASS — branch própria, baseline remota sincronizada e sem integração automática. | PASS — design evita schema/configuração global novos e concentra futuras alterações em arquivos da feature e pequeno compartilhamento de configuração de mapa. |
 
 Não há violação constitucional a justificar. As decisões ainda abertas foram mantidas fora do incremento ou como pontos explícitos de reconciliação.
@@ -221,6 +221,12 @@ O HEAD publicado possui somente spec/checklist e gates G1–G3 abertos. Depois d
 
 O dashboard publicado exclui coordenadas e não é fonte do mapa. Após integração, harmonizar apenas navegação/layout contextual e, se útil, helpers de contexto já integrados. Mapa e dashboard mantêm endpoints, estados e projeções independentes sobre as mesmas fontes; nenhum persiste ou copia contagens do outro.
 
+### Plotly — gráficos analíticos futuros
+
+`DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — por solicitação explícita da equipe nesta atualização de 2026-09-18, Plotly é a direção futura para gráficos e visualizações analíticas relacionados aos registros do contexto territorial. Sua implementação ocorrerá sempre depois da IMP-009, em entrega própria ainda sem identificador atribuído, e poderá ocorrer em paralelo com a IMP-010 sem depender dela nem antecipar a aprovação da entrega.
+
+Essa decisão não altera as fases ou tarefas T001–T055, não torna a IMP-009 dependência do mapa mínimo e não introduz gráfico, Plotly, Python, PostGIS, segundo motor cartográfico ou dependência na IMP-008. O planejamento futuro decidirá entre integração frontend e Plotly Python. Dados ambientais exigirão contratos pertinentes integrados; IHFR exigirá ainda a aprovação científica aplicável. IMP-005/006/007 continuam não integradas no baseline deste plano.
+
 ## Risks and Mitigations
 
 | Risco | Mitigação planejada |
@@ -238,7 +244,7 @@ O dashboard publicado exclui coordenadas e não é fonte do mapa. Após integra�
 
 ## Deferred Possibilities
 
-Permanecem `PENDENCIA_DE_DECISAO`, sem tipos, endpoints, flags ou placeholders: polígonos/linhas/buffers; localização própria da coleta; filtros/busca; clustering/deslocamento; camadas/heatmap; simbologia científica; dados ambientais; IHFR; comparação temporal; desenho/edição/medição; compartilhamento/exportação; generalização de precisão; acesso público; cache/offline de tiles; PostGIS, Plotly, Python ou nova biblioteca.
+Permanecem `PENDENCIA_DE_DECISAO`, sem tipos, endpoints, flags ou placeholders: polígonos/linhas/buffers; localização própria da coleta; filtros/busca; clustering/deslocamento; camadas/heatmap; simbologia científica; dados ambientais; IHFR; comparação temporal; desenho/edição/medição; compartilhamento/exportação; generalização de precisão; acesso público; cache/offline de tiles; PostGIS, Python, forma de integração do Plotly ou nova biblioteca. A escolha futura de Plotly para gráficos analíticos não resolve essas pendências nem integra qualquer capacidade nesta feature.
 
 ## Complexity Tracking
 

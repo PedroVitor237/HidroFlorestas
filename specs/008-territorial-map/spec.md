@@ -35,8 +35,10 @@ O incremento mínimo usa somente a cadeia integrada `laboratório → área-pont
 
 - `PENDENCIA_DE_DECISAO` — geometrias diferentes do ponto atual, localização própria da coleta, agrupamento, sobreposição, filtros, camadas temáticas, simbologia científica, comparação temporal, busca geográfica, desenho/edição no mapa e compartilhamento externo exigem definição de produto, UX, dados, privacidade ou ciência conforme o assunto.
 - `PENDENCIA_DE_DECISAO` — qualquer redução, generalização ou ocultação adicional da precisão das coordenadas exige política de privacidade e caso de uso aprovados. No mínimo atual, a visão autenticada usa somente o ponto já acessível aos mesmos membros e não fabrica precisão além das seis casas persistidas.
-- `PENDENCIA_DE_DECISAO` — `TD-008`, `TD-010`, `TD-011` e `TD-014` permanecem respectivamente em avaliação/proposta para base cartográfica, visualizações, biblioteca e arquitetura. A implementação existente de Leaflet em cadastro/detalhe é evidência técnica, não aprovação automática para toda visualização territorial.
-- `PENDENCIA_DE_DECISAO` — a eventual adoção de PostGIS, Plotly, Python ou qualquer outra tecnologia depende de necessidades espaciais ou analíticas demonstradas no planejamento; nenhuma delas é requisito desta especificação.
+- `PENDENCIA_DE_DECISAO` — `TD-008`, `TD-011` e `TD-014` permanecem respectivamente em avaliação/proposta para base cartográfica, biblioteca e arquitetura definitiva. A implementação existente de Leaflet em cadastro/detalhe e sua escolha local para o mapa mínimo não aprovam automaticamente outro motor cartográfico ou toda visualização territorial.
+- `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — por solicitação explícita da equipe nesta atualização de 2026-09-18, Plotly é a direção futura para gráficos e visualizações analíticas relacionados aos registros exibidos no contexto territorial. Essa implementação ocorrerá sempre depois da IMP-009, em entrega própria ainda sem identificador atribuído, e poderá ser executada em paralelo com a IMP-010; esse paralelismo não cria dependência da IMP-010 nem aprovação antecipada da entrega futura.
+- `PENDENCIA_DE_DECISAO` — a forma de integração do Plotly, inclusive uso no frontend ou de Plotly Python, será definida no planejamento dessa entrega futura. A decisão não introduz automaticamente Python, PostGIS, um segundo motor cartográfico, dependência, gráfico ou tarefa implementável na IMP-008; a eventual adoção dessas tecnologias ou arquiteturas continua dependente de necessidade demonstrada e decisão aplicável.
+- `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — dados ambientais somente poderão alimentar gráficos após integração e reconciliação dos contratos pertinentes; diagnósticos IHFR exigem também a aprovação científica aplicável. Nenhuma informação das IMP-005/006/007 ou da futura entrega de gráficos é tratada como integrada por esta decisão.
 
 ### Relação com a IMP-007 publicada
 
@@ -184,7 +186,7 @@ Como participante que usa teclado, tecnologia assistiva ou uma tela pequena, que
 - **FR-032**: Dados ambientais da IMP-005 somente MAY aparecer após implementação, integração e reconciliação do contrato real, com definição aprovada da projeção, unidade, precisão, privacidade, legenda e retorno ao registro de origem.
 - **FR-033**: Diagnósticos ou resultados IHFR da IMP-006 somente MAY aparecer após implementação, integração e satisfação dos gates científicos, de proveniência e de ciclo; ausência, schema legado ou documento planejado MUST NOT ser apresentado como score, classe, risco, cor, gráfico ou diagnóstico.
 - **FR-034**: A IMP-007 MUST NOT ser dependência automática da visão territorial. Se integrada, mapa e dashboard MAY reutilizar projeções compatíveis das mesmas fontes, mas nenhum deles MUST copiar, persistir ou contradizer a fonte do outro.
-- **FR-035**: A especificação MUST permanecer neutra quanto a provedor, biblioteca e arquitetura cartográfica; Leaflet atual, OpenStreetMap, Plotly, PostGIS e Python MUST NOT ser promovidos a requisito funcional ou capacidade disponível por esta feature.
+- **FR-035**: A especificação MUST permanecer neutra quanto a provedor e arquitetura cartográfica definitiva; Leaflet/React-Leaflet é a escolha local do mapa mínimo, enquanto OpenStreetMap, Plotly, PostGIS e Python MUST NOT ser promovidos a requisito funcional ou capacidade disponível por esta feature. A direção futura de Plotly para gráficos analíticos MUST NOT alterar o escopo implementável da IMP-008.
 
 ### Key Entities
 
@@ -223,6 +225,8 @@ Como participante que usa teclado, tecnologia assistiva ou uma tela pequena, que
 | IMP-006 — diagnóstico IHFR | `f5f6e27de2a81d64fa6e829d44d68669ba447739` | Publicada, não integrada e com gates abertos | Planejamento condicionado; bloqueia score, classe, risco, gráfico ou diagnóstico no mapa mínimo. |
 | IMP-007 — dashboard/histórico | `b863a86242da9364216842e31d4b87145d9a3ea1` | Publicada e não integrada | Referência de proveniência/navegação; não é dependência automática nem fonte do mapa. |
 
+IMP-009 e IMP-010 já possuem itens próprios no backlog. A condição de implementar os gráficos Plotly sempre depois da IMP-009 rege somente a entrega futura ainda não identificada; ela não transforma a IMP-009 em pré-requisito do mapa mínimo. A possibilidade de execução paralela com a IMP-010 é apenas de sequenciamento e não cria dependência entre as duas entregas.
+
 ### Traceability
 
 | Subject | Sources | Application in IMP-008 |
@@ -232,7 +236,8 @@ Como participante que usa teclado, tecnologia assistiva ou uma tela pequena, que
 | Visualização territorial e origem | `CF-PRD-FR-015`, `CF-UC-015`, `CF-PFLOW-007` | Exige projeção rastreável e retorno ao registro de origem; restringe o mínimo às fontes integradas. |
 | Isolamento, privacidade e minimização | `CF-PRD-NFR-001` a `CF-PRD-NFR-005`; contratos integrados das IMP-003/004 | Revalidação server-side, resposta indistinguível, projeção mínima e nenhum campo pessoal desnecessário. |
 | Acessibilidade e qualidade visual | `CF-PRD-NFR-006`; critérios já especificados pela IMP-007 publicada | Lista equivalente, teclado, estados explícitos, responsividade e atribuição acessível. |
-| Decisões cartográficas | `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-010`, `TD-011`, `TD-014` | Mantidas abertas para planejamento e decisões futuras; nenhuma tecnologia é prescrita pela spec. |
+| Decisões cartográficas | `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-011`, `TD-014` | Leaflet/React-Leaflet é escolha local do mapa mínimo; provedor e arquitetura definitiva permanecem abertos. |
+| Gráficos analíticos futuros | solicitação explícita da equipe nesta atualização de 2026-09-18; `TD-010` ainda requer reconciliação no registro global | Plotly é direção futura após a IMP-009, sem implementação, dependência ou gráfico na IMP-008 e sem tratar IMP-005/006/007 como integradas. |
 
 ### Scope Assumptions
 
@@ -247,9 +252,9 @@ Como participante que usa teclado, tecnologia assistiva ou uma tela pequena, que
 - Criar, editar, mover ou excluir área, ponto, coleta, dado ambiental ou diagnóstico.
 - Polígonos, linhas, limites territoriais, buffers, localização própria de coleta, geocodificação, roteamento ou busca por endereço.
 - Filtros, camadas alternáveis, clusters, heatmaps, comparação temporal, animação, desenho, medição ou exportação.
-- Valores, grupos, indicadores ou gráficos ambientais até integração e reconciliação da IMP-005.
-- Score, classe, risco, cor temática, interpretação, gráfico ou recomendação IHFR até integração da IMP-006 e satisfação de seus gates.
+- Valores, grupos, indicadores ou gráficos ambientais até integração e reconciliação dos contratos pertinentes.
+- Score, classe, risco, cor temática, interpretação, gráfico ou recomendação IHFR até integração do contrato pertinente e satisfação da aprovação científica aplicável.
 - Dashboard, histórico, auditoria, retenção independente, notificações ou atualização em tempo real.
-- Seleção de OpenStreetMap, Leaflet, Plotly, PostGIS, Python, provedor de tiles, schema, endpoint, biblioteca ou arquitetura.
+- Implementação ou integração de Plotly, inclusive no frontend ou via Plotly Python; seleção de OpenStreetMap, PostGIS, Python, segundo motor cartográfico, provedor de tiles, schema, endpoint ou arquitetura definitiva.
 - Acesso público, compartilhamento externo, publicação de coordenadas ou mudança de precisão sem política aprovada.
 - Alteração de código, schema, migration, dependência, configuração ou artefato das IMP-003 a IMP-007 nesta etapa de especificação.
