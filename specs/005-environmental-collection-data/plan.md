@@ -130,7 +130,7 @@ A IMP-004 incorporou a IMP-003, concluiu seus gates automatizados e foi integrad
 | G2 | **Fechado para captura v1** | `measurement-contract-v1.md` fixa grupos, campos, tipos, unidades, nulabilidade, faixas estruturais, versão e casos; `math-contract-v1.md` separa cálculo futuro | Decisão técnica/de dados de 2026-09-17; não equivale a validação científica do IHFR |
 | G3 | **Fechado** | OWNER/ADMIN/MEMBER vinculados; conjunto único, integral, imutável, confirmado e idempotente; inativo somente leitura | Decisão explícita de 2026-09-17 |
 
-Próxima etapa: gerar `tasks.md`, executar análise de consistência e somente então implementar após reconciliar a branch com `origin/development`.
+Tarefas geradas em `tasks.md`. Revisão de prontidão de 2026-09-17 em [implementation-readiness.md](implementation-readiness.md). A reconciliação da branch continua sendo pré-requisito operacional antes da codificação.
 
 ## Validation Strategy
 
@@ -157,3 +157,14 @@ Nenhuma exceção constitucional proposta. Não há novas camadas, dependências
 ## Execution Boundary
 
 `$speckit-specify`, `$speckit-plan`, `$speckit-tasks` e a análise de consistência executados; `.specify/extensions.yml` ausente. Sem implement, código, Prisma, migrations, build/testes funcionais ou PR. Registros globais não alterados: a resolução G2/G3 deverá ser refletida na governança quando esses caminhos forem autorizados, preservando histórico.
+
+
+## Direção visual da implementação — 2026-09-17
+
+`DECISAO_CONFIRMADA` — origem: solicitação do usuário nesta revisão de prontidão, em 2026-09-17. As telas da IMP-005 devem seguir as imagens de `docs/figma-references/`, a documentação funcional e o padrão visual do sistema. A instrução atual torna o uso visual obrigatório para esta entrega, sem transformar as imagens em regras de negócio.
+
+Referência principal: [indicadores ambientais](../../docs/figma-references/area-monitorada-com-formulario-de-dados-da-agua.jpg). Complementos: [áreas](../../docs/figma-references/areas-monitoradas.jpg), [formulário](../../docs/figma-references/cadastro-de-nova-area.jpg), [início](../../docs/figma-references/inicio-apos-acessar-laboratorio.jpg) e [laboratório](../../docs/figma-references/entrar-ou-criar-laboratorio.jpg).
+
+`RECOMENDACAO` de aplicação: reutilizar o shell existente, superfícies claras, cartões brancos arredondados, títulos hierárquicos, ações primárias verdes e grupos ambientais identificados por texto e cor (água azul, solo ocre, vegetação verde e terreno em tom terroso). Adaptar as composições amplas ao móvel, preservando labels, foco, teclado e contraste; não depender apenas de cor. Comparar registro, revisão e consulta no navegador com as referências e registrar a evidência em T023/T031/T035.
+
+Campos e valores vêm exclusivamente do contrato v1. A imagem mostra salinidade numérica e disponibilidade percentual; o contrato exige enums. A imagem também mostra IHFR, IA, PDF e histórico, todos fora desta entrega. Esses elementos não serão acrescentados à IMP-005. A seção de terreno integra a confirmação única dos quatro grupos, sem criar complementação posterior. O contexto é a coleta existente, sem recriar a confirmação da IMP-004.
