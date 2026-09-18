@@ -63,3 +63,13 @@ T038: registros globais não foram editados. A autorização confirmou integraç
 ## Exclusões científicas verificadas — T036
 
 Busca estática nos caminhos novos de API, serviço, tipos e componentes encontrou zero referência a `IHFRDiagnosis`, `algorithmVersion`, pesos, limiares ou aos models legados `WaterData`, `SoilData`, `VegetationData` e `TerrainData`. Os testes de contrato recusam grafias legadas e campos extras; a migration preserva o legado sem lê-lo ou reclassificá-lo. A IMP-005 armazena somente o payload validado de `ihfr-measurement-v1` e não produz diagnóstico.
+
+## Retomada do gate de PR — 2026-09-18
+
+`EVIDENCIA_IMPLEMENTACAO`: fetch confirmou `origin/development` em `37fb3a4` e a IMP-005 local/remota em `a8ac907`, com árvore inicialmente limpa e sem PR existente. O diagnóstico focal anterior classificou as falhas de login e cadastro de área como orquestração de fixture e sincronização E2E, sem regressão funcional atribuível à IMP-005.
+
+Foram alterados somente quatro testes legados: autenticação e laboratório passaram a preparar/remover explicitamente os quatro usuários allowlisted; cadastro de área passou a aguardar e validar POST `201`, `Location`, identidade e navegação; alteração de papel passou a aguardar e validar os PATCH `200`. Nenhuma assertion funcional foi removida e nenhum código de produto, schema, migration ou contrato foi alterado.
+
+Os quatro cenários anteriormente falhos passaram juntos, com um worker: área manual, login ativo, criação de laboratório e promoção/rebaixamento (`4/4`). A execução completa única iniciou com guard aprovado, banco de teste distinto e allowlists zeradas, mas terminou com `25 passed`, `4 failed` e `11 did not run`. Duas falhas trouxeram `ETIMEDOUT` explícito do endpoint remoto; a área foi redirecionada a login antes do POST, coerente com indisponibilidade na revalidação da sessão; o fluxo ambiental também perdeu a sessão durante a indisponibilidade. A quarta falha expôs uma expectativa legada preexistente: o teste espera `/dashboard`, enquanto a página canônica redireciona para `/workspace`. A regressão não foi repetida.
+
+Teardown allowlisted posterior confirmou zero medições, usuários, laboratórios, vínculos, áreas e coletas reservados pelas fixtures IMP-001–005. A regressão completa permanece não aprovada por infraestrutura remota e pela expectativa legada de `/dashboard`; isso não é apresentado como falha funcional da IMP-005. `SC-006`/T037 continua `NAO_VERIFICADO` e não foi substituído por automação.

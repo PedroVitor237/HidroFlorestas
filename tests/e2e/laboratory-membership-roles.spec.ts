@@ -8,12 +8,14 @@ test("owner promotes and demotes; stale role and inactive laboratory reject chan
  await context.addCookies([{name:"auth_token",value:signSessionToken(AREA_FIXTURES.userIds[0]),url:String(info.project.use.baseURL)}]);
  const lab=AREA_FIXTURES.laboratoryIds[0];
  await page.goto(`/dashboard/laboratories/${lab}/members`);
- await page.getByRole("button",{name:"Promover Member IMP003"}).click();
+ const promoted=page.waitForResponse(response=>response.url().includes(`/api/laboratories/${lab}/memberships/`)&&response.request().method()==='PATCH',{timeout:30_000});
+ await page.getByRole("button",{name:"Promover Member IMP003"}).click();expect((await promoted).status()).toBe(200);
  await expect(page.getByRole("button",{name:"Rebaixar Member IMP003"})).toBeVisible();
  const list=await (await context.request.get(`/api/laboratories/${lab}/memberships`)).json();
  const member=list.memberships.find((m:{name:string})=>m.name==="Member IMP003");
  expect((await context.request.patch(`/api/laboratories/${lab}/memberships/${member.id}`,{data:{expectedRole:"MEMBER",role:"ADMIN"}})).status()).toBe(409);
- await page.getByRole("button",{name:"Rebaixar Member IMP003"}).click();
+ const demoted=page.waitForResponse(response=>response.url().includes(`/api/laboratories/${lab}/memberships/`)&&response.request().method()==='PATCH',{timeout:30_000});
+ await page.getByRole("button",{name:"Rebaixar Member IMP003"}).click();expect((await demoted).status()).toBe(200);
  await expect(page.getByRole("button",{name:"Promover Member IMP003"})).toBeVisible();
  const inactive=AREA_FIXTURES.laboratoryIds[1];
  await page.goto(`/dashboard/laboratories/${inactive}/members`);
