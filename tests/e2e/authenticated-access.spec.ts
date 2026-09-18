@@ -154,7 +154,7 @@ test.describe("authenticated access", () => {
     ).toBeVisible();
 
     await page.goto("/dashboard");
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page).toHaveURL(/\/workspace$/);
   });
 
   test("denies missing, malformed, tampered, expired, invalid-payload, and orphan sessions", async (
