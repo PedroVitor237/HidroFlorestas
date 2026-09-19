@@ -7,7 +7,7 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 
 **Input**: artefatos de design em `specs/007-dashboard-history/`
 
-**Status**: baseline e documentos reconciliados; análise independente repetida sem achados críticos ou altos. Implementação funcional e testes automatizados de unidade/handlers concluídos parcialmente. E2E, fixture própria com banco, build global e validações humanas permanecem pendentes; a IMP-007 não está concluída.
+**Status**: baseline e documentos reconciliados; análise independente repetida sem achados críticos ou altos. Implementação funcional, fixtures protegidas, suites automatizadas, regressões e build estão concluídos. SC-008 com tecnologia assistiva real (T065) e SC-009 com participantes permanecem `NAO_VERIFICADO`; a IMP-007 não está concluída.
 
 **Prerequisites**: `plan.md`, `spec.md`, `research.md`, `data-model.md`, `contracts/dashboard-api.openapi.yaml` e `quickstart.md`
 
@@ -170,9 +170,9 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 - [x] T059 Executar `npm run lint` separadamente e corrigir somente arquivos da IMP-007 em `src/components/dashboard/`, `src/app/api/server/dashboard/`, `src/app/api/laboratories/[laboratoryId]/dashboard/` e `tests/`
 - [x] T060 Executar `npm run typecheck` separadamente e corrigir somente incompatibilidades da IMP-007 em `src/types/dashboard.type.ts`, `src/components/dashboard/` e `src/app/api/`
 - [x] T061 Executar `npm run build` separadamente e confirmar ausência de import server-side em cliente, dependência, schema ou migration nova em `src/components/dashboard/`, `src/app/api/server/dashboard/`, `package.json` e `prisma/`
-- [ ] T062 Executar `git diff --check`, `git status --short` e revisão de diff/escopo para confirmar somente caminhos autorizados, ausência de segredos/mocks/dados reais e nenhuma mudança em `docs/raw/`, `prisma/schema.prisma` ou `prisma/migrations/`, registrando o resultado em `specs/007-dashboard-history/tasks.md`
-- [ ] T063 Auditar estaticamente a cobertura explícita de FR-001–FR-019 e SC-001–SC-009 contra testes e comportamento, sem declarar SC-009 aprovada, em `specs/007-dashboard-history/tasks.md`
-- [ ] T064 Registrar SC-009 como validação humana pendente/agendada, com método, amostra, responsável e evidência a preencher pela equipe, sem resultado simulado pelo agente, em `specs/007-dashboard-history/quickstart.md`
+- [x] T062 Executar `git diff --check`, `git status --short` e revisão de diff/escopo para confirmar somente caminhos autorizados, ausência de segredos/mocks/dados reais e nenhuma mudança em `docs/raw/`, `prisma/schema.prisma` ou `prisma/migrations/`, registrando o resultado em `specs/007-dashboard-history/tasks.md`
+- [x] T063 Auditar estaticamente a cobertura explícita de FR-001–FR-019 e SC-001–SC-009 contra testes e comportamento, sem declarar SC-009 aprovada, em `specs/007-dashboard-history/tasks.md`
+- [x] T064 Registrar SC-009 como validação humana pendente/agendada, com método, amostra, responsável e evidência a preencher pela equipe, sem resultado simulado pelo agente, em `specs/007-dashboard-history/quickstart.md`
 - [ ] T065 Executar verificação manual do fluxo principal com tecnologia assistiva real e registrar responsável, data, sistema operacional, navegador, tecnologia/versões, procedimento, resultados e evidências em `specs/007-dashboard-history/accessibility-evidence.md`; manter SC-008 como `NAO_VERIFICADO` até a execução efetiva e não reutilizar a avaliação moderada de SC-009 como substituta
 
 ---
@@ -292,6 +292,24 @@ T047 — E2E de acesso, acessibilidade e responsividade
 | SC-008 | T047–T053 e T057 para aspectos automatizáveis; T065 para tecnologia assistiva real, inicialmente `NAO_VERIFICADO` |
 | SC-009 | T063–T064; human evidence remains pending |
 
+### Auditoria estática de cobertura — 2026-09-18
+
+| Requisitos | Evidência observada | Estado |
+|---|---|---|
+| FR-001–FR-002, FR-012 | Guard contextual em `dashboard.service.ts` e reautorização nas rotas/destinos; matriz de vínculo atual, revogado, inelegível e laboratórios distintos em unidade, integração e E2E | `COBERTO_AUTOMATICAMENTE` |
+| FR-003 | Resumo deriva nome, estado e contagens das fontes; fixture comprova laboratório com dados e vazio real | `COBERTO_AUTOMATICAMENTE` |
+| FR-004–FR-008 | União somente de área criada/coleta confirmada, identidade e destino contextuais, ordem total, desempate e cursor keyset de 20 itens comprovados por contrato, serviço e E2E 20+4 | `COBERTO_AUTOMATICAMENTE` |
+| FR-009–FR-010 | Componentes mantêm ciclos independentes de loading/erro/retry; E2E comprova releitura persistida e descarte de resposta tardia | `COBERTO_AUTOMATICAMENTE` |
+| FR-011 | Resumo/histórico e destinos de laboratório inativo permanecem legíveis, sinalizam somente leitura e não oferecem mutação | `COBERTO_AUTOMATICAMENTE` |
+| FR-013 | DTOs e selects minimizados; contratos e E2E recusam/excluem autoria, contato, coordenadas, observações e dados científicos | `COBERTO_AUTOMATICAMENTE` |
+| FR-014–FR-016, FR-019 | Ausência de log/tabela/migration e de projeção ambiental ou diagnóstica; runtime permanece somente leitura e o mock antigo foi removido | `COBERTO_POR_INSPECAO_E_TESTE` |
+| FR-017–FR-018 | E2E em 320/768/1280, sem overflow principal, com teclado, foco e nomes/estados acessíveis | `COBERTO_AUTOMATICAMENTE`; tecnologia assistiva real pendente em T065 |
+| SC-001–SC-007 | Fixtures determinísticas e 25 cenários E2E, além de unidade/integração, comprovam isolamento, destinos, paginação, estados, releitura e responsividade | `APROVADO_AUTOMATICAMENTE` |
+| SC-008 | Teclado, foco, nomes, papéis, estados ARIA e responsividade foram automatizados | `PARCIAL`; tecnologia assistiva real `NAO_VERIFICADO` até T065 |
+| SC-009 | Protocolo, amostra, medidas, critério e campos de evidência definidos em `quickstart.md` | `PENDENTE_AGENDAMENTO`; estudo humano `NAO_VERIFICADO` |
+
+Resultado da revisão de escopo de T062: `git diff --check` passou; a árvore contém somente o arquivo local preexistente e não versionado `specs/005-environmental-collection-data/coverage-review.md`, preservado e fora da IMP-007. O diff da branch não altera `docs/raw/`, `prisma/schema.prisma`, `prisma/migrations/` ou dependências. Não há mock no runtime, dado real em fixture ou segredo novo da IMP-007; os valores de credencial encontrados nos testes de guard são literais sintéticos em domínios reservados. As fixtures reais usam apenas variáveis de ambiente, IDs allowlisted e cleanup verificado.
+
 ## Notes
 
 - `[P]` foi aplicado somente a arquivos distintos sem dependência funcional incompleta.
@@ -315,3 +333,5 @@ T047 — E2E de acesso, acessibilidade e responsividade
 - Etapas 3–5 da continuação: fixture real criou três laboratórios (ativo com dados, inativo e vazio), quatro identidades, 13 áreas, 13 coletas confirmadas e uma coleta incompleta, com 24 eventos elegíveis no laboratório principal, empates determinísticos e cleanup final zero. Unidade direcionada: 4/4 arquivos GREEN. Integração direcionada: 1/1 arquivo GREEN. E2E `dashboard-history.spec.ts`: 3/3 cenários GREEN, cobrindo totais reais, vazio, destino de áreas, 20+4 itens sem duplicação, fim da paginação, destinos contextuais e inserção mais recente ausente da continuação e presente ao retornar à primeira página.
 - Etapas 6–8 da continuação: E2E do dashboard ampliado para 7 cenários, cobrindo releitura após persistência, loading distinto de vazio, falha parcial e retry, descarte de resposta tardia, revogação e reautorização, minimização do payload, teclado/foco e viewports 320/768/1280. Os destinos persistidos mantêm os guards contextuais; tecnologia assistiva real permanece `NAO_VERIFICADO` para T065.
 - Validação final das etapas 6–8: `npm run typecheck` PASS; `npm run lint` PASS com zero erros e quatro warnings preexistentes fora da IMP-007; `npm run test:unit` PASS em 33/33 arquivos; `npm run test:integration` PASS em 46 testes, incluindo PostgreSQL real; matriz Playwright PASS em 25/25 cenários (7 do dashboard e 18 regressões IMP-003/004), com cleanup final zero; `npm run build -- --webpack` PASS. As fábricas testáveis de 13 rotas foram movidas para `route.handlers.ts`, deixando `route.ts` com apenas exports HTTP aceitos pelo Next.js 16, sem mudança de comportamento.
+- Etapa 9 da continuação: T062–T064 concluídas. `git diff --check` PASS; revisão de escopo sem mudança em `docs/raw/`, schema, migrations ou dependências; 19/19 requisitos funcionais e 9/9 critérios de sucesso rastreados. A análise Speckit não destrutiva encontrou zero conflito constitucional, zero requisito sem tarefa e zero achado crítico/alto. SC-009 recebeu protocolo humano próprio e permanece `NAO_VERIFICADO`; T065 continua como única tarefa aberta.
+- Etapa 10 da continuação: `accessibility-evidence.md` criado com ambiente, procedimento, matriz por controle/estado, evidências e decisão a preencher. A parcela automatizável já está GREEN, mas nenhuma pessoa executou tecnologia assistiva real nesta sessão; por isso T065 e SC-008 permanecem corretamente `NAO_VERIFICADO`, sem simulação de aprovação.

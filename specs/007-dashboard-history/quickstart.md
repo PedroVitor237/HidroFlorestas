@@ -149,7 +149,7 @@ Esperado:
 
 ## Cenário H — verificação manual com tecnologia assistiva para SC-008
 
-Estado inicial: `NAO_VERIFICADO`.
+Estado: `PRONTO_PARA_EXECUCAO` (`NAO_VERIFICADO`). O roteiro e os campos de resultado estão em `accessibility-evidence.md`.
 
 Depois de existir build utilizável, uma pessoa responsável deve registrar em evidência versionada ou vinculada:
 
@@ -176,7 +176,21 @@ Esperado: listagem/detalhe de áreas, confirmação/detalhe de coletas, cadeia c
 
 Após existir build utilizável, a equipe de produto/pesquisa deve moderar cada cenário principal com participantes representativos e registrar método, amostra e resultado. A meta é pelo menos 90% identificarem laboratório, estado e origem sem ajuda. Não substituir essa evidência por teste automatizado ou inspeção do agente.
 
-Estado inicial: `NAO_VERIFICADO`. Esta avaliação não é a verificação técnica com tecnologia assistiva de SC-008 e deve manter método, amostra, responsável e evidência próprios.
+Estado: `PENDENTE_AGENDAMENTO` (`NAO_VERIFICADO`). Esta avaliação não é a verificação técnica com tecnologia assistiva de SC-008 e deve manter método, amostra, responsável e evidência próprios.
+
+### Protocolo a agendar
+
+| Campo | Registro exigido |
+|---|---|
+| Responsável | Pessoa de produto/pesquisa a definir pela equipe antes do recrutamento |
+| Amostra | Participantes representativos do público-alvo; quantidade e critérios de inclusão a definir e registrar antes das sessões |
+| Método | Sessões moderadas individuais, sem ajuda durante a medição, percorrendo laboratório ativo com dados, laboratório vazio, falha com retry, laboratório inativo e localização da origem no histórico |
+| Medidas | Para cada participante e cenário: identificou o laboratório, distinguiu o estado da visão e localizou um registro de origem sem ajuda; registrar também tempo, desvios e observações qualitativas |
+| Critério | Aprovar somente se pelo menos 90% dos participantes satisfizerem os três resultados nos cenários principais, conforme SC-009 |
+| Evidência | Vincular roteiro, consentimento aplicável, perfil agregado da amostra, registros anonimizados por sessão, cálculo do resultado e decisão da equipe |
+| Agenda | Data e local/canal a preencher pela equipe; nenhuma sessão foi executada pelo agente |
+
+Antes das sessões, o responsável deve congelar roteiro, amostra e forma de cálculo. Depois, deve registrar data, participantes apenas de forma anonimizada, resultado numerador/denominador por medida, evidências vinculadas, desvios e decisão final. Enquanto esses campos não estiverem preenchidos por uma execução humana real, SC-009 permanece `NAO_VERIFICADO`.
 
 ## Critério de encerramento futuro
 
