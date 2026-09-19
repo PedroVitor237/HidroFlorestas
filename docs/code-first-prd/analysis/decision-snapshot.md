@@ -8,6 +8,8 @@
 
 “Estado registrado” reproduz os eixos canônicos existentes. “Implementação observada” aplica somente o eixo local da iniciativa Code-First após inspeção estática. Uma evidência de código pode atualizar a compreensão analítica da implementação, mas não muda a origem, a autoridade nem o estado em `TECH_DECISIONS.md`.
 
+**Atualização posterior preservando o snapshot**: em 2026-09-18, a equipe confirmou `TD-010` como direção de Plotly para gráficos e visualizações analíticas futuros, sempre após a IMP-009 e fora do mapa mínimo Leaflet/React-Leaflet da IMP-008. O estado vigente está em `TECH_DECISIONS.md`; a linha histórica abaixo permanece como fotografia anterior à decisão. Arquitetura de execução, frontend versus Plotly Python, contratos de entrada e gráficos concretos continuam abertos, e nenhuma implementação foi declarada.
+
 `TD-001` a `TD-007` têm implementação parcialmente verificável como conjunto, mas continuam originados em relato da equipe, sem data ou responsável especificados (`TECH_DECISIONS.md:15-37`). Não são promovidos a `DECISAO_EQUIPE_CONFIRMADA` por esta iniciativa.
 
 ## Decisões operacionais confirmadas para a implementação

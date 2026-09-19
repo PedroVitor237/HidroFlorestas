@@ -13,7 +13,7 @@
 
 Fontes usadas: código e configurações rastreados; `prisma/schema.prisma`; [`../../../TECH_DECISIONS.md`](../../../TECH_DECISIONS.md), com seus estados preservados; documentos existentes em [`../`](../), em especial o [PRD](../prd-code-first.md) e o [catálogo de requisitos](requirements.md); e decisões humanas já registradas na iniciativa (`CF-PD-001`, `CF-PD-004`, `CF-PD-007` e `CF-PD-008`).
 
-Limites: estes casos detalham atores e interações candidatas da versão Code-First, não aprovam produto, ciência, UX, dados ou arquitetura e não comprovam comportamento em runtime. `docs/raw/**`, matriz global, relatórios históricos, internet, fontes externas e Figma não foram consultados. Mocks e placeholders são evidência do estado estático, não comportamento aprovado. O mapa integra o núcleo do MVP por `CF-PD-007`, sem seleção de tecnologia cartográfica. IA permanece fora do núcleo por `CF-PD-004`. A produção do IHFR continua `PENDENCIA_DE_DECISAO`: não se escolhe entre cálculo interno, Python, importação, registro manual ou serviço externo. A revisão H01–H10 está em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md); suas direções humanas permanecem sem autoridade identificada e não alteram a classificação dos atores candidatos.
+Limites: estes casos detalham atores e interações candidatas da versão Code-First, não aprovam produto, ciência, UX, dados ou arquitetura e não comprovam comportamento em runtime. `docs/raw/**`, matriz global, relatórios históricos, internet, fontes externas e Figma não foram consultados. Mocks e placeholders são evidência do estado estático, não comportamento aprovado. O mapa integra o núcleo do MVP por `CF-PD-007`, com Leaflet/React-Leaflet como escolha planejada do mínimo da IMP-008 e sem encerrar provedor ou arquitetura definitiva; `TD-010` escolhe Plotly somente para gráficos futuros posteriores à IMP-009. IA permanece fora do núcleo por `CF-PD-004`. A produção do IHFR continua `PENDENCIA_DE_DECISAO`: não se escolhe entre cálculo interno, Python, importação, registro manual ou serviço externo. A revisão H01–H10 está em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md); suas direções humanas permanecem sem autoridade identificada e não alteram a classificação dos atores candidatos.
 
 Neste documento, **comportamento pretendido candidato** designa a interação estruturada a partir dos requisitos candidatos e das direções registradas; **implementação observada estaticamente** designa somente código ou schema diretamente localizado; **mock ou placeholder** identifica interfaces sem fluxo de domínio conectado; e **dependência aberta** identifica decisão ou contrato ainda necessário. Nenhuma dessas categorias equivale a `APROVADO`.
 
@@ -204,7 +204,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Pós-condições:** área cadastrada e representável espacialmente no contexto correto.
 - **Estado da implementação:** `PARCIALMENTE_IMPLEMENTADO`; schema parcial, sem cadastro espacial consumidor.
 - **Mock ou placeholder:** ação “Nova Área”, dados da lista e mapa não persistem o domínio.
-- **Dependências abertas:** dados mínimos, estados e propriedade em `CF-PD-003`, `CF-PD-006`; geometria, precisão, privacidade e interação em `CF-Q-012`; alternativas `TD-008`, `TD-010`, `TD-011`, `TD-014` permanecem sem seleção.
+- **Dependências abertas:** dados mínimos, estados e propriedade em `CF-PD-003`, `CF-PD-006`; geometria adicional, precisão, privacidade e interação em `CF-Q-012`; provedor e arquitetura definitiva em `TD-008`, `TD-011`, `TD-014`. `TD-010` não altera o mapa mínimo.
 - **Decisões relacionadas:** `CF-PD-003`, `CF-PD-004`, `CF-PD-006`, `CF-PD-007`.
 - **Limitações:** o cadastro e sua representação espacial compõem um único objetivo; não se define ponto, polígono, coordenadas ou tecnologia.
 
@@ -258,7 +258,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Pós-condições:** a coleta permite alcançar a área e sua representação espacial aplicável.
 - **Estado da implementação:** `PARCIALMENTE_IMPLEMENTADO`; relações no schema sem fluxo consumidor.
 - **Mock ou placeholder:** visualização cartográfica atual é placeholder.
-- **Dependências abertas:** granularidade, eventual localização própria, precisão, validação e privacidade em `CF-Q-012`; tecnologia em `CF-Q-013` e `TD-008`, `TD-010`, `TD-011`, `TD-014`.
+- **Dependências abertas:** granularidade, eventual localização própria, precisão, validação e privacidade em `CF-Q-012`; provedor e arquitetura cartográfica em `CF-Q-013`, `TD-008`, `TD-011`, `TD-014`. A direção analítica de `TD-010` é separada deste vínculo espacial mínimo.
 - **Decisões relacionadas:** `CF-PD-003`, `CF-PD-004`, `CF-PD-006`, `CF-PD-007`.
 - **Limitações:** é incluído por `CF-UC-009`; não inventa coordenada própria para a coleta.
 
@@ -349,7 +349,7 @@ O [`../diagrams/plantuml/use-cases.puml`](../diagrams/plantuml/use-cases.puml) c
 - **Pós-condições:** acompanhamento territorial consultado sem quebrar a cadeia laboratório → área → coleta → diagnóstico aplicável.
 - **Estado da implementação:** `PARCIALMENTE_IMPLEMENTADO`; somente contêiner e legenda estáticos.
 - **Mock ou placeholder:** mapa, pontos e categorias de risco não estão conectados ao domínio.
-- **Dependências abertas:** conteúdo e gráficos em `CF-PD-003`, `CF-PD-005`; acesso e privacidade em `CF-PD-006`; geometria, camadas, precisão, filtros e interação em `CF-Q-012`; tecnologia em `CF-Q-013` e `TD-008`, `TD-010`, `TD-011`, `TD-014`.
+- **Dependências abertas:** conteúdo e gráficos em `CF-PD-003`, `CF-PD-005`; acesso e privacidade em `CF-PD-006`; geometria, camadas, precisão, filtros e interação em `CF-Q-012`; provedor/arquitetura em `CF-Q-013`, `TD-008`, `TD-011`, `TD-014`; integração, entradas e gráficos concretos de Plotly em `TD-010`.
 - **Decisões relacionadas:** `CF-PD-003`, `CF-PD-004`, `CF-PD-005`, `CF-PD-006`, `CF-PD-007`.
 - **Limitações:** não seleciona base, biblioteca, provedor, arquitetura, simbologia ou regra científica; “aplicáveis” limita a visão aos registros existentes e ao contrato futuro.
 
@@ -395,7 +395,7 @@ Não foram usadas relações `extend`. Cadastrar a área já incorpora sua repre
 | `CF-PD-003` | `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-014`, `CF-UC-015` | dados mínimos, estados, edição, exclusão, eventos, resumo e comportamento cartográfico detalhado |
 | `CF-PD-005` | `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-015` | contrato científico, produção, validação, qualidade, conteúdo, versão do contrato, versão do algoritmo e relação entre ambas |
 | `CF-PD-006` | `CF-UC-004`, `CF-UC-005`, `CF-UC-006`, `CF-UC-007`, `CF-UC-008`, `CF-UC-009`, `CF-UC-010`, `CF-UC-011`, `CF-UC-012`, `CF-UC-013`, `CF-UC-014`, `CF-UC-015` | papéis, permissões, propriedade, autoria detalhada, isolamento e privacidade |
-| `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-UC-007`, `CF-UC-010`, `CF-UC-015` | alternativas e arquitetura cartográfica; nenhuma foi selecionada |
+| `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-UC-007`, `CF-UC-010`, `CF-UC-015` | Leaflet/React-Leaflet como escolha planejada do mapa mínimo e Plotly confirmado para gráficos futuros; provedor, arquitetura definitiva e integração analítica permanecem abertos |
 | `TD-009`, `TD-012` | `CF-UC-012` | eventual Python e integração; não definem a produção do IHFR |
 
 Este documento e seu PlantUML permanecem `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), e H01–H10 estão verificadas em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md) sem autoridade normativa identificada. A Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. As decisões abertas e a ausência de aprovação normativa permanecem preservadas.

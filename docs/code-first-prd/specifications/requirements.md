@@ -15,7 +15,7 @@ O [`../prd-code-first.md`](../prd-code-first.md) permanece o documento central d
 
 Nenhum requisito representa automaticamente comportamento já implementado. O campo “Estado da implementação” registra apenas evidência estática observável; implementação parcial não reduz a intenção candidata sustentada pelo código e pelas decisões de trabalho. Nenhuma formulação com “deverá” está `APROVADO`, e decisões futuras poderão completar ou revisar o catálogo sem renumerar silenciosamente seus requisitos.
 
-Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são apenas grupos sugeridos pelo schema atual, não um contrato científico aprovado. OpenStreetMap, Plotly e Leaflet permanecem alternativas abertas em `TD-008`, `TD-010` e `TD-011`; este catálogo não prescreve biblioteca, provedor, arquitetura, camadas, precisão, geometria, simbologia ou interação cartográfica.
+Não há metas quantitativas inventadas. Água, solo, vegetação e terreno são apenas grupos sugeridos pelo schema atual, não um contrato científico aprovado. Leaflet/React-Leaflet são a escolha local planejada para o mapa mínimo da IMP-008; Plotly foi confirmado em `TD-010` somente para gráficos analíticos futuros posteriores à IMP-009. OpenStreetMap, provedor, arquitetura cartográfica definitiva, forma de integração do Plotly, entradas e gráficos concretos permanecem abertos; este catálogo não antecipa Python, PostGIS, camadas científicas, precisão, geometria, simbologia ou interação adicional.
 
 A verificação de H01–H10 está em [`../reviews/product-hypotheses-human-review.md`](../reviews/product-hypotheses-human-review.md). O anexo humano não identifica autor, função ou autoridade; por isso, suas direções não aprovam requisitos. Em especial, H08 não cria campos nem requisito novo: `algorithmVersion` é a única versão observada no schema, enquanto a versão do contrato científico e sua relação com o algoritmo permanecem lacunas de `CF-PD-005`.
 
@@ -212,7 +212,7 @@ A verificação de H01–H10 está em [`../reviews/product-hypotheses-human-revi
 - **Precondições conhecidas:** laboratório ativo, permissão aplicável e início do cadastro de uma área.
 - **Comportamento ou fluxo principal:** cadastrar a área; fornecer ou estabelecer sua referência espacial pelo mapa; manter a representação associada ao registro da área.
 - **Critérios de aceitação provisórios:** uma área cadastrada pode ser representada no mapa e a representação permanece vinculada ao mesmo registro; ponto, polígono, coordenadas ou combinação não são definidos por este requisito.
-- **Dependências abertas:** representação geométrica, dados espaciais mínimos, precisão, privacidade, validação, interação e tecnologia (`CF-PD-003`, `CF-PD-006`, `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-010`, `TD-011`, `TD-014`).
+- **Dependências abertas:** representação geométrica adicional, dados espaciais mínimos, precisão, privacidade, validação, interação, provedor e arquitetura cartográfica definitiva (`CF-PD-003`, `CF-PD-006`, `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-011`, `TD-014`). `TD-010` não altera o mapa mínimo Leaflet.
 - **Decisões relacionadas:** `CF-PD-004`, `CF-PD-007`.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 
@@ -242,7 +242,7 @@ A verificação de H01–H10 está em [`../reviews/product-hypotheses-human-revi
 - **Precondições conhecidas:** laboratório ativo; registros espaciais e resultados aplicáveis existentes; acesso autorizado.
 - **Comportamento ou fluxo principal:** acessar o mapa; visualizar as áreas e projeções aplicáveis de coletas, dados, gráficos ou resultados; navegar ou correlacionar a representação com seus registros de origem.
 - **Critérios de aceitação provisórios:** cada elemento territorial apresentado mantém vínculo identificável com a área, coleta, dado, gráfico ou resultado IHFR que o originou; conteúdo aplicável depende dos registros existentes e do contrato científico.
-- **Dependências abertas:** conteúdo e forma dos gráficos, camadas, filtros, simbologia, interação, precisão, privacidade, tecnologia e contrato de apresentação do IHFR (`CF-PD-003`, `CF-PD-005`, `CF-PD-006`, `CF-Q-011`, `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-010`, `TD-011`, `TD-014`).
+- **Dependências abertas:** conteúdo e forma dos gráficos, camadas, filtros, simbologia, interação, precisão, privacidade, contratos de entrada, aprovação científica aplicável e forma de integração do Plotly (`CF-PD-003`, `CF-PD-005`, `CF-PD-006`, `CF-Q-011`, `CF-Q-012`, `CF-Q-013`, `TD-010`, `TD-014`). A direção Plotly está confirmada, mas não implementada.
 - **Decisões relacionadas:** `CF-PD-003`, `CF-PD-004`, `CF-PD-005`, `CF-PD-006`, `CF-PD-007`.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 

@@ -17,7 +17,7 @@ Fontes usadas: código e configurações rastreados; [`../../../prisma/schema.pr
 
 Este documento especifica comportamento candidato e registra separadamente a implementação observável. Código, schema, mocks e placeholders comprovam somente seu próprio estado; não aprovam intenção, regras de negócio, domínio, permissões ou ciência. A aplicação, build, lint, testes, banco, migrations e deploy não foram executados.
 
-O mapa integra o núcleo do MVP por `CF-PD-007`, mas geometria, formato de coordenadas, camadas, simbologia, precisão, interação, biblioteca, provedor e arquitetura continuam abertos em `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-010`, `TD-011` e `TD-014`. O IHFR integra o ciclo por `CF-PD-004`, enquanto sua forma de produção permanece aberta em `CF-PD-005`; este documento não define fórmula, pesos, variáveis normativas, classes, limiares, interpretação, Python, serviço externo ou cálculo interno.
+O mapa integra o núcleo do MVP por `CF-PD-007`; Leaflet/React-Leaflet são a escolha local planejada para seu mínimo, enquanto geometria adicional, formato de coordenadas, camadas, simbologia, precisão, interação, provedor e arquitetura definitiva continuam abertos em `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-011` e `TD-014`. `TD-010` confirma Plotly apenas para gráficos analíticos futuros posteriores à IMP-009, sem integração definida. O IHFR integra o ciclo por `CF-PD-004`, enquanto sua forma de produção permanece aberta em `CF-PD-005`; este documento não define fórmula, pesos, variáveis normativas, classes, limiares, interpretação, Python, serviço externo ou cálculo interno.
 
 ## Convenções
 
@@ -214,7 +214,7 @@ flowchart TD
 | Classes/models relacionados | `CF-CLS-001` `User`; `CF-CLS-002` `Coordinates`; `CF-CLS-003` `LaboratoryRoom`; `CF-CLS-005` `CollectionArea`; `CF-CLS-014` `LandType` apenas como enum técnico não aprovado; `CF-CLS-030` `CollectCardData` como mock |
 | Evidências | `prisma/schema.prisma:43-109`; `src/app/(private)/dashboard/collects/page.tsx:6-24`; `src/app/(private)/dashboard/collects/collect-card.tsx:24-80`; `src/app/(private)/dashboard/collects/collects-grid.tsx:3-49`; `src/app/(private)/dashboard/maps.tsx:18-46` |
 | Estado geral da implementação | `PARCIALMENTE_IMPLEMENTADO`: schema espacial parcial; lista e mapa mockados; ação de cadastro placeholder |
-| Decisões abertas | `CF-PD-003`, `CF-PD-006`; `CF-Q-012`, `CF-Q-013`; `TD-008`, `TD-010`, `TD-011`, `TD-014` |
+| Decisões abertas | `CF-PD-003`, `CF-PD-006`; `CF-Q-012`, `CF-Q-013`; `TD-008`, `TD-011`, `TD-014`; em `TD-010`, apenas integração e gráficos concretos permanecem abertos |
 | Limitações | não escolhe ponto, polígono, coordenadas, formato, precisão, interação, biblioteca ou provedor |
 
 ### Mermaid
@@ -366,7 +366,7 @@ flowchart TD
 | Classes/models relacionados | `CF-CLS-002` `Coordinates`; `CF-CLS-003` `LaboratoryRoom`; `CF-CLS-005` `CollectionArea`; `CF-CLS-006` `CollectionData`; `CF-CLS-007` `IHFRDiagnosis`; `CF-CLS-029` `ActivityLog` como mock não persistido |
 | Evidências | `src/app/(private)/dashboard/page.tsx:7-22`; `src/app/(private)/dashboard/maps.tsx:18-46`; `src/app/(private)/dashboard/activity-history.tsx:9-270`; `prisma/schema.prisma:43-142` |
 | Estado geral da implementação | `PARCIALMENTE_IMPLEMENTADO`: resumo parcial, histórico e mapa mockados; registros de domínio e destinos não conectados |
-| Decisões abertas | `CF-PD-003`, `CF-PD-005`, `CF-PD-006`; `CF-Q-012`, `CF-Q-013`; `TD-008`, `TD-010`, `TD-011`, `TD-014` |
+| Decisões abertas | `CF-PD-003`, `CF-PD-005`, `CF-PD-006`; `CF-Q-012`, `CF-Q-013`; contratos científicos e de entrada, integração e gráficos concretos de `TD-010`; `TD-014` |
 | Limitações | não seleciona tecnologia, camada, simbologia, filtro ou interação; gráficos e resultados só aparecem quando aplicáveis e existentes |
 
 ### Mermaid
@@ -449,7 +449,7 @@ Cobertura validável: os 15 requisitos funcionais, os 6 não funcionais e os 15 
 | `CF-PD-003` | `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-007` e ciclo principal | dados mínimos, estados, edição, exclusão, eventos, resumo e detalhes cartográficos |
 | `CF-PD-005` | `CF-PFLOW-005`, `CF-PFLOW-006`, `CF-PFLOW-007` e ciclo principal | contrato científico, forma de produção, conteúdo, qualidade, validação, versão do contrato, versão do algoritmo e relação entre ambas |
 | `CF-PD-006` | todos os fluxos autenticados | papéis, permissões, propriedade, autoria detalhada, isolamento e privacidade |
-| `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-007` | base, visualização, biblioteca e arquitetura cartográfica; nenhuma selecionada |
+| `TD-008`, `TD-010`, `TD-011`, `TD-014` | `CF-PFLOW-004`, `CF-PFLOW-005`, `CF-PFLOW-007` | Leaflet/React-Leaflet como escolha planejada do mapa mínimo e Plotly confirmado para gráficos futuros; provedor, arquitetura definitiva e integração analítica permanecem abertos |
 | `TD-009`, `TD-012` | `CF-PFLOW-006` | eventual Python e integração; não determinam a forma de produção do IHFR |
 
 Os sete fluxos e seu PlantUML permanecem `EM_REVISAO`. A validação cruzada está `CONCLUIDA` em [`../analysis/code-first-package-validation.md`](../analysis/code-first-package-validation.md), a Fase 1 está `CONCLUIDA` e a Fase 2 está `NAO_INICIADA`, aguardando revisão humana e autorização explícita. As decisões abertas e a ausência de aprovação normativa permanecem preservadas.
