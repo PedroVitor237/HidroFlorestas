@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPinned, Users } from "lucide-react";
+import { LayoutDashboard, MapPinned, Users } from "lucide-react";
 import { getLaboratoryContext } from "@/components/workspace/laboratory-context";
 export const dynamic = "force-dynamic";
 export default async function LaboratoryLayout({
@@ -34,6 +34,9 @@ export default async function LaboratoryLayout({
             aria-label="Laboratório"
             className="grid grid-cols-2 gap-2 sm:flex"
           >
+            <Link href={`/dashboard/laboratories/${laboratoryId}`} className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2">
+              <LayoutDashboard aria-hidden="true" size={18} /> Resumo
+            </Link>
             <Link
               href={`/dashboard/laboratories/${laboratoryId}/areas`}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-green-700"

@@ -1,0 +1,5 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { it } from "node:test";
+import { parse } from "yaml";
+it("publishes two closed, no-store dashboard operations",()=>{const api=parse(readFileSync("specs/007-dashboard-history/contracts/dashboard-api.openapi.yaml","utf8"));assert.equal(api.openapi,"3.1.0");const operations=Object.values(api.paths).map((path)=>path.get);assert.deepEqual(operations.map((operation)=>operation.operationId).sort(),["getLaboratoryDashboardHistory","getLaboratoryDashboardSummary"]);for(const operation of operations){assert.ok(operation.responses["200"].headers["Cache-Control"]);assert.ok(operation.responses["401"]);assert.ok(operation.responses["404"]);assert.ok(operation.responses["500"]);}for(const name of ["LaboratoryContext","DashboardSummary","AreaCreatedItem","CollectionConfirmedItem","HistoryPage","ErrorEnvelope"])assert.equal(api.components.schemas[name].additionalProperties,false);});
