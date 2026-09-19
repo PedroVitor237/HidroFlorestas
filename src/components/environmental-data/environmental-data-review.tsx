@@ -1,0 +1,5 @@
+import type { EnvironmentalPayload } from "@/types/environmental-data.type";
+import { EnvironmentalValues } from "./environmental-data-detail";
+export function EnvironmentalReview({payload,busy,locked=false,onBack,onConfirm}:{payload:EnvironmentalPayload;busy:boolean;locked?:boolean;onBack:()=>void;onConfirm:()=>void}) {
+ return <section aria-labelledby="review-title" className="space-y-5"><h2 id="review-title" tabIndex={-1} className="text-2xl font-bold outline-none">Revisar dados ambientais</h2><p className="text-slate-600">Confira os quatro grupos. Após confirmar, o conjunto não poderá ser editado, complementado ou excluído.</p><EnvironmentalValues payload={payload}/><div className="flex flex-wrap justify-end gap-3"><button type="button" disabled={busy||locked} onClick={onBack} className="rounded-xl border border-slate-300 px-5 py-3 font-semibold disabled:opacity-50">Voltar ao formulário</button><button type="button" disabled={busy} onClick={onConfirm} className="rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800 disabled:opacity-50">{busy?'Confirmando…':'Confirmar dados ambientais'}</button></div></section>;
+}

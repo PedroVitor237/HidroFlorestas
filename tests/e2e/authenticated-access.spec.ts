@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import {
   AUTH_FIXTURE_USERS,
+  countAuthFixtureUsers,
   runAuthFixtureCommand,
 } from "../fixtures/auth-users";
 import {
@@ -38,6 +39,16 @@ async function setAuthCookie(
 }
 
 test.describe("authenticated access", () => {
+  test.beforeAll(async () => {
+    await runAuthFixtureCommand("teardown", process.env);
+    await runAuthFixtureCommand("setup", process.env);
+  });
+
+  test.afterAll(async () => {
+    await runAuthFixtureCommand("teardown", process.env);
+    expect(await countAuthFixtureUsers(process.env)).toBe(0);
+  });
+
   test.beforeEach(() => {
     if (!password) {
       throw new Error("E2E_USER_PASSWORD is required for authenticated access E2E");
@@ -143,7 +154,7 @@ test.describe("authenticated access", () => {
     ).toBeVisible();
 
     await page.goto("/dashboard");
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page).toHaveURL(/\/workspace$/);
   });
 
   test("denies missing, malformed, tampered, expired, invalid-payload, and orphan sessions", async (
