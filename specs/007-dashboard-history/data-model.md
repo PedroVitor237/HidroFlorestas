@@ -184,7 +184,7 @@ CollectionData confirmada ──projeta── 0..1 CollectionConfirmedItem por l
 
 ## Dependências futuras não materializadas
 
-- `EnvironmentalMeasurementSet` da IMP-005 é apenas modelo planejado no SHA publicado; não integra este modelo atual.
+- `EnvironmentalMeasurementSet` da IMP-005 está integrado, mas é deliberadamente excluído das projeções do incremento mínimo da IMP-007. Uma extensão posterior poderá consumi-lo sem alterar a fonte de verdade atual.
 - O diagnóstico da IMP-006 não possui contrato técnico publicado; nenhum campo ou estado é reservado aqui.
 - Uma extensão futura deverá acrescentar nova variante somente depois de reler models, datas, estados e destinos efetivamente integrados.
 

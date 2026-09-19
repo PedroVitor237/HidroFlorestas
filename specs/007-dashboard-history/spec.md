@@ -4,16 +4,16 @@
 
 **Created**: 2026-09-17
 
-**Status**: Especificação, plano e tarefas concluídos; primeira análise cruzada remediada documentalmente em 2026-09-17, com nova análise independente pendente. Projeções de IMP-005/006 permanecem condicionadas à integração e aos gates de origem.
+**Status**: Especificação, plano e tarefas reconciliados em 2026-09-18 com `origin/development` `5d9ca6f`, que integra a IMP-005. Nova análise independente pendente. A IMP-005 permanece fora do incremento mínimo por decisão explícita de escopo; a IMP-006 continua condicionada aos seus gates.
 
 **Input**: IMP-007 — permitir que um participante acompanhe o ciclo do laboratório explicitamente selecionado por meio de um resumo e de um histórico básicos, rastreáveis e derivados dos registros de origem, sem criar uma fonte paralela de verdade.
 
 ## Authority and Scope
 
-- `DECISAO_CONFIRMADA` — a solicitação desta tarefa, em 2026-09-17, autoriza especificar somente a IMP-007, exige partir de `origin/development`, permite usar as IMP-005/006 publicadas apenas como contratos planejados e proíbe inventar eventos, números, diagnósticos ou conclusões científicas. A mesma solicitação define o laboratório explicitamente selecionado como contexto do incremento.
+- `DECISAO_CONFIRMADA` — a solicitação desta tarefa exige implementar a IMP-007 sobre a `development` atual, preservar o incremento mínimo de resumo e histórico e não incluir cálculo, diagnóstico ou dados científicos. A mesma solicitação define o laboratório explicitamente selecionado como contexto do incremento e recomenda manter a IMP-005 fora do runtime quando nenhuma fonte autoritativa exigir sua inclusão.
 - `FATO_DOCUMENTADO` — `IMP-007`, `CF-PRD-FR-010`, `CF-PRD-NFR-002`, `CF-UC-014` e `CF-PFLOW-007` sustentam acompanhamento por resumo e histórico com retorno ao registro de origem. O pacote Code-First permanece em revisão e seus requisitos continuam candidatos.
-- `EVIDENCIA_IMPLEMENTACAO` — `origin/development` em `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13` contém a IMP-003 e a IMP-004 integradas. Há laboratório contextual, áreas persistidas, coletas confirmadas, leitura autorizada em laboratório inativo e destinos contextuais de detalhe. O dashboard atual somente encaminha ao seletor de contexto; o componente de histórico permanece desconectado e usa pessoas, datas, tipos e destinos fixos.
-- `FATO_DOCUMENTADO` — a IMP-005 publicada em `1235387ded9854be20a92f8639a502a80a2bd952` planeja dados ambientais confirmados, imutáveis e ligados à coleta, mas ainda não está integrada. A IMP-006 publicada em `f5f6e27de2a81d64fa6e829d44d68669ba447739` especifica diagnóstico rastreável, porém sua implementação está bloqueada por integração, ciência e ciclo operacional.
+- `EVIDENCIA_IMPLEMENTACAO` — `origin/development` em `5d9ca6f8f848867e8152bc25e86abc9a6e73358f` contém as IMP-003, IMP-004 e IMP-005 integradas. Há laboratório contextual, áreas persistidas, coletas confirmadas, conjuntos ambientais imutáveis, leitura autorizada em laboratório inativo e destinos contextuais de detalhe. O dashboard atual somente encaminha ao seletor de contexto; o componente de histórico permanece desconectado e usa pessoas, datas, tipos e destinos fixos.
+- `EVIDENCIA_IMPLEMENTACAO` — a IMP-005 integrada fornece `EnvironmentalMeasurementSet` único por coleta, `confirmedAt`, contrato versionado e detalhe contextual. Sua exclusão do dashboard básico é uma decisão de escopo desta entrega, não ausência de runtime. Uma extensão posterior pode projetá-la sem bloquear o mínimo atual. A IMP-006 continua sem contrato implementável integrado e mantém gates científicos e operacionais.
 - `DECISAO_CONFIRMADA` — para esta entrega, conteúdo e eventos ficam limitados a projeções de leitura de registros de origem realmente integrados; retenção acompanha a disponibilidade desses registros; a projeção normal não expõe nome, e-mail ou identificador de autor. Isso resolve o incremento mínimo sem criar auditoria, retenção independente ou exposição pessoal por inferência.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -91,7 +91,7 @@ Como participante autorizado, quero consultar o acompanhamento sem expor dados d
 - Item de origem existe, mas seu destino deixa de ser autorizado: o dashboard não revela o registro e a navegação aplica a mesma resposta de recurso inexistente/inacessível.
 - Falha parcial entre resumo e histórico: cada região identifica seu próprio estado; uma falha não transforma a outra em zero nem mistura dados antigos de contexto diferente.
 - Registro novo é confirmado entre páginas: o cursor não cria snapshot. Uma continuação para itens mais antigos não repete itens já vistos; ao voltar para uma parte mais recente, essa parte é consultada novamente e pode refletir a nova origem. Refresh reinicia a travessia na primeira parte e inclui as fontes então elegíveis.
-- Conteúdo planejado da IMP-005 ou IMP-006 existe apenas em documentos ou estruturas legadas: não aparece como total, evento, diagnóstico ou conclusão até haver contrato implementado, integrado e reconciliado.
+- Conteúdo da IMP-005, embora integrado, não aparece neste incremento por decisão de escopo; conteúdo da IMP-006 continua ausente até implementação e integração. Nenhum dos dois aparece como diagnóstico ou conclusão científica.
 
 ## Requirements *(mandatory)*
 
@@ -111,7 +111,7 @@ Como participante autorizado, quero consultar o acompanhamento sem expor dados d
 - **FR-012**: Perda de vínculo, inelegibilidade ou acesso a recurso de outro laboratório MUST interromper a entrega de dados em toda leitura e navegação. Recurso inexistente e inacessível MUST permanecer indistinguíveis.
 - **FR-013**: A projeção normal MUST minimizar dados: não expor nome, e-mail, avatar ou identificador interno do autor, observações livres, coordenadas, credenciais, chaves, evidências restritas ou detalhes científicos. Autoria e proveniência continuam preservadas na fonte, sem serem copiadas ou publicadas desnecessariamente.
 - **FR-014**: A IMP-007 MUST NOT criar entidade, cópia ou retenção independente de atividade. A elegibilidade e a duração de cada item MUST acompanhar o registro de origem e sua política; a feature não promete retenção permanente.
-- **FR-015**: Dados ambientais da IMP-005 somente MAY compor futuramente o resumo como existência de conjunto confirmado e o histórico como `dados ambientais confirmados` após o contrato real ser implementado, integrado e reconciliado. Valores, grupos, qualidade ou conclusões MUST NOT ser antecipados por esta spec.
+- **FR-015**: Dados ambientais da IMP-005 integrada ficam fora do incremento mínimo da IMP-007 por decisão de escopo. Uma extensão posterior MAY acrescentar existência de conjunto confirmado e o evento `dados ambientais confirmados` após especificação e análise próprias. Valores, grupos, qualidade ou conclusões MUST NOT ser expostos por esta entrega.
 - **FR-016**: Diagnóstico da IMP-006 somente MAY compor futuramente resumo ou histórico após a feature ser implementada e integrada e seus gates científicos, de proveniência e de ciclo estarem satisfeitos. Ausência, estrutura legada ou planejamento MUST NOT ser apresentado como diagnóstico aceito, score, classe, risco ou conclusão.
 - **FR-017**: A interface MUST manter leitura e navegação completas em larguras de 320 px ou superiores, sem rolagem horizontal para o conteúdo principal e sem perda de tipo, instante ou destino do item.
 - **FR-018**: Controles e destinos MUST ser operáveis por teclado, possuir nome acessível e foco perceptível; estados de carregamento, erro, vazio, atualização e somente leitura MUST ser comunicados sem depender exclusivamente de cor ou ícone.
@@ -148,8 +148,8 @@ Como participante autorizado, quero consultar o acompanhamento sem expor dados d
 
 | Gate | Classificação e fonte | Estado para IMP-007 | Consequência |
 |---|---|---|---|
-| G1 — Laboratório, área e coleta | `EVIDENCIA_IMPLEMENTACAO`: IMP-003 `106e25f984df56384896729bf786e44104166570` e IMP-004 `7c977147797ca8a8c167033fee6e7a8ab46f673f`, integradas em `origin/development` `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13` | **FECHADO** para o incremento mínimo | Permite resumo de áreas/coletas e itens `área criada`/`coleta confirmada`, consumindo os contratos reais integrados. |
-| G2 — Dados ambientais | `FATO_DOCUMENTADO`: contratos planejados da IMP-005 em `1235387ded9854be20a92f8639a502a80a2bd952` | **ABERTO** para projeção ambiental | Não bloqueia o incremento mínimo nem o planejamento; bloqueia qualquer total ou item ambiental até integração e reconciliação. |
+| G1 — Laboratório, área e coleta | `EVIDENCIA_IMPLEMENTACAO`: IMP-003, IMP-004 e IMP-005 integradas em `origin/development` `5d9ca6f8f848867e8152bc25e86abc9a6e73358f` | **FECHADO** para o incremento mínimo | Permite resumo de áreas/coletas e itens `área criada`/`coleta confirmada`, consumindo os contratos reais integrados. |
+| G2 — Dados ambientais | `EVIDENCIA_IMPLEMENTACAO`: IMP-005 integrada em `5d9ca6f8f848867e8152bc25e86abc9a6e73358f`, com `EnvironmentalMeasurementSet` e detalhe contextual | **FECHADO** quanto à disponibilidade; **FORA DO ESCOPO** da IMP-007 mínima | Não bloqueia o dashboard básico. Qualquer projeção ambiental será extensão posterior explicitamente especificada, sem expor payload científico. |
 | G3 — Diagnóstico IHFR | `FATO_DOCUMENTADO`: especificação da IMP-006 em `f5f6e27de2a81d64fa6e829d44d68669ba447739`, com gates científicos e operacionais abertos | **ABERTO** para projeção diagnóstica | Não bloqueia o incremento mínimo nem o planejamento; bloqueia qualquer resultado, estado, score, classe ou evento diagnóstico. |
 
 ### Decisões de recorte
@@ -163,7 +163,7 @@ Como participante autorizado, quero consultar o acompanhamento sem expor dados d
 ### Pendências não bloqueantes e reconciliação futura
 
 - `PENDENCIA_DE_DECISAO` — uma política institucional de retenção dos registros de origem não foi localizada. A IMP-007 permanece implementável porque não cria retenção própria; qualquer futura exigência de histórico imutável ou forense exigirá decisão e outra entrega.
-- `PENDENCIA_DE_DECISAO` — mudanças futuras nos contratos ou estados de IMP-005/006 devem definir quais acontecimentos são publicáveis e seus destinos. Até reconciliação com o código integrado, as projeções FR-015/016 não entram no escopo implementável.
+- `PENDENCIA_DE_DECISAO` — uma extensão futura da IMP-007 deverá decidir se e como publicar acontecimentos da IMP-005 integrada; a IMP-006 ainda exige reconciliação após implementação. Essas extensões não entram no escopo implementável atual.
 - Antes de implementar itens futuros, reler os commits efetivamente integrados; os hashes publicados consultados nesta especificação não provam integração nem permanecem necessariamente como HEAD.
 
 ### Fora do escopo
@@ -172,4 +172,4 @@ Cálculo, aceite, associação ou alteração de diagnóstico IHFR; captura ou c
 
 ### Fontes consultadas
 
-Base Git: `origin/development` em `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`. IMP-003: `106e25f984df56384896729bf786e44104166570`, integrada. IMP-004: `7c977147797ca8a8c167033fee6e7a8ab46f673f`, integrada. IMP-005: `1235387ded9854be20a92f8639a502a80a2bd952`, publicada e não integrada. IMP-006: `f5f6e27de2a81d64fa6e829d44d68669ba447739`, publicada e não integrada. Foram consultados o backlog e requisitos Code-First aplicáveis, o dashboard/histórico atual, os contratos integrados de laboratório/área/coleta e os artefatos publicados das IMP-005/006, sem merge, rebase ou cherry-pick.
+Base Git reconciliada: `origin/development` em `5d9ca6f8f848867e8152bc25e86abc9a6e73358f`. IMP-003, IMP-004 e IMP-005 estão integradas; a IMP-006 permanece publicada e não integrada. Foram consultados o backlog, os contratos e a implementação real de laboratório, área, coleta e dados ambientais. A `development` foi incorporada na branch IMP-007 por merge normal, sem conflitos.

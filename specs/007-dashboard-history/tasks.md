@@ -265,7 +265,7 @@ T047 — E2E de acesso, acessibilidade e responsividade
 
 ## Future Reconciliation Gates (non-blocking)
 
-- **IMP-005**: após integração real em `development`, reler schema, DTOs, estados, datas e destinos implementados e abrir uma extensão separada. Não adicionar nesta entrega enum, adaptador, total ou item ambiental; o gate futuro não bloqueia T001–T065.
+- **IMP-005**: integrada em `development` e relida nesta reconciliação. Não adicionar nesta entrega enum, adaptador, total ou item ambiental; sua exclusão é decisão de escopo e uma extensão posterior não bloqueia T001–T065.
 - **IMP-006**: ainda não oferece contrato técnico consumível para a IMP-007. Não reservar campo, estado, score, classe, diagnóstico ou evento; reavaliar somente após implementação e integração com gates científicos/operacionais satisfeitos.
 - **SC-009**: requer participantes representativos e evidência humana. A automação cobre preparo e rastreabilidade, mas nunca equivale a aprovação.
 

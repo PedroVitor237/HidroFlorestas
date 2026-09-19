@@ -4,9 +4,9 @@
 
 - `DECISAO_CONFIRMADA` — a spec da IMP-007 limita o incremento a resumo e histórico derivados de áreas e coletas confirmadas integradas.
 - `EVIDENCIA_IMPLEMENTACAO` — branch inspecionada: `007-dashboard-history` em `df87b2efa7ad37a4ac69316e042384d7dfc0e4fb`.
-- `EVIDENCIA_IMPLEMENTACAO` — `origin/development` continua na baseline `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`; não houve avanço desde a criação da feature.
+- `EVIDENCIA_IMPLEMENTACAO` — `origin/development` avançou para `5d9ca6f8f848867e8152bc25e86abc9a6e73358f` e foi incorporada à branch por merge normal sem conflitos.
 - `EVIDENCIA_IMPLEMENTACAO` — IMP-003 `106e25f984df56384896729bf786e44104166570` e IMP-004 `7c977147797ca8a8c167033fee6e7a8ab46f673f` estão integradas.
-- `FATO_DOCUMENTADO` — IMP-005 `1235387ded9854be20a92f8639a502a80a2bd952` e IMP-006 `f5f6e27de2a81d64fa6e829d44d68669ba447739` estão publicadas, mas não integradas.
+- `EVIDENCIA_IMPLEMENTACAO` — a IMP-005 está integrada e implementa captura/leitura imutável de `EnvironmentalMeasurementSet`; a IMP-006 permanece publicada, mas não integrada.
 - `FATO_DOCUMENTADO` — a primeira análise cruzada dos artefatos foi concluída e seus sete findings foram remediados documentalmente em 2026-09-17; uma nova análise independente permanece pendente.
 
 ## R-001 — Dashboard contextual
@@ -140,7 +140,7 @@
 
 **Decision**: criar apenas pontos de reconciliação documental; nenhum adaptador, enum ou placeholder de runtime para IMP-005/006 entra no mínimo.
 
-**Rationale**: a IMP-005 publica um conjunto ambiental planejado e confirmado, mas nenhum código integrado. A IMP-006 não possui contrato técnico e mantém gates científicos/operacionais. Tipos futuros só podem usar campos e datas realmente integrados.
+**Rationale**: a IMP-005 agora possui código integrado, mas o recorte aprovado da IMP-007 continua limitado a áreas e coletas. Sua exclusão é decisão de escopo e uma extensão posterior pode usar `confirmedAt` e o destino contextual já existentes. A IMP-006 não possui contrato técnico integrado e mantém gates científicos/operacionais.
 
 **Alternatives considered**:
 

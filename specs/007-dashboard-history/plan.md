@@ -4,7 +4,7 @@
 
 **Input**: `specs/007-dashboard-history/spec.md`
 
-**Status**: planejamento e tarefas concluídos; remediação documental da primeira análise cruzada aplicada em 2026-09-17, com nova análise independente pendente. Extensões IMP-005/006 permanecem condicionadas à integração e à reconciliação de seus contratos reais.
+**Status**: planejamento e tarefas reconciliados em 2026-09-18 com a IMP-005 integrada; nova análise independente pendente. A extensão ambiental permanece fora do incremento mínimo por decisão de escopo.
 
 ## Summary
 
@@ -38,7 +38,7 @@ Gate avaliado antes da pesquisa e reavaliado após o design.
 
 | Princípio | Antes da Phase 0 | Após Phase 1 |
 |---|---|---|
-| I — Hierarquia de fontes | PASS — solicitação e spec governam o recorte; código integrado comprova somente contratos atuais. | PASS — models integrados sustentam o mínimo; IMP-005/006 aparecem apenas como planejamento futuro identificado por SHA. |
+| I — Hierarquia de fontes | PASS — solicitação e spec governam o recorte; código integrado comprova somente contratos atuais. | PASS — models integrados sustentam o mínimo; a IMP-005 integrada é reconhecida e excluída por escopo, enquanto a IMP-006 permanece futura. |
 | II — Entregas verticais | PASS — resumo e histórico de áreas/coletas são um resultado pequeno e verificável. | PASS — nenhuma dependência futura ou aprovação científica foi transformada em pré-requisito. |
 | III — Especificação por funcionalidade | PASS — branch e diretório próprios confirmados pelo setup oficial. | PASS — plano, pesquisa, modelo, contrato, quickstart e as tarefas T001–T065 já geradas permanecem em `specs/007-dashboard-history/**`. |
 | IV — Evidência e rastreabilidade | PASS — baseline integrada, mocks atuais e branches futuras estão separados. | PASS — cada dado, instante, critério de inclusão e extensão futura aponta à fonte e à classificação aplicável. |
@@ -107,10 +107,10 @@ tests/
 ## Baseline and Dependency Evidence
 
 - Branch local/upstream no início: `007-dashboard-history` em `df87b2efa7ad37a4ac69316e042384d7dfc0e4fb`, divergência `0/0`, árvore limpa.
-- Baseline de criação e `origin/development`: `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`, divergência `0/0`; portanto não houve avanço a reconciliar.
+- Baseline de criação: `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`. Baseline reconciliada: `origin/development` `5d9ca6f8f848867e8152bc25e86abc9a6e73358f`, incorporada por merge normal sem conflitos.
 - IMP-003 integrada: `106e25f984df56384896729bf786e44104166570`.
 - IMP-004 integrada: `7c977147797ca8a8c167033fee6e7a8ab46f673f`.
-- IMP-005 publicada, não integrada: `1235387ded9854be20a92f8639a502a80a2bd952`; contém somente planejamento e contratos da feature, sem código integrado.
+- IMP-005 integrada: merge `5d9ca6f8f848867e8152bc25e86abc9a6e73358f`, com schema, migration, serviço, rotas, componentes e testes de dados ambientais.
 - IMP-006 publicada, não integrada: `f5f6e27de2a81d64fa6e829d44d68669ba447739`; contém spec/checklist, sem contrato técnico implementável.
 - Apontador local do Spec Kit: `.specify/feature.json` → `specs/007-dashboard-history`; checklist da spec: 16/16 itens aprovados.
 
@@ -196,13 +196,13 @@ SC-001–SC-008 possuem cobertura automatizável detalhada em [quickstart.md](qu
 3. Implementar os dois route handlers com factories injetáveis, erros sanitizados e `no-store`.
 4. Criar a landing contextual e regiões independentes de resumo/histórico; remover o mock do fluxo e atualizar navegação.
 5. Completar contrato, integração, E2E, acessibilidade automatizável, responsividade e regressões IMP-003/004.
-6. Registrar a verificação manual com tecnologia assistiva, manter SC-009 explicitamente pendente e reler IMP-005/006 somente se alguma delas tiver sido integrada antes da execução.
+6. Registrar a verificação manual com tecnologia assistiva, manter SC-009 explicitamente pendente e preservar a IMP-005 integrada fora do runtime deste incremento; reler a IMP-006 se ela for integrada antes da execução.
 
 ## Future Reconciliation Points
 
 ### IMP-005 — dados ambientais
 
-O SHA publicado `1235387...` planeja `EnvironmentalMeasurementSet` único, confirmado e imutável, ligado à coleta, com `confirmedAt` e versão de contrato. Após integração real, reler schema, DTO, rota, índices e semântica temporal; então uma extensão separada poderá projetar “dados ambientais confirmados” pelo `confirmedAt` e linkar ao detalhe contextual. Não expor autor, chave idempotente, hash nem payload no feed. O contrato publicado não prova disponibilidade atual.
+O merge `5d9ca6f...` integra `EnvironmentalMeasurementSet` único, confirmado e imutável, ligado à coleta, com `confirmedAt`, versão de contrato e detalhe contextual. O incremento mínimo não o projeta por decisão de escopo. Uma extensão separada poderá projetar “dados ambientais confirmados” pelo `confirmedAt`; ela não deverá expor autor, chave idempotente, hash nem payload no feed.
 
 ### IMP-006 — diagnóstico
 

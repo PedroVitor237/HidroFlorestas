@@ -7,7 +7,7 @@ Este guia será executado depois da implementação. Nesta etapa de planejamento
 - branch `007-dashboard-history` implementada a partir do plano aprovado;
 - dependências já instaladas pelo fluxo normal do projeto;
 - ambiente de teste isolado e explicitamente confirmado conforme os guards de fixtures existentes;
-- migrations integradas das IMP-003/004 aplicadas no banco descartável;
+- migrations integradas das IMP-003/004/005 aplicadas no banco descartável;
 - nenhum dado real, credencial ou ambiente compartilhado usado em fixtures.
 
 Referências:
