@@ -27,10 +27,10 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 
 - [x] T001 Confirmar branch `007-dashboard-history`, HEAD/upstream, working tree limpa, `origin/development` e `.specify/feature.json`, registrar qualquer avanço impeditivo antes de marcar esta tarefa em `specs/007-dashboard-history/tasks.md`
 - [x] T002 Conferir os scripts `test:unit`, `test:integration`, `test:e2e`, `lint`, `typecheck` e `build`, a ausência de dependência/migration nova e o contrato publicado em `package.json`, `prisma/schema.prisma` e `specs/007-dashboard-history/contracts/dashboard-api.openapi.yaml`
-- [ ] T003 Escrever primeiro os testes do guard de fixture IMP-007 para URL isolada, confirmação explícita, prefixos/UUIDs allowlisted, limpeza e contagem final em `tests/unit/dashboard-fixture-guard.test.ts`
-- [ ] T004 Executar `node --import=tsx --test tests/unit/dashboard-fixture-guard.test.ts` e confirmar RED comportamental por ausência do guard, sem erro de importação ou configuração, em `tests/unit/dashboard-fixture-guard.test.ts`
+- [x] T003 Escrever primeiro os testes do guard de fixture IMP-007 para URL isolada, confirmação explícita, prefixos/UUIDs allowlisted, limpeza e contagem final em `tests/unit/dashboard-fixture-guard.test.ts`
+- [x] T004 Executar `node --import=tsx --test tests/unit/dashboard-fixture-guard.test.ts` e confirmar RED comportamental por ausência do guard, sem erro de importação ou configuração, em `tests/unit/dashboard-fixture-guard.test.ts`
 - [ ] T005 Implementar fixtures determinísticas para dois laboratórios, vazio real, inatividade, vínculo revogável, conta inelegível, tuplas completas/incompletas, mais de 20 origens e empates, com cleanup em `finally` e guards herdados de IMP-003/004, em `tests/fixtures/dashboard-history.ts`
-- [ ] T006 Reexecutar `node --import=tsx --test tests/unit/dashboard-fixture-guard.test.ts` e confirmar GREEN do ambiente seguro antes de qualquer teste com banco em `tests/unit/dashboard-fixture-guard.test.ts`
+- [x] T006 Reexecutar `node --import=tsx --test tests/unit/dashboard-fixture-guard.test.ts` e confirmar GREEN do ambiente seguro antes de qualquer teste com banco em `tests/unit/dashboard-fixture-guard.test.ts`
 
 **Checkpoint**: baseline e fixture estão explícitos; nenhuma suite funcional foi executada antes da confirmação do ambiente isolado.
 
@@ -311,3 +311,4 @@ T047 — E2E de acesso, acessibilidade e responsividade
 - `npm run build`: bloqueado pelo download de Poppins no sandbox. `npm run build -- --webpack` fora do sandbox compilou o bundle e falhou na validação de rota preexistente `src/app/api/auth/logout/route.ts`, cujo export `createLogoutHandler` é incompatível com o validador de rotas do Next.js 16.
 - E2E e banco da IMP-007 não executados: o guard/fixture exclusivo T003–T006 ainda não foi implementado, portanto a URL de teste fornecida não foi usada.
 - SC-008 com tecnologia assistiva real e SC-009 com participantes permanecem `NAO_VERIFICADO`.
+- Etapas 1–2 da continuação: baseline confirmado em `d7e40ec`, alinhado `0/0` com `origin/007-dashboard-history`, e arquivo local da IMP-005 preservado. `dashboard-fixture-guard.test.ts` apresentou RED com `DASHBOARD_FIXTURE_GUARD_NOT_IMPLEMENTED` e depois GREEN após implementar confirmação exclusiva `HIDROFLORESTAS_IMP007_TEST`, allowlist de UUIDs `...07xx`, recusa de ambiente/URL insegura, cleanup anterior ao setup, cleanup compensatório e contagem final zero. Nenhuma conexão com banco foi aberta nesta etapa.
