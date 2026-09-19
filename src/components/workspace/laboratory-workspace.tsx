@@ -374,7 +374,7 @@ export function LaboratoryWorkspace() {
                       Configurações
                     </button>
                     <Link
-                      href={`/dashboard/laboratories/${laboratory.id}/areas`}
+                      href={`/dashboard/laboratories/${laboratory.id}`}
                       className="flex items-center justify-center gap-3 rounded-2xl bg-linear-to-r from-green-600 to-green-500 px-8 py-4 font-bold text-white shadow-lg transition hover:scale-[1.02]"
                     >
                       ACESSAR LABORATÓRIO

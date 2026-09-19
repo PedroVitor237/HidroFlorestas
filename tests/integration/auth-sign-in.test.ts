@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 
 import { NextRequest } from "next/server";
 
-import { createSignInHandler } from "../../src/app/api/auth/sign-in/route";
+import { createSignInHandler } from "../../src/app/api/auth/sign-in/route.handlers";
 
 const successResult = {
   success: true as const,

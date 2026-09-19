@@ -4,8 +4,8 @@ import { describe, it } from "node:test";
 import { AreaAccessError } from "../../src/app/api/server/areas/area.authorization";
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
 import { CollectionServiceError } from "../../src/app/api/server/services/collections.service";
-import { createCollectionHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route";
-import { createCollectionDetailHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/route";
+import { createCollectionHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route.handlers";
+import { createCollectionDetailHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/route.handlers";
 
 const laboratoryId = "00000000-0000-4000-8000-000000000411";
 const areaId = "00000000-0000-4000-8000-000000000421";

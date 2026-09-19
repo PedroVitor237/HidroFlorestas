@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { CollectionDetailDto } from "@/types/collection.type";
 
 export function CollectionDetail({ collection }: { collection: CollectionDetailDto }) {
@@ -15,6 +16,7 @@ export function CollectionDetail({ collection }: { collection: CollectionDetailD
         <div><dt className="font-semibold text-slate-600">Ocorrência em campo</dt><dd>{collection.occurredAt}</dd></div>
         <div><dt className="font-semibold text-slate-600">Confirmação no sistema</dt><dd>{collection.confirmedAt}</dd></div>
       </dl>
+      <Link href={`/dashboard/laboratories/${collection.laboratory.id}/areas/${collection.area.id}/collections/${collection.id}/environmental-data`} className="inline-block rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800">Ver dados ambientais</Link>
     </article>
   );
 }

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { NextRequest } from "next/server";
-import { createLaboratoriesHandlers } from "../../src/app/api/laboratories/route";
+import { createLaboratoriesHandlers } from "../../src/app/api/laboratories/route.handlers";
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
 
 const principal = { id: "principal-id", firstName: "Ana", lastName: "Silva", image: "", isAdmin: false };
