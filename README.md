@@ -2,6 +2,10 @@
 
 Bem-vindo ao repositório do **Hidro Florestas**, uma aplicação fullstack desenvolvida com **Next.js** e **Prisma**. Este guia ajudará você a configurar o ambiente de desenvolvimento local do zero.
 
+## IHFR experimental
+
+A primeira versão do IHFR é um contrato experimental, versionado e sujeito a recalibração. Os conflitos das fontes históricas estão preservados e a validação científica definitiva e os testes de campo permanecem futuros. Consulte o [registro canônico da decisão](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md).
+
 ---
 
 ## 🚀 Primeiros Passos

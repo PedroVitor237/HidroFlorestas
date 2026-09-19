@@ -6,7 +6,7 @@
 
 ## Content Quality
 
-- [x] No implementation details (languages, frameworks, APIs)
+- [x] No low-level implementation design beyond the architecture boundaries explicitly decided for G3
 - [x] Focused on user value and business needs
 - [x] Written for non-technical stakeholders
 - [x] All mandatory sections completed
@@ -31,6 +31,8 @@
 
 ## Validation Evidence
 
+As iterações 1 a 3 abaixo são evidências históricas preservadas. Seus estados de gates são substituídos, para o recorte experimental v0.1, pela Iteração 4; não devem ser lidos como estado vigente.
+
 Iteração 1: 16/16 critérios documentais atendidos. US1 cobre consulta, ausência, origem, inatividade, isolamento e legado; US2 cobre associação condicionada, rejeições, preservação e recuperação. FR-001–FR-015 são verificáveis pelos cenários e limites; SC-001–SC-007 definem resultados observáveis sem escolher arquitetura ou ciência ausentes.
 
 Os gates G1–G3 são precondições materiais explícitas, não marcadores ocultos. A validação desta checklist confirma a qualidade do recorte documental e não declara prontidão para implementação. A produção do diagnóstico, o contrato científico, a relação contrato–algoritmo e o ciclo de associação permanecem pendentes; por isso, a spec declara a implementação bloqueada.
@@ -46,3 +48,11 @@ G2 permanece aberto para fórmula, normalizações, pesos, classes, limiares, au
 A reconciliação não declara implementação da IMP-006. A próxima etapa é somente `$speckit-plan` condicionado; `$speckit-tasks`, `$speckit-analyze` e `$speckit-implement` permanecem inaplicáveis até existir plano executável e tarefas. A IMP-007 foi consultada em `9e3a818be1690298e70586ac640151fecba02b82`, possui 64/65 tarefas marcadas, permanece não integrada e sem projeção de diagnóstico, portanto não bloqueia esse planejamento condicionado.
 
 Hooks: `.specify/extensions.yml` ausente; nenhum hook anterior ou posterior a specify foi executado.
+
+Iteração 4: os 16 critérios permanecem atendidos após a consolidação decisória de 2026-09-18. O [ADR-0001](../../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) é a fonte canônica para conflitos, matemática, compatibilidade e G3; a spec mantém requisitos verificáveis sem duplicar a decisão completa.
+
+`G2-ENG` foi separado de `G2-SCI`: o primeiro está em `G2_ENG_DEPENDE_DE_EVOLUCAO_DE_ENTRADA`, com a dependência limitada ao suplemento `ihfr-diagnosis-input-experimental-v0.1.0` e à presença de `slopePercent`; o segundo está em `NAO_VERIFICADO_VALIDACAO_POSTERIOR`. G3 está `RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`. Nenhum desses estados afirma validação científica definitiva.
+
+O manifesto JSON é válido, seu hash canônico foi reproduzido e o perfil regional permanece inativo. Nenhum código, schema, migration, dependência, contrato da IMP-005 ou documento de `docs/raw/` foi alterado. A próxima skill aplicável é `$speckit-plan`; tasks, analyze e implement continuam posteriores.
+
+A rechecagem remota de 2026-09-19 encontrou somente a integração da IMP-007 em `origin/development` `10fdb8b`; a branch IMP-006 permaneceu `0/0`. O dashboard integrado continua sem projeção de diagnóstico e nenhum merge foi executado nesta consolidação.

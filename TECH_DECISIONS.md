@@ -12,7 +12,7 @@ Uma decisão `CONFIRMADO` não implica implementação verificada. Da mesma form
 
 ## Escolhas relatadas pela equipe
 
-Estas escolhas foram informadas como adotadas. A classificação `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` registra que a adoção foi relatada e que a implementação ainda não foi verificada.
+As escolhas `TD-001` a `TD-007` foram informadas como adotadas; sua classificação `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` registra que a adoção foi relatada e que a implementação ainda não foi verificada. `TD-015` decorre da decisão atual da equipe registrada em 2026-09-18 e usa `DECISAO_CONFIRMADA`, sem implicar implementação ou validação científica definitiva.
 
 | Identificador | Assunto | Decisão ou alternativa | Classificação | Estado decisório | Estado de implementação |
 |---|---|---|---|---|---|
@@ -23,6 +23,7 @@ Estas escolhas foram informadas como adotadas. A classificação `DECISAO_RELATA
 | `TD-005` | Estilização | Adotar Tailwind CSS. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
 | `TD-006` | Ícones | Adotar Lucide React. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
 | `TD-007` | Hospedagem da aplicação | Adotar Vercel para hospedar a aplicação no contexto atualmente relatado. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
+| `TD-015` | Avaliador IHFR experimental v0.1 | Adotar avaliador determinístico server-side no backend TypeScript existente, regido pelo manifesto `ihfr-math-experimental-v0.1.0`; não usar Python, FastAPI, serviço externo ou IA generativa nesta versão. | `DECISAO_CONFIRMADA` | `CONFIRMADO` | `NAO_IMPLEMENTADO` |
 
 ### Origem e evidências das escolhas relatadas
 
@@ -35,6 +36,7 @@ Estas escolhas foram informadas como adotadas. A classificação `DECISAO_RELATA
 | `TD-005` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Nenhuma inspeção do código foi realizada para esta entrada. | não especificado |
 | `TD-006` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Nenhuma inspeção do código foi realizada para esta entrada. | não especificado |
 | `TD-007` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Não resolve a estratégia futura de hospedagem registrada em `TD-013`. | não especificado |
+| `TD-015` | solicitação da equipe para consolidação decisória da IMP-006 | 2026-09-18 | equipe HidroFlorestas | [ADR-0001](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) e manifesto versionado; implementação ainda inexistente. | suplemento `ihfr-diagnosis-input-experimental-v0.1.0`; `ihfr-measurement-v1` | Decisão restrita à v0.1 experimental; `VALIDACAO_CIENTIFICA_PENDENTE` e recalibração futura preservadas. | `ADR-0001` |
 
 ## Alternativas ainda não aprovadas
 
@@ -43,10 +45,10 @@ As entradas abaixo não têm autoridade normativa e não devem ser tratadas como
 | Identificador | Assunto | Decisão ou alternativa | Classificação | Estado decisório | Estado de implementação |
 |---|---|---|---|---|---|
 | `TD-008` | Base cartográfica | Avaliar o uso de OpenStreetMap. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
-| `TD-009` | Cálculos científicos | Avaliar o uso de Python para cálculos científicos e do IHFR. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
+| `TD-009` | Cálculos científicos | Avaliar o uso futuro de Python para cálculos científicos e do IHFR; alternativa não selecionada para a v0.1 experimental. | `EM_AVALIACAO` | `ADIADO` | `NAO_IMPLEMENTADO` |
 | `TD-010` | Visualizações de mapa | Avaliar o uso de Plotly em visualizações relacionadas ao mapa. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
 | `TD-011` | Biblioteca de mapas | Considerar a possibilidade de uso de Leaflet. | `PROPOSTA` | `PROPOSTO` | `NAO_AVALIADO` |
-| `TD-012` | Integração de componentes | Avaliar a estratégia de integração entre componentes Python e Next.js. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
+| `TD-012` | Integração de componentes | Avaliar futuramente a integração Python–Next.js caso Python seja aprovado; não aplicável à v0.1 experimental. | `EM_AVALIACAO` | `ADIADO` | `NAO_IMPLEMENTADO` |
 | `TD-013` | Hospedagem futura | Avaliar a estratégia futura de hospedagem. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
 | `TD-014` | Mapas e visualizações | Avaliar a arquitetura definitiva para mapas e visualizações. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
 
@@ -82,5 +84,8 @@ Cada mudança deve acrescentar uma linha com a origem e manter as linhas anterio
 | `TD-012` | não especificado | Registro inicial | `EM_AVALIACAO` | `NAO_AVALIADO` | Item informado pela equipe para registro de governança, sem aprovação |
 | `TD-013` | não especificado | Registro inicial | `EM_AVALIACAO` | `NAO_AVALIADO` | Item informado pela equipe para registro de governança, sem aprovação |
 | `TD-014` | não especificado | Registro inicial | `EM_AVALIACAO` | `NAO_AVALIADO` | Item informado pela equipe para registro de governança, sem aprovação |
+| `TD-009` | 2026-09-18 | Python não selecionado para a v0.1 experimental; avaliação futura preservada | `ADIADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
+| `TD-012` | 2026-09-18 | Integração Python–Next.js tornou-se inaplicável à v0.1 e permanece futura | `ADIADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
+| `TD-015` | 2026-09-18 | Registro inicial do avaliador experimental interno | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
 
-Não há ADR relacionado registrado para nenhuma entrada. Um ADR só poderá ser criado após a aprovação da decisão correspondente e quando a natureza da decisão justificar esse registro.
+`TD-015` possui `ADR-0001`. As demais entradas continuam sem ADR relacionado; novos ADRs exigem decisão aprovada e natureza compatível.

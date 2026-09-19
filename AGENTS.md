@@ -24,6 +24,10 @@
 - Use as classificações canônicas de informação de `SOURCE_AUTHORITY.md`. Identifique toda inferência como `INFERENCIA` e toda orientação do agente como `RECOMENDACAO`; não apresente nenhuma delas como decisão da equipe.
 - Só use `DECISAO_CONFIRMADA` quando a origem da confirmação estiver identificada e registrada. Se a origem não estiver disponível, registre uma pendência ou use outra classificação compatível com as evidências; data e responsável ausentes podem usar `não especificado`.
 
+### IHFR experimental
+
+- Para a IMP-006, consulte [ADR-0001 — Contrato experimental IHFR v0.1](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md). Nunca apresente a v0.1 como cientificamente validada, universal ou definitiva; preserve `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
 ## Alterações e nomes
 
 - Limite cada mudança ao escopo autorizado e não altere arquivos não relacionados.

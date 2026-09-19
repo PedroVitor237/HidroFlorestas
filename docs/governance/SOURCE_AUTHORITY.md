@@ -9,6 +9,7 @@ A autoridade é específica ao assunto. Nenhuma fonte deve ter sua autoridade ex
 - Uma decisão confirmada pode ainda não estar implementada.
 - Uma implementação existente pode não corresponder à intenção atual.
 - Regras científicas e cálculo do IHFR exigem validação dos responsáveis científicos designados.
+- A equipe pode aprovar um contrato experimental de engenharia sem convertê-lo em validação científica definitiva, desde que versão, proveniência, conflitos, limitações e estado científico permaneçam explícitos.
 - O documento institucional aprovado governa o escopo originalmente aprovado, mas não necessariamente as decisões técnicas atuais.
 
 ## Matriz por assunto
@@ -20,6 +21,7 @@ A autoridade é específica ao assunto. Nenhuma fonte deve ter sua autoridade ex
 | Objetivos e direção atual do produto | Decisões explicitamente confirmadas pela equipe | Prevalecem como intenção atual quando não violarem o escopo institucional. Confirmação exige origem registrada. |
 | Regras científicas | Documentos científicos validados e responsáveis científicos designados | Exigem validação científica; conflitos não podem ser resolvidos por inferência do agente. |
 | Cálculo do IHFR | Documentos científicos validados e responsáveis científicos designados | Fórmulas, variáveis e critérios dependem de validação científica explícita. Implementação é evidência, não validação científica. |
+| Contrato experimental IHFR v0.1 | Decisão da equipe de 2026-09-18 e [ADR-0001](ADR-0001-contrato-experimental-ihfr-v0-1.md) | Autoridade provisória para planejamento e implementação experimental. Não confere validade científica definitiva; exige `VALIDACAO_CIENTIFICA_PENDENTE`, proveniência, versionamento, hash, imutabilidade e recalibração por nova versão. |
 | Modelo de dados | Decisões confirmadas pela autoridade de dados e registros normativos aceitos | Governa o modelo pretendido. Schemas e migrations demonstram apenas o estado implementado; enquanto a autoridade não for designada, divergências são pendências. |
 | Requisitos funcionais | Decisões confirmadas pela autoridade de produto e requisitos, limitadas pelo escopo institucional | Propostas, backlog histórico e implementação não se tornam requisitos aprovados por recorrência ou existência. |
 | UX e fluxos | Decisões de UX confirmadas e artefatos com estado de aprovação registrado | Wireframes e Figma são evidência conforme seu estado; explorações não são requisitos aprovados. |
@@ -44,6 +46,8 @@ A autoridade é específica ao assunto. Nenhuma fonte deve ter sua autoridade ex
 | `RECOMENDACAO` | Orientação do analista ou agente, sem autoridade decisória. |
 | `PENDENCIA_DE_DECISAO` | Ponto que depende de decisão, validação ou designação de responsável. |
 | `NAO_ESPECIFICADO` | Informação necessária que não consta nas fontes disponíveis. |
+
+No IHFR v0.1, `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO` são qualificadores obrigatórios definidos no ADR-0001. Eles não substituem as classificações acima; delimitam o alcance da decisão confirmada.
 
 Não converta ausência de informação em requisito, proposta recorrente em decisão ou implementação existente em intenção aprovada. Toda `INFERENCIA` deve ser identificada. `DECISAO_CONFIRMADA` exige origem identificada e registrada; origem `não especificado` não é suficiente. Sem essa origem, mantenha a informação como pendência ou use outra classificação compatível com as evidências. Data e responsável ausentes podem usar `não especificado`. Decisões já registradas com origem válida permanecem inalteradas.
 

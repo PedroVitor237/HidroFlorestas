@@ -1,0 +1,484 @@
+{
+  "algorithmVersion": "ihfr-evaluator-ts-v0.1.0",
+  "classes": [
+    {
+      "id": "LOW",
+      "lower": 0,
+      "lowerInclusive": true,
+      "upper": 0.25,
+      "upperInclusive": true
+    },
+    {
+      "id": "MODERATE",
+      "lower": 0.25,
+      "lowerInclusive": false,
+      "upper": 0.5,
+      "upperInclusive": true
+    },
+    {
+      "id": "HIGH",
+      "lower": 0.5,
+      "lowerInclusive": false,
+      "upper": 0.75,
+      "upperInclusive": true
+    },
+    {
+      "id": "CRITICAL",
+      "lower": 0.75,
+      "lowerInclusive": false,
+      "upper": 1,
+      "upperInclusive": true
+    }
+  ],
+  "compatibility": {
+    "incompatibleVersion": "REJECT",
+    "measurementContractVersion": "ihfr-measurement-v1",
+    "requiredSupplementVersion": "ihfr-diagnosis-input-experimental-v0.1.0",
+    "substitutionPolicy": "new contract version and new diagnosis; never reinterpret or overwrite an existing result"
+  },
+  "contractHash": "sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b",
+  "dataQuality": {
+    "essentialInputs": [
+      "soil.infiltrationRateMmPerHour",
+      "soil.compactionLevel",
+      "vegetation.vegetationCoverPercent",
+      "supplement.landUseType",
+      "water.waterAvailability"
+    ],
+    "high": {
+      "lowerInclusive": 0.8,
+      "upperInclusive": 1
+    },
+    "low": {
+      "lowerInclusive": 0,
+      "upperExclusive": 0.5
+    },
+    "medium": {
+      "lowerInclusive": 0.5,
+      "upperExclusive": 0.8
+    },
+    "rule": "presentEssentialInputs / 5"
+  },
+  "decision": {
+    "date": "2026-09-18",
+    "responsible": "Equipe HidroFlorestas",
+    "scientificOrigin": "Professor Fabio Mesquita"
+  },
+  "dimensions": {
+    "S": {
+      "aggregation": "arithmeticMeanAvailable",
+      "inputs": [
+        "soil.infiltrationRateMmPerHour",
+        "soil.compactionLevel",
+        "soil.erosionSigns",
+        "soil.soilTexture",
+        "soil.soilExposedPercent"
+      ],
+      "minimumAvailableScores": 2
+    },
+    "T": {
+      "aggregation": "arithmeticMeanAvailable",
+      "inputs": [
+        "terrain.slopePercent",
+        "supplement.landUseType"
+      ],
+      "minimumAvailableScores": 2
+    },
+    "V": {
+      "aggregation": "arithmeticMeanAvailable",
+      "inputs": [
+        "vegetation.vegetationCoverPercent",
+        "vegetation.fragmentationLevel",
+        "vegetation.hasRiparianApp",
+        "vegetation.landscapeDegradation"
+      ],
+      "minimumAvailableScores": 2
+    },
+    "W": {
+      "aggregation": "arithmeticMeanAvailable",
+      "inputs": [
+        "water.waterSourceType",
+        "water.hasSpring",
+        "water.wellDepthMeters",
+        "water.waterAvailability",
+        "water.salinityIndicator"
+      ],
+      "minimumAvailableScores": 2
+    }
+  },
+  "enumMappings": {
+    "soil.compactionLevel": {
+      "HIGH": 0.9,
+      "LOW": 0.2,
+      "MEDIUM": 0.6
+    },
+    "soil.erosionSigns": {
+      "LAMINAR": 0.6,
+      "NONE": 0.2,
+      "RILLS_GULLIES": 0.9
+    },
+    "soil.soilTexture": {
+      "CLAYEY": 0.7,
+      "MEDIUM": 0.4,
+      "SANDY": 0.5
+    },
+    "supplement.landUseType": {
+      "AGROFORESTRY": 0.25,
+      "BARE_SOIL": 0.95,
+      "CROPLAND": 0.6,
+      "DEGRADED_PASTURE": 0.8,
+      "FOREST": 0.2,
+      "PASTURE": 0.65,
+      "URBAN": 0.7
+    },
+    "vegetation.fragmentationLevel": {
+      "HIGH": 0.9,
+      "LOW": 0.2,
+      "MEDIUM": 0.6
+    },
+    "vegetation.hasRiparianApp": {
+      "false": 0.85,
+      "true": 0.2
+    },
+    "vegetation.landscapeDegradation": {
+      "HIGH": 0.9,
+      "LOW": 0.2,
+      "MEDIUM": 0.6
+    },
+    "water.hasSpring": {
+      "false": 0.8,
+      "true": 0.2
+    },
+    "water.salinityIndicator": {
+      "CONFIRMED": 0.95,
+      "NONE": 0.2,
+      "SUSPECTED": 0.7
+    },
+    "water.waterAvailability": {
+      "PERMANENT": 0.2,
+      "SCARCE": 0.9,
+      "SEASONAL": 0.6
+    },
+    "water.waterSourceType": {
+      "CISTERN": 0.5,
+      "OTHER": 0.5,
+      "RIVER_STREAM": 0.4,
+      "SHALLOW_WELL": 0.7,
+      "SPRING": 0.2,
+      "TUBULAR_WELL": 0.6
+    }
+  },
+  "explanation": {
+    "driverCount": 2,
+    "joiner": " ",
+    "templateByDriver": {
+      "S": "Risco influenciado por baixa infiltracao, compactacao, erosao, textura ou solo exposto.",
+      "T": "Risco influenciado por uso da terra com maior exposicao ou declividade favoravel ao escoamento.",
+      "V": "Risco influenciado por baixa cobertura vegetal, fragmentacao, ausencia de APP ou degradacao da paisagem.",
+      "W": "Risco influenciado por disponibilidade hidrica, fonte de agua, nascente, profundidade do poco ou salinidade."
+    },
+    "tieOrder": [
+      "W",
+      "S",
+      "V",
+      "T"
+    ],
+    "type": "deterministicTemplates",
+    "usesGenerativeAI": false
+  },
+  "finalAggregation": {
+    "formula": "0.25*W + 0.25*S + 0.25*V + 0.25*T",
+    "requiresAllDimensions": true
+  },
+  "goldenVectors": {
+    "scientificReferenceStatus": "PENDING_SPECIALIST_REVIEW_AND_FIELD_TESTS",
+    "technicalSuiteRequired": true,
+    "technicalVectorFields": [
+      "id",
+      "kind",
+      "measurementContractVersion",
+      "supplementVersion",
+      "measurementInput",
+      "supplementInput",
+      "expectedVariableScores",
+      "expectedDimensionScores",
+      "expectedRawScore",
+      "expectedDisplayScore",
+      "expectedClass",
+      "expectedDataQuality",
+      "expectedStatus",
+      "tolerance"
+    ]
+  },
+  "inputs": {
+    "soil.compactionLevel": {
+      "domain": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "nullable": false,
+      "type": "enum",
+      "unit": null
+    },
+    "soil.erosionSigns": {
+      "domain": [
+        "NONE",
+        "LAMINAR",
+        "RILLS_GULLIES"
+      ],
+      "nullable": false,
+      "type": "enum",
+      "unit": null
+    },
+    "soil.infiltrationRateMmPerHour": {
+      "domain": "finite number >= 0; clamped to [0,60] only for normalization",
+      "nullable": false,
+      "type": "number",
+      "unit": "mm/h"
+    },
+    "soil.soilExposedPercent": {
+      "domain": "finite number in [0,100]",
+      "nullable": true,
+      "type": "number",
+      "unit": "%"
+    },
+    "soil.soilTexture": {
+      "domain": [
+        "SANDY",
+        "MEDIUM",
+        "CLAYEY"
+      ],
+      "nullable": false,
+      "type": "enum",
+      "unit": null
+    },
+    "supplement.landUseType": {
+      "domain": [
+        "FOREST",
+        "AGROFORESTRY",
+        "CROPLAND",
+        "PASTURE",
+        "DEGRADED_PASTURE",
+        "BARE_SOIL",
+        "URBAN"
+      ],
+      "requiredForDiagnosis": true,
+      "type": "enum",
+      "unit": null
+    },
+    "terrain.slopePercent": {
+      "domain": "finite number >= 0; clamped to [0,45] only for normalization",
+      "requiredForDiagnosis": true,
+      "type": "number",
+      "unit": "%"
+    },
+    "vegetation.fragmentationLevel": {
+      "domain": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "nullable": false,
+      "type": "enum",
+      "unit": null
+    },
+    "vegetation.hasRiparianApp": {
+      "domain": [
+        true,
+        false
+      ],
+      "nullable": true,
+      "type": "boolean",
+      "unit": null
+    },
+    "vegetation.landscapeDegradation": {
+      "domain": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "nullable": false,
+      "type": "enum",
+      "unit": null
+    },
+    "vegetation.vegetationCoverPercent": {
+      "domain": "finite number in [0,100]",
+      "nullable": false,
+      "type": "number",
+      "unit": "%"
+    },
+    "water.hasSpring": {
+      "domain": [
+        true,
+        false
+      ],
+      "nullable": false,
+      "type": "boolean",
+      "unit": null
+    },
+    "water.salinityIndicator": {
+      "domain": [
+        "NONE",
+        "SUSPECTED",
+        "CONFIRMED"
+      ],
+      "nullable": true,
+      "type": "enum",
+      "unit": null
+    },
+    "water.waterAvailability": {
+      "domain": [
+        "PERMANENT",
+        "SEASONAL",
+        "SCARCE"
+      ],
+      "nullable": false,
+      "type": "enum",
+      "unit": null
+    },
+    "water.waterSourceType": {
+      "domain": [
+        "RIVER_STREAM",
+        "SPRING",
+        "SHALLOW_WELL",
+        "TUBULAR_WELL",
+        "CISTERN",
+        "OTHER"
+      ],
+      "nullable": false,
+      "type": "enum",
+      "unit": null
+    },
+    "water.wellDepthMeters": {
+      "domain": "finite number >= 0; clamped to [0,60] only for normalization",
+      "nullable": true,
+      "type": "number",
+      "unit": "m"
+    }
+  },
+  "mathContractVersion": "ihfr-math-experimental-v0.1.0",
+  "missingData": {
+    "absentOptionalInput": "excludeFromDimensionMean",
+    "inapplicableInput": "excludeFromDimensionMean",
+    "insufficientDimension": "INSUFFICIENT_DATA",
+    "invalidInput": "INVALID_INPUT",
+    "nullBecomesZero": false,
+    "unknownInput": "excludeFromDimensionMean",
+    "validDiagnosisRequiresAllDimensions": true
+  },
+  "normalizations": {
+    "soil.infiltrationRateMmPerHour": "1 - clamp(value,0,60)/60",
+    "soil.soilExposedPercent": "clamp(value,0,100)/100",
+    "terrain.slopePercent": "clamp(value,0,45)/45",
+    "vegetation.vegetationCoverPercent": "1 - clamp(value,0,100)/100",
+    "water.wellDepthMeters": "1 - clamp(value,0,60)/60"
+  },
+  "outputs": [
+    "status",
+    "ihfrScore",
+    "displayScore",
+    "ihfrClass",
+    "componentScores",
+    "variableScores",
+    "drivers",
+    "explanation",
+    "dataQuality",
+    "measurementContractVersion",
+    "supplementVersion",
+    "mathContractVersion",
+    "algorithmVersion",
+    "contractHash",
+    "calculatedAt"
+  ],
+  "precision": {
+    "classificationUses": "unroundedInternalScore",
+    "displayDecimals": 2,
+    "displayRounding": "decimal half up",
+    "internalArithmetic": "IEEE-754 binary64 without intermediate rounding",
+    "technicalVectorTolerance": 1e-12
+  },
+  "recalibration": {
+    "createsNewContractVersion": true,
+    "preservesHistoricalResults": true,
+    "triggers": [
+      "specialistReview",
+      "scientificReferenceVectors",
+      "fieldTestEvidence",
+      "territorialCalibrationEvidence"
+    ]
+  },
+  "scope": {
+    "profile": "GENERAL_EXPERIMENTAL",
+    "regionalCalibration": false,
+    "statement": "First engineering version for controlled experimental use; not universal and not definitively scientifically validated"
+  },
+  "sources": [
+    {
+      "docId": "DOC-RAW-013",
+      "hash": "d2382cf17561f557bbd70201875d08c554740a01bb31448f0d0713c8dd8f117a",
+      "path": "docs/raw/specificacao-do-ihfr-v0-1-mvp-contrato-matematico.md",
+      "role": "PRIMARY_EXPERIMENTAL_BASE",
+      "sections": [
+        "Objetivo do IHFR",
+        "1) Estrutura do indice",
+        "2) Convencoes de pontuacao",
+        "3) Variaveis minimas do MVP",
+        "4) Tratamento de dados faltantes",
+        "5) Classificacao do risco",
+        "6) Interpretacao automatica"
+      ]
+    },
+    {
+      "docId": "DOC-RAW-002",
+      "hash": "896298b12bdce0b1970b2356756296aaf6b11cc481c76567775147d1ed52b2b6",
+      "path": "docs/raw/algoritmo-operacional-hidroflorestas-mvp.md",
+      "role": "OPERATIONAL_COMPLEMENT_WHERE_NON_CONFLICTING",
+      "sections": [
+        "2) Entradas do algoritmo",
+        "4) Normalizacao",
+        "5) Calculo por dimensoes",
+        "10) Persistencia e rastreabilidade"
+      ]
+    },
+    {
+      "docId": "DOC-RAW-007",
+      "hash": "dd2a40af070bdff1a44367aab7d868e2cd6cacd7c8e8588dfdf17fcb494973b4",
+      "path": "docs/raw/matriz-de-variaveis-do-ihfr.md",
+      "role": "CONCEPTUAL_CONFIRMATION",
+      "sections": [
+        "1. Dimensao hidrica",
+        "2. Dimensao pedologica",
+        "3. Dimensao da vegetacao e paisagem",
+        "4. Dimensao territorial",
+        "5. Estrutura final do indice"
+      ]
+    },
+    {
+      "docId": "DOC-RAW-008",
+      "hash": "c90147a321306d2ec7f5ffce55cc7d7cce3e343555e4d16f3ea9a39f79ee4dd5",
+      "path": "docs/raw/modelo-cientifico-do-ihfr.md",
+      "role": "CONCEPTUAL_CONFIRMATION",
+      "sections": [
+        "8. Formulacao matematica do indice",
+        "9. Classificacao do risco"
+      ]
+    }
+  ],
+  "state": "EXPERIMENTAL",
+  "validation": {
+    "labels": [
+      "CONTRATO_EXPERIMENTAL",
+      "VALIDACAO_CIENTIFICA_PENDENTE",
+      "SUJEITO_A_RECALIBRACAO",
+      "NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO"
+    ],
+    "scientificStatus": "NOT_VERIFIED"
+  },
+  "weights": {
+    "S": 0.25,
+    "T": 0.25,
+    "V": 0.25,
+    "W": 0.25
+  }
+}
