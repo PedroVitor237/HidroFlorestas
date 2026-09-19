@@ -213,7 +213,7 @@ SC-001–SC-007 e SC-009 têm cenários automatizáveis detalhados em [quickstar
 
 ### IMP-005 — dados ambientais
 
-O HEAD publicado planeja um `EnvironmentalMeasurementSet` único, imutável e vinculado à coleta, mas não prova integração. Depois do merge real, reler schema, DTO, rota, `confirmedAt`, versão, autorização e privacidade. Uma extensão territorial só pode usar projeção, unidade, precisão, legenda e retorno ao registro aprovados; payload, autoria, chave e hash não entram por antecipação.
+O runtime integrado fornece um `EnvironmentalMeasurementSet` único, imutável e vinculado à coleta, com DTO e autorização próprios. A IMP-008 não consulta essa entidade. Uma extensão territorial futura exige decisão explícita e só pode usar projeção, unidade, precisão, legenda e retorno ao registro aprovados; payload, autoria, chave e hash não entram por antecipação.
 
 ### IMP-006 — diagnóstico IHFR
 
@@ -221,7 +221,7 @@ O HEAD publicado possui somente spec/checklist e gates G1–G3 abertos. Depois d
 
 ### IMP-007 — dashboard e histórico
 
-O dashboard publicado exclui coordenadas e não é fonte do mapa. Após integração, harmonizar apenas navegação/layout contextual e, se útil, helpers de contexto já integrados. Mapa e dashboard mantêm endpoints, estados e projeções independentes sobre as mesmas fontes; nenhum persiste ou copia contagens do outro.
+O dashboard integrado exclui coordenadas e não é fonte do mapa. A IMP-008 harmoniza navegação/layout contextual e reutiliza guard, critério de confirmação e padrões de estado já integrados. Mapa e dashboard mantêm endpoints e projeções independentes sobre as mesmas fontes; nenhum persiste ou copia contagens do outro.
 
 ### Plotly — gráficos analíticos futuros
 

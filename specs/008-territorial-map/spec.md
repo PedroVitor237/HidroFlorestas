@@ -187,9 +187,9 @@ Como participante que usa teclado, tecnologia assistiva ou uma tela pequena, que
 #### Limites e evolução condicionada
 
 - **FR-031**: O incremento mínimo MUST NOT oferecer filtros, alternância de camadas, busca geográfica, desenho, edição, medição, comparação temporal, agrupamento, heatmap ou simbologia científica sem uma decisão futura vinculada a fonte e caso de uso aprovados.
-- **FR-032**: Dados ambientais da IMP-005 somente MAY aparecer após implementação, integração e reconciliação do contrato real, com definição aprovada da projeção, unidade, precisão, privacidade, legenda e retorno ao registro de origem.
+- **FR-032**: Embora a IMP-005 esteja implementada e integrada, dados ambientais MUST NOT aparecer no mapa mínimo. Uma extensão futura somente MAY incluí-los após decisão explícita de escopo e reconciliação territorial do contrato real, com definição aprovada da projeção, unidade, precisão, privacidade, legenda e retorno ao registro de origem.
 - **FR-033**: Diagnósticos ou resultados IHFR da IMP-006 somente MAY aparecer após implementação, integração e satisfação dos gates científicos, de proveniência e de ciclo; ausência, schema legado ou documento planejado MUST NOT ser apresentado como score, classe, risco, cor, gráfico ou diagnóstico.
-- **FR-034**: A IMP-007 MUST NOT ser dependência automática da visão territorial. Se integrada, mapa e dashboard MAY reutilizar projeções compatíveis das mesmas fontes, mas nenhum deles MUST copiar, persistir ou contradizer a fonte do outro.
+- **FR-034**: A IMP-007 integrada fornece landing, navegação e padrões de estado, mas seu endpoint MUST NOT ser fonte da visão territorial. Mapa e dashboard MAY reutilizar guard e regras compatíveis sobre as mesmas fontes, mas nenhum deles MUST copiar, persistir ou contradizer a projeção do outro.
 - **FR-035**: A especificação MUST permanecer neutra quanto a provedor e arquitetura cartográfica definitiva; Leaflet/React-Leaflet é a escolha local do mapa mínimo, enquanto OpenStreetMap, Plotly, PostGIS e Python MUST NOT ser promovidos a requisito funcional ou capacidade disponível por esta feature. A direção futura de Plotly para gráficos analíticos MUST NOT alterar o escopo implementável da IMP-008.
 
 ### Key Entities
@@ -199,7 +199,7 @@ Como participante que usa teclado, tecnologia assistiva ou uma tela pequena, que
 - **Coleta confirmada relacionada**: projeção mínima do registro confirmado da IMP-004, subordinada à área e ao laboratório; herda o ponto da área somente para correlação visual.
 - **Item com localização indisponível**: área autorizada cuja coordenada não pode ser plotada; permanece na alternativa textual sem posição fabricada.
 - **Base cartográfica**: contexto visual externo sobre o qual pontos podem ser apresentados; sua falha é independente dos registros territoriais e seu uso exige atribuição.
-- **Fonte futura condicionada**: dados ambientais ou diagnóstico que somente se torna elegível após integração e reconciliação do respectivo contrato.
+- **Fonte futura condicionada**: dado ambiental integrado que exige extensão territorial explicitamente aprovada, ou diagnóstico que somente se torna elegível após implementação, integração e reconciliação do respectivo contrato.
 
 ## Success Criteria *(mandatory)*
 
