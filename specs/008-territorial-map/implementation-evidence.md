@@ -8,7 +8,14 @@
 
 ## Estado
 
-`PARCIALMENTE_IMPLEMENTADO` — a projeção, o endpoint, o mapa/lista e os estados contextuais existem e passam por typecheck, lint, testes unitários/handler e build. Os gates que exigem PostgreSQL de teste, sessão E2E autenticada, medição real, tecnologia assistiva ou participantes permanecem `NAO_VERIFICADO` porque `TEST_DATABASE_URL` e `DATABASE_URL` não estavam disponíveis no ambiente.
+`IMPLEMENTADO_COM_GATES_HUMANOS_E_DE_PERFORMANCE_PENDENTES` — a projeção, o endpoint, o mapa/lista e os estados contextuais existem e passam por typecheck, lint, testes unitários, integração PostgreSQL, E2E autenticado, regressões e build. Permanecem `NAO_VERIFICADO` a medição p95/`EXPLAIN`, a avaliação com tecnologia assistiva real e o estudo moderado com participantes.
+
+## Banco e migrations
+
+- O banco autorizado possuía a migration histórica `20260523010444_init`, ausente do repositório, e schema legado com 3 usuários, zero laboratórios, vínculos, áreas e coletas.
+- `prisma migrate deploy` preservou essa entrada histórica e aplicou `20260907120000_unique_laboratory_access_code`, `20260914000100_area_registration_and_membership_roles`, `20260915000100_collection_registration_metadata` e `20260917000100_environmental_measurement_set`.
+- O pós-deploy confirmou `Database schema is up to date!`.
+- Após integração e E2E, permaneceram 3 usuários preexistentes e zero laboratórios, vínculos, áreas, coletas e medições de fixtures.
 
 ## Arquitetura e contrato
 
@@ -45,17 +52,17 @@
 | `npm run typecheck` | PASS | zero erro |
 | testes territoriais direcionados | PASS | 4 arquivos unitários + 1 arquivo de handler |
 | `npm run test:unit` | PASS | 37/37 arquivos, 0 falha |
-| `npm run test:integration` | PARCIAL | 13/14 arquivos; rota territorial passou; `environmental-data-concurrency.test.ts` falhou sem `TEST_DATABASE_URL` |
+| `npm run test:integration` | PASS | 48/48 testes; inclui concorrência PostgreSQL real e rota territorial |
+| `npx playwright test tests/e2e/territorial-map.spec.ts` | PASS | 3/3 cenários; lista/mapa, coleta parcial, isolamento, inativo, tiles, teclado e 320/768/1280 |
+| regressões E2E de áreas/coletas | PASS | 18/18 testes em `area-registration`, `area-viewing` e `collection-registration` |
 | `npm run lint` | PASS com avisos preexistentes | 0 erro, 4 warnings fora da IMP-008 |
 | `npm run build` | PASS fora do sandbox | compilação, TypeScript, 15 páginas e novas rotas concluídos; primeira tentativa falhou apenas ao buscar Google Fonts |
 | `git diff --check` | PASS nas alterações da IMP-008 | avisos no diff do merge pertenciam a arquivos preexistentes da IMP-007; diffs próprios limpos |
 
 ## Não verificado e risco residual
 
-- Integração real PostgreSQL, isolamento com fixtures persistidas, corrida e limpeza: `NAO_VERIFICADO` sem `TEST_DATABASE_URL`.
-- `npx playwright test tests/e2e/territorial-map.spec.ts` e regressões E2E: `NAO_VERIFICADO`; a spec dedicada ainda não foi criada porque o fluxo autenticado depende das fixtures/banco autorizados.
 - p95 de 100 leituras, `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` e interação sem tiles: `NAO_VERIFICADO`.
-- Teclado em navegador real nas larguras 320/768/1280, tecnologia assistiva real e estudo moderado de usabilidade: `NAO_VERIFICADO`.
+- Teclado e overflow foram automatizados em navegador nas larguras 320/768/1280. Tecnologia assistiva real e estudo moderado de usabilidade permanecem `NAO_VERIFICADO`.
 - `npm ci` reportou 30 vulnerabilidades nas dependências travadas (2 baixas, 8 moderadas, 19 altas, 1 crítica); nenhuma atualização automática foi feita por ser trabalho transversal e potencialmente incompatível.
 
-Essas pendências impedem declarar a IMP-008 completamente validada, embora os gates estáticos, unitários, de handler e build estejam aprovados.
+Essas pendências impedem declarar cumpridas as metas humana e de performance, mas os gates funcionais, de segurança automatizada, integração PostgreSQL, E2E, regressão e build estão aprovados.
