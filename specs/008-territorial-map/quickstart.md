@@ -2,11 +2,11 @@
 
 **Feature**: IMP-008
 
-**Purpose**: guia de validação para a futura implementação; nenhum comando deste documento foi executado durante `$speckit-plan`.
+**Purpose**: guia de validação reconciliado com `origin/development@10fdb8b`; os resultados reais da implementação devem ser registrados em `implementation-evidence.md`.
 
 ## 1. Prerequisites
 
-- branch de implementação baseada no commit que contém estes artefatos;
+- branch `008-territorial-map` após o merge `46b22d1` da baseline integrada;
 - Node.js 20.19.2 e dependências já travadas no repositório;
 - banco de teste descartável e variáveis E2E protegidas pelos guards existentes;
 - fixtures com IDs/prefixos allowlisted e teardown verificável;
@@ -41,6 +41,7 @@ Resultados esperados:
 - todas as respostas declaram `Cache-Control: no-store`;
 - DTO não contém `userId`, autoria, email, avatar, `accessCode`, observações, descrição, `confirmationKey`, dados ambientais ou IHFR;
 - typecheck/lint não introduzem regressão no mapa da IMP-003.
+- resumo/histórico e landing contextual da IMP-007 continuam usando suas próprias projeções, sem passar a depender do endpoint territorial.
 
 ## 3. Fixture matrix
 
@@ -226,7 +227,7 @@ Registrar ambiente, tecnologia assistiva, procedimento, participantes autorizado
 
 Interromper a implementação e reconciliar antes de continuar se:
 
-- `origin/development` passar a conter contratos incompatíveis de área/coleta;
+- `origin/development` avançar com contratos incompatíveis de área/coleta/dashboard;
 - a tupla de confirmação ou o guard integrado mudar;
 - a implementação exigir truncar áreas sem decisão de UX/produto;
 - uma extensão ambiental/IHFR for solicitada antes de sua integração e aprovação aplicável;

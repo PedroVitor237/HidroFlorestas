@@ -201,11 +201,11 @@ description: "Tarefas executáveis da IMP-008 — mapa e visualização territor
 
 ### User Story Dependencies
 
-- **US1 (P1)**: depende somente da fundação; entrega áreas autorizadas e navegação de área.
+- **US1 (P1)**: depende somente da fundação integrada; entrega áreas autorizadas e navegação de área dentro da experiência contextual da IMP-007.
 - **US2 (P2)**: depende de US1 porque acrescenta relações ao mesmo painel/seleção e estende a query territorial.
 - **US3 (P2)**: depende de US1/US2 para provar preservação ou descarte da projeção completa sob falhas e mudanças de contexto.
 - **US4 (P3)**: depende de US1–US3 para validar acessibilidade e responsividade de todas as ações e estados reais.
-- A ordem executável é `Setup → Foundational → US1 → US2 → US3 → US4 → Gates`; não há dependência runtime das IMP-005/006/007.
+- A ordem executável é `Setup → Foundational → US1 → US2 → US3 → US4 → Gates`; IMP-005/007 já integram a baseline, mas o endpoint territorial consulta diretamente área/coleta e a IMP-006 não é dependência runtime.
 
 ### RED/GREEN discipline
 
@@ -293,9 +293,9 @@ Cobertura planejada: **35/35 requisitos funcionais** e **9/9 critérios de suces
 
 ### Future reconciliation (não bloqueante)
 
-- IMP-005/006/007 não fornecem código nem contratos runtime a esta execução.
+- IMP-005/007 fornecem código e contratos runtime integrados que devem ser preservados: a primeira continua fora do payload por escopo; a segunda fornece landing/navegação/estados, mas não a fonte territorial. A IMP-006 fornece somente documentação não integrada.
 - Não antecipar camada ambiental, IHFR, dashboard, gráfico, filtro, polígono, PostGIS, implementação de Plotly, Python, schema, migration, índice ou dependência.
-- Plotly é direção para gráficos analíticos em entrega própria sempre posterior à IMP-009, possivelmente paralela à IMP-010 sem depender dela; a forma de integração será planejada nessa entrega futura, após os contratos pertinentes estarem integrados e, para IHFR, após aprovação científica aplicável. Essa decisão não altera T001–T055 nem trata IMP-005/006/007 como integradas.
+- Plotly é direção para gráficos analíticos em entrega própria sempre posterior à IMP-009, possivelmente paralela à IMP-010 sem depender dela; a forma de integração será planejada nessa entrega futura e, para IHFR, após contrato implementado/integrado e aprovação científica aplicável. Essa decisão não altera T001–T055 nem inclui dados da IMP-005 ou projeções da IMP-007 no mapa mínimo.
 - Índice/paginação/agregação só entram em trabalho futuro após evidência registrada de volume, `EXPLAIN` ou latência e decisão de produto/UX compatível com FR-012.
 
 ## Notes

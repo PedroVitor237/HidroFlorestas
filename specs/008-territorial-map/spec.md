@@ -6,7 +6,7 @@
 
 **Status**: Ready for Independent Re-analysis
 
-**Delivery State**: `tasks.md` contém T001–T055 e a análise de consistência da baseline `389adeed05011109ef35441dff24a24abd25ce72` foi concluída. Os findings documentais foram encaminhados nesta revisão; nenhuma implementação foi iniciada e uma nova análise independente deve verificar o commit publicado antes do código.
+**Delivery State**: `tasks.md` contém T001–T055. A branch incorporou `origin/development@10fdb8bbb8e4895614575fedc9de8e08a5121afe` pelo merge `46b22d183bc720c840cba8fbeb9a71b9e008bb66`; a IMP-005 e a IMP-007 estão integradas. Nenhuma implementação específica da IMP-008 foi iniciada e uma nova análise independente deve validar esta reconciliação antes do código.
 
 **Input**: IMP-008 — permitir que o usuário represente áreas e relacione visualmente coletas, dados e resultados aplicáveis aos respectivos registros de origem, preservando o laboratório selecionado, a autorização contextual e os limites dos contratos efetivamente integrados.
 
@@ -18,20 +18,22 @@ O incremento mínimo usa somente a cadeia integrada `laboratório → área-pont
 
 ## Authority, Baseline and Scope Levels
 
-### Nível 1 — comportamento sustentado pelas IMP-003/004 integradas
+### Nível 1 — comportamento sustentado pelas IMP-003/004/005/007 integradas
 
-- `EVIDENCIA_IMPLEMENTACAO` — `origin/development` em `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13` contém a IMP-003 (`106e25f984df56384896729bf786e44104166570`) e a IMP-004 (`7c977147797ca8a8c167033fee6e7a8ab46f673f`) integradas.
+- `EVIDENCIA_IMPLEMENTACAO` — `origin/development` em `10fdb8bbb8e4895614575fedc9de8e08a5121afe` contém as IMP-003/004, a IMP-005 integrada pelo merge `5d9ca6f8f848867e8152bc25e86abc9a6e73358f` e a IMP-007 integrada pelo merge `10fdb8bbb8e4895614575fedc9de8e08a5121afe`.
 - `EVIDENCIA_IMPLEMENTACAO` — a área atual não usa o antigo modelo `Coordinates`: cada `CollectionArea` possui latitude e longitude obrigatórias, persistidas com seis casas decimais, e pertence a um laboratório. O cadastro e o detalhe já representam exclusivamente um ponto confirmado.
 - `EVIDENCIA_IMPLEMENTACAO` — qualquer membro com vínculo atual pode ler áreas do laboratório selecionado; laboratório inativo permanece consultável em modo somente leitura; vínculo revogado, contexto cruzado e recurso inacessível não podem ser distinguidos de recurso inexistente.
 - `EVIDENCIA_IMPLEMENTACAO` — cada coleta confirmada pertence imutavelmente a uma área do mesmo laboratório. A coleta não possui coordenada própria; sua relação territorial é herdada da área.
 - `EVIDENCIA_IMPLEMENTACAO` — o cadastro e o detalhe de uma área já usam um mapa de ponto baseado em Leaflet, com base cartográfica configurável, estado de carregamento e fallback quando a configuração do mapa não está disponível. Essa evidência não seleciona por si só provedor, biblioteca ou arquitetura definitiva para a visão agregada.
+- `EVIDENCIA_IMPLEMENTACAO` — a IMP-005 fornece `EnvironmentalMeasurementSet` e contratos HTTP reais, mas a exclusão de valores e camadas ambientais do mapa mínimo é uma decisão explícita de escopo e minimização, não ausência de implementação.
+- `EVIDENCIA_IMPLEMENTACAO` — a IMP-007 fornece a landing contextual do laboratório, resumo, histórico, navegação, estados de loading/erro/retry e projeções transitórias. A IMP-008 integra seu destino nessa navegação, mas consulta diretamente as fontes canônicas e não duplica o resumo, o histórico ou suas contagens.
 - `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — o mínimo implementável da IMP-008 é uma projeção somente leitura das áreas e coletas confirmadas autorizadas do laboratório selecionado. Cada área válida aparece uma única vez no próprio ponto; suas coletas são relacionadas ao mesmo ponto por identificação e contagem, com acesso individual aos detalhes autorizados.
 
-### Nível 2 — relações condicionadas às IMP-005/006
+### Nível 2 — relação condicionada à IMP-006 e extensões futuras
 
-- `FATO_DOCUMENTADO` — a IMP-005 publicada em `1235387ded9854be20a92f8639a502a80a2bd952` planeja um conjunto ambiental confirmado, versionado, imutável e ligado à coleta. A branch não está integrada; seus contratos podem orientar reconciliação futura, mas nenhum grupo, valor, indicador ou camada ambiental integra o mapa mínimo.
-- `FATO_DOCUMENTADO` — a IMP-006 publicada em `f5f6e27de2a81d64fa6e829d44d68669ba447739` especifica diagnóstico IHFR rastreável, mas sua implementação está bloqueada por integração, ciência e ciclo operacional. Nenhum score, classe, risco, diagnóstico, cor temática ou gráfico IHFR integra o mapa mínimo.
-- `FATO_DOCUMENTADO` — depois que uma dessas features for implementada e integrada, a respectiva informação somente poderá entrar no mapa após reconciliação com o contrato real, definição da projeção territorial e comprovação de que cada elemento conduz ao registro de origem autorizado.
+- `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — embora a IMP-005 esteja implementada e integrada, nenhum grupo, valor, indicador ou camada ambiental integra o mapa mínimo. Uma extensão futura exige decisão própria de produto/UX/privacidade, projeção territorial minimizada e rastreabilidade ao registro autorizado.
+- `FATO_DOCUMENTADO` — a IMP-006 publicada em `ab5e30b2cf1e78c5ab20c9467d003cba1041d8ec` possui somente especificação e checklist próprios; não está integrada e mantém implementação bloqueada por ciência e ciclo operacional. Nenhum score, classe, risco, diagnóstico, cor temática ou gráfico IHFR integra o mapa mínimo.
+- `FATO_DOCUMENTADO` — uma extensão futura somente poderá entrar no mapa após implementação e integração do contrato pertinente, reconciliação explícita e comprovação de que cada elemento conduz ao registro de origem autorizado.
 
 ### Nível 3 — decisões ainda abertas
 
@@ -40,11 +42,11 @@ O incremento mínimo usa somente a cadeia integrada `laboratório → área-pont
 - `PENDENCIA_DE_DECISAO` — `TD-008`, `TD-011` e `TD-014` permanecem respectivamente em avaliação/proposta para base cartográfica, biblioteca e arquitetura definitiva. A implementação existente de Leaflet em cadastro/detalhe e sua escolha local para o mapa mínimo não aprovam automaticamente outro motor cartográfico ou toda visualização territorial.
 - `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — por solicitação explícita da equipe nesta atualização de 2026-09-18, Plotly é a direção futura para gráficos e visualizações analíticas relacionados aos registros exibidos no contexto territorial. Essa implementação ocorrerá sempre depois da IMP-009, em entrega própria ainda sem identificador atribuído, e poderá ser executada em paralelo com a IMP-010; esse paralelismo não cria dependência da IMP-010 nem aprovação antecipada da entrega futura.
 - `PENDENCIA_DE_DECISAO` — a forma de integração do Plotly, inclusive uso no frontend ou de Plotly Python, será definida no planejamento dessa entrega futura. A decisão não introduz automaticamente Python, PostGIS, um segundo motor cartográfico, dependência, gráfico ou tarefa implementável na IMP-008; a eventual adoção dessas tecnologias ou arquiteturas continua dependente de necessidade demonstrada e decisão aplicável.
-- `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — dados ambientais somente poderão alimentar gráficos após integração e reconciliação dos contratos pertinentes; diagnósticos IHFR exigem também a aprovação científica aplicável. Nenhuma informação das IMP-005/006/007 ou da futura entrega de gráficos é tratada como integrada por esta decisão.
+- `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — dados ambientais somente poderão alimentar gráficos após decisão e reconciliação territorial próprias sobre o contrato integrado; diagnósticos IHFR exigem também implementação, integração e aprovação científica aplicável. A integração técnica das IMP-005/007 não inclui seus dados no mapa por inferência.
 
-### Relação com a IMP-007 publicada
+### Relação com a IMP-007 integrada
 
-`FATO_DOCUMENTADO` — a IMP-007 publicada em `b863a86242da9364216842e31d4b87145d9a3ea1` não está integrada e define resumo/histórico como projeções transitórias dos registros de origem. A IMP-008 aplica a mesma fronteira de proveniência, mas não depende da implementação do dashboard, não replica histórico e não cria contagens persistidas. Navegação territorial e navegação pelo histórico podem coexistir após integração sem que uma seja fonte da outra.
+`EVIDENCIA_IMPLEMENTACAO` — a IMP-007 integrada em `10fdb8bbb8e4895614575fedc9de8e08a5121afe` implementa a página contextual do laboratório e resumo/histórico como projeções transitórias dos registros de origem. A IMP-008 reutiliza o guard, o critério runtime de coleta confirmada, os padrões de estado e a navegação contextual, mas não replica histórico, não consome o dashboard como fonte e não cria contagens persistidas.
 
 ## Actors
 
@@ -221,11 +223,11 @@ Como participante que usa teclado, tecnologia assistiva ou uma tela pequena, que
 
 | Dependency | Published HEAD | Integration state at baseline | Consequence for IMP-008 |
 |---|---|---|---|
-| IMP-003 — áreas | `106e25f984df56384896729bf786e44104166570` | Integrada em `origin/development@37fb3a4` | Sustenta contexto, autorização, área-ponto, coordenadas e detalhe. |
-| IMP-004 — coletas | `7c977147797ca8a8c167033fee6e7a8ab46f673f` | Integrada em `origin/development@37fb3a4` | Sustenta coleta confirmada, associação imutável à área e detalhe contextual; não fornece coordenada própria. |
-| IMP-005 — dados ambientais | `1235387ded9854be20a92f8639a502a80a2bd952` | Publicada e não integrada | Planejamento condicionado; bloqueia qualquer camada ou valor ambiental no mapa mínimo. |
-| IMP-006 — diagnóstico IHFR | `f5f6e27de2a81d64fa6e829d44d68669ba447739` | Publicada, não integrada e com gates abertos | Planejamento condicionado; bloqueia score, classe, risco, gráfico ou diagnóstico no mapa mínimo. |
-| IMP-007 — dashboard/histórico | `b863a86242da9364216842e31d4b87145d9a3ea1` | Publicada e não integrada | Referência de proveniência/navegação; não é dependência automática nem fonte do mapa. |
+| IMP-003 — áreas | `106e25f984df56384896729bf786e44104166570` | Integrada em `origin/development@10fdb8b` | Sustenta contexto, autorização, área-ponto, coordenadas e detalhe. |
+| IMP-004 — coletas | `7c977147797ca8a8c167033fee6e7a8ab46f673f` | Integrada em `origin/development@10fdb8b` | Sustenta coleta confirmada, associação imutável à área e detalhe contextual; não fornece coordenada própria. |
+| IMP-005 — dados ambientais | `e775ebcdc1112c0d18117e4023a578a4ef62cf1c` | Integrada pelo merge `5d9ca6f` | Fornece contrato/runtime real; permanece fora da projeção mínima por decisão explícita de escopo. |
+| IMP-006 — diagnóstico IHFR | `ab5e30b2cf1e78c5ab20c9467d003cba1041d8ec` | Documentação não integrada e com gates abertos | Bloqueia score, classe, risco, gráfico ou diagnóstico no mapa mínimo. |
+| IMP-007 — dashboard/histórico | `9e3a818be1690298e70586ac640151fecba02b82` | Integrada pelo merge `10fdb8b` | Fornece landing, navegação, estados e padrões de projeção; não é fonte de dados do mapa. |
 
 IMP-009 e IMP-010 já possuem itens próprios no backlog. A condição de implementar os gráficos Plotly sempre depois da IMP-009 rege somente a entrega futura ainda não identificada; ela não transforma a IMP-009 em pré-requisito do mapa mínimo. A possibilidade de execução paralela com a IMP-010 é apenas de sequenciamento e não cria dependência entre as duas entregas.
 
@@ -237,9 +239,9 @@ IMP-009 e IMP-010 já possuem itens próprios no backlog. A condição de implem
 | Associação espacial de coletas | `CF-PRD-FR-014`, `CF-UC-010`, `CF-PFLOW-005`; IMP-004 integrada | Relaciona coleta confirmada ao ponto de sua área, sem localização própria. |
 | Visualização territorial e origem | `CF-PRD-FR-015`, `CF-UC-015`, `CF-PFLOW-007` | Exige projeção rastreável e retorno ao registro de origem; restringe o mínimo às fontes integradas. |
 | Isolamento, privacidade e minimização | `CF-PRD-NFR-001` a `CF-PRD-NFR-005`; contratos integrados das IMP-003/004 | Revalidação server-side, resposta indistinguível, projeção mínima e nenhum campo pessoal desnecessário. |
-| Acessibilidade e qualidade visual | `CF-PRD-NFR-006`; critérios já especificados pela IMP-007 publicada | Lista equivalente, teclado, estados explícitos, responsividade e atribuição acessível. |
+| Acessibilidade e qualidade visual | `CF-PRD-NFR-006`; padrões implementados pela IMP-007 integrada | Lista equivalente, teclado, estados explícitos, responsividade e atribuição acessível. |
 | Decisões cartográficas | `CF-Q-012`, `CF-Q-013`, `TD-008`, `TD-011`, `TD-014` | Leaflet/React-Leaflet é escolha local do mapa mínimo; provedor e arquitetura definitiva permanecem abertos. |
-| Gráficos analíticos futuros | solicitação explícita da equipe nesta atualização de 2026-09-18; `TD-010` reconciliado no registro global | Plotly é direção futura após a IMP-009, sem implementação, dependência ou gráfico na IMP-008 e sem tratar IMP-005/006/007 como integradas. |
+| Gráficos analíticos futuros | solicitação explícita da equipe nesta atualização de 2026-09-18; `TD-010` reconciliado no registro global | Plotly é direção futura após a IMP-009, sem implementação, dependência ou gráfico na IMP-008; IMP-005/007 integradas continuam fora desta projeção. |
 
 ### Scope Assumptions
 

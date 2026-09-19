@@ -33,5 +33,5 @@
 
 - Validation iteration 1: 16/16 items pass; este foi o gate histórico anterior ao planejamento.
 - References to current Leaflet behavior and open technology alternatives appear only as baseline evidence and decision boundaries; no technology is prescribed by the requirements or success criteria.
-- Estado atual: spec, plano e T001–T055 foram produzidos, e a análise da baseline `389adeed` foi concluída. Os findings foram encaminhados documentalmente para uma nova análise independente; isso não autoriza `$speckit-implement`.
-- Environmental and IHFR extensions remain explicitly conditional on integration and reconciliation of IMP-005/006 rather than unresolved requirements of the minimum map.
+- Estado atual: spec, plano e T001–T055 foram reconciliados após o merge `46b22d1` de `origin/development@10fdb8b`; uma nova análise independente continua obrigatória antes de `$speckit-implement`.
+- Environmental extensions remain outside the minimum map by explicit scope despite IMP-005 integration; IHFR remains conditional on IMP-006 implementation, integration, reconciliation, and scientific approval.

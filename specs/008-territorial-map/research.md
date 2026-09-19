@@ -9,9 +9,9 @@
 
 ## R-001 — Baseline e dependências
 
-**Decision (`DECISAO_DE_PLANEJAMENTO`)**: planejar exclusivamente sobre `origin/development@37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`, com IMP-003/004 integradas. Classificar IMP-005 `1235387...`, IMP-006 `f5f6e27...` e IMP-007 `b863a86...` como publicadas, não integradas e não bloqueantes.
+**Decision (`DECISAO_DE_PLANEJAMENTO`)**: executar sobre `origin/development@10fdb8bbb8e4895614575fedc9de8e08a5121afe`, incorporada pelo merge `46b22d1`, com IMP-003/004/005/007 integradas. Tratar a IMP-006 `ab5e30b...` como fonte documental não integrada e não bloqueante do mapa mínimo.
 
-**Rationale**: `git fetch origin` confirmou que `development` não avançou desde a baseline e que os três HEADs futuros não são ancestrais dela. A constituição exige entrega vertical sobre dependências materiais reais.
+**Rationale**: `git fetch origin` confirmou a integração das IMP-005/007 e a divergência documental da IMP-006. O runtime integrado fornece guard, critério de confirmação, landing/navegação e padrões de estado; nenhum deles autoriza camada ambiental ou diagnóstico por inferência.
 
 **Alternatives considered**:
 
@@ -29,7 +29,7 @@
 
 - Persistir tabela/materialized view territorial: rejeitado sem necessidade de escala, histórico ou snapshot.
 - Consultar áreas e depois uma request por área: rejeitado por N+1 e risco de estados divergentes.
-- Consumir o dashboard planejado: rejeitado porque ele não está integrado, exclui coordenadas e não é fonte do mapa.
+- Consumir o dashboard integrado como fonte: rejeitado porque seu contrato exclui coordenadas e sua projeção não é fonte do mapa; reutilizam-se apenas guard, critério de confirmação, navegação e padrões de estado.
 
 ## R-003 — Endpoint territorial próprio
 
@@ -169,15 +169,15 @@
 
 ## R-014 — Reconciliação futura
 
-**Decision (`DECISAO_DE_PLANEJAMENTO`)**: criar somente checklist documental para IMP-005/006/007; nenhum enum, adaptador, endpoint, flag, cor ou placeholder futuro entra no runtime do mapa mínimo.
+**Decision (`DECISAO_DE_PLANEJAMENTO`)**: não ler dados ambientais da IMP-005 integrada, não copiar resumo/histórico da IMP-007 integrada e manter a IMP-006 documental fora do runtime; nenhum enum, adaptador, flag, cor ou placeholder futuro entra no mapa mínimo.
 
-**Rationale**: IMP-005 planeja dados imutáveis mas não está integrada; IMP-006 não possui contrato implementável e mantém gates; IMP-007 planeja projeções sem coordenadas. Antecipar tipos criaria acoplamento com contratos mutáveis.
+**Rationale**: a IMP-005 implementa dados imutáveis, mas sua presença não aprova exposição territorial; a IMP-007 implementa projeções sem coordenadas e não deve ser duplicada; a IMP-006 não possui contrato implementável e mantém gates. Antecipar tipos criaria acoplamento e ampliaria o escopo.
 
 **Alternatives considered**:
 
-- Expor existência/payload ambiental agora: rejeitado por falta de fonte integrada e decisão territorial.
+- Expor existência/payload ambiental agora: rejeitado por falta de decisão territorial, minimização e caso de uso aprovado, apesar da fonte integrada.
 - Reservar risco/cor IHFR: rejeitado por falta de ciência aprovada.
-- Fazer dashboard hospedar/fornecer o mapa: rejeitado por dependência invertida e não integrada.
+- Fazer o endpoint do dashboard fornecer o mapa: rejeitado por dependência invertida e duplicação de contrato; a página contextual apenas oferece o destino de navegação.
 
 ## R-015 — Direção futura para gráficos analíticos
 
@@ -192,7 +192,7 @@
 - dados ambientais exigem integração e reconciliação dos contratos pertinentes antes de alimentar gráficos;
 - IHFR exige também implementação, integração e aprovação científica aplicável;
 - o planejamento da entrega futura decidirá integração no frontend ou via Plotly Python;
-- a decisão não introduz Python, PostGIS, segundo motor cartográfico, dependência ou gráfico nesta feature e não trata IMP-005/006/007 como integradas.
+- a decisão não introduz Python, PostGIS, segundo motor cartográfico, dependência ou gráfico nesta feature; IMP-005/007 integradas continuam fora da projeção mínima e a IMP-006 continua não integrada.
 
 ## Conclusão da pesquisa
 

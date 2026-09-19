@@ -6,7 +6,7 @@
 
 ## Summary
 
-Entregar uma visão territorial somente leitura por laboratório, sustentada diretamente por `CollectionArea` e pelas coletas confirmadas da IMP-004. Um endpoint GET contextual formará uma projeção mínima, sem persistência, cache de domínio ou coordenada própria de coleta. A interface combinará uma lista textual completa e um mapa Leaflet de múltiplos pontos carregado somente no cliente; falha de tiles, de configuração ou do módulo cartográfico não removerá os dados e destinos já autorizados.
+Entregar uma visão territorial somente leitura por laboratório, sustentada diretamente por `CollectionArea` e pelo critério runtime de coletas confirmadas compartilhado com as IMP-004/007. Um endpoint GET contextual formará uma projeção mínima, sem persistência, cache de domínio ou coordenada própria de coleta. A interface será integrada à landing e à navegação contextual da IMP-007 e combinará uma lista textual completa com um mapa Leaflet de múltiplos pontos carregado somente no cliente; falha de tiles, configuração ou módulo cartográfico não removerá dados e destinos autorizados.
 
 ## Technical Context
 
@@ -36,10 +36,10 @@ As metas de desempenho acima são `RECOMENDACAO_TECNICA` verificável na impleme
 
 | Princípio | Verificação antes da Fase 0 | Verificação após a Fase 1 |
 |---|---|---|
-| I. Hierarquia de fontes | PASS — a spec pronta governa o recorte; Code-First, IMP-003/004 e código integrado foram usados conforme seus estados. | PASS — decisões técnicas estão classificadas em `research.md`; branches não integradas não foram tratadas como capacidade. |
+| I. Hierarquia de fontes | PASS — a spec pronta governa o recorte; Code-First e o runtime integrado das IMP-003/004/005/007 foram usados conforme seus estados. | PASS — decisões técnicas estão classificadas em `research.md`; a IMP-006 documental não foi tratada como capacidade. |
 | II. Entregas verticais | PASS — mapa, lista e navegação formam um incremento pequeno sustentado por fontes integradas. | PASS — dados ambientais, IHFR, histórico, filtros e geometrias futuras permanecem fora e não bloqueiam o mínimo. |
 | III. Especificação por funcionalidade | PASS — planejamento limitado a `specs/008-territorial-map/**`. | PASS — registro histórico da Fase 1: plano, pesquisa, modelo, contrato e quickstart foram concluídos antes da criação de `tasks.md`. Estado atual: `tasks.md` contém T001–T055 e a análise da baseline `389adeed` já foi realizada; esta revisão segue para nova análise independente. |
-| IV. Evidência e rastreabilidade | PASS — spec registra requisitos, baseline, Code-First e dependências publicadas. | PASS — artefatos distinguem `EVIDENCIA_IMPLEMENTACAO`, `DECISAO_DE_PLANEJAMENTO`, `PENDENCIA_DE_DECISAO` e reconciliação futura. |
+| IV. Evidência e rastreabilidade | PASS — spec registra requisitos, baseline, Code-First e dependências integradas/documentais. | PASS — artefatos distinguem `EVIDENCIA_IMPLEMENTACAO`, `DECISAO_DE_PLANEJAMENTO`, `PENDENCIA_DE_DECISAO` e extensão futura. |
 | V. Qualidade e segurança proporcionais | PASS — riscos centrais são isolamento, minimização, coordenadas, fallback e acessibilidade. | PASS — guard integrado, query contextual, DTO fechado, `no-store`, lista independente e matriz de testes cobrem os riscos sem auditoria geral. |
 | VI. Documentação evolutiva | PASS — `docs/raw/**` e registros históricos não serão alterados. | PASS — Leaflet é escolha local desta feature, não arquitetura cartográfica definitiva; a direção futura de Plotly está registrada no pacote da IMP-008 e reconciliada em `TD-010` e nos registros Code-First diretamente pertinentes, sem declarar implementação. |
 | VII. Trabalho em equipe | PASS — branch própria, baseline remota sincronizada e sem integração automática. | PASS — design evita schema/configuração global novos e concentra futuras alterações em arquivos da feature e pequeno compartilhamento de configuração de mapa. |
@@ -107,12 +107,13 @@ O placeholder cientificamente não sustentado em `src/app/(private)/dashboard/ma
 
 ## Baseline, Remote State and Dependencies
 
-- `HEAD` local e `origin/008-territorial-map`: `2d7f9b452c041ad2326a729ce46581a71bcdbf16`, divergência `0/0` antes dos artefatos.
-- `origin/development`: `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`, igual à baseline informada; não houve avanço a reconciliar.
-- IMP-003 `106e25f984df56384896729bf786e44104166570` e IMP-004 `7c977147797ca8a8c167033fee6e7a8ab46f673f` estão integradas em `development` e sustentam o plano.
-- IMP-005 `1235387ded9854be20a92f8639a502a80a2bd952`, IMP-006 `f5f6e27de2a81d64fa6e829d44d68669ba447739` e IMP-007 `b863a86242da9364216842e31d4b87145d9a3ea1` correspondem aos HEADs remotos publicados, não são ancestrais de `development` e não foram incorporadas.
+- baseline histórica de criação: `2d7f9b452c041ad2326a729ce46581a71bcdbf16`; início desta execução: `origin/008-territorial-map@297364da201100ddd251dbaf134b0435cb32bd05`, 22 commits atrás e 6 à frente de `origin/development`.
+- `origin/development`: `10fdb8bbb8e4895614575fedc9de8e08a5121afe`, incorporada à branch pelo merge `46b22d183bc720c840cba8fbeb9a71b9e008bb66`.
+- IMP-003/004 permanecem integradas e sustentam área/coleta; IMP-005 `e775ebc` está integrada pelo merge `5d9ca6f` e IMP-007 `9e3a818` pelo merge `10fdb8b`.
+- IMP-005 fornece contrato e runtime ambientais reais, mas não é lida pela projeção mínima. IMP-007 fornece landing contextual, resumo/histórico, navegação, estados e critérios reutilizáveis, sem se tornar fonte paralela do mapa.
+- IMP-006 `ab5e30b2cf1e78c5ab20c9467d003cba1041d8ec` contém somente spec/checklist próprios, não é ancestral de `development` e permanece fora do runtime.
 
-`EVIDENCIA_IMPLEMENTACAO`: `CollectionArea` contém `Decimal(8,6)`/`Decimal(9,6)` e chave de laboratório; `CollectionData` contém a relação composta com área/laboratório e a tupla de confirmação; `authorizeLaboratoryAccess`, detalhes contextuais e mapas Leaflet de ponto estão conectados. Nenhuma branch futura é dependência material do mapa mínimo.
+`EVIDENCIA_IMPLEMENTACAO`: `CollectionArea` contém `Decimal(8,6)`/`Decimal(9,6)` e chave de laboratório; `CollectionData` contém a relação composta com área/laboratório e a tupla de confirmação usada também pelo dashboard; `authorizeLaboratoryAccess`, página contextual, estados conectados e mapas Leaflet de ponto estão integrados. A IMP-006 não é dependência material do mapa mínimo.
 
 ## Design and Delivery Strategy
 
@@ -226,7 +227,7 @@ O dashboard publicado exclui coordenadas e não é fonte do mapa. Após integra�
 
 `DECISAO_CONFIRMADA_PARA_A_ESPECIFICACAO` — por solicitação explícita da equipe nesta atualização de 2026-09-18, Plotly é a direção futura para gráficos e visualizações analíticas relacionados aos registros do contexto territorial. Sua implementação ocorrerá sempre depois da IMP-009, em entrega própria ainda sem identificador atribuído, e poderá ocorrer em paralelo com a IMP-010 sem depender dela nem antecipar a aprovação da entrega.
 
-Essa decisão não altera as fases ou tarefas T001–T055, não torna a IMP-009 dependência do mapa mínimo e não introduz gráfico, Plotly, Python, PostGIS, segundo motor cartográfico ou dependência na IMP-008. O planejamento futuro decidirá entre integração frontend e Plotly Python. Dados ambientais exigirão contratos pertinentes integrados; IHFR exigirá ainda a aprovação científica aplicável. IMP-005/006/007 continuam não integradas no baseline deste plano.
+Essa decisão não altera as fases ou tarefas T001–T055, não torna a IMP-009 dependência do mapa mínimo e não introduz gráfico, Plotly, Python, PostGIS, segundo motor cartográfico ou dependência na IMP-008. O planejamento futuro decidirá entre integração frontend e Plotly Python. Dados ambientais exigirão decisão e reconciliação territoriais sobre o contrato integrado; IHFR exigirá implementação, integração e aprovação científica aplicável. IMP-005/007 estão integradas mas fora desta projeção; IMP-006 permanece documental e não integrada.
 
 ## Risks and Mitigations
 
@@ -240,7 +241,7 @@ Essa decisão não altera as fases ou tarefas T001–T055, não torna a IMP-009 
 | Marcadores coincidentes ficam ambíguos | cada marker conserva identidade/teclado; lista distingue todos; sem cluster/jitter inventado. |
 | DTO territorial vaza PII/ciência | `select` e schema fechados, testes de campos proibidos e `no-store`. |
 | Volume futuro torna resposta integral pesada | medir matriz proporcional; não truncar; abrir decisão de paginação/agregação somente com evidência. |
-| Contratos de 005/006/007 mudam ao integrar | zero adaptadores/placeholders agora e checklist de reconciliação por commit integrado. |
+| Contratos integrados de 005/007 ou documentação da 006 mudam | zero adaptadores/placeholders agora; reconciliação somente se a mudança afetar materialmente a projeção mínima. |
 | Uso indevido de OSM público | configuração substituível, atribuição, sem prefetch/offline/testes e gate operacional de produção. |
 
 ## Deferred Possibilities
