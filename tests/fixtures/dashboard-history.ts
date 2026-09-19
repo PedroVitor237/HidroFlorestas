@@ -35,6 +35,187 @@ export type DashboardFixtureActionsFactory = (
   testDatabaseUrl: string,
 ) => DashboardFixtureActions;
 
+const fixtureEmail = (index: number) =>
+  `person-${index}@imp007.hidroflorestas.invalid`;
+
+export function createDashboardFixtureClient(testDatabaseUrl: string) {
+  neonConfig.webSocketConstructor = ws;
+  return new PrismaClient({
+    adapter: new PrismaNeon({
+      connectionString: withPublicSchema(testDatabaseUrl),
+      connectionTimeoutMillis: 15_000,
+    }),
+  });
+}
+
+export function createDashboardFixtureActions(
+  testDatabaseUrl: string,
+): DashboardFixtureActions {
+  const prisma = createDashboardFixtureClient(testDatabaseUrl);
+  const userIds = [...DASHBOARD_FIXTURES.userIds];
+  const laboratoryIds = [...DASHBOARD_FIXTURES.laboratoryIds];
+  const areaIds = [...DASHBOARD_FIXTURES.areaIds];
+  const collectionIds = [...DASHBOARD_FIXTURES.collectionIds];
+  return {
+    async cleanup() {
+      await prisma.$transaction(async (tx) => {
+        await tx.$executeRawUnsafe(
+          `ALTER TABLE "CollectionData" DISABLE TRIGGER imp004_collection_immutable`,
+        );
+        try {
+          await tx.collectionData.deleteMany({
+            where: {
+              id: { in: collectionIds },
+              collectionAreaId: { in: areaIds },
+              laboratoryRoomId: { in: laboratoryIds },
+              userId: { in: userIds },
+            },
+          });
+        } finally {
+          await tx.$executeRawUnsafe(
+            `ALTER TABLE "CollectionData" ENABLE TRIGGER imp004_collection_immutable`,
+          );
+        }
+        await tx.collectionArea.deleteMany({
+          where: {
+            id: { in: areaIds },
+            laboratoryRoomId: { in: laboratoryIds },
+            userId: { in: userIds },
+            name: { startsWith: DASHBOARD_FIXTURE_PREFIX },
+          },
+        });
+        await tx.researchersLinked.deleteMany({
+          where: {
+            laboratoryRoomId: { in: laboratoryIds },
+            userId: { in: userIds },
+          },
+        });
+        await tx.laboratoryRoom.deleteMany({
+          where: {
+            id: { in: laboratoryIds },
+            userId: { in: userIds },
+            name: { startsWith: DASHBOARD_FIXTURE_PREFIX },
+          },
+        });
+        for (const [index, id] of userIds.entries()) {
+          await tx.user.deleteMany({ where: { id, email: fixtureEmail(index) } });
+        }
+      }, { maxWait: 15_000, timeout: 30_000 });
+    },
+    async setup(password: string) {
+      const passwordHash = await bcrypt.hash(password, 10);
+      const base = new Date("2026-09-18T15:00:00.000Z");
+      await prisma.$transaction(async (tx) => {
+        for (const [index, id] of userIds.entries()) {
+          await tx.user.create({
+            data: {
+              id,
+              email: fixtureEmail(index),
+              firstName: ["Owner", "Admin", "Member", "Ineligible"][index],
+              lastName: "IMP007",
+              password: passwordHash,
+              status: index === 3 ? "BLOCKED" : "ACTIVE",
+              role: "USER",
+              isAdmin: false,
+            },
+          });
+        }
+        for (const [index, id] of laboratoryIds.entries()) {
+          await tx.laboratoryRoom.create({
+            data: {
+              id,
+              name: `${DASHBOARD_FIXTURE_PREFIX} laboratory ${index}`,
+              userId: userIds[0],
+              isActive: index !== 1,
+              accessCode: `imp007-fixture-${index}`,
+            },
+          });
+          await tx.researchersLinked.create({
+            data: { userId: userIds[0], laboratoryRoomId: id, role: "OWNER" },
+          });
+          if (index < 2) {
+            await tx.researchersLinked.createMany({
+              data: [
+                { userId: userIds[1], laboratoryRoomId: id, role: "ADMIN" },
+                { userId: userIds[2], laboratoryRoomId: id, role: "MEMBER" },
+              ],
+            });
+          }
+        }
+        for (let index = 0; index < 12; index += 1) {
+          const createdAt = new Date(base.getTime() - index * 60_000);
+          await tx.collectionArea.create({
+            data: {
+              id: areaIds[index],
+              name: `${DASHBOARD_FIXTURE_PREFIX} area ${index}`,
+              userId: userIds[0],
+              laboratoryRoomId: laboratoryIds[0],
+              latitude: -3,
+              longitude: -38,
+              createdAt,
+            },
+          });
+          await tx.collectionData.create({
+            data: {
+              id: collectionIds[index],
+              collectionAreaId: areaIds[index],
+              laboratoryRoomId: laboratoryIds[0],
+              userId: userIds[0],
+              occurredAt: new Date(createdAt.getTime() - 3_600_000),
+              occurrenceOffset: "-03:00",
+              confirmedAt: createdAt,
+              confirmationKey: uuid(801 + index),
+            },
+          });
+        }
+        await tx.collectionArea.create({
+          data: {
+            id: areaIds[12],
+            name: `${DASHBOARD_FIXTURE_PREFIX} inactive area`,
+            userId: userIds[0],
+            laboratoryRoomId: laboratoryIds[1],
+            latitude: -3,
+            longitude: -38,
+            createdAt: new Date("2026-09-17T15:00:00.000Z"),
+          },
+        });
+        await tx.collectionData.create({
+          data: {
+            id: collectionIds[12],
+            collectionAreaId: areaIds[12],
+            laboratoryRoomId: laboratoryIds[1],
+            userId: userIds[0],
+            occurredAt: new Date("2026-09-17T13:00:00.000Z"),
+            occurrenceOffset: "-03:00",
+            confirmedAt: new Date("2026-09-17T15:00:00.000Z"),
+            confirmationKey: uuid(813),
+          },
+        });
+        await tx.collectionData.create({
+          data: {
+            id: collectionIds[23],
+            collectionAreaId: areaIds[0],
+            laboratoryRoomId: laboratoryIds[0],
+            userId: userIds[0],
+          },
+        });
+      }, { maxWait: 15_000, timeout: 30_000 });
+    },
+    async count() {
+      return {
+        users: await prisma.user.count({ where: { id: { in: userIds } } }),
+        laboratories: await prisma.laboratoryRoom.count({ where: { id: { in: laboratoryIds } } }),
+        memberships: await prisma.researchersLinked.count({ where: { laboratoryRoomId: { in: laboratoryIds }, userId: { in: userIds } } }),
+        areas: await prisma.collectionArea.count({ where: { id: { in: areaIds } } }),
+        collections: await prisma.collectionData.count({ where: { id: { in: collectionIds } } }),
+      };
+    },
+    async disconnect() {
+      await prisma.$disconnect();
+    },
+  };
+}
+
 class DashboardFixtureGuardError extends Error {
   constructor(message: string) {
     super(message);
@@ -126,7 +307,7 @@ function assertCleanupComplete(counts: Record<string, number>) {
 
 export async function setupDashboardFixtures(
   environment: DashboardFixtureEnvironment,
-  createActions: DashboardFixtureActionsFactory,
+  createActions: DashboardFixtureActionsFactory = createDashboardFixtureActions,
 ) {
   const safe = validateDashboardFixtureEnvironment(environment);
   const actions = createActions(safe.testDatabaseUrl);
@@ -147,7 +328,7 @@ export async function setupDashboardFixtures(
 
 export async function cleanupDashboardFixtures(
   environment: DashboardFixtureEnvironment,
-  createActions: DashboardFixtureActionsFactory,
+  createActions: DashboardFixtureActionsFactory = createDashboardFixtureActions,
 ) {
   const safe = validateDashboardFixtureEnvironment(environment);
   const actions = createActions(safe.testDatabaseUrl);
@@ -161,7 +342,7 @@ export async function cleanupDashboardFixtures(
 
 export async function countDashboardFixtures(
   environment: DashboardFixtureEnvironment,
-  createActions: DashboardFixtureActionsFactory,
+  createActions: DashboardFixtureActionsFactory = createDashboardFixtureActions,
 ) {
   const safe = validateDashboardFixtureEnvironment(environment);
   const actions = createActions(safe.testDatabaseUrl);
@@ -171,3 +352,10 @@ export async function countDashboardFixtures(
     await actions.disconnect();
   }
 }
+import { PrismaNeon } from "@prisma/adapter-neon";
+import { neonConfig } from "@neondatabase/serverless";
+import bcrypt from "bcrypt";
+import ws from "ws";
+
+import { PrismaClient } from "../../src/generated/prisma";
+import { withPublicSchema } from "./areas";

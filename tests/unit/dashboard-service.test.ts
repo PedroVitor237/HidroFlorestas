@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { it } from "node:test";
 import type { Prisma, PrismaClient } from "../../src/generated/prisma";
 import { DashboardService } from "../../src/app/api/server/services/dashboard.service";
+import { DashboardError } from "../../src/app/api/server/dashboard/dashboard.contracts";
 const lab="10000000-0000-4000-8000-000000000101", user="10000000-0000-4000-8000-000000000102";
 function setup(active=true,linked=true,status="ACTIVE") {
   const calls:{method:string;args:unknown}[]=[];
@@ -15,4 +16,6 @@ function setup(active=true,linked=true,status="ACTIVE") {
 it("returns real scoped counts and inactive read-only context",async()=>{const {service,calls}=setup(false);const result=await service.summary(user,lab);assert.deepEqual(result.totals,{areas:3,confirmedCollections:4});assert.equal(result.context.readOnly,true);assert.deepEqual((calls[0].args as {where:unknown}).where,{laboratoryRoomId:lab});assert.deepEqual((calls[1].args as {where:{laboratoryRoomId:string}}).where.laboratoryRoomId,lab);});
 it("merges sources deterministically, limits to 20 and emits a cursor",async()=>{const {service,calls}=setup();const result=await service.history(user,lab);assert.equal(result.items.length,20);assert.ok(result.page.nextCursor);assert.equal(new Set(result.items.map((item)=>item.id)).size,20);assert.equal(result.items[0].type,"AREA_CREATED");for(const call of calls.filter((entry)=>["areas","collections"].includes(entry.method)))assert.equal((call.args as {take:number}).take,21);});
 it("rechecks current membership before reading any source",async()=>{const {service,calls}=setup(true,false);await assert.rejects(service.summary(user,lab),/NOT_FOUND/);assert.equal(calls.length,0);});
-
+it("rejects an ineligible account before reading dashboard sources",async()=>{const {service,calls}=setup(true,true,"BLOCKED");await assert.rejects(service.history(user,lab),/UNAUTHENTICATED/);assert.equal(calls.length,0);});
+it("authorizes before rejecting an invalid cursor and does not query sources",async()=>{const {service,calls}=setup();await assert.rejects(service.history(user,lab,"invalid!"),(error)=>error instanceof DashboardError&&error.code==="INVALID_CURSOR");assert.equal(calls.length,0);});
+it("selects and publishes only the dashboard allowlist",async()=>{const {service,calls}=setup();const result=await service.history(user,lab);const areaQuery=calls.find((entry)=>entry.method==="areas")!.args as {select:Record<string,unknown>};const collectionQuery=calls.find((entry)=>entry.method==="collections")!.args as {select:Record<string,unknown>};assert.deepEqual(Object.keys(areaQuery.select).sort(),["createdAt","id","name"]);assert.deepEqual(Object.keys(collectionQuery.select).sort(),["collectionArea","confirmedAt","id","occurredAt"]);for(const item of result.items){const serialized=JSON.stringify(item);for(const forbidden of ["userId","email","latitude","longitude","observations","confirmationKey","payload","measurementContractVersion"])assert.equal(serialized.includes(forbidden),false);}});

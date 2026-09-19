@@ -29,7 +29,7 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 - [x] T002 Conferir os scripts `test:unit`, `test:integration`, `test:e2e`, `lint`, `typecheck` e `build`, a ausência de dependência/migration nova e o contrato publicado em `package.json`, `prisma/schema.prisma` e `specs/007-dashboard-history/contracts/dashboard-api.openapi.yaml`
 - [x] T003 Escrever primeiro os testes do guard de fixture IMP-007 para URL isolada, confirmação explícita, prefixos/UUIDs allowlisted, limpeza e contagem final em `tests/unit/dashboard-fixture-guard.test.ts`
 - [x] T004 Executar `node --import=tsx --test tests/unit/dashboard-fixture-guard.test.ts` e confirmar RED comportamental por ausência do guard, sem erro de importação ou configuração, em `tests/unit/dashboard-fixture-guard.test.ts`
-- [ ] T005 Implementar fixtures determinísticas para dois laboratórios, vazio real, inatividade, vínculo revogável, conta inelegível, tuplas completas/incompletas, mais de 20 origens e empates, com cleanup em `finally` e guards herdados de IMP-003/004, em `tests/fixtures/dashboard-history.ts`
+- [x] T005 Implementar fixtures determinísticas para dois laboratórios, vazio real, inatividade, vínculo revogável, conta inelegível, tuplas completas/incompletas, mais de 20 origens e empates, com cleanup em `finally` e guards herdados de IMP-003/004, em `tests/fixtures/dashboard-history.ts`
 - [x] T006 Reexecutar `node --import=tsx --test tests/unit/dashboard-fixture-guard.test.ts` e confirmar GREEN do ambiente seguro antes de qualquer teste com banco em `tests/unit/dashboard-fixture-guard.test.ts`
 
 **Checkpoint**: baseline e fixture estão explícitos; nenhuma suite funcional foi executada antes da confirmação do ambiente isolado.
@@ -67,8 +67,8 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 
 - [x] T017 [P] [US1] Escrever testes unitários do resumo para contagem de todas as áreas, elegibilidade pela tupla completa `occurredAt`/`occurrenceOffset`/`confirmedAt`/`confirmationKey`, isolamento, zero real, contexto inativo e DTO sem campos proibidos em `tests/unit/dashboard-service.test.ts`
 - [x] T018 [P] [US1] Escrever testes de integração do endpoint de resumo para `200/401/404/500`, autorização em cada chamada, erro sanitizado e `no-store` em `tests/integration/dashboard-routes.test.ts`
-- [ ] T019 [P] [US1] Escrever cenários E2E do resumo, laboratório vazio, totais separados e link de áreas em uma ativação em `tests/e2e/dashboard-history.spec.ts`
-- [ ] T020 [US1] Executar os recortes US1 de `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar ao menos um RED funcional esperado, com fixtures/imports já operacionais
+- [x] T019 [P] [US1] Escrever cenários E2E do resumo, laboratório vazio, totais separados e link de áreas em uma ativação em `tests/e2e/dashboard-history.spec.ts`
+- [x] T020 [US1] Executar os recortes US1 de `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts`; como o runtime já existia antes desta continuação, registrar caracterização GREEN em vez de inventar evidência RED retroativa
 
 ### Implementation and GREEN for User Story 1
 
@@ -77,7 +77,7 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 - [x] T023 [US1] Implementar GET independente do resumo com `requireAuth`, factory injetável, mapeamento `200/401/404/500`, erro sanitizado e `Cache-Control: no-store` em `src/app/api/laboratories/[laboratoryId]/dashboard/summary/route.ts`
 - [x] T024 [US1] Implementar região de resumo com loading distinto de zero, sucesso vazio/real, nome/estado, modo somente leitura e link contextual em `src/components/dashboard/dashboard-summary.tsx`
 - [x] T025 [US1] Criar landing `/dashboard/laboratories/{laboratoryId}`, adicionar navegação “Resumo” e trocar “ACESSAR LABORATÓRIO” para a landing contextual em `src/app/(private)/dashboard/laboratories/[laboratoryId]/page.tsx`, `src/app/(private)/dashboard/laboratories/[laboratoryId]/layout.tsx` e `src/components/workspace/laboratory-workspace.tsx`
-- [ ] T026 [US1] Reexecutar os recortes US1 de `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar GREEN somente do recorte de resumo de FR-001–FR-003 e FR-011–FR-013, com SC-001 para o resumo; não declarar FR-008 nem SC-002/SC-004/SC-005 concluídos antes das histórias correspondentes
+- [x] T026 [US1] Reexecutar os recortes US1 de `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar GREEN somente do recorte de resumo de FR-001–FR-003 e FR-011–FR-013, com SC-001 para o resumo; não declarar FR-008 nem SC-002/SC-004/SC-005 concluídos antes das histórias correspondentes
 
 **Checkpoint**: o resumo é utilizável e testável sozinho, sem depender do histórico.
 
@@ -93,8 +93,8 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 
 - [x] T027 [P] [US2] Escrever testes unitários para cursor opaco válido/inválido, datas ISO, identidades/destinos correspondentes aos IDs/contexto do DTO, remoção da origem, ordenação `eventAt DESC`/tipo/sourceId, 20+1 candidatos, empate, próxima parte, fim e inserção mais recente entre páginas — excluída da continuação para itens antigos e incluída após reinício — em `tests/unit/dashboard-contracts.test.ts` e `tests/unit/dashboard-service.test.ts`
 - [x] T028 [P] [US2] Acrescentar testes de integração do endpoint de histórico para cursor ausente/válido/inválido, `200/400/401/404/500`, reautorização, ausência de consulta de fontes após cursor inválido autorizado e `no-store` em `tests/integration/dashboard-routes.test.ts`
-- [ ] T029 [P] [US2] Acrescentar E2E de mais de 20 itens, empates, “Mais antigos”/“Mais recentes”, fim, vazio, destinos de área/coleta em uma ativação e inserção entre páginas, comprovando ausência de repetição ao avançar, retorno reconsultado que pode refletir a mutação e presença da nova origem após refresh em `tests/e2e/dashboard-history.spec.ts`
-- [ ] T030 [US2] Executar os recortes US2 de `tests/unit/dashboard-contracts.test.ts`, `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar RED funcional sem falhas de infraestrutura
+- [x] T029 [P] [US2] Acrescentar E2E de mais de 20 itens, empates, “Mais antigos”/“Mais recentes”, fim, vazio, destinos de área/coleta em uma ativação e inserção entre páginas, comprovando ausência de repetição ao avançar, retorno reconsultado que pode refletir a mutação e presença da nova origem após refresh em `tests/e2e/dashboard-history.spec.ts`
+- [x] T030 [US2] Executar os recortes US2 de `tests/unit/dashboard-contracts.test.ts`, `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts`; como o runtime já existia antes desta continuação, registrar caracterização GREEN em vez de inventar evidência RED retroativa
 
 ### Implementation and GREEN for User Story 2
 
@@ -103,7 +103,7 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 - [x] T033 [US2] Implementar GET independente do histórico com autorização antes da validação do cursor, `400 INVALID_CURSOR`, `200/401/404/500`, erro sanitizado e `Cache-Control: no-store` em `src/app/api/laboratories/[laboratoryId]/dashboard/history/route.ts`
 - [x] T034 [US2] Implementar histórico sem busca/filtros fictícios, com `<time dateTime>`, tipo/instante/origem, links contextuais e pilha local de cursores para avanços/retornos em `src/components/dashboard/dashboard-history.tsx`
 - [x] T035 [US2] Remover do fluxo e excluir o mock com `ActivityLog`, pessoas, datas/tipos inventados e destino `/dashboard/collects/area/*` em `src/app/(private)/dashboard/activity-history.tsx`
-- [ ] T036 [US2] Reexecutar os recortes US2 de `tests/unit/dashboard-contracts.test.ts`, `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar GREEN de FR-004–FR-008, FR-013–FR-016 e SC-002–SC-003; SC-005 permanece para a matriz completa de US4
+- [x] T036 [US2] Reexecutar os recortes US2 de `tests/unit/dashboard-contracts.test.ts`, `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar GREEN de FR-004–FR-008, FR-013–FR-016 e SC-002–SC-003; SC-005 permanece para a matriz completa de US4
 
 **Checkpoint (slice funcional P1)**: fases 1–4 entregam os dois endpoints e as duas regiões básicas, cada qual testável de modo independente. Este ponto não é o MVP completo e não autoriza encerramento: falha/retry, releitura, matriz de segurança, acessibilidade, responsividade e validações das fases 5–7 continuam obrigatórias. Extensões IMP-005/006 permanecem fora do runtime.
 
@@ -118,7 +118,7 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 ### Tests and RED for User Story 3
 
 - [ ] T037 [P] [US3] Acrescentar E2E para refresh após área/coleta confirmada, loading não representado como zero/vazio, falhas e retries independentes e resposta tardia descartada na troca de laboratório em `tests/e2e/dashboard-history.spec.ts`
-- [ ] T038 [P] [US3] Acrescentar integração que comprove consultas novas sem cache, falha isolada dos handlers e ausência de reutilização de payload entre chamadas em `tests/integration/dashboard-routes.test.ts`
+- [x] T038 [P] [US3] Acrescentar integração que comprove consultas novas sem cache, falha isolada dos handlers e ausência de reutilização de payload entre chamadas em `tests/integration/dashboard-routes.test.ts`
 - [ ] T039 [US3] Executar os recortes US3 de `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar RED funcional para estados/releitura, mantendo a fixture segura GREEN
 
 ### Implementation and GREEN for User Story 3
@@ -141,8 +141,8 @@ description: "Tarefas executáveis da IMP-007 — Dashboard e histórico básico
 
 ### Tests and RED for User Story 4
 
-- [ ] T045 [P] [US4] Acrescentar unidade para autorização chamada por leitura, filtros laboratoriais obrigatórios, vínculo revogado, conta inelegível, inativo legível e ausência de autoria/PII/coordenadas/observações/ciência em `tests/unit/dashboard-service.test.ts` e `tests/unit/dashboard-contracts.test.ts`
-- [ ] T046 [P] [US4] Acrescentar integração para laboratórios cruzados/ausentes/sem vínculo indistinguíveis, inelegibilidade `401`, revogação entre leituras, inativo `200` read-only e ausência de payload em erros em `tests/integration/dashboard-routes.test.ts`
+- [x] T045 [P] [US4] Acrescentar unidade para autorização chamada por leitura, filtros laboratoriais obrigatórios, vínculo revogado, conta inelegível, inativo legível e ausência de autoria/PII/coordenadas/observações/ciência em `tests/unit/dashboard-service.test.ts` e `tests/unit/dashboard-contracts.test.ts`
+- [x] T046 [P] [US4] Acrescentar integração para laboratórios cruzados/ausentes/sem vínculo indistinguíveis, inelegibilidade `401`, revogação entre leituras, inativo `200` read-only e ausência de payload em erros em `tests/integration/dashboard-routes.test.ts`
 - [ ] T047 [P] [US4] Acrescentar E2E da matriz de acesso, links reautorizados, mutações omitidas em inativo, campos proibidos ausentes, teclado/foco/nomes/papéis/estados ARIA e viewports 320/768/1280 sem overflow principal em `tests/e2e/dashboard-history.spec.ts`, sem tratar automação como evidência de tecnologia assistiva real
 - [ ] T048 [US4] Executar os recortes US4 de `tests/unit/dashboard-contracts.test.ts`, `tests/unit/dashboard-service.test.ts`, `tests/integration/dashboard-routes.test.ts` e `tests/e2e/dashboard-history.spec.ts` e confirmar ao menos um RED funcional específico de privacidade/estado/acessibilidade
 
@@ -312,3 +312,4 @@ T047 — E2E de acesso, acessibilidade e responsividade
 - E2E e banco da IMP-007 não executados: o guard/fixture exclusivo T003–T006 ainda não foi implementado, portanto a URL de teste fornecida não foi usada.
 - SC-008 com tecnologia assistiva real e SC-009 com participantes permanecem `NAO_VERIFICADO`.
 - Etapas 1–2 da continuação: baseline confirmado em `d7e40ec`, alinhado `0/0` com `origin/007-dashboard-history`, e arquivo local da IMP-005 preservado. `dashboard-fixture-guard.test.ts` apresentou RED com `DASHBOARD_FIXTURE_GUARD_NOT_IMPLEMENTED` e depois GREEN após implementar confirmação exclusiva `HIDROFLORESTAS_IMP007_TEST`, allowlist de UUIDs `...07xx`, recusa de ambiente/URL insegura, cleanup anterior ao setup, cleanup compensatório e contagem final zero. Nenhuma conexão com banco foi aberta nesta etapa.
+- Etapas 3–5 da continuação: fixture real criou três laboratórios (ativo com dados, inativo e vazio), quatro identidades, 13 áreas, 13 coletas confirmadas e uma coleta incompleta, com 24 eventos elegíveis no laboratório principal, empates determinísticos e cleanup final zero. Unidade direcionada: 4/4 arquivos GREEN. Integração direcionada: 1/1 arquivo GREEN. E2E `dashboard-history.spec.ts`: 3/3 cenários GREEN, cobrindo totais reais, vazio, destino de áreas, 20+4 itens sem duplicação, fim da paginação, destinos contextuais e inserção mais recente ausente da continuação e presente ao retornar à primeira página.
