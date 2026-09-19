@@ -191,7 +191,7 @@ Histórico preservado: a primeira leitura usou `d3fade93e71473b88e44bb473fb2adb9
 
 - **IMP-001 a IMP-004 — integradas**: fornecem acesso autenticado, laboratório, área e coleta confirmada. A IMP-006 deve preservar seus contratos observados na base integrada.
 - **IMP-005 — integrada**: o head `e775ebc` fornece o conjunto ambiental versionado implementado; sua fronteira matemática futura continua sem ciência ativável.
-- **IMP-007 — publicada, em implementação e não integrada**: `origin/007-dashboard-history` está em `56dc1c51305c944ff77fb84ebf29470f468d47da`, contém 61/65 tarefas marcadas e continua fora de `origin/development`. Seu dashboard mínimo aceita somente `AREA_CREATED` e `COLLECTION_CONFIRMED`; não existe DTO, evento, link ou projeção integrada de diagnóstico. Após a integração de ambas as features será necessária reconciliação específica; a IMP-007 não bloqueia o planejamento condicionado da IMP-006.
+- **IMP-007 — publicada, em implementação e não integrada**: `origin/007-dashboard-history` está em `9e3a818be1690298e70586ac640151fecba02b82`, contém 64/65 tarefas marcadas e mantém apenas a verificação humana com tecnologia assistiva pendente. A branch continua fora de `origin/development`. Seu dashboard mínimo aceita somente `AREA_CREATED` e `COLLECTION_CONFIRMED`; não existe DTO, evento, link ou projeção integrada de diagnóstico. Após a integração de ambas as features será necessária reconciliação específica; a IMP-007 não bloqueia o planejamento condicionado da IMP-006.
 - **IMP-008 — posterior**: mapa, gráficos, visualização analítica e acompanhamento territorial não pertencem à IMP-006.
 
 ### Fora do escopo
