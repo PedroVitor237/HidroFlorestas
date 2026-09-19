@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { it } from "node:test";
-import { createDashboardSummaryHandler } from "../../src/app/api/laboratories/[laboratoryId]/dashboard/summary/route";
-import { createDashboardHistoryHandler } from "../../src/app/api/laboratories/[laboratoryId]/dashboard/history/route";
+import { createDashboardSummaryHandler } from "../../src/app/api/laboratories/[laboratoryId]/dashboard/summary/route.handlers";
+import { createDashboardHistoryHandler } from "../../src/app/api/laboratories/[laboratoryId]/dashboard/history/route.handlers";
 import { AreaAccessError } from "../../src/app/api/server/areas/area.authorization";
 import { DashboardError } from "../../src/app/api/server/dashboard/dashboard.contracts";
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
