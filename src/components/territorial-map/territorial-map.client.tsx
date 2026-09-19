@@ -28,7 +28,7 @@ export default function TerritorialMapClient({ areas, selectedAreaId, onSelect }
       <MapContainer center={[-14, -52]} zoom={3} className="h-full w-full" scrollWheelZoom={false}>
         {config && <TileLayer url={config.url} attribution={config.attribution} eventHandlers={{ loading: () => { counts.current = { loaded: 0, failed: 0 }; setTileState("LOADING"); }, tileload: () => { counts.current.loaded += 1; }, tileerror: () => { counts.current.failed += 1; }, load: () => setTileState(classifyTiles(counts.current.loaded, counts.current.failed)) }} />}
         <Fit areas={areas} />
-        {located.map((area) => <Marker key={area.id} position={[area.location!.latitude, area.location!.longitude]} icon={area.id === selectedAreaId ? selectedMarker : marker} title={`Selecionar ${area.name}`} alt={`Selecionar ${area.name}`} keyboard eventHandlers={{ click: () => onSelect(area.id) }} />)}
+        {located.map((area) => <Marker key={area.id} position={[area.location!.latitude, area.location!.longitude]} icon={area.id === selectedAreaId ? selectedMarker : marker} title={`Selecionar ${area.name}, área ${area.id}`} alt={`Selecionar ${area.name}, área ${area.id}`} keyboard eventHandlers={{ click: () => onSelect(area.id) }} />)}
       </MapContainer>
     </div>
     {tileState !== "AVAILABLE" && <p role="status" className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">{tileState === "DEGRADED" ? "A base cartográfica está parcialmente disponível." : tileState === "LOADING" ? "Carregando base cartográfica…" : "Base cartográfica indisponível. A lista permanece completa."}</p>}
