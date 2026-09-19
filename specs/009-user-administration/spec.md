@@ -29,6 +29,10 @@ Permitir que uma autoridade administrativa global consulte contas existentes e a
 - Q: Qual e a diferenca observavel entre INACTIVE e BLOCKED? → A: ambos perdem acesso normal; INACTIVE e desativacao administrativa reversivel e BLOCKED e negacao por seguranca, distinguida no estado e na auditoria.
 - Q: O que acontece com sessoes anteriores? → A: bloqueio, inativacao ou rebaixamento valem na proxima validacao protegida, que reconsulta estado e papel atuais; nao se promete revogacao instantanea entre validacoes.
 - Q: Como conflitos concorrentes sao tratados? → A: alteracoes exigem versao esperada e falham sem sobrescrever quando a conta mudou; a protecao do ultimo ADMIN ativo e atomica.
+- Q: A feature cria ou exclui contas? → A: nao; administra contas existentes e substitui exclusao por estado administrativo reversivel.
+- Q: Quem consulta a auditoria minima? → A: somente ADMIN global ACTIVE; tentativas negadas nao integram o historico funcional deste recorte.
+- Q: DEVELOPER ou MODERATOR recebem alguma autoridade? → A: nao; os valores sao preservados apenas por compatibilidade.
+- Q: Existe razao normativa para manter isAdmin? → A: nao identificada; ele permanece apenas durante uma transicao tecnica controlada.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -157,6 +161,17 @@ Como ADMIN global, quero consultar os eventos administrativos deste recorte para
 | Remove last active ADMIN | No | No | No | No | No |
 | Manage laboratory membership | By laboratory contract | By laboratory contract | By laboratory contract | Not automatically | By laboratory contract |
 
+### Observable Account-State Policy
+
+| Current state | Start session | Restore/validate session | Administrative meaning | Normal next states |
+|---|---:|---:|---|---|
+| `ACTIVE` | Yes | Yes | Conta habilitada | `PENDING`, `INACTIVE`, `BLOCKED` |
+| `PENDING` | No | No | Conta ainda nao habilitada para uso normal | `ACTIVE`, `INACTIVE`, `BLOCKED` |
+| `INACTIVE` | No | No | Desativacao administrativa reversivel | `ACTIVE`, `PENDING`, `BLOCKED` |
+| `BLOCKED` | No | No | Negacao administrativa ou de seguranca | `ACTIVE`, `PENDING`, `INACTIVE` |
+
+Toda transicao exige outra conta ADMIN global `ACTIVE`, justificativa, precondicao concorrente e auditoria. A tabela descreve o comportamento deste recorte; nao atribui causa automatica nem duracao a qualquer estado.
+
 ### Key Entities
 
 - **Account**: existing user identity with global `role`, account `status` and concurrency version.
@@ -204,4 +219,3 @@ Como ADMIN global, quero consultar os eventos administrativos deste recorte para
 - **SC-006**: na proxima validacao protegida, 100% das sessoes de contas bloqueadas, inativadas ou rebaixadas deixam de obter o acesso que perderam.
 - **SC-007**: 95% das consultas de ate 50 itens apresentam resultado em ate 2 segundos no ambiente representativo definido para validacao.
 - **SC-008**: em validacao automatizada, 100% das operacoes essenciais sao alcancaveis por teclado e comunicam estados de carregamento, vazio, erro, conflito e sucesso sem depender apenas de cor.
-
