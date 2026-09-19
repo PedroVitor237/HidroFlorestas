@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import type { BrowserContext, TestInfo } from "@playwright/test";
-import { AUTH_FIXTURE_USERS } from "../fixtures/auth-users";
+import { AUTH_FIXTURE_USERS, countAuthFixtureUsers, runAuthFixtureCommand } from "../fixtures/auth-users";
 import { cleanupLaboratoryFixtures, LABORATORY_FIXTURE_PREFIX, LABORATORY_SECOND_USER, setupLaboratoryFixtures } from "../fixtures/laboratories";
 import { readJwtSecret, signSessionToken } from "../../src/app/api/server/auth/session";
 
@@ -20,9 +20,18 @@ test.describe("minimum laboratory creation", () => {
 
   test.beforeAll(async () => {
     await cleanupLaboratoryFixtures(process.env);
+    await runAuthFixtureCommand("teardown", process.env);
+    await runAuthFixtureCommand("setup", process.env);
     await setupLaboratoryFixtures(process.env);
   });
-  test.afterAll(async () => cleanupLaboratoryFixtures(process.env));
+  test.afterAll(async () => {
+    try {
+      await cleanupLaboratoryFixtures(process.env);
+    } finally {
+      await runAuthFixtureCommand("teardown", process.env);
+    }
+    expect(await countAuthFixtureUsers(process.env)).toBe(0);
+  });
 
   test("creates with name only and remains visible after reload", async ({ page, context }, testInfo) => {
     await authenticate(context, testInfo, AUTH_FIXTURE_USERS[0].id);

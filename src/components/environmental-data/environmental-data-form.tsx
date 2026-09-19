@@ -1,0 +1,29 @@
+"use client";
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { ENVIRONMENTAL_FIELDS, EnvironmentalValidationError } from "@/types/environmental-data.validation";
+import { emptyEnvironmentalForm, formToPayload, prepareSubmission, type Submission } from "./environmental-data-form-state";
+import { GROUPS, VALUE_LABELS } from "./environmental-data-detail";
+import { EnvironmentalReview } from "./environmental-data-review";
+export function EnvironmentalForm({apiPath,basePath}:{apiPath:string;basePath:string}) {
+ const router=useRouter();const [form,setForm]=useState(emptyEnvironmentalForm);const [errors,setErrors]=useState<Record<string,string>>({});const [review,setReview]=useState<Submission|null>(null);const previous=useRef<Submission|null>(null);const submitting=useRef(false);const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');const [uncertain,setUncertain]=useState(false);
+ const focus=(id:string)=>requestAnimationFrame(()=>document.getElementById(id)?.focus());
+ function reviewForm(event:React.FormEvent){event.preventDefault();setMessage('');try{const payload=formToPayload(form);const next=prepareSubmission(payload,previous.current);previous.current=next;setReview(next);setErrors({});focus('review-title');}catch(error){if(error instanceof EnvironmentalValidationError){setErrors(error.fields);focus(Object.keys(error.fields)[0]);}}}
+ async function confirm(){if(!review||submitting.current)return;submitting.current=true;setBusy(true);setMessage('');try{
+  const response=await fetch(apiPath,{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':review.key},body:review.canonical});
+  const body=await response.json();
+  if(!response.ok){setUncertain(response.status>=500);setMessage(body.error?.message??'Não foi possível confirmar. Tente novamente.');toast.error('Não foi possível confirmar os dados.');return;}
+  if(!body.environmentalData?.id)throw Error('Invalid response');
+  toast.success('Dados ambientais confirmados.');router.push(basePath);router.refresh();
+ }catch{setUncertain(true);setMessage('Não foi possível verificar a confirmação. Tente novamente com os mesmos dados ou consulte o registro.');toast.error('Falha de conexão. Seus dados continuam nesta página.');}finally{submitting.current=false;setBusy(false);}}
+ return <div className="space-y-5">{message&&<div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-950">{message} <Link className="font-semibold underline" href={basePath}>Consultar registro</Link></div>}{review?<><EnvironmentalReview payload={review.payload} busy={busy} locked={uncertain} onBack={()=>{if(!uncertain){setReview(null);focus('form-title');}}} onConfirm={confirm}/>{uncertain&&<p className="text-sm text-slate-600">Enquanto o resultado estiver desconhecido, mantenha os mesmos dados e repita a confirmação.</p>}</>:<form noValidate onSubmit={reviewForm} className="space-y-6"><h2 id="form-title" tabIndex={-1} className="text-xl font-bold outline-none">Informar dados ambientais</h2><p className="text-sm text-slate-600">Preencha os quatro grupos. Campos opcionais podem ficar sem informação; zero e “Não” são valores informados.</p>{Object.keys(errors).length>0&&<p role="alert" className="text-red-700">Revise os campos indicados antes de continuar.</p>}<div className="grid items-start gap-5 lg:grid-cols-2">{Object.entries(ENVIRONMENTAL_FIELDS).map(([group,fields])=>{
+ const style=GROUPS[group as keyof typeof GROUPS];const Icon=style.icon;
+ return <fieldset key={group} className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white"><legend className={`${style.color} float-left flex w-full items-center gap-2 px-5 py-3 font-semibold text-white`}><Icon size={19} aria-hidden="true"/>{style.label}</legend><div className="clear-both space-y-4 p-5">{Object.entries(fields).map(([key,rule])=>{
+ const id=`${group}.${key}`;const error=errors[id];const inapplicable=key==='wellDepthMeters'&&!['SHALLOW_WELL','TUBULAR_WELL'].includes(form['water.waterSourceType']);
+ const common={id,name:id,value:form[id],disabled:inapplicable&&!form[id],'aria-required':!rule.optional,'aria-invalid':Boolean(error),'aria-describedby':`${id}-hint${error?` ${id}-error`:''}`,className:'w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-slate-900 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-700/20 disabled:bg-slate-100',onChange:(e:React.ChangeEvent<HTMLInputElement|HTMLSelectElement>)=>setForm(old=>({...old,[id]:e.target.value}))};
+ return <div key={id}><label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-slate-800">{rule.label}{rule.unit?` (${rule.unit})`:''}{rule.optional?' — opcional':' *'}</label>{rule.type==='number'?<input {...common} type="text" inputMode="decimal"/>:<select {...common}><option value="">{rule.optional?'Não informado':'Selecione'}</option>{rule.type==='boolean'?<><option value="true">Sim</option><option value="false">Não</option></>:rule.values!.map(v=><option key={v} value={v}>{VALUE_LABELS[v]??v}</option>)}</select>}<p id={`${id}-hint`} className="mt-1 text-xs text-slate-500">{inapplicable?'Aplicável somente a poços.':rule.type==='number'?`Use ponto como separador decimal.${rule.min!==undefined?` Mínimo: ${rule.min}.`:''}${rule.max!==undefined?` Máximo: ${rule.max}.`:''}`:rule.optional?'Deixe sem informação se não souber.':'Selecione uma opção.'}</p>{error&&<p id={`${id}-error`} className="mt-1 text-sm text-red-700">{error}</p>}</div>;
+ })}</div></fieldset>;
+ })}</div><div className="flex flex-wrap justify-end gap-3"><Link href={basePath} className="rounded-xl border border-slate-300 px-5 py-3 font-semibold">Cancelar</Link><button className="rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800">Revisar dados</button></div></form>}</div>;
+}

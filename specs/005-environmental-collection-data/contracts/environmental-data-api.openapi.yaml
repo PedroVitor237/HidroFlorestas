@@ -1,0 +1,894 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "IMP-005 Dados ambientais",
+    "version": "1.0.0"
+  },
+  "security": [
+    {
+      "session": []
+    }
+  ],
+  "paths": {
+    "/api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}/environmental-data": {
+      "parameters": [
+        {
+          "name": "laboratoryId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "areaId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Conjunto ou ausência",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "environmentalData"
+                  ],
+                  "properties": {
+                    "environmentalData": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/components/schemas/PublicEnvironmentalData"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro sanitizado 400",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro sanitizado 401",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erro sanitizado 403",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro sanitizado 404",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erro sanitizado 409",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro sanitizado 500",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentalInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replay idêntico",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "environmentalData"
+                  ],
+                  "properties": {
+                    "environmentalData": {
+                      "$ref": "#/components/schemas/PublicEnvironmentalData"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Criado",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "environmentalData"
+                  ],
+                  "properties": {
+                    "environmentalData": {
+                      "$ref": "#/components/schemas/PublicEnvironmentalData"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro sanitizado 400",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro sanitizado 401",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erro sanitizado 403",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro sanitizado 404",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erro sanitizado 409",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro sanitizado 500",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "auth_token"
+      }
+    },
+    "schemas": {
+      "EnvironmentalInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "water",
+          "soil",
+          "vegetation",
+          "terrain"
+        ],
+        "properties": {
+          "water": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "waterSourceType",
+              "hasSpring",
+              "waterAvailability"
+            ],
+            "properties": {
+              "waterSourceType": {
+                "type": "string",
+                "description": "Fonte de água",
+                "enum": [
+                  "RIVER_STREAM",
+                  "SPRING",
+                  "SHALLOW_WELL",
+                  "TUBULAR_WELL",
+                  "CISTERN",
+                  "OTHER"
+                ]
+              },
+              "hasSpring": {
+                "type": "boolean",
+                "description": "Há nascente"
+              },
+              "wellDepthMeters": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Profundidade do poço (m)",
+                "minimum": 0
+              },
+              "waterAvailability": {
+                "type": "string",
+                "description": "Disponibilidade hídrica",
+                "enum": [
+                  "PERMANENT",
+                  "SEASONAL",
+                  "SCARCE"
+                ]
+              },
+              "salinityIndicator": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Indicador de salinidade",
+                "enum": [
+                  "NONE",
+                  "SUSPECTED",
+                  "CONFIRMED",
+                  null
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "waterSourceType": {
+                      "not": {
+                        "enum": [
+                          "SHALLOW_WELL",
+                          "TUBULAR_WELL"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "wellDepthMeters": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "soil": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "soilTexture",
+              "infiltrationRateMmPerHour",
+              "compactionLevel",
+              "erosionSigns"
+            ],
+            "properties": {
+              "soilTexture": {
+                "type": "string",
+                "description": "Textura do solo",
+                "enum": [
+                  "SANDY",
+                  "MEDIUM",
+                  "CLAYEY"
+                ]
+              },
+              "infiltrationRateMmPerHour": {
+                "type": "number",
+                "description": "Taxa de infiltração (mm/h)",
+                "minimum": 0
+              },
+              "compactionLevel": {
+                "type": "string",
+                "description": "Compactação",
+                "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ]
+              },
+              "erosionSigns": {
+                "type": "string",
+                "description": "Sinais de erosão",
+                "enum": [
+                  "NONE",
+                  "LAMINAR",
+                  "RILLS_GULLIES"
+                ]
+              },
+              "soilExposedPercent": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Solo exposto (%)",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "vegetation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vegetationCoverPercent",
+              "fragmentationLevel",
+              "landscapeDegradation"
+            ],
+            "properties": {
+              "vegetationCoverPercent": {
+                "type": "number",
+                "description": "Cobertura vegetal (%)",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "fragmentationLevel": {
+                "type": "string",
+                "description": "Fragmentação",
+                "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ]
+              },
+              "hasRiparianApp": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Presença de APP ripária"
+              },
+              "landscapeDegradation": {
+                "type": "string",
+                "description": "Degradação da paisagem",
+                "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ]
+              }
+            }
+          },
+          "terrain": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [],
+            "properties": {
+              "drainageDensityKmPerKm2": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Densidade de drenagem (km/km²)",
+                "minimum": 0
+              },
+              "elevationMeters": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Elevação (m)"
+              },
+              "slopePercent": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Declividade (%)",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "PublicEnvironmentalData": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "collectionId",
+          "measurementContractVersion",
+          "confirmedAt",
+          "readOnly",
+          "water",
+          "soil",
+          "vegetation",
+          "terrain"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "collectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "measurementContractVersion": {
+            "type": "string",
+            "const": "ihfr-measurement-v1"
+          },
+          "confirmedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "water": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "waterSourceType",
+              "hasSpring",
+              "wellDepthMeters",
+              "waterAvailability",
+              "salinityIndicator"
+            ],
+            "properties": {
+              "waterSourceType": {
+                "type": "string",
+                "description": "Fonte de água",
+                "enum": [
+                  "RIVER_STREAM",
+                  "SPRING",
+                  "SHALLOW_WELL",
+                  "TUBULAR_WELL",
+                  "CISTERN",
+                  "OTHER"
+                ]
+              },
+              "hasSpring": {
+                "type": "boolean",
+                "description": "Há nascente"
+              },
+              "wellDepthMeters": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Profundidade do poço (m)",
+                "minimum": 0
+              },
+              "waterAvailability": {
+                "type": "string",
+                "description": "Disponibilidade hídrica",
+                "enum": [
+                  "PERMANENT",
+                  "SEASONAL",
+                  "SCARCE"
+                ]
+              },
+              "salinityIndicator": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Indicador de salinidade",
+                "enum": [
+                  "NONE",
+                  "SUSPECTED",
+                  "CONFIRMED",
+                  null
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "waterSourceType": {
+                      "not": {
+                        "enum": [
+                          "SHALLOW_WELL",
+                          "TUBULAR_WELL"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "wellDepthMeters": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "soil": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "soilTexture",
+              "infiltrationRateMmPerHour",
+              "compactionLevel",
+              "erosionSigns",
+              "soilExposedPercent"
+            ],
+            "properties": {
+              "soilTexture": {
+                "type": "string",
+                "description": "Textura do solo",
+                "enum": [
+                  "SANDY",
+                  "MEDIUM",
+                  "CLAYEY"
+                ]
+              },
+              "infiltrationRateMmPerHour": {
+                "type": "number",
+                "description": "Taxa de infiltração (mm/h)",
+                "minimum": 0
+              },
+              "compactionLevel": {
+                "type": "string",
+                "description": "Compactação",
+                "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ]
+              },
+              "erosionSigns": {
+                "type": "string",
+                "description": "Sinais de erosão",
+                "enum": [
+                  "NONE",
+                  "LAMINAR",
+                  "RILLS_GULLIES"
+                ]
+              },
+              "soilExposedPercent": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Solo exposto (%)",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "vegetation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vegetationCoverPercent",
+              "fragmentationLevel",
+              "hasRiparianApp",
+              "landscapeDegradation"
+            ],
+            "properties": {
+              "vegetationCoverPercent": {
+                "type": "number",
+                "description": "Cobertura vegetal (%)",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "fragmentationLevel": {
+                "type": "string",
+                "description": "Fragmentação",
+                "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ]
+              },
+              "hasRiparianApp": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Presença de APP ripária"
+              },
+              "landscapeDegradation": {
+                "type": "string",
+                "description": "Degradação da paisagem",
+                "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ]
+              }
+            }
+          },
+          "terrain": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "drainageDensityKmPerKm2",
+              "elevationMeters",
+              "slopePercent"
+            ],
+            "properties": {
+              "drainageDensityKmPerKm2": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Densidade de drenagem (km/km²)",
+                "minimum": 0
+              },
+              "elevationMeters": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Elevação (m)"
+              },
+              "slopePercent": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Declividade (%)",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

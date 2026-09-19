@@ -51,7 +51,7 @@ export async function setupAreaFixtures(environment: Record<string, string | und
         }
         await tx.collectionArea.create({ data: { id: uid(321 + i), name: `${AREA_FIXTURES.prefix} area ${i}`, userId: owner, laboratoryRoomId: id, latitude: -3, longitude: -38 } });
       }
-    });
+    }, { maxWait: 15_000, timeout: 30_000 });
   } finally { await prisma.$disconnect(); }
 }
 
@@ -65,7 +65,7 @@ export async function cleanupAreaFixtures(environment: Record<string, string | u
       await tx.researchersLinked.deleteMany({ where: { laboratoryRoomId: { in: ids }, userId: { in: AREA_FIXTURES.userIds } } });
       await tx.laboratoryRoom.deleteMany({ where: { id: { in: ids } } });
       for (const [i, id] of AREA_FIXTURES.userIds.entries()) await tx.user.deleteMany({ where: { id, email: areaFixtureEmail(i) } });
-    });
+    }, { maxWait: 15_000, timeout: 30_000 });
   } finally { await prisma.$disconnect(); }
 }
 

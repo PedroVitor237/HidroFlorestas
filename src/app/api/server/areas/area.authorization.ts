@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma";
 
 export type ContextRole = "OWNER" | "ADMIN" | "MEMBER";
 export type LaboratoryContext = { id: string; name: string; status: "ACTIVE" | "INACTIVE"; membershipRole: ContextRole; readOnly: boolean };
-export type AreaPermission = "READ_AREAS" | "CREATE_AREA" | "MANAGE_ROLES" | "CREATE_COLLECTION";
+export type AreaPermission = "READ_AREAS" | "CREATE_AREA" | "MANAGE_ROLES" | "CREATE_COLLECTION" | "READ_ENVIRONMENTAL_DATA" | "CREATE_ENVIRONMENTAL_DATA";
 export type AreaErrorCode = "UNAUTHENTICATED" | "NOT_FOUND" | "FORBIDDEN" | "READ_ONLY" | "INVALID_INPUT" | "CONFLICT" | "INTERNAL_ERROR";
 export class AreaAccessError extends Error {
   constructor(public readonly code: AreaErrorCode) { super(code); }

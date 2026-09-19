@@ -24,6 +24,7 @@ model User {
   researchersLinked ResearchersLinked[]
   collectionAreas   CollectionArea[]
   collectionData    CollectionData[]
+  environmentalMeasurementSets EnvironmentalMeasurementSet[]
 }
 
 enum UserRole {
@@ -134,6 +135,7 @@ model CollectionData {
   vegetationData VegetationData[]
   terrainData    TerrainData[]
   diagnoses      IHFRDiagnosis[]
+  environmentalMeasurementSet EnvironmentalMeasurementSet?
 
   @@unique([userId, confirmationKey])
   @@index([collectionAreaId, laboratoryRoomId])
@@ -251,4 +253,20 @@ enum ErosionSigns {
   NONE
   LAMINAR
   RILLS_GUILLIES
+}
+
+model EnvironmentalMeasurementSet {
+  id String @id @default(uuid())
+  collectionDataId String @unique
+  userId String
+  measurementContractVersion String
+  payload Json
+  payloadHash String
+  confirmationKey String
+  confirmedAt DateTime @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  collectionData CollectionData @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  @@unique([userId, confirmationKey])
+  @@index([measurementContractVersion])
 }
