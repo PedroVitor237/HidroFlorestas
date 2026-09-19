@@ -8,6 +8,7 @@
 - Conflitos históricos: pesos, normalizações, limites, qualidade, APP, composição territorial, classes, precisão e ausências estão documentados e resolvidos somente para engenharia no [ADR-0001](../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md).
 - Alternativa regional: `0,35H + 0,30S + 0,25V + 0,10T` permanece preservada, inativa e dependente de calibração territorial própria.
 - Compatibilidade: consome `ihfr-measurement-v1`, exige `slopePercent` e depende do suplemento imutável `ihfr-diagnosis-input-experimental-v0.1.0` para `landUseType`; drenagem, elevação, tamanho da área e `CollectionArea.landType` livre não substituem essa entrada.
+- `landUseType`: `FOREST=0.2`, `AGROFORESTRY=0.25`, `CROPLAND=0.6`, `PASTURE=0.65`, `DEGRADED_PASTURE=0.8`, `BARE_SOIL=0.95`, `URBAN=0.7`; uso misto exige predominância, desconhecido é `INVALID_INPUT` e ausência é `INSUFFICIENT_DATA`. Decisão focal e alternativas: ADR-0001 §7.
 - Versões: `mathContractVersion = ihfr-math-experimental-v0.1.0`; `algorithmVersion = ihfr-evaluator-ts-v0.1.0`.
 - Hash: `contractHash = sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`.
 - Validação: os vetores desta entrega são técnicos e derivados do manifesto; vetores científicos, revisão especializada, calibração e testes de campo permanecem pendentes.

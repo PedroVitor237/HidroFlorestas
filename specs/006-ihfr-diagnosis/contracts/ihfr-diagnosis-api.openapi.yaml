@@ -261,6 +261,28 @@ components:
           properties:
             kind: { type: string, enum: [FIELD_OBSERVATION, AUTHORIZED_RECORD] }
             observedAt: { type: string, format: date-time }
+    SupplementCandidateInput:
+      type: object
+      additionalProperties: false
+      required: [inputContractVersion, provenance]
+      description: >-
+        Candidato da tentativa de cálculo. landUseType ausente ou null produz
+        INSUFFICIENT_DATA e não é persistido; somente um candidato completo pode
+        satisfazer SupplementInput e virar suplemento confirmado.
+      properties:
+        inputContractVersion: { const: ihfr-diagnosis-input-experimental-v0.1.0 }
+        landUseType:
+          oneOf:
+            - { type: string, enum: [FOREST, AGROFORESTRY, CROPLAND, PASTURE, DEGRADED_PASTURE, BARE_SOIL, URBAN] }
+            - { type: 'null' }
+          description: Uso predominante; valor não reconhecido ou alias é INVALID_INPUT.
+        provenance:
+          type: object
+          additionalProperties: false
+          required: [kind, observedAt]
+          properties:
+            kind: { type: string, enum: [FIELD_OBSERVATION, AUTHORIZED_RECORD] }
+            observedAt: { type: string, format: date-time }
     CalculateRequest:
       type: object
       additionalProperties: false
@@ -270,7 +292,7 @@ components:
         expectedCurrentDiagnosisId:
           oneOf: [{ $ref: '#/components/schemas/Uuid' }, { type: 'null' }]
           description: Deve ser null em CREATE e obrigatório em REPLACE.
-        supplement: { $ref: '#/components/schemas/SupplementInput' }
+        supplement: { $ref: '#/components/schemas/SupplementCandidateInput' }
         versions:
           type: object
           additionalProperties: false

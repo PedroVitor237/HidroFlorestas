@@ -11,7 +11,7 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | Identificador | Assunto | Descrição | Classificação | Impacto | Estado |
 |---|---|---|---|---|---|
 | `PD-001` | Autoridade sobre escopo institucional | Designar quem pode confirmar interpretação, vigência e mudanças no escopo institucional. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Conflitos de escopo não podem ser resolvidos sem autoridade identificada. | `ABERTA` |
-| `PD-002` | Validação científica definitiva do IHFR | Designar os profissionais responsáveis e executar revisão especializada, comparação, vetores científicos, calibração e testes de campo. A base experimental de engenharia foi decidida no `ADR-0001`, sem resolver esta validação. | `PENDENCIA_DE_DECISAO` | `FATO_DOCUMENTADO` — O contrato experimental não equivale a contrato científico definitivo. | `ABERTA` |
+| `PD-002` | Validação científica definitiva do IHFR | Designar os profissionais responsáveis e executar revisão especializada, comparação, vetores científicos, calibração e testes de campo. A base experimental e a classificação focal de `landUseType` foram decididas no `ADR-0001` somente para engenharia, sem resolver esta validação. | `PENDENCIA_DE_DECISAO` | `FATO_DOCUMENTADO` — O contrato experimental não equivale a contrato científico definitivo. | `ABERTA` |
 | `PD-003` | Autoridade sobre produto e requisitos | Designar quem aprova objetivos, requisitos e regras de negócio. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Impede consolidar intenção de produto quando as fontes não bastarem. | `ABERTA` |
 | `PD-004` | Autoridade sobre dados | Designar quem aprova conceitos, modelo pretendido e governança de dados. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Impede resolver divergências sobre conceitos e modelo de dados. | `ABERTA` |
 | `PD-005` | Autoridade sobre UX | Designar quem aprova fluxos, wireframes e estados de artefatos de UX. | `PENDENCIA_DE_DECISAO` | `FATO_DOCUMENTADO` — Explorações não são requisitos aprovados. | `ABERTA` |
@@ -54,9 +54,11 @@ Plotly ter sido considerado não implica rejeição de Leaflet. Nenhuma entrada 
 
 ## Decisões confirmadas retiradas do bloqueio da IMP-006
 
-`DECISAO_CONFIRMADA` — Em 2026-09-18, a equipe aprovou o [ADR-0001](ADR-0001-contrato-experimental-ihfr-v0-1.md). Foram decididos para a v0.1: fonte-base `DOC-RAW-013`, fórmula de pesos iguais, manifesto/hash, resolução explícita dos conflitos, suplemento versionado de `landUseType`, avaliador interno TypeScript e ciclo operacional de G3. O estado resultante é `G2_ENG_DEPENDE_DE_EVOLUCAO_DE_ENTRADA`, `G2-SCI: NAO_VERIFICADO_VALIDACAO_POSTERIOR` e `G3-ENG: RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`.
+`DECISAO_CONFIRMADA` — Em 2026-09-18, a equipe aprovou o [ADR-0001](ADR-0001-contrato-experimental-ihfr-v0-1.md). Foram decididos para a v0.1: fonte-base `DOC-RAW-013`, fórmula de pesos iguais, manifesto/hash, resolução explícita dos conflitos, suplemento versionado de `landUseType`, avaliador interno TypeScript e ciclo operacional de G3.
 
-Essa decisão não encerra `PD-002`, que agora representa somente a validação científica definitiva, nem `PD-008`/`PD-011`, que permanecem abertos apenas para versões futuras.
+`DECISAO_EXPERIMENTAL_DE_ENGENHARIA` — Em 2026-09-19, a equipe autorizou a consolidação focal descrita no [ADR-0001 §7](ADR-0001-contrato-experimental-ihfr-v0-1.md#7-decisão-focal-de-landusetype). Os sete valores/scores, predominância, categoria desconhecida, ausência, imutabilidade, autoria e separação regional ficaram resolvidos para engenharia. O estado focal é `G2-ENG — landUseType: RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`; o `G2-ENG` geral está `RESOLVIDO_PARA_PLANEJAMENTO` e G3 permanece `RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`.
+
+Essas decisões não encerram `PD-002`, que agora representa somente a validação científica definitiva, nem `PD-008`/`PD-011`, que permanecem abertos apenas para versões futuras. Não existe pendência genérica adicional de `landUseType` para executar `$speckit-tasks`.
 
 ## Referências da consolidação transversal
 

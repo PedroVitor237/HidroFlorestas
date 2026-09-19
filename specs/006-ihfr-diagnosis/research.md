@@ -15,13 +15,15 @@
 
 **Decision**: usar exclusivamente `FOREST 0.2`, `AGROFORESTRY 0.25`, `CROPLAND 0.6`, `PASTURE 0.65`, `DEGRADED_PASTURE 0.8`, `BARE_SOIL 0.95` e `URBAN 0.7`.
 
-**Rationale**: ADR-0001 §6 e `inputs`/`enumMappings` do manifesto fornecem domínio e mapeamento completos. É `DECISAO_CONFIRMADA` para o contrato experimental, embora `VALIDACAO_CIENTIFICA_PENDENTE`.
+**Rationale**: ADR-0001 §7 audita as 13 fontes históricas que mencionam o assunto. `DOC-RAW-013` L196–207 fornece o único domínio completo com sete scores; `DOC-RAW-005` L48–59 confirma as sete categorias sem scores; `DOC-RAW-007` L61–68 confirma os seis scores não urbanos e a predominância. A escolha é `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`, embora `VALIDACAO_CIENTIFICA_PENDENTE`.
 
-**Alternatives considered**: `CollectionArea.landType` livre, drenagem, elevação e tamanho, todos proibidos; inventar categoria ou score, não autorizado.
+**Alternatives considered**: tabela conflitante de seis scores de `DOC-RAW-006`; taxonomia regional qualitativa de `DOC-RAW-011`; listas incompletas de UI; `CollectionArea.landType` livre; `soilTexture`, `landscapeDegradation`, `vegetationCoverPercent`, drenagem, elevação, declividade e tamanho como substitutos; categoria `OTHER`; composição ou média em uso misto. Todas permanecem documentadas e inativas.
+
+**Operational rules**: o candidato registra uma única categoria predominante; se a predominância não puder ser determinada, retorna `INSUFFICIENT_DATA`. Token, alias ou caixa fora dos sete valores exatos retorna `INVALID_INPUT`. Ausência não persiste suplemento. Mudança posterior cria novo suplemento e diagnóstico por operação auditável. O perfil é `GENERAL_EXPERIMENTAL`, com aplicabilidade territorial científica não comprovada e sem herança regional.
 
 ## R-003 — Forma do suplemento
 
-**Decision**: request fechado com `inputContractVersion`, `landUseType` e proveniência observacional mínima; contexto, conjunto ambiental, autoria e timestamps finais são derivados no servidor. Persistir suplemento somente junto de diagnóstico concluído.
+**Decision**: request fechado com `inputContractVersion`, proveniência observacional mínima e candidato de `landUseType`; o candidato pode estar ausente apenas para produzir `INSUFFICIENT_DATA`. Contexto, conjunto ambiental, autoria e timestamps finais são derivados no servidor. Persistir suplemento completo somente junto de diagnóstico concluído.
 
 **Rationale**: reduz autoridade do cliente, liga o snapshot à coleta/conjunto exatos e o torna imutável desde a criação. Tentativa insuficiente pode ser recuperada pela operação, sem parecer entrada confirmada.
 

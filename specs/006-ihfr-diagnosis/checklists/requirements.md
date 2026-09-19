@@ -31,7 +31,7 @@
 
 ## Validation Evidence
 
-As iterações 1 a 3 abaixo são evidências históricas preservadas. Seus estados de gates são substituídos, para o recorte experimental v0.1, pela Iteração 4; não devem ser lidos como estado vigente.
+As iterações 1 a 4 abaixo são evidências históricas preservadas. Seus estados de gates são substituídos, para o recorte experimental v0.1, pela Iteração 5; não devem ser lidos como estado vigente.
 
 Iteração 1: 16/16 critérios documentais atendidos. US1 cobre consulta, ausência, origem, inatividade, isolamento e legado; US2 cobre associação condicionada, rejeições, preservação e recuperação. FR-001–FR-015 são verificáveis pelos cenários e limites; SC-001–SC-007 definem resultados observáveis sem escolher arquitetura ou ciência ausentes.
 
@@ -56,3 +56,7 @@ Iteração 4: os 16 critérios permanecem atendidos após a consolidação decis
 O manifesto JSON é válido, seu hash canônico foi reproduzido e o perfil regional permanece inativo. Nenhum código, schema, migration, dependência, contrato da IMP-005 ou documento de `docs/raw/` foi alterado. A próxima skill aplicável é `$speckit-plan`; tasks, analyze e implement continuam posteriores.
 
 A rechecagem remota de 2026-09-19 encontrou somente a integração da IMP-007 em `origin/development` `10fdb8b`; a branch IMP-006 permaneceu `0/0`. O dashboard integrado continua sem projeção de diagnóstico e nenhum merge foi executado nesta consolidação.
+
+Iteração 5: os 16 critérios permanecem atendidos após a auditoria focal de `landUseType` de 2026-09-19. O ADR-0001 §7 registra as 13 fontes históricas pertinentes com hashes e localizadores, seleciona os sete valores/scores de `DOC-RAW-013` como `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`, preserva tabelas concorrentes e explicita uso misto, categoria desconhecida, ausência, mudança posterior, aplicabilidade e autoridade operacional.
+
+`G2-ENG — landUseType` está `RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`; `G2-ENG` geral está `RESOLVIDO_PARA_PLANEJAMENTO`; `G2-SCI` permanece `NAO_VERIFICADO_VALIDACAO_POSTERIOR`. A fronteira HTTP distingue candidato incompleto, que produz `INSUFFICIENT_DATA`, de suplemento confirmado, que continua estrito e imutável. Manifesto, versão e hash matemáticos não mudaram. A próxima skill aplicável é `$speckit-tasks`; ela não foi executada nesta auditoria.

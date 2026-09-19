@@ -12,7 +12,7 @@ Uma decisão `CONFIRMADO` não implica implementação verificada. Da mesma form
 
 ## Escolhas relatadas pela equipe
 
-As escolhas `TD-001` a `TD-007` foram informadas como adotadas; sua classificação `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` registra que a adoção foi relatada e que a implementação ainda não foi verificada. `TD-015` decorre da decisão atual da equipe registrada em 2026-09-18 e usa `DECISAO_CONFIRMADA`, sem implicar implementação ou validação científica definitiva.
+As escolhas `TD-001` a `TD-007` foram informadas como adotadas; sua classificação `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` registra que a adoção foi relatada e que a implementação ainda não foi verificada. `TD-015` decorre da decisão da equipe registrada em 2026-09-18. `TD-016` registra a decisão focal autorizada em 2026-09-19 como `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`. Nenhuma das duas implica implementação ou validação científica definitiva.
 
 | Identificador | Assunto | Decisão ou alternativa | Classificação | Estado decisório | Estado de implementação |
 |---|---|---|---|---|---|
@@ -24,6 +24,7 @@ As escolhas `TD-001` a `TD-007` foram informadas como adotadas; sua classificaç
 | `TD-006` | Ícones | Adotar Lucide React. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
 | `TD-007` | Hospedagem da aplicação | Adotar Vercel para hospedar a aplicação no contexto atualmente relatado. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
 | `TD-015` | Avaliador IHFR experimental v0.1 | Adotar avaliador determinístico server-side no backend TypeScript existente, regido pelo manifesto `ihfr-math-experimental-v0.1.0`; não usar Python, FastAPI, serviço externo ou IA generativa nesta versão. | `DECISAO_CONFIRMADA` | `CONFIRMADO` | `NAO_IMPLEMENTADO` |
+| `TD-016` | Classificação `landUseType` da v0.1 experimental | Adotar os sete valores e scores de `DOC-RAW-013`, exigir uma categoria predominante, rejeitar valor desconhecido e tratar ausência como insuficiência; preservar alternativas e perfil regional sem ativá-los. | `DECISAO_EXPERIMENTAL_DE_ENGENHARIA` | `CONFIRMADO` | `NAO_IMPLEMENTADO` |
 
 ### Origem e evidências das escolhas relatadas
 
@@ -37,6 +38,7 @@ As escolhas `TD-001` a `TD-007` foram informadas como adotadas; sua classificaç
 | `TD-006` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Nenhuma inspeção do código foi realizada para esta entrada. | não especificado |
 | `TD-007` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Não resolve a estratégia futura de hospedagem registrada em `TD-013`. | não especificado |
 | `TD-015` | solicitação da equipe para consolidação decisória da IMP-006 | 2026-09-18 | equipe HidroFlorestas | [ADR-0001](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) e manifesto versionado; implementação ainda inexistente. | suplemento `ihfr-diagnosis-input-experimental-v0.1.0`; `ihfr-measurement-v1` | Decisão restrita à v0.1 experimental; `VALIDACAO_CIENTIFICA_PENDENTE` e recalibração futura preservadas. | `ADR-0001` |
+| `TD-016` | solicitação da equipe para auditoria e consolidação focal de `landUseType` | 2026-09-19 | equipe HidroFlorestas | [ADR-0001 §7](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md#7-decisão-focal-de-landusetype), `DOC-RAW-013`, manifesto e contratos da IMP-006. | suplemento `ihfr-diagnosis-input-experimental-v0.1.0`; `TD-015` | Perfil `GENERAL_EXPERIMENTAL`; aplicabilidade territorial científica não comprovada; implementação e validação científica pendentes. | `ADR-0001` |
 
 ## Alternativas ainda não aprovadas
 
@@ -87,5 +89,6 @@ Cada mudança deve acrescentar uma linha com a origem e manter as linhas anterio
 | `TD-009` | 2026-09-18 | Python não selecionado para a v0.1 experimental; avaliação futura preservada | `ADIADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
 | `TD-012` | 2026-09-18 | Integração Python–Next.js tornou-se inaplicável à v0.1 e permanece futura | `ADIADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
 | `TD-015` | 2026-09-18 | Registro inicial do avaliador experimental interno | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
+| `TD-016` | 2026-09-19 | Registro inicial da classificação focal de `landUseType` para a v0.1 experimental | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` §7 |
 
-`TD-015` possui `ADR-0001`. As demais entradas continuam sem ADR relacionado; novos ADRs exigem decisão aprovada e natureza compatível.
+`TD-015` e `TD-016` possuem `ADR-0001`. As demais entradas continuam sem ADR relacionado; novos ADRs exigem decisão aprovada e natureza compatível.

@@ -10,7 +10,7 @@
 
 Produzir, tornar vigente, consultar, substituir e revogar um diagnóstico IHFR experimental a partir do conjunto `ihfr-measurement-v1` integrado e de um suplemento fechado `ihfr-diagnosis-input-experimental-v0.1.0`. O backend TypeScript carrega e valida o manifesto versionado, confirma seu hash canônico, executa um avaliador puro, persiste resultado/decomposição imutáveis e controla a vigência em uma camada separada, com autorização contextual, idempotência própria e auditoria restrita.
 
-`DECISAO_CONFIRMADA`: a taxonomia de `landUseType` está integralmente definida pelo ADR-0001 e pelo manifesto: `FOREST=0.2`, `AGROFORESTRY=0.25`, `CROPLAND=0.6`, `PASTURE=0.65`, `DEGRADED_PASTURE=0.8`, `BARE_SOIL=0.95` e `URBAN=0.7`. Não existe lacuna focal de domínio ou mapeamento para esta versão.
+`DECISAO_EXPERIMENTAL_DE_ENGENHARIA`: a auditoria focal de 2026-09-19 confirmou no ADR-0001 §7 a taxonomia `FOREST=0.2`, `AGROFORESTRY=0.25`, `CROPLAND=0.6`, `PASTURE=0.65`, `DEGRADED_PASTURE=0.8`, `BARE_SOIL=0.95` e `URBAN=0.7`. Uso misto exige uma categoria predominante; valor não reconhecido é `INVALID_INPUT`; ausência ou predominância indeterminável é `INSUFFICIENT_DATA`. Não existe lacuna focal de domínio ou mapeamento para esta versão.
 
 `RECOMENDACAO`: não evoluir o model legado `IHFRDiagnosis`. Criar modelagem experimental aditiva porque o legado não preserva suplemento, manifesto/hash, decomposição, proveniência, idempotência nem ciclo imutável e possui `algorithmVersion = "1.0.0"` e `explanationAI`, incompatíveis com o contrato atual.
 
@@ -114,7 +114,7 @@ A IMP-006 não modifica a IMP-007. `CREATED`, `SUPERSEDED` e `REVOKED` ficam em 
 
 ### 1. Entrada suplementar
 
-O contrato [ihfr-diagnosis-input-experimental-v0.1.0.schema.json](contracts/ihfr-diagnosis-input-experimental-v0.1.0.schema.json) é fechado e contém `inputContractVersion`, `landUseType` e `provenance`. IDs contextuais e autoria vêm do servidor. O suplemento é criado atomicamente com um diagnóstico bem-sucedido e nasce imutável, ligado a `CollectionData` e `EnvironmentalMeasurementSet`. Requests insuficientes/incompatíveis podem ter operação terminal recuperável, mas não fabricam suplemento confirmado nem diagnóstico. Legado não recebe backfill.
+O contrato [ihfr-diagnosis-input-experimental-v0.1.0.schema.json](contracts/ihfr-diagnosis-input-experimental-v0.1.0.schema.json) descreve o suplemento confirmado fechado e contém `inputContractVersion`, `landUseType` e `provenance`. A fronteira HTTP aceita um candidato ainda sem `landUseType` somente para produzir `INSUFFICIENT_DATA`; ele não satisfaz o schema nem é persistido. IDs contextuais e autoria vêm do servidor. O suplemento válido é criado atomicamente com um diagnóstico bem-sucedido e nasce imutável, ligado a `CollectionData` e `EnvironmentalMeasurementSet`. Requests insuficientes/incompatíveis podem ter operação terminal recuperável, mas não fabricam suplemento confirmado nem diagnóstico. Legado não recebe backfill.
 
 ### 2. Manifesto e avaliador
 
@@ -172,6 +172,7 @@ Os cenários SC-001–SC-007 são materializados na matriz de unitários, integr
 |---|---|---|
 | G1 — dados ambientais | **FECHADO** pela IMP-005 integrada | Preservar contrato e regressões |
 | G2-ENG — contrato experimental | **RESOLVIDO PARA PLANEJAMENTO** | Implementar suplemento, manifesto/hash e avaliador exatamente como desenhados |
+| G2-ENG — `landUseType` | **RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL** | Implementar as regras focais do ADR-0001 §7 sem ampliar enum ou aliases |
 | G2-SCI — validação definitiva | **NAO_VERIFICADO_VALIDACAO_POSTERIOR** | Revisão, calibração, vetores científicos e campo; não bloqueia a v0.1 rotulada |
 | G3-ENG — ciclo operacional | **RESOLVIDO DOCUMENTALMENTE PARA PLANEJAMENTO** | Implementar/testar autorização, transações, ciclo e auditoria |
 | IMP-007 | **INTEGRADA E RECONCILIADA NO BASELINE** | Não alterar agora; extensão futura deriva da fonte canônica da IMP-006 |

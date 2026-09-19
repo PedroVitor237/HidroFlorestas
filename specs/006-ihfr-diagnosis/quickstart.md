@@ -61,11 +61,13 @@ npm run test:unit
 | Caso | Esperado |
 |---|---|
 | cada um dos sete valores | aceita e usa o score exato do manifesto |
-| valor desconhecido/case divergente | `INVALID_INPUT` |
+| valor desconhecido, alias, `OTHER`/`OTHERS` ou case divergente | `INVALID_INPUT`, sem fallback |
 | `landUseType` ausente ou null | `INSUFFICIENT_DATA`, nunca zero |
+| uso misto com categoria predominante documentada | aceita somente a categoria predominante |
+| uso misto sem predominância determinável | `INSUFFICIENT_DATA`; não calcula composição ou média |
 | campo extra | `INVALID_INPUT` |
 | `CollectionArea.landType` disponível | ignorado pelo avaliador |
-| drenagem/elevação/tamanho disponíveis | não substituem `landUseType` |
+| `soilTexture`, degradação, cobertura, drenagem, elevação, declividade ou tamanho disponíveis | não substituem `landUseType` |
 
 ### Evaluator matrix
 

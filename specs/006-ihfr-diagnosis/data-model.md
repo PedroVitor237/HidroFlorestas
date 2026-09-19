@@ -41,7 +41,10 @@ Invariantes:
 - relação 1:1 com `ExperimentalIHFRDiagnosis` por unique no diagnóstico;
 - trigger recusa `UPDATE` e `DELETE` após criação;
 - `CollectionArea.landType`, drenagem, elevação e tamanho não alimentam o campo;
-- ausência não persiste como `null` nem vira zero: produz operação `INSUFFICIENT_DATA`.
+- `soilTexture`, `landscapeDegradation`, `vegetationCoverPercent`, declividade e os demais campos ambientais não substituem o uso da terra;
+- uso misto exige uma única categoria predominante; não existe array, composição ou média entre categorias;
+- categoria fora dos sete valores exatos retorna `INVALID_INPUT`; não existe `OTHER`, alias ou fallback;
+- ausência ou predominância indeterminável não persiste como `null` nem vira zero: produz operação `INSUFFICIENT_DATA`.
 
 ### LandUseTypeExperimentalV01
 
@@ -56,6 +59,8 @@ Invariantes:
 | `URBAN` | 0.70 |
 
 O score não é armazenado no suplemento como nova autoridade; ele aparece na decomposição produzida pelo manifesto.
+
+Os sete valores são a transformação lexical um a um do `lower_snake_case` de `DOC-RAW-013` para `UPPER_SNAKE_CASE`. Nenhuma categoria foi agrupada ou criada por inferência. `BARE_SOIL` como uso predominante em `T` permanece distinto de `soilExposedPercent` em `S`.
 
 ## 3. ExperimentalIHFRDiagnosis
 
@@ -188,6 +193,7 @@ A projeção de elegibilidade avalia, sem criar domínio:
 - existência e versão exata do conjunto ambiental;
 - presença de `terrain.slopePercent`;
 - presença/validade do suplemento request quando aplicável;
+- predominância única para uso misto; candidato ausente gera `MISSING_LAND_USE_TYPE`, enquanto token não reconhecido é `INVALID_INPUT`;
 - suporte exato a manifesto, algoritmo e hash;
 - suficiência de ao menos dois scores em W, S, V e T;
 - estado atual da coleta e eventual diagnóstico vigente.
