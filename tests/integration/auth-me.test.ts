@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 import {
   createMeHandler,
-} from "../../src/app/api/auth/me/route";
+} from "../../src/app/api/auth/me/route.handlers";
 import {
   AuthBoundaryError,
 } from "../../src/app/api/server/middlewares/auth.middleware";

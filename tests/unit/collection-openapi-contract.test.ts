@@ -102,19 +102,21 @@ describe("IMP-004 OpenAPI", () => {
   });
 
   it("keeps handlers and UI limited to POST, GET detail and separately-built navigation", async () => {
-    const [postSource, getSource, formSource] = await Promise.all([
+    const [postRouteSource, postHandlerSource, getRouteSource, getHandlerSource, formSource] = await Promise.all([
       readFile("src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route.ts", "utf8"),
+      readFile("src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/route.handlers.ts", "utf8"),
       readFile("src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/route.ts", "utf8"),
+      readFile("src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/route.handlers.ts", "utf8"),
       readFile("src/components/collections/collection-form.tsx", "utf8"),
     ]);
-    assert.match(postSource, /export const POST/);
-    assert.doesNotMatch(postSource, /export const (GET|PATCH|PUT|DELETE)/);
-    assert.match(getSource, /export const GET/);
-    assert.doesNotMatch(getSource, /export const (POST|PATCH|PUT|DELETE)/);
+    assert.match(postRouteSource, /export \{ POST \}/);
+    assert.doesNotMatch(postRouteSource, /\b(GET|PATCH|PUT|DELETE)\b/);
+    assert.match(getRouteSource, /export \{ GET \}/);
+    assert.doesNotMatch(getRouteSource, /\b(POST|PATCH|PUT|DELETE)\b/);
     assert.match(formSource, /headers\.get\("Location"\)/);
     assert.match(formSource, /router\.push\(`\/dashboard\/laboratories\/\$\{context\.laboratory\.id\}/);
     assert.doesNotMatch(formSource, /router\.push\([^)]*Location/i);
-    const allSources = `${postSource}\n${getSource}`;
+    const allSources = `${postRouteSource}\n${postHandlerSource}\n${getRouteSource}\n${getHandlerSource}`;
     for (const forbidden of ["WaterData", "SoilData", "VegetationData", "TerrainData", "IHFR"])
       assert.equal(allSources.includes(forbidden), false, forbidden);
   });

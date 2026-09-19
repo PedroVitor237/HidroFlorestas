@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { it } from "node:test";
-import { createAreaHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/route";
-import { createAreaDetailHandler } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/route";
+import { createAreaHandlers } from "../../src/app/api/laboratories/[laboratoryId]/areas/route.handlers";
+import { createAreaDetailHandler } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/route.handlers";
 import { AreaAccessError } from "../../src/app/api/server/areas/area.authorization";
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
 const principal={id:"server-user",firstName:"T",lastName:"U",image:"",isAdmin:false};
