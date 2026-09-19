@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { createLogoutHandler } from "../../src/app/api/auth/logout/route";
+import { createLogoutHandler } from "../../src/app/api/auth/logout/route.handlers";
 
 describe("POST /api/auth/logout", () => {
   it("idempotently expires the cookie for every session condition", async () => {

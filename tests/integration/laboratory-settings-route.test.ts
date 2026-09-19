@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { NextRequest } from "next/server";
-import { createLaboratorySettingsHandlers } from "../../src/app/api/laboratories/[laboratoryId]/route";
+import { createLaboratorySettingsHandlers } from "../../src/app/api/laboratories/[laboratoryId]/route.handlers";
 
 const principal = { id: "owner", firstName: "Ana", lastName: "Silva", image: "", isAdmin: false };
 const context = { params: Promise.resolve({ laboratoryId: "lab-id" }) };
