@@ -1,0 +1,400 @@
+openapi: 3.1.0
+info:
+  title: IMP-006 Diagnóstico IHFR experimental
+  version: 0.1.0
+  description: >-
+    API contextual para elegibilidade, cálculo, consulta, substituição, revogação e
+    recuperação idempotente. CONTRATO_EXPERIMENTAL; VALIDACAO_CIENTIFICA_PENDENTE;
+    SUJEITO_A_RECALIBRACAO; NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO.
+servers:
+  - url: /
+security:
+  - cookieAuth: []
+tags:
+  - name: IHFR diagnosis
+paths:
+  /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}/ihfr-diagnosis/eligibility:
+    get:
+      tags: [IHFR diagnosis]
+      operationId: getIHFRDiagnosisEligibility
+      summary: Verificar elegibilidade técnica sem criar diagnóstico
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/AreaId'
+        - $ref: '#/components/parameters/CollectionId'
+        - name: landUseType
+          in: query
+          required: false
+          description: Valor opcional para pré-validar a entrada; ausência permanece MISSING_LAND_USE_TYPE.
+          schema:
+            type: string
+            enum: [FOREST, AGROFORESTRY, CROPLAND, PASTURE, DEGRADED_PASTURE, BARE_SOIL, URBAN]
+      responses:
+        '200':
+          description: Elegibilidade atual autorizada.
+          headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EligibilityResponse' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}/ihfr-diagnosis/current:
+    get:
+      tags: [IHFR diagnosis]
+      operationId: getCurrentIHFRDiagnosis
+      summary: Consultar o diagnóstico vigente ou ausência
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/AreaId'
+        - $ref: '#/components/parameters/CollectionId'
+      responses:
+        '200':
+          description: Diagnóstico vigente ou null para coleta acessível.
+          headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [diagnosis]
+                properties:
+                  diagnosis:
+                    oneOf:
+                      - $ref: '#/components/schemas/PublicDiagnosis'
+                      - type: 'null'
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}/ihfr-diagnosis/diagnoses:
+    post:
+      tags: [IHFR diagnosis]
+      operationId: calculateOrReplaceIHFRDiagnosis
+      summary: Calcular e criar ou substituir o diagnóstico vigente
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/AreaId'
+        - $ref: '#/components/parameters/CollectionId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CalculateRequest' }
+      responses:
+        '201':
+          description: Novo diagnóstico criado e tornado vigente.
+          headers:
+            Cache-Control: { $ref: '#/components/headers/NoStore' }
+            Location:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OperationResponse' }
+        '200':
+          description: Replay idêntico de resposta terminal ou insuficiência terminal.
+          headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OperationResponse' }
+        '400': { $ref: '#/components/responses/InvalidInput' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/IncompatibleVersion' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}/ihfr-diagnosis/diagnoses/{diagnosisId}:
+    get:
+      tags: [IHFR diagnosis]
+      operationId: getIHFRDiagnosisDetail
+      summary: Consultar detalhe contextual e proveniência pública
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/AreaId'
+        - $ref: '#/components/parameters/CollectionId'
+        - $ref: '#/components/parameters/DiagnosisId'
+      responses:
+        '200':
+          description: Snapshot preservado com estado de ciclo derivado.
+          headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [diagnosis]
+                properties:
+                  diagnosis: { $ref: '#/components/schemas/PublicDiagnosis' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}/ihfr-diagnosis/diagnoses/{diagnosisId}/revocations:
+    post:
+      tags: [IHFR diagnosis]
+      operationId: revokeIHFRDiagnosis
+      summary: Revogar o diagnóstico vigente sem apagar o snapshot
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/AreaId'
+        - $ref: '#/components/parameters/CollectionId'
+        - $ref: '#/components/parameters/DiagnosisId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RevokeRequest' }
+      responses:
+        '200':
+          description: Revogação criada ou replay idêntico recuperado.
+          headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OperationResponse' }
+        '400': { $ref: '#/components/responses/InvalidInput' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/laboratories/{laboratoryId}/areas/{areaId}/collections/{collectionId}/ihfr-diagnosis/operations/{idempotencyKey}:
+    get:
+      tags: [IHFR diagnosis]
+      operationId: recoverIHFRDiagnosisOperation
+      summary: Recuperar resposta terminal depois de timeout
+      parameters:
+        - $ref: '#/components/parameters/LaboratoryId'
+        - $ref: '#/components/parameters/AreaId'
+        - $ref: '#/components/parameters/CollectionId'
+        - $ref: '#/components/parameters/OperationKey'
+      responses:
+        '200':
+          description: Resposta terminal reautorizada no contexto atual.
+          headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OperationResponse' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+components:
+  securitySchemes:
+    cookieAuth: { type: apiKey, in: cookie, name: auth_token }
+  headers:
+    NoStore:
+      schema: { type: string, const: no-store }
+  parameters:
+    LaboratoryId: { name: laboratoryId, in: path, required: true, schema: { $ref: '#/components/schemas/Uuid' } }
+    AreaId: { name: areaId, in: path, required: true, schema: { $ref: '#/components/schemas/Uuid' } }
+    CollectionId: { name: collectionId, in: path, required: true, schema: { $ref: '#/components/schemas/Uuid' } }
+    DiagnosisId: { name: diagnosisId, in: path, required: true, schema: { $ref: '#/components/schemas/Uuid' } }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { $ref: '#/components/schemas/Uuid' }
+      description: Chave própria desta escrita; não é confirmationKey da coleta ou do conjunto ambiental.
+    OperationKey:
+      name: idempotencyKey
+      in: path
+      required: true
+      schema: { $ref: '#/components/schemas/Uuid' }
+  responses:
+    InvalidInput: { $ref: '#/components/responses/Error400' }
+    Unauthenticated: { $ref: '#/components/responses/Error401' }
+    Forbidden: { $ref: '#/components/responses/Error403' }
+    NotFound: { $ref: '#/components/responses/Error404' }
+    Conflict: { $ref: '#/components/responses/Error409' }
+    IncompatibleVersion: { $ref: '#/components/responses/Error422' }
+    InternalError: { $ref: '#/components/responses/Error500' }
+    Error400:
+      description: Request fechado inválido.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+    Error401:
+      description: Sessão ausente/inválida ou conta inelegível.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+    Error403:
+      description: Papel sem permissão de escrita.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+    Error404:
+      description: Recurso inexistente ou inacessível; casos indistinguíveis.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+    Error409:
+      description: Laboratório inativo, conflito idempotente, estado esperado divergente ou corrida perdida.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+    Error422:
+      description: Versão ou hash incompatível; nenhuma ativação automática.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+    Error500:
+      description: Falha técnica sanitizada sem sucesso ou associação parcial.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+  schemas:
+    Uuid: { type: string, format: uuid, pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$' }
+    ScientificLabels:
+      type: array
+      prefixItems:
+        - { const: CONTRATO_EXPERIMENTAL }
+        - { const: VALIDACAO_CIENTIFICA_PENDENTE }
+        - { const: SUJEITO_A_RECALIBRACAO }
+        - { const: NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO }
+      minItems: 4
+      maxItems: 4
+    SupplementInput:
+      type: object
+      additionalProperties: false
+      required: [inputContractVersion, landUseType, provenance]
+      properties:
+        inputContractVersion: { const: ihfr-diagnosis-input-experimental-v0.1.0 }
+        landUseType: { type: string, enum: [FOREST, AGROFORESTRY, CROPLAND, PASTURE, DEGRADED_PASTURE, BARE_SOIL, URBAN] }
+        provenance:
+          type: object
+          additionalProperties: false
+          required: [kind, observedAt]
+          properties:
+            kind: { type: string, enum: [FIELD_OBSERVATION, AUTHORIZED_RECORD] }
+            observedAt: { type: string, format: date-time }
+    CalculateRequest:
+      type: object
+      additionalProperties: false
+      required: [action, expectedCurrentDiagnosisId, supplement, versions]
+      properties:
+        action: { type: string, enum: [CREATE, REPLACE] }
+        expectedCurrentDiagnosisId:
+          oneOf: [{ $ref: '#/components/schemas/Uuid' }, { type: 'null' }]
+          description: Deve ser null em CREATE e obrigatório em REPLACE.
+        supplement: { $ref: '#/components/schemas/SupplementInput' }
+        versions:
+          type: object
+          additionalProperties: false
+          required: [measurementContractVersion, mathContractVersion, algorithmVersion, contractHash]
+          properties:
+            measurementContractVersion: { const: ihfr-measurement-v1 }
+            mathContractVersion: { const: ihfr-math-experimental-v0.1.0 }
+            algorithmVersion: { const: ihfr-evaluator-ts-v0.1.0 }
+            contractHash: { const: 'sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b' }
+    RevokeRequest:
+      type: object
+      additionalProperties: false
+      required: [expectedCurrentDiagnosisId, reason]
+      properties:
+        expectedCurrentDiagnosisId: { $ref: '#/components/schemas/Uuid' }
+        reason: { type: string, minLength: 1, maxLength: 500 }
+    EligibilityResponse:
+      type: object
+      additionalProperties: false
+      required: [eligible, reasons, hasCurrentDiagnosis]
+      properties:
+        eligible: { type: boolean }
+        reasons:
+          type: array
+          uniqueItems: true
+          items: { type: string, enum: [MISSING_ENVIRONMENTAL_DATA, MISSING_SLOPE_PERCENT, MISSING_LAND_USE_TYPE, INSUFFICIENT_DIMENSION, INCOMPATIBLE_VERSION] }
+        hasCurrentDiagnosis: { type: boolean }
+        currentDiagnosisId:
+          oneOf: [{ $ref: '#/components/schemas/Uuid' }, { type: 'null' }]
+    VariableDecomposition:
+      type: object
+      additionalProperties: false
+      required: [input, available, raw, normalizedInput, transformation, score, clamped]
+      properties:
+        input:
+          type: string
+          enum:
+            - water.waterSourceType
+            - water.hasSpring
+            - water.wellDepthMeters
+            - water.waterAvailability
+            - water.salinityIndicator
+            - soil.soilTexture
+            - soil.infiltrationRateMmPerHour
+            - soil.compactionLevel
+            - soil.erosionSigns
+            - soil.soilExposedPercent
+            - vegetation.vegetationCoverPercent
+            - vegetation.fragmentationLevel
+            - vegetation.hasRiparianApp
+            - vegetation.landscapeDegradation
+            - terrain.slopePercent
+            - supplement.landUseType
+        available: { type: boolean }
+        raw: { type: [number, string, boolean, 'null'] }
+        normalizedInput: { type: [number, string, boolean, 'null'] }
+        transformation: { type: [string, 'null'] }
+        score: { type: [number, 'null'], minimum: 0, maximum: 1 }
+        clamped: { type: boolean }
+    PublicDiagnosis:
+      type: object
+      additionalProperties: false
+      required: [id, collectionId, environmentalMeasurementSetId, inputSupplementId, lifecycleState, rawScore, displayScore, ihfrClass, dataQuality, componentScores, decomposition, drivers, explanation, versions, calculatedAt, validFrom, scientificState, scientificLabels]
+      properties:
+        id: { $ref: '#/components/schemas/Uuid' }
+        collectionId: { $ref: '#/components/schemas/Uuid' }
+        environmentalMeasurementSetId: { $ref: '#/components/schemas/Uuid' }
+        inputSupplementId: { $ref: '#/components/schemas/Uuid' }
+        lifecycleState: { type: string, enum: [CURRENT, SUPERSEDED, REVOKED] }
+        rawScore: { type: number, minimum: 0, maximum: 1 }
+        displayScore: { type: number, minimum: 0, maximum: 1, multipleOf: 0.01 }
+        ihfrClass: { type: string, enum: [LOW, MODERATE, HIGH, CRITICAL] }
+        dataQuality: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        componentScores:
+          type: object
+          additionalProperties: false
+          required: [W, S, V, T]
+          properties:
+            W: { type: number, minimum: 0, maximum: 1 }
+            S: { type: number, minimum: 0, maximum: 1 }
+            V: { type: number, minimum: 0, maximum: 1 }
+            T: { type: number, minimum: 0, maximum: 1 }
+        decomposition:
+          type: array
+          minItems: 16
+          maxItems: 16
+          items: { $ref: '#/components/schemas/VariableDecomposition' }
+        drivers: { type: array, minItems: 2, maxItems: 2, items: { type: string, enum: [W, S, V, T] } }
+        explanation: { type: string }
+        versions:
+          type: object
+          additionalProperties: false
+          required: [measurementContractVersion, inputContractVersion, mathContractVersion, algorithmVersion, contractHash]
+          properties:
+            measurementContractVersion: { const: ihfr-measurement-v1 }
+            inputContractVersion: { const: ihfr-diagnosis-input-experimental-v0.1.0 }
+            mathContractVersion: { const: ihfr-math-experimental-v0.1.0 }
+            algorithmVersion: { const: ihfr-evaluator-ts-v0.1.0 }
+            contractHash: { const: 'sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b' }
+        calculatedAt: { type: string, format: date-time }
+        validFrom: { type: string, format: date-time }
+        transitionedAt: { type: [string, 'null'], format: date-time }
+        scientificState: { const: EXPERIMENTAL }
+        scientificLabels: { $ref: '#/components/schemas/ScientificLabels' }
+    OperationResponse:
+      type: object
+      additionalProperties: false
+      required: [outcome, diagnosis, insufficiencyReasons]
+      properties:
+        outcome: { type: string, enum: [SUCCEEDED, INSUFFICIENT_DATA, INCOMPATIBLE_VERSION] }
+        diagnosis:
+          oneOf: [{ $ref: '#/components/schemas/PublicDiagnosis' }, { type: 'null' }]
+        insufficiencyReasons:
+          type: array
+          items: { type: string, enum: [MISSING_ENVIRONMENTAL_DATA, MISSING_SLOPE_PERCENT, MISSING_LAND_USE_TYPE, INSUFFICIENT_DIMENSION] }
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code: { type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, FORBIDDEN, NOT_FOUND, READ_ONLY, IDEMPOTENCY_CONFLICT, STATE_CONFLICT, INCOMPATIBLE_VERSION, TECHNICAL_FAILURE] }
+            message: { type: string }
