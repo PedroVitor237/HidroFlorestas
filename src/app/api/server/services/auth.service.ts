@@ -6,6 +6,7 @@ import {
     type CredentialUser,
 } from "../auth/auth.core";
 import {
+    authenticatedDestination,
     serializePublicUser,
     type SignInInput,
 } from "../auth/auth.contracts";
@@ -21,7 +22,7 @@ export type AuthServiceDependencies = {
 };
 
 export type SignInServiceResult =
-    | { success: true; token: string; user: PublicUserDto }
+    | { success: true; token: string; user: PublicUserDto; destination: "/admin" | "/workspace" }
     | { success: false; reason: "INVALID_CREDENTIALS" | "INTERNAL_ERROR" };
 
 const defaultSignInDependencies: AuthServiceDependencies = {
@@ -90,6 +91,7 @@ export class AuthService {
             success: true,
             token: result.token,
             user: serializePublicUser(result.principal),
+            destination: authenticatedDestination(result.principal.role),
         };
     }
 

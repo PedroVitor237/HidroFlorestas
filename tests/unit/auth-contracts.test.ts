@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  authenticatedDestination,
   parseSignInInput,
   serializePublicUser,
 } from "../../src/app/api/server/auth/auth.contracts";
@@ -131,6 +132,26 @@ describe("authentication contracts", () => {
     );
     assert.deepEqual(
       parseAuthEnvelope({
+        success: true,
+        user: { firstName: "Ana", lastName: "Silva", image: "" },
+        destination: "/admin",
+      }),
+      {
+        success: true,
+        user: { firstName: "Ana", lastName: "Silva", image: "" },
+        destination: "/admin",
+      },
+    );
+    assert.equal(
+      parseAuthEnvelope({
+        success: true,
+        user: { firstName: "Ana", lastName: "Silva", image: "" },
+        destination: "/dashboard/admin/users",
+      }),
+      null,
+    );
+    assert.deepEqual(
+      parseAuthEnvelope({
         success: false,
         code: "UNAUTHENTICATED",
         message: "Faça login novamente.",
@@ -153,5 +174,12 @@ describe("authentication contracts", () => {
       }),
       null,
     );
+  });
+
+  it("derives a closed post-login destination from the global role", () => {
+    assert.equal(authenticatedDestination("ADMIN"), "/admin");
+    for (const role of ["USER", "DEVELOPER", "MODERATOR"] as const) {
+      assert.equal(authenticatedDestination(role), "/workspace");
+    }
   });
 });

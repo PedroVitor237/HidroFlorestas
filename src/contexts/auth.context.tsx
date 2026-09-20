@@ -147,7 +147,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setUser(result.user);
             toast.success("Login realizado com sucesso!", { id: "login" });
-            router.push("/workspace");
+            router.push(result.destination ?? "/workspace");
             return { success: true };
         } catch {
             toast.error(CONNECTION_FAILURE_MESSAGE, { id: "login" });

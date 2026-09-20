@@ -13,7 +13,10 @@ export type AuthFailureCode =
 export type AuthSuccess = {
   success: true;
   user: PublicUserDto;
+  destination?: AuthenticatedDestination;
 };
+
+export type AuthenticatedDestination = "/admin" | "/workspace";
 
 export type LogoutSuccess = {
   success: true;
@@ -78,12 +81,23 @@ export function parseAuthEnvelope(value: unknown): AuthEnvelope | null {
       return { success: true };
     }
 
-    if (!hasExactKeys(value, ["success", "user"])) {
+    const hasUserOnly = hasExactKeys(value, ["success", "user"]);
+    const hasDestination = hasExactKeys(value, ["success", "user", "destination"]);
+    if (!hasUserOnly && !hasDestination) {
       return null;
     }
 
     const user = parsePublicUser(value.user);
-    return user ? { success: true, user } : null;
+    if (!user) return null;
+
+    if (hasDestination) {
+      if (value.destination !== "/admin" && value.destination !== "/workspace") {
+        return null;
+      }
+      return { success: true, user, destination: value.destination };
+    }
+
+    return { success: true, user };
   }
 
   if (
