@@ -24,15 +24,11 @@ Permitir que uma autoridade administrativa global consulte contas existentes e a
 
 ### Session 2026-09-19
 
-- Q: Quais acoes integram o primeiro recorte? → A: listar e consultar contas existentes, alterar estado, alterar papel global e consultar auditoria dessas acoes.
-- Q: Como autoalteracao e administradores existentes sao protegidos? → A: nenhuma autoalteracao de papel ou estado; outro ADMIN pode ser alterado, exceto se isso remover o ultimo ADMIN ativo.
+- Q: Quais acoes e contas integram o primeiro recorte? → A: listar e consultar contas existentes, alterar estado, alterar papel global e consultar auditoria; criacao e exclusao ficam fora, substituidas por desativacao reversivel.
+- Q: Como autoalteracao e administradores existentes sao protegidos? → A: nenhuma autoalteracao de papel ou estado; outro ADMIN pode ser alterado, exceto se isso remover o ultimo ADMIN ativo; DEVELOPER e MODERATOR nao recebem autoridade.
 - Q: Qual e a diferenca observavel entre INACTIVE e BLOCKED? → A: ambos perdem acesso normal; INACTIVE e desativacao administrativa reversivel e BLOCKED e negacao por seguranca, distinguida no estado e na auditoria.
 - Q: O que acontece com sessoes anteriores? → A: bloqueio, inativacao ou rebaixamento valem na proxima validacao protegida, que reconsulta estado e papel atuais; nao se promete revogacao instantanea entre validacoes.
-- Q: Como conflitos concorrentes sao tratados? → A: alteracoes exigem versao esperada e falham sem sobrescrever quando a conta mudou; a protecao do ultimo ADMIN ativo e atomica.
-- Q: A feature cria ou exclui contas? → A: nao; administra contas existentes e substitui exclusao por estado administrativo reversivel.
-- Q: Quem consulta a auditoria minima? → A: somente ADMIN global ACTIVE; tentativas negadas nao integram o historico funcional deste recorte.
-- Q: DEVELOPER ou MODERATOR recebem alguma autoridade? → A: nao; os valores sao preservados apenas por compatibilidade.
-- Q: Existe razao normativa para manter isAdmin? → A: nao identificada; ele permanece apenas durante uma transicao tecnica controlada.
+- Q: Como concorrencia, auditoria e o legado isAdmin sao tratados? → A: versao esperada e protecao atomica do ultimo ADMIN; auditoria minima consultavel apenas por ADMIN global ACTIVE; tentativas negadas nao sao sucesso; nenhuma razao normativa mantem isAdmin alem da transicao controlada.
 
 ## User Scenarios & Testing *(mandatory)*
 

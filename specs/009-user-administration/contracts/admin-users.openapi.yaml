@@ -102,11 +102,14 @@ components:
         targetUserId: { type: string }
         actorUserId: { type: string }
         action: { type: string, enum: [ACCOUNT_STATUS_CHANGED, GLOBAL_ROLE_CHANGED] }
-        beforeValue: { type: string }
-        afterValue: { type: string }
+        beforeValue: { $ref: '#/components/schemas/AuditValue' }
+        afterValue: { $ref: '#/components/schemas/AuditValue' }
         reason: { type: string }
         targetRevision: { type: integer, minimum: 1 }
         createdAt: { type: string, format: date-time }
+    AuditValue:
+      type: string
+      enum: [USER, ADMIN, DEVELOPER, MODERATOR, ACTIVE, INACTIVE, PENDING, BLOCKED]
     UserPage:
       type: object
       additionalProperties: false
