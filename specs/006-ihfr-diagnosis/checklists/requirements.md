@@ -61,20 +61,22 @@ Iteração 5: os 16 critérios permanecem atendidos após a auditoria focal de `
 
 `G2-ENG — landUseType` está `RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`; `G2-ENG` geral está `RESOLVIDO_PARA_PLANEJAMENTO`; `G2-SCI` permanece `NAO_VERIFICADO_VALIDACAO_POSTERIOR`. A fronteira HTTP distingue candidato incompleto, que produz `INSUFFICIENT_DATA`, de suplemento confirmado, que continua estrito e imutável. Manifesto, versão e hash matemáticos não mudaram. A próxima skill aplicável é `$speckit-tasks`; ela não foi executada nesta auditoria.
 
-Iteração 6 — análise independente histórica: após incorporar `origin/development@df856194b3341137d6d863feefcb0a203deb5905` pelo merge normal `96dac7c`, a análise encontrou 12 inconsistências — 5 `HIGH`, 5 `MEDIUM` e 2 `LOW` — e não aprovou o pacote como pronto. Os itens abaixo registram o estado naquele momento e permanecem propositalmente desmarcados; esta seção não é reescrita para simular aprovação retroativa.
+Iteração 6 — análise independente histórica: após incorporar `origin/development@df856194b3341137d6d863feefcb0a203deb5905` pelo merge normal `96dac7c`, a análise encontrou 12 inconsistências — 5 `HIGH`, 5 `MEDIUM` e 2 `LOW` — e não aprovou o pacote como pronto. A tabela preserva o estado aberto observado naquela iteração sem usar sintaxe de checklist vigente e sem simular aprovação retroativa. A coluna de remediação registra somente o tratamento posterior na Iteração 7.
 
-- [ ] `HIGH` I1 — política contraditória para entrada desconhecida no manifesto
-- [ ] `HIGH` I2 — cardinalidade 1:1 do suplemento incompatível com reuso entre diagnósticos
-- [ ] `HIGH` I3 — testes GREEN de US1 antes da persistência/fixtures necessárias
-- [ ] `HIGH` I4 — preflight, migration, aplicação, generate e GREEN em ordem não executável
-- [ ] `HIGH` G1 — fixtures, isolamento e teardown PostgreSQL insuficientemente definidos
-- [ ] `MEDIUM` I5 — contagem de seis operações HTTP versus sete comportamentos ambígua
-- [ ] `MEDIUM` U1 — condicionais CREATE/REPLACE e erro de elegibilidade incompletos no OpenAPI
-- [ ] `MEDIUM` G2 — `PublicDiagnosis.areaId` ausente/inconsistente
-- [ ] `MEDIUM` I6 — marcações `[P]` concorrendo sobre os mesmos arquivos
-- [ ] `MEDIUM` I7 — encerramento antecedendo a regressão territorial
-- [ ] `LOW` U2 — caminho de migration ainda era placeholder
-- [ ] `LOW` I8 — checklist não refletia a análise corrente
+| Finding histórico | Estado na Iteração 6 | Remediação posterior | Evidência atual |
+|---|---|---|---|
+| `HIGH` I1 — política contraditória para entrada desconhecida no manifesto | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [manifesto v0.1.1](../contracts/ihfr-math-experimental-v0.1.1.json), [spec](../spec.md) e [ADR-0001](../../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) |
+| `HIGH` I2 — cardinalidade 1:1 do suplemento incompatível com reuso entre diagnósticos | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [modelo de dados](../data-model.md), [spec](../spec.md) e [tarefas](../tasks.md) |
+| `HIGH` I3 — testes GREEN de US1 antes da persistência/fixtures necessárias | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [ordem executável das tarefas](../tasks.md) e [plano](../plan.md) |
+| `HIGH` I4 — preflight, migration, aplicação, generate e GREEN em ordem não executável | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [Phase 2 e dependências](../tasks.md) e [quickstart](../quickstart.md) |
+| `HIGH` G1 — fixtures, isolamento e teardown PostgreSQL insuficientemente definidos | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [modelo de dados §10.1](../data-model.md), [quickstart §5/§9](../quickstart.md) e [tarefas](../tasks.md) |
+| `MEDIUM` I5 — contagem de seis operações HTTP versus sete comportamentos ambígua | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [OpenAPI](../contracts/ihfr-diagnosis-api.openapi.yaml), [plano](../plan.md) e [tarefas](../tasks.md) |
+| `MEDIUM` U1 — condicionais CREATE/REPLACE e erro de elegibilidade incompletos no OpenAPI | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [OpenAPI](../contracts/ihfr-diagnosis-api.openapi.yaml) e [quickstart](../quickstart.md) |
+| `MEDIUM` G2 — `PublicDiagnosis.areaId` ausente/inconsistente | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [OpenAPI](../contracts/ihfr-diagnosis-api.openapi.yaml), [spec](../spec.md) e [tarefas](../tasks.md) |
+| `MEDIUM` I6 — marcações `[P]` concorrendo sobre os mesmos arquivos | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [tarefas e exemplos de paralelismo](../tasks.md) |
+| `MEDIUM` I7 — encerramento antecedendo a regressão territorial | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [Phases 7 e 8](../tasks.md) |
+| `LOW` U2 — caminho de migration ainda era placeholder | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | [modelo de dados §10](../data-model.md), [quickstart](../quickstart.md) e [tarefas](../tasks.md) |
+| `LOW` I8 — checklist não refletia a análise corrente | `IDENTIFICADO_ABERTO` | `RESOLVIDO_NA_ITERACAO_7` | Esta Iteração 7 e o histórico preservado acima |
 
 Iteração 7 — remediação focal corrente, 2026-09-20: os 16 critérios de qualidade documental estão novamente atendidos no conteúdo atual, sem alterar o registro histórico da Iteração 6. A v0.1.0 foi preservada integralmente; a clarificação normativa gera `ihfr-math-experimental-v0.1.1` e hash novo, sem mudança de fórmula, pesos ou scores.
 
@@ -88,5 +90,17 @@ Iteração 7 — remediação focal corrente, 2026-09-20: os 16 critérios de qu
 - [x] I7 — regressão territorial antecede teardown, evidências e fechamento; o fechamento é a última tarefa real
 - [x] U2 — caminho reservado é `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`, com stop condition
 - [x] I8 — esta iteração registra a remediação sem reclassificar as anteriores
+- [x] A nova análise independente sobre o commit `530e4924035b2fa1e9fb020e2991c3e8a198b012` confirmou os 12 findings como resolvidos, encontrou zero finding material novo e emitiu `IMP_006_PRONTA_PARA_IMPLEMENTACAO`
 
-Revisão especializada e testes de campo continuam `NAO_VERIFICADO`, classificados como `VALIDACAO_POSTERIOR`. Isso não bloqueia o contrato experimental rotulado, mas bloqueia sua promoção a contrato científico definitivo. Nenhuma implementação foi executada nesta remediação; o próximo passo é uma nova análise independente.
+### Validações humanas futuras — estado informativo
+
+Estas validações não integram a checklist documental vigente e não recebem marca de conclusão automática:
+
+| Validação futura | Estado | Efeito |
+|---|---|---|
+| Revisão do professor Fábio e de especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) | Não bloqueia a implementação experimental; bloqueia alegação científica definitiva. |
+| Vetores científicos aprovados | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) | Pode exigir nova versão/hash; não reescreve diagnósticos históricos. |
+| Calibração científica e regional | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) | Mantém o perfil regional inativo. |
+| Testes de campo | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) | Evidência divergente aciona revisão futura, sem alterar resultados anteriores. |
+
+Nenhuma implementação foi executada nesta remediação editorial. O próximo passo autorizado é uma nova execução de `$speckit-implement`.
