@@ -117,6 +117,16 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - A cardinalidade N:1 do suplemento, `UNIQUE(collectionDataId,payloadHash)`, ausência de `UNIQUE(inputSupplementId)`, ponteiro vigente único, ledger idempotente e triggers append-only permaneceram cobertos pelas asserções estruturais existentes. Triggers não foram desabilitados e nenhum teste destrutivo usou `public`.
 - Inspeção final do catálogo após a rodada verde: zero schemas `imp006_test_*` residuais. T022 foi concluída somente após esse resultado.
 
+### Fixtures e lifecycle — T024–T030
+
+- Fixtures separadas cobrem seis usuários (OWNER, ADMIN contextual, MEMBER, sem vínculo, conta inativa e vínculo revogado representado pela ausência do vínculo vigente), dois laboratórios ativo/inativo, duas áreas, quatro coletas confirmadas/não confirmadas/próprias/cruzadas e conjuntos ambientais presente/ausente.
+- O papel global de todos os atores contextuais permanece `User.role=USER`; somente `ResearchersLinked.role` concede OWNER/ADMIN/MEMBER no laboratório. Nenhuma fixture restaura ou escreve `User.isAdmin`.
+- Estado de domínio: um suplemento válido reutilizado por três diagnósticos; projeções CURRENT, SUPERSEDED e REVOKED; quatro operações terminais, incluindo insuficiência; eventos com evidência restrita; candidatos inválido/ausente e conflito de idempotência sem persistir linha ilegal.
+- Vetores técnicos registram os sete enums, limites de declividade/percentuais, opcionais conhecidos ausentes, campos/enums desconhecidos e versões histórica/ativa. São `TECHNICAL_CONTRACT_VECTOR`, não validação científica.
+- Primeiras tentativas do smoke detectaram somente falhas estruturais de fixture antes do domínio: owner criado fora da mesma transação diferível (`IMP003_OWNER_INVARIANT`), placeholders não utilizados (`42P18`) e score sem casts distintos (`42P08`). Cada causa foi corrigida no harness/fixture; schema e migrations não foram alterados.
+- Smoke final PostgreSQL: 2/2 testes passaram. Contagens dentro do schema: 6 usuários, 2 laboratórios, 1 suplemento, 3 diagnósticos, 1 ponteiro vigente, 4 operações e 3 eventos. A segunda execução injetou `INJECTED_FIXTURE_FAILURE` depois do setup e confirmou propagação da falha com teardown em `finally`.
+- Inspeção final externa do catálogo: zero schemas `imp006_test_*` residuais. Os dois processos de teste terminaram; nenhum servidor foi iniciado. Triggers permaneceram ativos e nenhum cenário usou o schema `public`.
+
 ## Validações humanas
 
 | Validação | Estado |

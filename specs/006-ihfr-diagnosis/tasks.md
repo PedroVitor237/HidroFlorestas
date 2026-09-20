@@ -42,13 +42,13 @@
 - [X] T021 Aplicar a cadeia real de migrations nos schemas isolados vazio e legado, sem desabilitar triggers, e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 - [X] T022 Verificar objetos, constraints, triggers, zero backfill e ordem aplicada nos schemas isolados em `tests/migration/ihfr-diagnosis-preflight.test.ts`
 - [X] T023 Executar `prisma generate` somente após a aplicação isolada bem-sucedida e registrar o resultado em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T024 [P] Criar fixtures explícitas de OWNER/ADMIN/MEMBER, usuário sem vínculo, conta ativa/inativa, vínculo atual/revogado e laboratório ativo/inativo em `tests/fixtures/ihfr-diagnosis-actors.ts`
-- [ ] T025 [P] Criar fixtures de dois laboratórios, áreas, coletas confirmadas próprias/cruzadas e `EnvironmentalMeasurementSet` presente/ausente em `tests/fixtures/ihfr-diagnosis-contexts.ts`
-- [ ] T026 [P] Criar fixtures de suplemento válido/inválido/ausente, diagnósticos CURRENT/SUPERSEDED/REVOKED, operações idempotentes, eventos restritos, conflitos e dados insuficientes em `tests/fixtures/ihfr-diagnosis-domain.ts`
-- [ ] T027 [P] Criar vetores técnicos de manifesto, limites, opcionais conhecidos e entradas desconhecidas em `tests/fixtures/ihfr-diagnosis-technical-vectors.ts`
-- [ ] T028 Integrar criação, limpeza entre cenários e descarte final em `tests/fixtures/ihfr-diagnosis-fixtures.ts`
-- [ ] T029 Provar em smoke PostgreSQL que fixtures sobem e que o teardown remove o schema mesmo após falha injetada em `tests/integration/ihfr-diagnosis-fixture-lifecycle.test.ts`
-- [ ] T030 Registrar contagens baseline, schemas e processos antes dos testes comportamentais em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T024 [P] Criar fixtures explícitas de OWNER/ADMIN/MEMBER, usuário sem vínculo, conta ativa/inativa, vínculo atual/revogado e laboratório ativo/inativo em `tests/fixtures/ihfr-diagnosis-actors.ts`
+- [X] T025 [P] Criar fixtures de dois laboratórios, áreas, coletas confirmadas próprias/cruzadas e `EnvironmentalMeasurementSet` presente/ausente em `tests/fixtures/ihfr-diagnosis-contexts.ts`
+- [X] T026 [P] Criar fixtures de suplemento válido/inválido/ausente, diagnósticos CURRENT/SUPERSEDED/REVOKED, operações idempotentes, eventos restritos, conflitos e dados insuficientes em `tests/fixtures/ihfr-diagnosis-domain.ts`
+- [X] T027 [P] Criar vetores técnicos de manifesto, limites, opcionais conhecidos e entradas desconhecidas em `tests/fixtures/ihfr-diagnosis-technical-vectors.ts`
+- [X] T028 Integrar criação, limpeza entre cenários e descarte final em `tests/fixtures/ihfr-diagnosis-fixtures.ts`
+- [X] T029 Provar em smoke PostgreSQL que fixtures sobem e que o teardown remove o schema mesmo após falha injetada em `tests/integration/ihfr-diagnosis-fixture-lifecycle.test.ts`
+- [X] T030 Registrar contagens baseline, schemas e processos antes dos testes comportamentais em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 
 **Checkpoint**: migration aplicada em ambiente isolado, client gerado e fixtures executáveis; testes RED posteriores podem falhar por comportamento ausente, não por infraestrutura inexistente.
 
