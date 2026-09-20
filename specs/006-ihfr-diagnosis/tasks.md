@@ -58,16 +58,16 @@
 
 **Objetivo**: criar fronteiras mínimas compiláveis sem implementar comportamento de negócio.
 
-- [ ] T031 [P] Criar tipos públicos/fechados, incluindo `PublicDiagnosis.areaId`, em `src/types/ihfr-diagnosis.type.ts`
-- [ ] T032 [P] Criar constantes de versões, hashes, rótulos e capacidades em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.constants.ts`
-- [ ] T033 [P] Criar interfaces de store, relógio e transação em `src/app/api/server/services/ihfr-diagnosis.store.ts`
-- [ ] T034 [P] Criar shell do carregador fail-closed em `src/app/api/server/ihfr-diagnosis/manifest-loader.ts`
-- [ ] T035 [P] Criar shell do avaliador puro em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
-- [ ] T036 [P] Criar shell do parser de request/response em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.contracts.ts`
-- [ ] T037 [P] Criar shell de adaptação HTTP e erros sanitizados em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.http.ts`
-- [ ] T038 Criar shell do serviço e assinaturas de leitura/escrita em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T039 Criar os seis route handlers contextuais como shells compiláveis sob `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/`
-- [ ] T040 Executar typecheck focal dos shells e corrigir apenas erros estruturais, sem implementar os comportamentos que os testes RED devem dirigir
+- [X] T031 [P] Criar tipos públicos/fechados, incluindo `PublicDiagnosis.areaId`, em `src/types/ihfr-diagnosis.type.ts`
+- [X] T032 [P] Criar constantes de versões, hashes, rótulos e capacidades em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.constants.ts`
+- [X] T033 [P] Criar interfaces de store, relógio e transação em `src/app/api/server/services/ihfr-diagnosis.store.ts`
+- [X] T034 [P] Criar shell do carregador fail-closed em `src/app/api/server/ihfr-diagnosis/manifest-loader.ts`
+- [X] T035 [P] Criar shell do avaliador puro em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
+- [X] T036 [P] Criar shell do parser de request/response em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.contracts.ts`
+- [X] T037 [P] Criar shell de adaptação HTTP e erros sanitizados em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.http.ts`
+- [X] T038 Criar shell do serviço e assinaturas de leitura/escrita em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T039 Criar os seis route handlers contextuais como shells compiláveis sob `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/`
+- [X] T040 Executar typecheck focal dos shells e corrigir apenas erros estruturais, sem implementar os comportamentos que os testes RED devem dirigir
 
 **Checkpoint**: imports e assinaturas compilam; nenhuma história é considerada entregue.
 

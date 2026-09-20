@@ -127,6 +127,13 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - Smoke final PostgreSQL: 2/2 testes passaram. Contagens dentro do schema: 6 usuários, 2 laboratórios, 1 suplemento, 3 diagnósticos, 1 ponteiro vigente, 4 operações e 3 eventos. A segunda execução injetou `INJECTED_FIXTURE_FAILURE` depois do setup e confirmou propagação da falha com teardown em `finally`.
 - Inspeção final externa do catálogo: zero schemas `imp006_test_*` residuais. Os dois processos de teste terminaram; nenhum servidor foi iniciado. Triggers permaneceram ativos e nenhum cenário usou o schema `public`.
 
+### Shells estruturais — T031–T040
+
+- Foram criados tipos públicos fechados com `PublicDiagnosis.areaId` obrigatório; constantes de versões/hash/rótulos/capacidades; interfaces de store, relógio e transação; shells fail-closed do manifesto, avaliador, parser, HTTP e serviço.
+- As seis operações contextuais possuem módulos `route.ts` compiláveis sob laboratório → área → coleta. Enquanto os testes RED ainda não definem o comportamento, respondem deliberadamente `501 NOT_IMPLEMENTED` com `Cache-Control: no-store`; nenhum shell concede autorização ou persiste dados.
+- `npm run typecheck`: código 0. ESLint focal: zero erros e 21 warnings esperados de parâmetros ainda não usados nos shells. `git diff --check`: código 0.
+- Não há import ou dependência da administração global; nenhum `isAdmin`; tipos internos de store/manifesto não fazem parte de `PublicDiagnosis`.
+
 ## Validações humanas
 
 | Validação | Estado |
