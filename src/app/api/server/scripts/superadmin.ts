@@ -50,6 +50,7 @@ async function createSuperAdmin(): Promise<void> {
         if (rootPass !== ROOT_PASS) {
             terminalHeader();
             console.log('\nSenha Root inválida!')
+            return;
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -59,6 +60,8 @@ async function createSuperAdmin(): Promise<void> {
                 firstName,
                 lastName,
                 email,
+                // Compatibility write while the legacy column remains in storage.
+                // Runtime global authority is derived exclusively from role.
                 isAdmin: true,
                 password: hashedPassword,
                 role: 'ADMIN',

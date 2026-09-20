@@ -10,65 +10,65 @@
 
 ## Authority Completeness
 
-- [ ] CHK001 Are authentication, ACTIVE-state and current global ADMIN requirements explicit for every administrative read and mutation? [Completeness, Spec §FR-001]
-- [ ] CHK002 Is `User.role` unambiguously identified as the sole normative global-authority source throughout all artifacts? [Consistency, Spec §FR-002]
-- [ ] CHK003 Are laboratory roles explicitly excluded from every global administrative capability? [Coverage, Spec §FR-003]
-- [ ] CHK004 Are USER, DEVELOPER and MODERATOR denial requirements consistent across matrix, scenarios and contracts? [Consistency, Spec §FR-004]
-- [ ] CHK005 Is server-side actor derivation specified independently of sidebar visibility and client input? [Completeness, Spec §FR-025]
+- [x] CHK001 Are authentication, ACTIVE-state and current global ADMIN requirements explicit for every administrative read and mutation? [Completeness, Spec §FR-001]
+- [x] CHK002 Is `User.role` unambiguously identified as the sole normative global-authority source throughout all artifacts? [Consistency, Spec §FR-002]
+- [x] CHK003 Are laboratory roles explicitly excluded from every global administrative capability? [Coverage, Spec §FR-003]
+- [x] CHK004 Are USER, DEVELOPER and MODERATOR denial requirements consistent across matrix, scenarios and contracts? [Consistency, Spec §FR-004]
+- [x] CHK005 Is server-side actor derivation specified independently of sidebar visibility and client input? [Completeness, Spec §FR-025]
 
 ## Privilege-Escalation Protection
 
-- [ ] CHK006 Is the prohibition on every self-role and self-state change complete, including elevation and rebalancing? [Coverage, Spec §FR-013]
-- [ ] CHK007 Is the last-active-ADMIN invariant objectively defined across both role and state changes? [Clarity, Spec §FR-014]
-- [ ] CHK008 Are concurrent attempts to remove different ADMIN accounts covered without relying on an application-only pre-count? [Coverage, Plan §Data, Concurrency and Audit]
-- [ ] CHK009 Are no-op semantics defined so repeated requests cannot fabricate audit evidence or alter revision? [Clarity, Spec §FR-019]
+- [x] CHK006 Is the prohibition on every self-role and self-state change complete, including elevation and rebalancing? [Coverage, Spec §FR-013]
+- [x] CHK007 Is the last-active-ADMIN invariant objectively defined across both role and state changes? [Clarity, Spec §FR-014]
+- [x] CHK008 Are concurrent attempts to remove different ADMIN accounts covered without relying on an application-only pre-count? [Coverage, Plan §Data, Concurrency and Audit]
+- [x] CHK009 Are no-op semantics defined so repeated requests cannot fabricate audit evidence or alter revision? [Clarity, Spec §FR-019]
 
 ## Account States and Sessions
 
-- [ ] CHK010 Are authentication consequences specified for all four account states? [Completeness, Spec §Observable Account-State Policy]
-- [ ] CHK011 Is the observable distinction between INACTIVE and BLOCKED sufficient and consistent across spec, model and audit requirements? [Consistency, Spec §FR-011]
-- [ ] CHK012 Is the timing of blocked, inactive and rebalanced-session enforcement explicit without promising instant revocation? [Clarity, Spec §FR-020]
-- [ ] CHK013 Are reactivation and promotion requirements clear that no session or authority is granted until a subsequent validation? [Edge Case, Spec §Edge Cases]
+- [x] CHK010 Are authentication consequences specified for all four account states? [Completeness, Spec §Observable Account-State Policy]
+- [x] CHK011 Is the observable distinction between INACTIVE and BLOCKED sufficient and consistent across spec, model and audit requirements? [Consistency, Spec §FR-011]
+- [x] CHK012 Is the timing of blocked, inactive and rebalanced-session enforcement explicit without promising instant revocation? [Clarity, Spec §FR-020]
+- [x] CHK013 Are reactivation and promotion requirements clear that no session or authority is granted until a subsequent validation? [Edge Case, Spec §Edge Cases]
 
 ## Privacy and Projection
 
-- [ ] CHK014 Is the administrative projection exhaustively allowlisted for list, detail, mutation and audit responses? [Completeness, Spec §FR-005, §FR-008]
-- [ ] CHK015 Are password/hash, tokens, secrets, root key, environment values, `isAdmin` and unnecessary relations prohibited consistently? [Consistency, Spec §FR-008]
-- [ ] CHK016 Are audit before/after values constrained to allowlisted enums rather than arbitrary payload snapshots? [Clarity, Data Model §AdministrativeAuditEvent]
-- [ ] CHK017 Are error responses specified to avoid account enumeration and internal-detail leakage outside authorized not-found behavior? [Coverage, Spec §FR-021]
+- [x] CHK014 Is the administrative projection exhaustively allowlisted for list, detail, mutation and audit responses? [Completeness, Spec §FR-005, §FR-008]
+- [x] CHK015 Are password/hash, tokens, secrets, root key, environment values, `isAdmin` and unnecessary relations prohibited consistently? [Consistency, Spec §FR-008]
+- [x] CHK016 Are audit before/after values constrained to allowlisted enums rather than arbitrary payload snapshots? [Clarity, Data Model §AdministrativeAuditEvent]
+- [x] CHK017 Are error responses specified to avoid account enumeration and internal-detail leakage outside authorized not-found behavior? [Coverage, Spec §FR-021]
 
 ## Concurrency and Audit
 
-- [ ] CHK018 Is the expected-revision precondition present and consistent for both mutation contracts? [Consistency, Contract §StatusChange/RoleChange]
-- [ ] CHK019 Is atomicity between mutation, revision increment and exactly one audit event objectively specified? [Measurability, Spec §FR-016, §SC-005]
-- [ ] CHK020 Are stale-write, last-ADMIN and current-state conflict meanings distinguishable enough for safe recovery? [Clarity, Plan §API and UI]
-- [ ] CHK021 Are audit access, ordering, pagination, event scope and exclusion of failed/no-op operations specified? [Completeness, Spec §FR-017–FR-019]
-- [ ] CHK022 Is the boundary between functional audit and deferred security-attempt observability explicit? [Scope, Spec §US4]
+- [x] CHK018 Is the expected-revision precondition present and consistent for both mutation contracts? [Consistency, Contract §StatusChange/RoleChange]
+- [x] CHK019 Is atomicity between mutation, revision increment and exactly one audit event objectively specified? [Measurability, Spec §FR-016, §SC-005]
+- [x] CHK020 Are stale-write, last-ADMIN and current-state conflict meanings distinguishable enough for safe recovery? [Clarity, Plan §API and UI]
+- [x] CHK021 Are audit access, ordering, pagination, event scope and exclusion of failed/no-op operations specified? [Completeness, Spec §FR-017–FR-019]
+- [x] CHK022 Is the boundary between functional audit and deferred security-attempt observability explicit? [Scope, Spec §US4]
 
 ## API and Interaction Contracts
 
-- [ ] CHK023 Are 400, 401, 403, 404, 409 and 500 semantics consistent across all applicable operations? [Consistency, Contract responses]
-- [ ] CHK024 Are cursor limits, stable ordering, search normalization and invalid-filter behavior sufficiently defined? [Completeness, Spec §FR-005–FR-006]
-- [ ] CHK025 Are loading, empty, error, success and conflict-recovery requirements defined for every administrative journey? [Coverage, Spec §FR-024]
-- [ ] CHK026 Are keyboard, focus and non-color communication requirements measurable across sensitive confirmations? [Measurability, Spec §NFR-005, §SC-008]
+- [x] CHK023 Are 400, 401, 403, 404, 409 and 500 semantics consistent across all applicable operations? [Consistency, Contract responses]
+- [x] CHK024 Are cursor limits, stable ordering, search normalization and invalid-filter behavior sufficiently defined? [Completeness, Spec §FR-005–FR-006]
+- [x] CHK025 Are loading, empty, error, success and conflict-recovery requirements defined for every administrative journey? [Coverage, Spec §FR-024]
+- [x] CHK026 Are keyboard, focus and non-color communication requirements measurable across sensitive confirmations? [Measurability, Spec §NFR-005, §SC-008]
 
 ## Legacy Migration and Dependencies
 
-- [ ] CHK027 Does the transition require an exhaustive consumer/writer inventory before authority changes? [Dependency, Spec §FR-023]
-- [ ] CHK028 Are all four `role/isAdmin` consistency classes defined without silently selecting a source for contradictory records? [Completeness, Data Model §Legacy Consistency Classes]
-- [ ] CHK029 Are compatibility exit criteria and the separate later removal migration explicit and reviewable? [Clarity, Plan §Safe `isAdmin` Transition]
-- [ ] CHK030 Is rollback constrained so it cannot reintroduce authority from `isAdmin` or lose audit/version data? [Recovery, Plan §Safe `isAdmin` Transition]
-- [ ] CHK031 Is IMP-006 explicitly non-material and are shared-file coordination boundaries documented? [Dependency, Plan §IMP-006 and Shared Files]
+- [x] CHK027 Does the transition require an exhaustive consumer/writer inventory before authority changes? [Dependency, Spec §FR-023]
+- [x] CHK028 Are all four `role/isAdmin` consistency classes defined without silently selecting a source for contradictory records? [Completeness, Data Model §Legacy Consistency Classes]
+- [x] CHK029 Are compatibility exit criteria and the separate later removal migration explicit and reviewable? [Clarity, Plan §Safe `isAdmin` Transition]
+- [x] CHK030 Is rollback constrained so it cannot reintroduce authority from `isAdmin` or lose audit/version data? [Recovery, Plan §Safe `isAdmin` Transition]
+- [x] CHK031 Is IMP-006 explicitly non-material and are shared-file coordination boundaries documented? [Dependency, Plan §IMP-006 and Shared Files]
 
 ## Traceability and Readiness
 
-- [ ] CHK032 Does every security-critical requirement map to at least one concrete task and validation scenario? [Traceability, Tasks]
-- [ ] CHK033 Are automated, PostgreSQL migration, browser, accessibility and human-validation gates kept distinct? [Clarity, Quickstart]
-- [ ] CHK034 Are out-of-scope creation, deletion, impersonation, password recovery, generic RBAC and advanced audit exclusions consistent across artifacts? [Consistency, Spec §Out of Scope]
-- [ ] CHK035 Are all remaining recommendations and future decisions labeled so none appears as historical team approval? [Authority, Research §Classificacao]
+- [x] CHK032 Does every security-critical requirement map to at least one concrete task and validation scenario? [Traceability, Tasks]
+- [x] CHK033 Are automated, PostgreSQL migration, browser, accessibility and human-validation gates kept distinct? [Clarity, Quickstart]
+- [x] CHK034 Are out-of-scope creation, deletion, impersonation, password recovery, generic RBAC and advanced audit exclusions consistent across artifacts? [Consistency, Spec §Out of Scope]
+- [x] CHK035 Are all remaining recommendations and future decisions labeled so none appears as historical team approval? [Authority, Research §Classificacao]
 
 ## Notes
 
-- All items intentionally remain unchecked pending actual reviewer evaluation.
+- Human review received on 2026-09-19: all 35 items approved after the requested conflict, ordering, focus and rollback flows were incorporated into the feature artifacts.
 - `$speckit-implement` reads checklist state but must not modify reviewer markers.
 - `requirements.md` has the separate built-in lifecycle maintained by specification and clarification steps.

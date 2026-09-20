@@ -36,6 +36,8 @@ Eventos sao append-only. No-op, rejeicao ou conflito nao criam evento de sucesso
 - Mudanca bem-sucedida incrementa revision uma vez e cria exatamente um evento na mesma transacao.
 - Revisao obsoleta falha; no-op atual nao incrementa nem audita.
 - Ultimo ACTIVE+ADMIN e protegido dentro da transacao serializada.
+- Rollback nunca reduz `revision` nem apaga evento ja persistido; recuperacao destrutiva usa migration compensatoria revisada e backup verificado.
+- Depois de qualquer compensacao, `role` permanece a unica autoridade, pelo menos um `ACTIVE + ADMIN` permanece e nenhum registro contraditorio ganha autoridade por `isAdmin`.
 
 ## State Transitions
 
@@ -51,4 +53,3 @@ Os quatro estados podem transitar para outro estado sob autorizacao. Apenas ACTI
 | non-ADMIN | true | contradicao de privilegio | nao conceder; corrigir explicitamente |
 
 Esta tabela e preflight, nao logica de autorizacao.
-

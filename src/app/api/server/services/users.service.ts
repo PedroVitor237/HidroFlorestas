@@ -13,6 +13,7 @@ export class UserService {
                 image: true,
                 password: true,
                 status: true,
+                role: true,
                 isAdmin: true,
             },
         });
@@ -27,6 +28,7 @@ export class UserService {
                 lastName: true,
                 image: true,
                 status: true,
+                role: true,
                 isAdmin: true,
             },
         });

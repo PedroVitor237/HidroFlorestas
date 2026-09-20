@@ -2,13 +2,14 @@ openapi: 3.1.0
 info:
   title: IMP-009 Administrative Users API
   version: 0.1.0
-  description: Planned contract; no endpoint is implemented by this documentation phase.
+  description: Contract for role-authorized global user administration.
 paths:
   /api/admin/users:
     get:
+      operationId: listAdminUsers
       summary: List and filter existing accounts
       parameters:
-        - { name: cursor, in: query, schema: { type: string } }
+        - { name: cursor, in: query, description: Opaque encoding of createdAt, id and normalized filter hash for createdAt DESC, id DESC ordering, schema: { type: string } }
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 50, default: 25 } }
         - { name: search, in: query, schema: { type: string, maxLength: 120 } }
         - { name: role, in: query, schema: { $ref: '#/components/schemas/UserRole' } }
@@ -21,6 +22,7 @@ paths:
         '500': { $ref: '#/components/responses/InternalError' }
   /api/admin/users/{userId}:
     get:
+      operationId: getAdminUser
       summary: Read an existing account
       parameters: [ { $ref: '#/components/parameters/UserId' } ]
       responses:
@@ -31,22 +33,25 @@ paths:
         '500': { $ref: '#/components/responses/InternalError' }
   /api/admin/users/{userId}/status:
     patch:
+      operationId: changeAdminUserStatus
       summary: Change another account status
       parameters: [ { $ref: '#/components/parameters/UserId' } ]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StatusChange' } } } }
       responses: { '200': { $ref: '#/components/responses/User' }, '400': { $ref: '#/components/responses/BadRequest' }, '401': { $ref: '#/components/responses/Unauthorized' }, '403': { $ref: '#/components/responses/Forbidden' }, '404': { $ref: '#/components/responses/NotFound' }, '409': { $ref: '#/components/responses/Conflict' }, '500': { $ref: '#/components/responses/InternalError' } }
   /api/admin/users/{userId}/role:
     patch:
+      operationId: changeAdminUserRole
       summary: Change another account global role
       parameters: [ { $ref: '#/components/parameters/UserId' } ]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/RoleChange' } } } }
       responses: { '200': { $ref: '#/components/responses/User' }, '400': { $ref: '#/components/responses/BadRequest' }, '401': { $ref: '#/components/responses/Unauthorized' }, '403': { $ref: '#/components/responses/Forbidden' }, '404': { $ref: '#/components/responses/NotFound' }, '409': { $ref: '#/components/responses/Conflict' }, '500': { $ref: '#/components/responses/InternalError' } }
   /api/admin/users/{userId}/audit:
     get:
+      operationId: listAdminUserAudit
       summary: Read functional administration history
       parameters:
         - { $ref: '#/components/parameters/UserId' }
-        - { name: cursor, in: query, schema: { type: string } }
+        - { name: cursor, in: query, description: Opaque encoding of createdAt and id for createdAt DESC, id DESC ordering, schema: { type: string } }
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 50, default: 25 } }
       responses:
         '200': { description: Audit page, content: { application/json: { schema: { $ref: '#/components/schemas/AuditPage' } } } }
@@ -134,11 +139,29 @@ components:
           additionalProperties: false
           required: [code, message]
           properties: { code: { type: string }, message: { type: string } }
+    ConflictError:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message, recovery]
+          properties:
+            code: { type: string, enum: [STALE_REVISION, EXPECTED_STATE_MISMATCH, EXPECTED_ROLE_MISMATCH, LAST_ACTIVE_ADMIN] }
+            message: { type: string }
+            currentRevision: { type: integer, minimum: 0 }
+            recovery: { type: string, enum: [REFRESH_TARGET, ENSURE_ANOTHER_ACTIVE_ADMIN] }
   responses:
     User: { description: Updated or current no-op projection, content: { application/json: { schema: { $ref: '#/components/schemas/AdminUser' } } } }
     BadRequest: { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
     Unauthorized: { description: Missing or invalid session, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
     Forbidden: { description: Lacks authority or self-change forbidden, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
     NotFound: { description: Target does not exist, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    Conflict: { description: Stale revision or last active ADMIN, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Conflict:
+      description: Recoverable conflict with an enumerated cause
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ConflictError' }
     InternalError: { description: Controlled internal error, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }

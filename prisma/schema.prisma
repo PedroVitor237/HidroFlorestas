@@ -19,12 +19,15 @@ model User {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   isAdmin   Boolean    @default(false)
+  revision  Int        @default(0)
 
   laboratoryRooms   LaboratoryRoom[]
   researchersLinked ResearchersLinked[]
   collectionAreas   CollectionArea[]
   collectionData    CollectionData[]
   environmentalMeasurementSets EnvironmentalMeasurementSet[]
+  administrativeActions AdministrativeAuditEvent[] @relation("AdministrativeActor")
+  administrativeChanges AdministrativeAuditEvent[] @relation("AdministrativeTarget")
 }
 
 enum UserRole {
@@ -39,6 +42,29 @@ enum UserStatus {
   INACTIVE
   PENDING
   BLOCKED
+}
+
+enum AdministrativeAuditAction {
+  ACCOUNT_STATUS_CHANGED
+  GLOBAL_ROLE_CHANGED
+}
+
+model AdministrativeAuditEvent {
+  id             String                    @id @default(uuid())
+  targetUserId   String
+  actorUserId    String
+  action         AdministrativeAuditAction
+  beforeValue    String
+  afterValue     String
+  reason         String                    @db.VarChar(500)
+  targetRevision Int
+  createdAt      DateTime                  @default(now()) @db.Timestamptz(3)
+
+  target User @relation("AdministrativeTarget", fields: [targetUserId], references: [id], onDelete: Restrict)
+  actor  User @relation("AdministrativeActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([targetUserId, createdAt, id])
+  @@index([actorUserId, createdAt, id])
 }
 
 model LaboratoryRoom {

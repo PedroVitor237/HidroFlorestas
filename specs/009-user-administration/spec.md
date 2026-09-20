@@ -113,7 +113,7 @@ Como ADMIN global, quero consultar os eventos administrativos deste recorte para
 - **FR-002**: `User.role` MUST ser a unica fonte normativa de autoridade global; `isAdmin` MUST ser tratado como legado temporario, nunca como autorizacao independente.
 - **FR-003**: Papeis `OWNER`, `ADMIN` e `MEMBER` de laboratorio MUST limitar-se ao laboratorio correspondente e MUST NOT conceder administracao global.
 - **FR-004**: `USER`, `DEVELOPER` e `MODERATOR` MUST NOT receber autoridade administrativa nesta feature.
-- **FR-005**: O produto MUST listar contas com paginacao opaca, ordenacao estavel e projecao allowlisted contendo somente `id`, nome, email, papel global, estado, datas administrativas necessarias e versao concorrente.
+- **FR-005**: O produto MUST listar contas com paginacao opaca em ordem canonica `createdAt DESC, id DESC`; o cursor MUST carregar os dois valores. A projecao allowlisted contem somente `id`, nome, email, papel global, estado, datas administrativas necessarias e versao concorrente.
 - **FR-006**: O produto MUST permitir pesquisa por nome ou email e filtros por papel global e estado; parametros invalidos MUST produzir resposta controlada.
 - **FR-007**: O produto MUST permitir ao ADMIN consultar uma conta por identificador e MUST distinguir conta inexistente para o ator autorizado.
 - **FR-008**: Lista, detalhe e auditoria MUST NOT retornar senha, hash, token, segredo, chave root, valor de ambiente, `isAdmin` ou relacoes internas desnecessarias.
@@ -126,13 +126,13 @@ Como ADMIN global, quero consultar os eventos administrativos deste recorte para
 - **FR-015**: Alteracoes MUST usar controle otimista de concorrencia; versao desatualizada ou precondicao de ultimo ADMIN MUST falhar sem sobrescrever estado atual.
 - **FR-016**: Alterar estado ou papel e gravar o respectivo evento de auditoria MUST formar uma unica operacao atomica.
 - **FR-017**: Cada mudanca concluida MUST registrar identificador do ator e alvo, tipo, valor anterior e novo permitidos, justificativa, instante e versao resultante; senha, tokens, segredos e dados livres desnecessarios MUST NOT ser registrados.
-- **FR-018**: Apenas ADMIN global `ACTIVE` MUST consultar o historico funcional de auditoria, paginado e limitado a eventos deste recorte.
+- **FR-018**: Apenas ADMIN global `ACTIVE` MUST consultar o historico funcional de auditoria, paginado e limitado a eventos deste recorte, em ordem canonica `createdAt DESC, id DESC`, com cursor contendo os dois valores.
 - **FR-019**: Uma solicitacao que repete o valor atual com precondicoes atuais MUST produzir resultado idempotente e MUST NOT fabricar evento de mudanca.
 - **FR-020**: Bloqueio, inativacao ou rebaixamento MUST valer na proxima validacao protegida, que reconsulta estado e papel atuais; a feature MUST NOT prometer revogacao instantanea entre validacoes.
-- **FR-021**: Respostas MUST distinguir entrada invalida, ausencia de autenticacao, falta de autoridade, alvo inexistente e conflito sem revelar detalhes internos.
+- **FR-021**: Respostas MUST distinguir entrada invalida, ausencia de autenticacao, falta de autoridade, alvo inexistente e conflito sem revelar detalhes internos. Conflitos MUST usar um dos codigos `STALE_REVISION`, `EXPECTED_STATE_MISMATCH`, `EXPECTED_ROLE_MISMATCH` ou `LAST_ACTIVE_ADMIN`; os tres primeiros orientam atualizar os dados, e o ultimo impede repeticao ate existir outro `ACTIVE + ADMIN`.
 - **FR-022**: A IMP-009 MUST administrar somente contas existentes e MUST NOT criar, excluir fisicamente, impersonar ou recuperar senha.
 - **FR-023**: A futura transicao de `isAdmin` MUST inventariar consumidores, detectar registros divergentes, migrar autorizacao para `role`, manter compatibilidade somente quando necessaria e remover o campo apenas quando nenhum consumidor depender dele.
-- **FR-024**: A administracao MUST oferecer estados de carregamento, vazio, erro e conflito, navegacao por teclado, foco perceptivel e comunicacao textual que nao dependa apenas de cor.
+- **FR-024**: A administracao MUST oferecer estados de carregamento, vazio, erro, sucesso e conflito, navegacao por teclado, foco perceptivel e comunicacao textual que nao dependa apenas de cor. Em confirmacoes, o foco MUST entrar no titulo ou primeiro controle, permanecer contido, retornar ao acionador ao cancelar, mover para o resultado ou cabecalho atualizado apos sucesso e para o alerta com acao `Atualizar dados` apos conflito; `Escape` MUST cancelar sem mutacao.
 - **FR-025**: Todas as operacoes administrativas MUST aplicar negacao por padrao e ignorar qualquer papel ou autoridade enviado pelo cliente para identificar o ator.
 
 ### Non-Functional Requirements
@@ -201,6 +201,7 @@ Toda transicao exige outra conta ADMIN global `ACTIVE`, justificativa, precondic
 - O mecanismo concreto de versao concorrente e o modelo persistido de auditoria pertencem ao plano e a futura implementacao.
 - `INACTIVE` e `BLOCKED` diferem por semantica administrativa e rastreabilidade, mas compartilham negacao de acesso; simplificacao futura exige decisao propria.
 - `DEVELOPER` e `MODERATOR` sao preservados por compatibilidade, sem escopo funcional aprovado nesta feature.
+- A possibilidade atualmente especificada de retornar uma conta previamente ativada para `PENDING` permanece `PENDENCIA_DE_DECISAO`; a recomendacao recebida e tornar `PENDING` apenas pre-ativacao, mas isso nao foi aprovado e nao deve ser alterado silenciosamente na implementacao.
 - A IMP-006 permanece divergente. Nenhuma dependencia material foi identificada para administrar contas; nenhum conteudo exclusivo dela e incorporado.
 
 ## Success Criteria *(mandatory)*
