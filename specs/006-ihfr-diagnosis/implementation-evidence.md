@@ -107,6 +107,16 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - Novo bloqueio determinístico de T022: código `ERR_ASSERTION`; o driver retornou a coluna agregada PostgreSQL como texto `"{diagnosisId}"`, enquanto o teste esperava o array JavaScript `["diagnosisId"]`. A migration não emitiu erro PostgreSQL, mas a ordem completa das colunas, unicidade dos índices, triggers e zero backfill não foram todos alcançados pela asserção corrente; T022 permanece aberta e não houve repetição automática.
 - O teardown da rodada foi confirmado: zero schemas `imp006_test_*` antes da inspeção final, zero removidos e zero restantes. Nenhuma alteração foi aplicada em `public`.
 
+### Conclusão de T022 na cadeia integrada com a IMP-009
+
+- A normalização foi implementada como função reutilizável no harness: aceita tanto `string[]` quanto a representação textual de arrays PostgreSQL retornada pelo driver, valida o envelope e rejeita valores malformados. A comparação estrutural deixou de depender da representação específica do driver sem alterar a migration.
+- O preflight passou a comprovar a ordem lexicográfica publicada `user_administration` → `ihfr_experimental_diagnosis` → `remove_legacy_is_admin`. As migrations foram aplicadas nessa ordem nos cenários isolados; nenhuma migration publicada foi renomeada ou reescrita.
+- Primeira rodada integrada: 8/9 testes passaram. A falha restante, PostgreSQL `42703`, era da fixture, que tentava inserir a coluna histórica `isAdmin` depois da migration que a remove. O catálogo foi consultado após a falha e confirmou zero schemas `imp006_test_*` residuais.
+- Correção focal: as dependências legadas do terceiro cenário passaram a ser inseridas antes de `remove_legacy_is_admin`; a remoção continua ocorrendo antes das asserções do diagnóstico. Schema, migrations e dados de produto não foram alterados.
+- Repetição integrada autorizada: 9/9 testes passaram. Foram comprovados banco vazio, preservação de uma linha legada, zero backfill experimental, constraints de score, cinco tabelas experimentais, constraints requeridas, 19 FKs `RESTRICT`, 15 índices com colunas/ordem/unicidade corretas, ausência de predicados parciais, nove triggers esperados e nomes PostgreSQL dentro de 63 bytes.
+- A cardinalidade N:1 do suplemento, `UNIQUE(collectionDataId,payloadHash)`, ausência de `UNIQUE(inputSupplementId)`, ponteiro vigente único, ledger idempotente e triggers append-only permaneceram cobertos pelas asserções estruturais existentes. Triggers não foram desabilitados e nenhum teste destrutivo usou `public`.
+- Inspeção final do catálogo após a rodada verde: zero schemas `imp006_test_*` residuais. T022 foi concluída somente após esse resultado.
+
 ## Validações humanas
 
 | Validação | Estado |

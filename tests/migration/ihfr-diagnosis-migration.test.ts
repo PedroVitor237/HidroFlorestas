@@ -11,12 +11,20 @@ import {
   applyCollectionMigration,
   applyEnvironmentalMigration,
   applyIHFRDiagnosisMigration,
+  applyRemoveLegacyIsAdminMigration,
+  applyUserAdministrationMigration,
 } from "./migration-test-harness";
 
 async function applyIntegratedChain(client: Parameters<typeof insertIHFRLegacyBaseline>[0]) {
   await applyAreaMigration(client);
   await applyCollectionMigration(client);
   await applyEnvironmentalMigration(client);
+  await applyUserAdministrationMigration(client);
+}
+
+async function applyIHFRAndLegacyRemoval(client: Parameters<typeof insertIHFRLegacyBaseline>[0]) {
+  await applyIHFRDiagnosisMigration(client);
+  await applyRemoveLegacyIsAdminMigration(client);
 }
 
 async function insertExperimentalDependencies(client: Parameters<typeof insertIHFRLegacyBaseline>[0]) {
@@ -81,7 +89,7 @@ async function rejectsWithPostgresqlCode(
 test("IMP-006 migration applies on empty integrated baseline", async () => {
   await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client) => {
     await applyIntegratedChain(client);
-    await applyIHFRDiagnosisMigration(client);
+    await applyIHFRAndLegacyRemoval(client);
     const tables = await client.query("SELECT tablename FROM pg_tables WHERE schemaname=current_schema() AND tablename LIKE '%IHFR%' ORDER BY tablename");
     assert.deepEqual(tables.rows.map((row) => row.tablename), [
       "CurrentExperimentalIHFRDiagnosis",
@@ -98,7 +106,7 @@ test("IMP-006 migration preserves legacy rows and performs zero backfill", async
   await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client) => {
     await applyIntegratedChain(client);
     await insertIHFRLegacyBaseline(client);
-    await applyIHFRDiagnosisMigration(client);
+    await applyIHFRAndLegacyRemoval(client);
     const legacy = await client.query('SELECT "algorithmVersion" FROM "IHFRDiagnosis"');
     const experimental = await client.query('SELECT count(*)::int AS count FROM "ExperimentalIHFRDiagnosis"');
     assert.equal(legacy.rowCount, 1);
@@ -112,6 +120,7 @@ test("IMP-006 score constraint accepts finite domain values and rejects non-fini
     await applyIntegratedChain(client);
     await applyIHFRDiagnosisMigration(client);
     await insertExperimentalDependencies(client);
+    await applyRemoveLegacyIsAdminMigration(client);
 
     await insertExperimentalDiagnosis(client, "00000000-0000-4000-8000-000000000671", 0.5);
     await insertExperimentalDiagnosis(client, "00000000-0000-4000-8000-000000000672", 0);

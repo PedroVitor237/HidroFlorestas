@@ -7,7 +7,42 @@ import ws from "ws";
 export const migrationPath = "prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql";
 export const collectionMigrationPath = "prisma/migrations/20260915000100_collection_registration_metadata/migration.sql";
 export const environmentalMigrationPath = "prisma/migrations/20260917000100_environmental_measurement_set/migration.sql";
+export const userAdministrationMigrationPath = "prisma/migrations/20260919000100_user_administration/migration.sql";
 export const ihfrDiagnosisMigrationPath = "prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql";
+export const removeLegacyIsAdminMigrationPath = "prisma/migrations/20260920000100_remove_legacy_is_admin/migration.sql";
+
+export function normalizePostgresqlTextArray(value: unknown): string[] {
+  if (Array.isArray(value) && value.every((item) => typeof item === "string")) {
+    return value;
+  }
+  if (typeof value !== "string" || !value.startsWith("{") || !value.endsWith("}")) {
+    throw new TypeError("Expected a PostgreSQL text array");
+  }
+  if (value === "{}") return [];
+
+  const items: string[] = [];
+  let item = "";
+  let quoted = false;
+  let escaped = false;
+  for (const character of value.slice(1, -1)) {
+    if (escaped) {
+      item += character;
+      escaped = false;
+    } else if (character === "\\") {
+      escaped = true;
+    } else if (character === '"') {
+      quoted = !quoted;
+    } else if (character === "," && !quoted) {
+      items.push(item);
+      item = "";
+    } else {
+      item += character;
+    }
+  }
+  if (quoted || escaped) throw new TypeError("Malformed PostgreSQL text array");
+  items.push(item);
+  return items;
+}
 
 export function migrationTestEnvironment() {
   dotenv.config({ path: ".env", quiet: true });
@@ -71,6 +106,14 @@ export async function applyEnvironmentalMigration(client: PoolClient) {
   await client.query(await readFile(environmentalMigrationPath, "utf8"));
 }
 
+export async function applyUserAdministrationMigration(client: PoolClient) {
+  await client.query(await readFile(userAdministrationMigrationPath, "utf8"));
+}
+
 export async function applyIHFRDiagnosisMigration(client: PoolClient) {
   await client.query(await readFile(ihfrDiagnosisMigrationPath, "utf8"));
+}
+
+export async function applyRemoveLegacyIsAdminMigration(client: PoolClient) {
+  await client.query(await readFile(removeLegacyIsAdminMigrationPath, "utf8"));
 }

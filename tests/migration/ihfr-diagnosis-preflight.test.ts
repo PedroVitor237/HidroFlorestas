@@ -11,6 +11,9 @@ import {
   applyCollectionMigration,
   applyEnvironmentalMigration,
   applyIHFRDiagnosisMigration,
+  applyRemoveLegacyIsAdminMigration,
+  applyUserAdministrationMigration,
+  normalizePostgresqlTextArray,
 } from "./migration-test-harness";
 
 const migrationDirectory =
@@ -76,6 +79,16 @@ test("all explicit IMP-006 database identifiers are ASCII, unique and PostgreSQL
   }
 });
 
+test("PostgreSQL text arrays normalize independently of driver representation", () => {
+  assert.deepEqual(normalizePostgresqlTextArray(["diagnosisId"]), ["diagnosisId"]);
+  assert.deepEqual(normalizePostgresqlTextArray("{diagnosisId}"), ["diagnosisId"]);
+  assert.deepEqual(normalizePostgresqlTextArray('{"collectionDataId","calculatedAt"}'), [
+    "collectionDataId",
+    "calculatedAt",
+  ]);
+  assert.throws(() => normalizePostgresqlTextArray("diagnosisId"), TypeError);
+});
+
 test(
   "applied IMP-006 schema has the expected constraints, indexes, triggers and zero backfill",
   { skip: process.env.IMP006_DATABASE_VARIABLE === undefined },
@@ -84,7 +97,9 @@ test(
       await applyAreaMigration(client);
       await applyCollectionMigration(client);
       await applyEnvironmentalMigration(client);
+      await applyUserAdministrationMigration(client);
       await applyIHFRDiagnosisMigration(client);
+      await applyRemoveLegacyIsAdminMigration(client);
 
       const expectedTables = [
         "CurrentExperimentalIHFRDiagnosis",
@@ -204,7 +219,7 @@ test(
       for (const row of indexes.rows) {
         const expected = expectedIndexShape.get(row.indexname);
         assert.ok(expected);
-        assert.deepEqual(row.columns, expected.columns);
+        assert.deepEqual(normalizePostgresqlTextArray(row.columns), expected.columns);
         assert.equal(row.indisunique, expected.unique);
       }
 
