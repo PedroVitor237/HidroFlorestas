@@ -15,7 +15,7 @@ const baseUser = {
   image: "avatar.png",
   password: "stored-hash",
   status: "ACTIVE",
-  isAdmin: true,
+  role: "USER" as const,
 };
 
 function dependencies(

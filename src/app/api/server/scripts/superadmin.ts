@@ -60,9 +60,6 @@ async function createSuperAdmin(): Promise<void> {
                 firstName,
                 lastName,
                 email,
-                // Compatibility write while the legacy column remains in storage.
-                // Runtime global authority is derived exclusively from role.
-                isAdmin: true,
                 password: hashedPassword,
                 role: 'ADMIN',
                 status: 'ACTIVE',

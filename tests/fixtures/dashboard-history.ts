@@ -116,7 +116,7 @@ export function createDashboardFixtureActions(
               password: passwordHash,
               status: index === 3 ? "BLOCKED" : "ACTIVE",
               role: "USER",
-              isAdmin: false,
+
             },
           });
         }

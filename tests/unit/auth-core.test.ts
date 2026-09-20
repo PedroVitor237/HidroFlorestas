@@ -17,7 +17,7 @@ const credentialUser: CredentialUser = {
   password: "stored-hash",
   status: "ACTIVE",
   role: "ADMIN",
-  isAdmin: true,
+
 };
 
 const identity: CurrentIdentity = {
@@ -27,7 +27,6 @@ const identity: CurrentIdentity = {
   image: credentialUser.image,
   status: credentialUser.status,
   role: credentialUser.role,
-  isAdmin: credentialUser.isAdmin,
 };
 
 const principal: AuthenticatedPrincipal = {
@@ -36,7 +35,7 @@ const principal: AuthenticatedPrincipal = {
   lastName: "Silva",
   image: "avatar.png",
   role: "ADMIN",
-  isAdmin: true,
+
 };
 
 describe("authentication core", () => {

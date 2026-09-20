@@ -11,7 +11,7 @@ const principal = {
   firstName: "Ana",
   lastName: "Silva",
   image: "",
-  isAdmin: false,
+
 } as const;
 
 describe("global administration authority", () => {
@@ -20,9 +20,9 @@ describe("global administration authority", () => {
     assert.equal(requireGlobalAdmin(admin), admin);
   });
 
-  it("does not grant authority from the legacy isAdmin flag", () => {
+  it("does not grant authority to a canonical non-admin role", () => {
     assert.throws(
-      () => requireGlobalAdmin({ ...principal, isAdmin: true, role: "USER" }),
+      () => requireGlobalAdmin({ ...principal, role: "USER" }),
       (error) =>
         error instanceof GlobalAuthorityError &&
         error.code === "ADMIN_AUTHORITY_REQUIRED",

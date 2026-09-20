@@ -13,7 +13,7 @@ const admin = {
   lastName: "Admin",
   image: "",
   role: "ADMIN" as const,
-  isAdmin: false,
+
 };
 
 describe("user administration routes", () => {

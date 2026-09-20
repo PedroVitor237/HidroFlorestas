@@ -183,22 +183,22 @@ Toda transicao exige outra conta ADMIN global `ACTIVE`, justificativa, precondic
 - Impersonacao, permissoes configuraveis, RBAC/ABAC generico e auditoria corporativa avancada.
 - Painel geral de metricas, IA e alteracao das capacidades de `DEVELOPER` ou `MODERATOR`.
 - Revogacao instantanea push de sessao entre validacoes e registro funcional de toda tentativa negada.
-- Implementacao, migration, mudanca de schema ou remocao fisica de `isAdmin` nesta execucao documental.
+- A fase documental original nao implementava nem migrava; a execucao `speckit-implement` posterior implementou o recorte e removeu fisicamente `isAdmin` no banco de teste isolado.
 
 ## Dependencies, Assumptions and Evidence
 
 - `DECISAO_ADOTADA_PARA_O_RECORTE`: `User.role` e a fonte unica planejada de autoridade global; `isAdmin` e legado a descontinuar com migracao segura.
 - `EVIDENCIA_IMPLEMENTACAO`: autenticacao atual reconsulta a identidade e exige `ACTIVE` em cada restauracao/validacao por `requireAuth`.
-- `EVIDENCIA_IMPLEMENTACAO`: `requireAdmin` ainda usa `isAdmin`; o principal nao carrega `role`.
-- `EVIDENCIA_IMPLEMENTACAO`: o provisionamento de superadmin grava simultaneamente `role = ADMIN` e `isAdmin = true`.
+- `EVIDENCIA_IMPLEMENTACAO_ATUAL`: `requireAdmin` usa exclusivamente `role === ADMIN` e `status === ACTIVE`; o principal interno carrega o papel atual reconsultado no banco.
+- `EVIDENCIA_IMPLEMENTACAO_ATUAL`: o provisionamento de superadmin grava `role = ADMIN` e `status = ACTIVE`; a coluna `isAdmin` foi removida pela migration posterior.
 - `EVIDENCIA_IMPLEMENTACAO`: papeis de laboratorio estao persistidos separadamente em `ResearchersLinked.role`.
 - `RECOMENDACAO_ADOTADA_PARA_O_RECORTE`: consultar auditoria integra o primeiro recorte para tornar a rastreabilidade observavel.
 - A baseline normativa e tecnica e `origin/development` em `df85619`.
 
 ## Risks and Pending Decisions
 
-- Registros existentes podem conter divergencia entre `role` e `isAdmin`; a implementacao futura deve inventariar antes de escolher estrategia de correcao.
-- O mecanismo concreto de versao concorrente e o modelo persistido de auditoria pertencem ao plano e a futura implementacao.
+- O preflight da migration bloqueia divergencias entre `role` e `isAdmin`; o alvo isolado validado possuia zero contradicoes antes da remocao.
+- A versao concorrente e o modelo persistido de auditoria foram implementados e validados com testes PostgreSQL de corrida e imutabilidade.
 - `INACTIVE` e `BLOCKED` diferem por semantica administrativa e rastreabilidade, mas compartilham negacao de acesso; simplificacao futura exige decisao propria.
 - `DEVELOPER` e `MODERATOR` sao preservados por compatibilidade, sem escopo funcional aprovado nesta feature.
 - A possibilidade atualmente especificada de retornar uma conta previamente ativada para `PENDING` permanece `PENDENCIA_DE_DECISAO`; a recomendacao recebida e tornar `PENDING` apenas pre-ativacao, mas isso nao foi aprovado e nao deve ser alterado silenciosamente na implementacao.

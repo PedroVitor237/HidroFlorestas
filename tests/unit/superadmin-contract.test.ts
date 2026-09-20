@@ -8,5 +8,5 @@ it("provisions canonical ACTIVE+ADMIN authority and stops after an invalid root 
   assert.match(source, /if \(rootPass !== ROOT_PASS\)[\s\S]*return;/);
   assert.match(source, /role: 'ADMIN'/);
   assert.match(source, /status: 'ACTIVE'/);
-  assert.match(source, /Compatibility write while the legacy column remains/);
+  assert.doesNotMatch(source, /isAdmin/);
 });

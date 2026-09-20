@@ -39,7 +39,7 @@ describe("POST collection route", () => {
     for (const created of [true, false]) {
       let received: unknown;
       const handlers = createCollectionHandlers({
-        requireAuth: async () => ({ id: userId, firstName: "A", lastName: "B", image: "", isAdmin: false }),
+        requireAuth: async () => ({ id: userId, firstName: "A", lastName: "B", image: "", role: "USER" as const, }),
         service: { create: async (command) => { received = command; return { created, collection }; } },
       });
       const response = await handlers.POST(request(), context());
@@ -105,7 +105,7 @@ describe("GET collection detail route", () => {
   it("returns the closed contextual DTO with no-store", async () => {
     let received: unknown;
     const handlers = createCollectionDetailHandlers({
-      requireAuth: async () => ({ id: userId, firstName: "A", lastName: "B", image: "", isAdmin: false }),
+      requireAuth: async () => ({ id: userId, firstName: "A", lastName: "B", image: "", role: "USER" as const, }),
       service: { detail: async (...parameters: unknown[]) => { received = parameters; return { collection }; } },
     });
     const response = await handlers.GET(new Request("http://local.test/detail"), detailContext());
@@ -124,7 +124,7 @@ describe("GET collection detail route", () => {
       const handlers = createCollectionDetailHandlers({
         requireAuth: async () => {
           if (failure instanceof AuthBoundaryError) throw failure;
-          return { id: userId, firstName: "A", lastName: "B", image: "", isAdmin: false };
+          return { id: userId, firstName: "A", lastName: "B", image: "", role: "USER" as const, };
         },
         service: { detail: async () => { throw failure; } },
       });

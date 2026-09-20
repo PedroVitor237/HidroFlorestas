@@ -2,53 +2,66 @@
 
 ## Estado inicial e autorização
 
-- Autorização: pedido explícito do usuário para executar `speckit-implement`, com navegação e padrão visual preservados.
-- Branch: `009-user-administration`.
-- Baseline preservada: `4e70c736cd38fc3ee794a6700539deaa64fa27d6`.
-- Escopo compartilhado necessário: autenticação, middleware administrativo, schema Prisma, layout/sidebar e testes correspondentes.
-- `docs/raw/**` e `specs/006-*`: sem alterações observadas no fechamento desta execução.
-- Nenhum commit, push, PR, merge ou migração em banco remoto foi realizado.
+- Autorização: pedidos explícitos do usuário para executar `speckit-implement`, finalizar a IMP-009 e usar o branch Neon de teste fornecido.
+- Branch de código: `009-user-administration`; baseline publicada antes desta continuação: `599bd41`.
+- Alvo de dados: branch Neon isolado, descartável em 24 horas; a credencial foi mantida apenas no ambiente efêmero e não foi registrada em arquivos, comandos de evidência ou commits.
+- Escopo compartilhado necessário: autenticação, middleware administrativo, schema Prisma, sidebar, interface e testes correspondentes.
+- `docs/raw/**` e `specs/006-*`: sem alterações.
+- Esta continuação não realizou commit, push, PR ou merge.
 
-## Inventário de autoridade e compatibilidade
+## Autoridade final e legado
 
-- Autoridade global de runtime: `User.role === ADMIN`, revalidada no banco com `status === ACTIVE` por operação.
-- Estado de autenticação: `auth.core.ts` rejeita qualquer estado diferente de `ACTIVE`; `users.service.ts` recarrega papel e estado atuais.
-- Middleware global: `admin.middleware.ts` delega exclusivamente à política central `requireGlobalAdmin`.
-- Autoridade laboratorial: continua separada em `ResearchersLinked.role`; não concede administração global.
-- `User.isAdmin`: permanece na persistência e em fixtures/escritores legados como compatibilidade. Não é lido pela nova política de autorização. O fluxo de superadmin grava `role: ADMIN` e `status: ACTIVE`; a remoção física da coluna permanece em seguimento técnico separado.
-- Sessão: o papel não é aceito como autoridade enviada pelo cliente; o principal interno é reconstruído a partir do usuário atual.
-- Projeções administrativas: selects e DTOs explícitos; senha, hash, token e `isAdmin` não são serializados.
+- `User.role === ADMIN` e `User.status === ACTIVE`, reconsultados no servidor em cada operação, são a única autoridade administrativa global.
+- `ResearchersLinked.role` permanece estritamente contextual ao laboratório e nunca concede administração global.
+- O JWT transporta somente identidade; papel/estado enviados pelo cliente ou presentes em estado antigo da interface não são aceitos como autoridade.
+- `User.isAdmin` não possui consumidores/escritores atuais e foi removido do schema e do banco de teste pela migration `20260920000100_remove_legacy_is_admin`.
+- Busca de zero consumidores: ocorrências remanescentes de `isAdmin` estão classificadas como migrations/preflight histórico, baselines SQL, asserções de campo proibido e documentação histórica. Nenhuma ocorrência em código de runtime ou schema atual.
+- O fluxo de superadmin grava apenas `role: ADMIN` e `status: ACTIVE`.
+
+## Evidência PostgreSQL
+
+- Estado inicial do alvo: três usuários sintéticos/legados, zero laboratórios, vínculos, áreas e coletas; zero contradições entre `role` e `isAdmin`.
+- As migrations locais pendentes foram executadas sequencialmente e registradas como aplicadas somente após sucesso do SQL correspondente.
+- `prisma migrate status`: schema atualizado após as migrations de revisão/auditoria e remoção do legado.
+- Verificação final: coluna `revision` presente; coluna `isAdmin` ausente; armazenamento/trigger de auditoria imutável presentes.
+- Teste de migration em schema isolado comprova criação, restrições, imutabilidade, remoção do legado e rollback integral quando o preflight encontra contradição.
+- Fixtures criaram 54 contas sintéticas `@test.invalid`. Eventos de auditoria são deliberadamente imutáveis; por isso a limpeza destrutiva não é tentada e o branch descartável é a fronteira de descarte.
 
 ## Implementação observada
 
-- Migração aditiva com `User.revision`, eventos funcionais de auditoria, chaves, checks, índices e trigger de imutabilidade.
-- Preflight interrompe contradições entre `role` e `isAdmin` sem promover dados automaticamente.
-- APIs de lista, detalhe, mudança de estado, mudança de papel e histórico com `Cache-Control: no-store`.
-- Paginação keyset estável por `createdAt DESC, id DESC`, cursor opaco ligado aos filtros e respostas de erro controladas.
-- Mutações serializáveis com revisão esperada, proibição de autoalteração, proteção do último administrador ativo e auditoria na mesma transação.
-- Página protegida e responsiva com busca, filtros, estados de carregamento/vazio/erro, detalhe, histórico, confirmações com justificativa, foco contido/restaurado e navegação visível apenas para ADMIN global.
+- Cinco endpoints administrativos com DTOs allowlisted, `Cache-Control: no-store` e erros controlados.
+- Lista/detalhe com busca, filtros e paginação keyset estável por `createdAt DESC, id DESC`.
+- Mutações serializáveis com revisão esperada, autoalteração proibida, no-op não destrutivo, proteção concorrente do último ADMIN ativo e auditoria na mesma transação.
+- Histórico funcional minimizado, imutável, filtrado pelo alvo e paginado.
+- Página protegida e responsiva com navegação administrativa, filtros, carregamento/vazio/erro, detalhe, confirmação com justificativa, recuperação textual de conflito, histórico e foco gerenciado.
+- O feedback de sucesso é preservado após a recarga de lista/histórico; o defeito foi detectado pelos E2E e corrigido antes do fechamento.
 
-## Validação executada em 2026-09-19
+## Validação executada em 2026-09-20
 
 | Gate | Resultado |
 |---|---|
-| `npm ci` | passou; npm reportou 30 vulnerabilidades de dependências (2 baixas, 8 moderadas, 19 altas, 1 crítica); nenhuma correção automática foi aplicada |
-| `npx prisma generate` | passou |
-| `npm run typecheck` | passou após declarar o tipo dos assets PNG já existentes |
-| `npm run lint` | passou com 4 avisos preexistentes, sem erro |
-| `npm run test:unit` | passou: 41/41 arquivos antes da adição final do teste de superadmin; testes direcionados posteriores também passaram |
-| `npm run test:integration` | 14/15 passaram; a única falha foi o teste PostgreSQL preexistente que exige `TEST_DATABASE_CONFIRMATION`; a nova suíte de rotas passou |
-| `npm run build` | passou com acesso autorizado ao Google Fonts; todas as cinco APIs e a página administrativa foram compiladas |
-| `git diff --check` | passou |
+| Checklists | `requirements.md` 16/16; `security-authority.md` 35/35 |
+| `npx prisma validate` | PASS |
+| `npx prisma generate` | PASS |
+| `npm run test:migration` | PASS: 12/12, incluindo 2 cenários IMP-009 em PostgreSQL isolado |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS sem erros; 4 avisos preexistentes fora da IMP-009 |
+| `npm run test:unit` | PASS: 49/49 arquivos |
+| `npm run test:integration` | PASS: 63/63, incluindo concorrência, último ADMIN e segurança |
+| E2E direcionado IMP-009 | PASS: 4/4 em Chromium, desktop e viewport móvel exercitado |
+| Desempenho | PASS: p95 de páginas allowlisted com 50 contas abaixo de 2 s |
+| `npm run test:e2e` | IMP-009 PASS 4/4; suíte global: 42 passaram, 3 falharam e 9 não executaram. Duas falhas são guards preexistentes sem `DASHBOARD_FIXTURE_CONFIRMATION`; uma é expectativa preexistente de redirecionamento da rota de laboratório, fora do recorte IMP-009 |
+| `npm run build` | PASS; cinco APIs e página administrativa compiladas |
+| `git diff --check` | PASS antes da reconciliação documental final; repetir no fechamento |
 
-## Gates não concluídos
+## Gates humanos e limites de evidência
 
-- Migração PostgreSQL real e testes de corrida: não executados porque nenhum alvo isolado/autorização de dados foi fornecido nesta execução.
-- E2E autenticado: não executado por ausência de fixtures/ambiente autorizado de autenticação e banco.
-- p95 com 50 contas: não medido sem banco isolado.
-- Revisão humana com teclado, viewport móvel e tecnologia assistiva: `NAO_VERIFICADO`; automação não substitui essa evidência.
-- Remoção física de `User.isAdmin`: fora da entrega funcional atual e dependente de autorização separada, backup verificado e prova de zero consumidores.
+- A automação comprovou operação por teclado do diálogo, foco de alerta/resultado e viewport móvel nos fluxos cobertos.
+- Revisão humana com leitor de tela ou outra tecnologia assistiva: `NAO_VERIFICADO`. Playwright e inspeção DOM não substituem esse gate.
+- A possibilidade de retornar uma conta previamente ativada para `PENDING` continua `PENDENCIA_DE_DECISAO`; a implementação preserva o contrato aprovado sem inventar política normativa.
 
-## Pendência de decisão
+## Compensação e recuperação
 
-- A recomendação de tornar `PENDING` exclusivamente pré-ativação e impedir retorno a esse estado não foi confirmada como decisão normativa. A implementação preserva as transições entre os quatro estados conforme o contrato aprovado, até decisão posterior.
+- O branch Neon temporário funciona como ponto recuperável anterior à expiração; nenhuma migration foi aplicada a produção.
+- Rollback após remoção física exige migration compensatória própria e nunca pode restaurar autoridade por booleano, apagar auditoria ou reduzir revisões.
+- Falhas funcionais podem desabilitar UI/rotas preservando dados; autoridade permanece exclusivamente em `role`.

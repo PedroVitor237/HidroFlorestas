@@ -14,7 +14,6 @@ export class UserService {
                 password: true,
                 status: true,
                 role: true,
-                isAdmin: true,
             },
         });
     }
@@ -29,7 +28,6 @@ export class UserService {
                 image: true,
                 status: true,
                 role: true,
-                isAdmin: true,
             },
         });
     }

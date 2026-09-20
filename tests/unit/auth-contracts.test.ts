@@ -87,7 +87,7 @@ describe("authentication contracts", () => {
       password: "hash",
       status: "ACTIVE",
       role: "ADMIN",
-      isAdmin: true,
+
       createdAt: new Date(),
       updatedAt: new Date(),
       token: "secret-token",
@@ -111,7 +111,7 @@ describe("authentication contracts", () => {
   it("does not widen the IMP-001 public DTO for collection registration", () => {
     const internal = {
       firstName: "Ana", lastName: "Silva", image: "", id: "internal", email: "private@example.test",
-      password: "hash", status: "ACTIVE", role: "USER", isAdmin: false,
+      password: "hash", status: "ACTIVE", role: "USER",
       confirmationKey: "private", collectionAreaId: "private",
     };
     const serialized = serializePublicUser(internal);
@@ -148,7 +148,7 @@ describe("authentication contracts", () => {
           firstName: "Ana",
           lastName: "Silva",
           image: "",
-          isAdmin: true,
+          role: "ADMIN",
         },
       }),
       null,

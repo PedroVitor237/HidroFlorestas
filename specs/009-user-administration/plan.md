@@ -4,13 +4,13 @@
 
 ## Summary
 
-Planejar uma superficie administrativa exclusiva para `User.role = ADMIN`, com consultas allowlisted, mudancas concorrentes de estado e papel, protecao atomica do ultimo ADMIN ativo e auditoria funcional. A futura implementacao centralizara autoridade em `role`, revalidara estado/papel no servidor e descontinuara `isAdmin` em fases. Esta execucao nao altera implementacao.
+Implementar uma superficie administrativa exclusiva para `User.role = ADMIN`, com consultas allowlisted, mudancas concorrentes de estado e papel, protecao atomica do ultimo ADMIN ativo e auditoria funcional. A implementacao centraliza autoridade em `role`, revalida estado/papel no servidor e remove `isAdmin` por migration posterior validada em branch Neon isolada.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5, Node.js >=20.9.0  
 **Primary Dependencies**: Next.js 16.1.6, React 19.2.4, Prisma 7.4.2, PostgreSQL/Neon, JWT existente, Tailwind 4, Lucide React  
-**Storage**: PostgreSQL via Prisma; migration futura para revisao concorrente/auditoria e remocao posterior de `isAdmin`  
+**Storage**: PostgreSQL via Prisma; migrations para revisao concorrente/auditoria e remocao posterior de `isAdmin`, ambas validadas em PostgreSQL isolado
 **Testing**: Node test runner + `tsx`, Playwright, ESLint, TypeScript, build Next.js  
 **Target Platform**: aplicacao web full-stack responsiva  
 **Performance Goals**: p95 percebido de ate 2 s para consultas de ate 50 contas  
@@ -65,7 +65,7 @@ Rollback deve ser por fase e nunca reintroduzir concessao via dado contraditorio
 
 ## Data, Concurrency and Audit
 
-- `Account.revision` futuro, inteiro monotono que nunca pode ser reduzido ou reinicializado, e `AdministrativeAuditEvent` imutavel que rollback nao pode apagar.
+- `User.revision` implementado como inteiro monotono e `AdministrativeAuditEvent` imutavel que rollback nao pode apagar.
 - Transacao PostgreSQL: reconsultar ator/alvo, validar revisao, serializar invariante de ADMIN ativo, alterar, incrementar revisao e auditar.
 - Revisao obsoleta ou ultimo ADMIN produz `409`; no-op atual nao incrementa nem audita.
 - Falha entre mutacao e auditoria desfaz ambas.
@@ -149,8 +149,8 @@ tests/{unit,integration,migration,e2e}/
 3. Centralizar autorizacao por role com compatibilidade temporaria.
 4. Implementar projecoes, servicos, contratos e invariantes.
 5. Implementar API e UI protegidas.
-6. Encerrar a entrega funcional com consumidores migrados para `role`, zero autoridade baseada em `isAdmin` e a coluna legada ainda presente sem autoridade.
-7. Em follow-up tecnico separado, provar zero consumidores e remover fisicamente `isAdmin` por migration posterior autorizada, com backup e revisao proprios.
+6. Encerrar a entrega funcional com consumidores migrados para `role` e zero autoridade baseada em `isAdmin`.
+7. No seguimento tecnico autorizado pelo pedido de finalizacao e pelo branch Neon descartavel, provar zero consumidores e remover fisicamente `isAdmin` por migration posterior com preflight e teste de rollback.
 8. Executar gates e reconciliar documentacao.
 
 Rollback e compensatorio: interromper mutacoes se necessario, identificar a fase, verificar auditoria/revisoes, criar backup ou ponto de restauracao Neon, preparar e revisar migration compensatoria, aplicar primeiro em branch Neon temporaria, validar integridade e somente entao aplicar ao ambiente de teste da feature. UI/rotas podem ser desativadas sem tocar dados; politica deve ser corrigida mantendo `role`; auditoria/revisao exigem compensacao monotona; remocao de `isAdmin` nunca restaura autoridade pelo booleano. Ao final, nenhum evento foi perdido, nenhuma revisao diminuiu, `role` permanece fonte unica e existe ao menos um `ACTIVE + ADMIN`.

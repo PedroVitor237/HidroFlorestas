@@ -73,3 +73,5 @@ prisma/migrations/*
 # IMP-009: additive account revision and functional administration audit.
 !prisma/migrations/20260919000100_user_administration/
 !prisma/migrations/20260919000100_user_administration/migration.sql
+!prisma/migrations/20260920000100_remove_legacy_is_admin/
+!prisma/migrations/20260920000100_remove_legacy_is_admin/migration.sql

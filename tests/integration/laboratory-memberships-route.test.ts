@@ -3,7 +3,7 @@ import { it } from "node:test";
 import { createMembershipChangeHandler } from "../../src/app/api/laboratories/[laboratoryId]/memberships/[membershipId]/route.handlers";
 import { createMembershipListHandler } from "../../src/app/api/laboratories/[laboratoryId]/memberships/route.handlers";
 import { AreaAccessError } from "../../src/app/api/server/areas/area.authorization";
-const principal = { id: "server-identity", firstName: "Test", lastName: "User", image: "", isAdmin: false };
+const principal = { id: "server-identity", firstName: "Test", lastName: "User", image: "", role: "USER" as const, };
 const route = { params: Promise.resolve({ laboratoryId: "lab", membershipId: "membership" }) };
 it("rejects forged identity and OWNER transitions before writes", async () => {
  let writes = 0;
