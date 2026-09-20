@@ -127,7 +127,7 @@
 - [X] T061 Derive the post-login destination on the server so only `ACTIVE + ADMIN` enters `/admin`, with other active roles entering `/workspace`
 - [X] T062 Revalidate restored sessions and route current ADMIN to `/admin` without preserving stale authority
 - [X] T063 Update targeted authentication, guard, navigation and legacy-route tests
-- [ ] T064 Run proportional final gates, review the complete diff, commit and push the correction to `009-user-administration`
+- [X] T064 Run proportional final gates, review the complete diff, commit and push the correction to `009-user-administration`
 
 ---
 

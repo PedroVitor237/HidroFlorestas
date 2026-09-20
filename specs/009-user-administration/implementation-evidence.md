@@ -79,3 +79,4 @@
 - `npm run build`: PASS; o manifesto confirma `/admin`, `/admin/users` e a rota dinamica legada `/dashboard/admin/users`.
 - E2E administrativo direcionado: `NAO_EXECUTADO`; o guard seguro interrompeu antes da inicializacao por ausencia de `TEST_DATABASE_CONFIRMATION` e credencial do banco isolado neste worktree. Nenhuma credencial antiga foi inferida ou reutilizada.
 - Revisao humana com leitor de tela/tecnologia assistiva permanece `NAO_VERIFICADO`; automacao e build nao substituem esse gate.
+- Commits da correcao: `1c7bf93` (estrutura global), `e2879b3` (pos-login e sessao) e `f2b6142` (testes e documentacao), publicados em `origin/009-user-administration`. Nenhum merge em `development` foi executado.
