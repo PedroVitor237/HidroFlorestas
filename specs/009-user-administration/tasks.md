@@ -48,7 +48,7 @@
 - [X] T021 [US1] Implement GET list handler and route in `src/app/api/admin/users/route.handlers.ts` and `src/app/api/admin/users/route.ts`
 - [X] T022 [US1] Implement GET detail handler and route in `src/app/api/admin/users/[userId]/route.handlers.ts` and `src/app/api/admin/users/[userId]/route.ts`
 - [X] T023 [P] [US1] Add accessible query/filter/pagination state helpers with tests in `src/components/user-administration/user-list-state.ts` and `tests/unit/user-list-state.test.ts`
-- [X] T024 [US1] Implement the server-protected users page, list, filters, empty/error/loading states and detail navigation in `src/app/(private)/dashboard/admin/users/page.tsx` and `src/components/user-administration/user-administration-page.tsx`
+- [X] T024 [US1] Implement the server-protected users page, list, filters, empty/error/loading states and detail navigation, now canonically located in `src/app/(private)/admin/users/page.tsx`, and `src/components/user-administration/user-administration-page.tsx`
 - [X] T025 [US1] Add global-ADMIN-only sidebar visibility without treating it as authorization in `src/components/sidebar/index.tsx`
 - [X] T026 [US1] Add E2E coverage for list/search/filter/detail, direct API/page denial, responsive layout and keyboard focus in `tests/e2e/user-administration-read.spec.ts`, supported by list-state and route integration tests
 
@@ -116,6 +116,18 @@
 - [ ] T055 Perform manual keyboard, responsive and assistive-technology review without inferring results; record evidence/status in `specs/009-user-administration/implementation-evidence.md`
 - [X] T056 Reconcile actual implementation, contracts, migrations, validation results and remaining work in `specs/009-user-administration/spec.md`, `plan.md`, `tasks.md` and `implementation-evidence.md`
 - [X] T057 Confirm final diff changes only authorized IMP-009 paths, preserves `docs/raw/**` and IMP-006, contains no secrets, and leaves global documentation follow-ups recorded in `specs/009-user-administration/implementation-evidence.md`
+
+---
+
+## Phase 8: Global Administration Route Correction
+
+- [X] T058 Move the canonical user-administration page to `/admin/users` and retain `/dashboard/admin/users` only as a server-side legacy redirect
+- [X] T059 Add a reusable, responsive and keyboard-accessible global administration shell with overview, users, logout and operational-environment navigation
+- [X] T060 Protect `/admin/**` server-side with the current authenticated global role while preserving API authorization
+- [X] T061 Derive the post-login destination on the server so only `ACTIVE + ADMIN` enters `/admin`, with other active roles entering `/workspace`
+- [X] T062 Revalidate restored sessions and route current ADMIN to `/admin` without preserving stale authority
+- [X] T063 Update targeted authentication, guard, navigation and legacy-route tests
+- [ ] T064 Run proportional final gates, review the complete diff, commit and push the correction to `009-user-administration`
 
 ---
 

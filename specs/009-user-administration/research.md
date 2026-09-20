@@ -41,8 +41,8 @@
 
 ### 6. Interface
 
-**Decision**: REST focado, pagina no dashboard, cursor opaco, busca/papel/estado e limite 50.  
-**Rationale**: segue baseline e reduz superficie.  
+**Decision**: REST focado, area global em `/admin`, pagina canonica em `/admin/users`, cursor opaco, busca/papel/estado e limite 50. A rota anterior redireciona temporariamente.
+**Rationale**: separa autoridade global do contexto operacional de laboratorios sem ampliar a superficie funcional.
 **Alternatives**: patch generico, GraphQL e exportacao em massa fora do recorte.
 
 ### 7. Account states
@@ -66,4 +66,3 @@
 ## IMP-006
 
 Nenhuma dependencia material com diagnostico IHFR foi encontrada. A branch permanece divergente; nenhum artefato exclusivo, decisao ou codigo foi incorporado. Reconciliacao futura so sera necessaria se houver disputa por schema/auth compartilhados.
-

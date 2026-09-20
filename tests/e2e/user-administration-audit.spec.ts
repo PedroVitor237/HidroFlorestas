@@ -4,7 +4,7 @@ import { authenticateAs, setupUsers } from "./user-administration.helper";
 test.beforeAll(setupUsers);
 test("successful changes appear in minimized history", async ({ page, context }, testInfo) => {
   await authenticateAs(context, testInfo, 1);
-  await page.goto("/dashboard/admin/users");
+  await page.goto("/admin/users");
   await page.getByPlaceholder("Pesquisar nome ou email").fill("Fixture03");
   await page.getByText("imp009-3@test.invalid").click();
   await page.getByRole("button", { name: "Usuário", exact: true }).click();

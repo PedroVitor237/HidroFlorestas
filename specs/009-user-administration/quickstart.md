@@ -33,8 +33,9 @@ Registrar cada gate separadamente; browser nao prova migration PostgreSQL nem va
 4. **Last-admin race**: duas requisicoes concorrentes tentam remover/desativar os dois ultimos ADMINs. Esperado: no maximo uma conclui e um ACTIVE+ADMIN permanece.
 5. **Legacy preflight**: semear quatro classes `role/isAdmin`. Esperado: contradicoes bloqueiam automatismo e nunca concedem autoridade.
 6. **Accessibility**: teclado em mobile/desktop por loading, vazio, detalhe, confirmacao, sucesso, erro e conflito. Esperado: foco logico/visivel, rotulos e anuncios textuais.
+7. **Global admin routing**: autenticar `ACTIVE + ADMIN`, demais papeis ativos e restaurar sessoes depois de mudanca de papel/estado. Esperado: `/admin` somente para autoridade global atual; `/workspace` para demais ativos; contas nao ativas permanecem negadas.
+8. **Canonical and legacy routes**: acessar `/admin`, `/admin/users` e `/dashboard/admin/users` como ADMIN e nao ADMIN. Esperado: shell global protegido, pagina canonica unica e redirecionamento legado para `/admin/users` sem duplicacao.
 
 ## Final Evidence
 
-Registrar branch/commit, alvo de banco sem credenciais, migration, comandos/resultados, navegadores, inspecao de campos proibidos e gates humanos nao realizados. Confirmar ausencia de mudanca em `docs/raw/**`, IMP-006 e arquivos globais.
-
+Registrar branch/commit, alvo de banco sem credenciais, migration, comandos/resultados, navegadores, destinos pos-login, guardas `/admin`, redirecionamento legado, inspecao de campos proibidos e gates humanos nao realizados. Confirmar ausencia de mudanca em `docs/raw/**`, IMP-006 e arquivos globais.

@@ -4,7 +4,7 @@ import { authenticateAs, setupUsers } from "./user-administration.helper";
 test.beforeAll(setupUsers);
 test("role promotion is confirmed and self-change controls are rejected by API", async ({ page, context }, testInfo) => {
   await authenticateAs(context, testInfo, 1);
-  await page.goto("/dashboard/admin/users");
+  await page.goto("/admin/users");
   await page.getByPlaceholder("Pesquisar nome ou email").fill("Fixture03");
   await page.getByText("imp009-3@test.invalid").click();
   await page.getByRole("button", { name: "Administrador", exact: true }).click();

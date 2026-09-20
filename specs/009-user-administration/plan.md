@@ -15,7 +15,7 @@ Implementar uma superficie administrativa exclusiva para `User.role = ADMIN`, co
 **Target Platform**: aplicacao web full-stack responsiva  
 **Performance Goals**: p95 percebido de ate 2 s para consultas de ate 50 contas  
 **Constraints**: negacao por padrao, revalidacao server-side, allowlists, mutacao/auditoria atomicas, concorrencia, sem dependencia nova prevista  
-**Scale/Scope**: quatro jornadas, cinco endpoints, uma pagina, migracao de legado e testes proporcionais
+**Scale/Scope**: quatro jornadas, cinco endpoints, shell administrativo com visao geral e pagina de usuarios, migracao de legado e testes proporcionais
 
 ## Constitution Check
 
@@ -86,7 +86,9 @@ Dentro da mesma transacao: revalidar ator `ACTIVE + ADMIN`; serializar os regist
 
 - Contrato: [contracts/admin-users.openapi.yaml](contracts/admin-users.openapi.yaml).
 - Rotas planejadas: `/api/admin/users`, `/{userId}`, `/status`, `/role`, `/audit`.
-- Pagina: `/dashboard/admin/users`, protegida no servidor, com busca/filtros/cursor, detalhe, confirmacao e recuperacao de conflito. Lista e auditoria usam `createdAt DESC, id DESC` e cursores com ambos os valores.
+- Area global: `/admin`, protegida no servidor por `User.role === ADMIN` e estado atual `ACTIVE`, com shell responsivo proprio, visao geral sem metricas inventadas e retorno explicito ao ambiente operacional.
+- Pagina canonica: `/admin/users`, com busca/filtros/cursor, detalhe, confirmacao e recuperacao de conflito. `/dashboard/admin/users` contem somente redirecionamento server-side temporario para a rota canonica. Lista e auditoria usam `createdAt DESC, id DESC` e cursores com ambos os valores.
+- Pos-login: a API retorna somente o destino allowlisted derivado depois da autenticacao; `ACTIVE + ADMIN` recebe `/admin`, e os demais papeis ativos recebem `/workspace`. Sessao restaurada reconsulta papel/estado atuais antes de redirecionar.
 - Estados: loading, vazio, erro, conflito e sucesso; teclado, foco visivel e texto independente de cor.
 - Cursores sao opacos, codificam `createdAt`, `id` e uma impressao dos filtros normalizados; cursor malformado retorna `INVALID_CURSOR`, e cursor de outro conjunto de filtros retorna `CURSOR_FILTER_MISMATCH`. A consulta usa comparacao lexicografica estrita e `limit + 1`, sem repetir itens.
 - Dialogos registram o acionador, contem `Tab`/`Shift+Tab`, tornam o fundo inerte, associam titulo/descricao e aceitam `Escape` somente antes de uma operacao enviada. Cancelamento devolve foco ao acionador. Durante envio, duplicacao e bloqueada e `Processando...` e anunciado. Sucesso fecha o dialogo e foca o resumo atualizado; conflito foca `role="alert"`, oferece `Atualizar dados` e exige nova confirmacao; `LAST_ACTIVE_ADMIN` nunca oferece repeticao automatica.
@@ -132,7 +134,8 @@ specs/009-user-administration/
 
 prisma/schema.prisma
 prisma/migrations/<timestamp>_user_administration/
-src/app/(private)/dashboard/admin/users/
+src/app/(private)/admin/{layout.tsx,page.tsx,users/page.tsx}
+src/app/(private)/dashboard/admin/users/page.tsx # redirect legado
 src/app/api/admin/users/
 src/app/api/server/{auth,middlewares,services,user-administration}/
 src/components/user-administration/
@@ -148,7 +151,7 @@ tests/{unit,integration,migration,e2e}/
 2. Adicionar migration revisada para revision/audit e validar em PostgreSQL.
 3. Centralizar autorizacao por role com compatibilidade temporaria.
 4. Implementar projecoes, servicos, contratos e invariantes.
-5. Implementar API e UI protegidas.
+5. Implementar API e UI protegidas; separar a administracao global em `/admin` do dashboard operacional.
 6. Encerrar a entrega funcional com consumidores migrados para `role` e zero autoridade baseada em `isAdmin`.
 7. No seguimento tecnico autorizado pelo pedido de finalizacao e pelo branch Neon descartavel, provar zero consumidores e remover fisicamente `isAdmin` por migration posterior com preflight e teste de rollback.
 8. Executar gates e reconciliar documentacao.

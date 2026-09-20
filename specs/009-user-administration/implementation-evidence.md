@@ -65,3 +65,17 @@
 - O branch Neon temporário funciona como ponto recuperável anterior à expiração; nenhuma migration foi aplicada a produção.
 - Rollback após remoção física exige migration compensatória própria e nunca pode restaurar autoridade por booleano, apagar auditoria ou reduzir revisões.
 - Falhas funcionais podem desabilitar UI/rotas preservando dados; autoridade permanece exclusivamente em `role`.
+
+## Correcao arquitetural da area administrativa — 2026-09-20
+
+- `EVIDENCIA_IMPLEMENTACAO_ATUAL`: `/admin` e a entrada global protegida e `/admin/users` e a unica pagina canonica de gestao de contas. O caminho `/dashboard/admin/users` executa somente redirecionamento server-side temporario.
+- `EVIDENCIA_IMPLEMENTACAO_ATUAL`: o shell administrativo possui navegacao responsiva para visao geral, usuarios, ambiente principal e logout, com rota atual e foco perceptiveis.
+- `EVIDENCIA_IMPLEMENTACAO_ATUAL`: a visao geral usa atalhos e orientacoes operacionais sem metricas ou endpoints decorativos.
+- `EVIDENCIA_IMPLEMENTACAO_ATUAL`: login bem-sucedido recebe do servidor apenas um destino allowlisted: `/admin` para `ACTIVE + ADMIN` global e `/workspace` para os demais papeis ativos. Nenhum papel de laboratorio participa dessa decisao.
+- `EVIDENCIA_IMPLEMENTACAO_ATUAL`: `/admin/**` reconsulta a identidade atual com `requireAuth`; nao ADMIN segue para `/workspace`, sessao ausente segue para `/login` pela fronteira privada e APIs preservam `requireAdmin` independente da UI.
+- Testes direcionados: PASS, 16 unitarios de contrato/servico/autoridade e 10 integracoes de login/guardas/seguranca.
+- `npm run typecheck`: PASS.
+- `npm run lint`: PASS sem erros; quatro avisos preexistentes fora da correcao.
+- `npm run build`: PASS; o manifesto confirma `/admin`, `/admin/users` e a rota dinamica legada `/dashboard/admin/users`.
+- E2E administrativo direcionado: `NAO_EXECUTADO`; o guard seguro interrompeu antes da inicializacao por ausencia de `TEST_DATABASE_CONFIRMATION` e credencial do banco isolado neste worktree. Nenhuma credencial antiga foi inferida ou reutilizada.
+- Revisao humana com leitor de tela/tecnologia assistiva permanece `NAO_VERIFICADO`; automacao e build nao substituem esse gate.

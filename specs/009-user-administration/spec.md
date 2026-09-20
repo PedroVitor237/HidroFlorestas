@@ -30,6 +30,11 @@ Permitir que uma autoridade administrativa global consulte contas existentes e a
 - Q: O que acontece com sessoes anteriores? → A: bloqueio, inativacao ou rebaixamento valem na proxima validacao protegida, que reconsulta estado e papel atuais; nao se promete revogacao instantanea entre validacoes.
 - Q: Como concorrencia, auditoria e o legado isAdmin sao tratados? → A: versao esperada e protecao atomica do ultimo ADMIN; auditoria minima consultavel apenas por ADMIN global ACTIVE; tentativas negadas nao sao sucesso; nenhuma razao normativa mantem isAdmin alem da transicao controlada.
 
+### Session 2026-09-20 — Correcao arquitetural
+
+- Q: Onde deve viver a administracao global? → A: em `/admin`, como area irma do dashboard operacional; `/admin/users` e a rota canonica de contas, e `/dashboard/admin/users` permanece apenas como redirecionamento legado temporario.
+- Q: Qual e o destino depois do login? → A: uma conta global `ACTIVE + ADMIN` segue para `/admin`; os demais papeis globais ativos seguem para `/workspace`. O destino e derivado no servidor depois da autenticacao confirmada.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Consultar contas com seguranca (Priority: P1)
@@ -134,6 +139,8 @@ Como ADMIN global, quero consultar os eventos administrativos deste recorte para
 - **FR-023**: A futura transicao de `isAdmin` MUST inventariar consumidores, detectar registros divergentes, migrar autorizacao para `role`, manter compatibilidade somente quando necessaria e remover o campo apenas quando nenhum consumidor depender dele.
 - **FR-024**: A administracao MUST oferecer estados de carregamento, vazio, erro, sucesso e conflito, navegacao por teclado, foco perceptivel e comunicacao textual que nao dependa apenas de cor. Em confirmacoes, o foco MUST entrar no titulo ou primeiro controle, permanecer contido, retornar ao acionador ao cancelar, mover para o resultado ou cabecalho atualizado apos sucesso e para o alerta com acao `Atualizar dados` apos conflito; `Escape` MUST cancelar sem mutacao.
 - **FR-025**: Todas as operacoes administrativas MUST aplicar negacao por padrao e ignorar qualquer papel ou autoridade enviado pelo cliente para identificar o ator.
+- **FR-026**: A administracao global MUST usar `/admin` como entrada e `/admin/users` como rota canonica, separadas do dashboard operacional dos laboratorios; `/dashboard/admin/users` MUST apenas redirecionar para a rota canonica sem duplicar a implementacao.
+- **FR-027**: Depois de autenticar, o servidor MUST derivar `/admin` somente para `ACTIVE + ADMIN` global e `/workspace` para os demais papeis ativos; restauracao de sessao e acesso direto MUST reconsultar os dados atuais.
 
 ### Non-Functional Requirements
 
@@ -216,3 +223,4 @@ Toda transicao exige outra conta ADMIN global `ACTIVE`, justificativa, precondic
 - **SC-006**: na proxima validacao protegida, 100% das sessoes de contas bloqueadas, inativadas ou rebaixadas deixam de obter o acesso que perderam.
 - **SC-007**: 95% das consultas de ate 50 itens apresentam resultado em ate 2 segundos no ambiente representativo definido para validacao.
 - **SC-008**: em validacao automatizada, 100% das operacoes essenciais sao alcancaveis por teclado e comunicam estados de carregamento, vazio, erro, conflito e sucesso sem depender apenas de cor.
+- **SC-009**: em testes direcionados, ADMIN global ativo entra em `/admin`, nao administradores ativos entram em `/workspace`, acessos nao autorizados a `/admin/**` sao redirecionados com seguranca e a rota legada converge para `/admin/users`.

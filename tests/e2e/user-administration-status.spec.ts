@@ -4,7 +4,7 @@ import { authenticateAs, setupUsers } from "./user-administration.helper";
 test.beforeAll(setupUsers);
 test("status confirmation is keyboard-operable and audited", async ({ page, context }, testInfo) => {
   await authenticateAs(context, testInfo, 1);
-  await page.goto("/dashboard/admin/users");
+  await page.goto("/admin/users");
   await page.getByPlaceholder("Pesquisar nome ou email").fill("Fixture04");
   await page.getByText("imp009-4@test.invalid").click();
   await page.getByRole("button", { name: "Ativa", exact: true }).click();
