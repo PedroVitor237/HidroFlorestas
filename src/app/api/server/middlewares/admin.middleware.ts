@@ -1,12 +1,9 @@
 import { requireAuth } from "./auth.middleware";
+import { requireGlobalAdmin } from "../user-administration/global-authority";
 
 export async function requireAdmin() {
 
     const user = await requireAuth();
 
-    if (!user.isAdmin) {
-        throw new Error("FORBIDDEN");
-    }
-
-    return user;
+    return requireGlobalAdmin(user);
 }

@@ -130,7 +130,7 @@ export function createEnvironmentalFixtureActions(
               password: passwordHash,
               status: "ACTIVE",
               role: "USER",
-              isAdmin: false,
+
             },
           });
         }

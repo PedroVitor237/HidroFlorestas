@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  authenticatedDestination,
   parseSignInInput,
   serializePublicUser,
 } from "../../src/app/api/server/auth/auth.contracts";
@@ -87,7 +88,7 @@ describe("authentication contracts", () => {
       password: "hash",
       status: "ACTIVE",
       role: "ADMIN",
-      isAdmin: true,
+
       createdAt: new Date(),
       updatedAt: new Date(),
       token: "secret-token",
@@ -111,7 +112,7 @@ describe("authentication contracts", () => {
   it("does not widen the IMP-001 public DTO for collection registration", () => {
     const internal = {
       firstName: "Ana", lastName: "Silva", image: "", id: "internal", email: "private@example.test",
-      password: "hash", status: "ACTIVE", role: "USER", isAdmin: false,
+      password: "hash", status: "ACTIVE", role: "USER",
       confirmationKey: "private", collectionAreaId: "private",
     };
     const serialized = serializePublicUser(internal);
@@ -128,6 +129,26 @@ describe("authentication contracts", () => {
         success: true,
         user: { firstName: "Ana", lastName: "Silva", image: "" },
       },
+    );
+    assert.deepEqual(
+      parseAuthEnvelope({
+        success: true,
+        user: { firstName: "Ana", lastName: "Silva", image: "" },
+        destination: "/admin",
+      }),
+      {
+        success: true,
+        user: { firstName: "Ana", lastName: "Silva", image: "" },
+        destination: "/admin",
+      },
+    );
+    assert.equal(
+      parseAuthEnvelope({
+        success: true,
+        user: { firstName: "Ana", lastName: "Silva", image: "" },
+        destination: "/dashboard/admin/users",
+      }),
+      null,
     );
     assert.deepEqual(
       parseAuthEnvelope({
@@ -148,10 +169,17 @@ describe("authentication contracts", () => {
           firstName: "Ana",
           lastName: "Silva",
           image: "",
-          isAdmin: true,
+          role: "ADMIN",
         },
       }),
       null,
     );
+  });
+
+  it("derives a closed post-login destination from the global role", () => {
+    assert.equal(authenticatedDestination("ADMIN"), "/admin");
+    for (const role of ["USER", "DEVELOPER", "MODERATOR"] as const) {
+      assert.equal(authenticatedDestination(role), "/workspace");
+    }
   });
 });

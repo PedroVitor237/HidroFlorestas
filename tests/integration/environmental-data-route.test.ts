@@ -8,7 +8,7 @@ import { validEnvironmentalPayload } from "../fixtures/environmental-data";
 const ctx={laboratoryId:'00000000-0000-4000-8000-000000000511',areaId:'00000000-0000-4000-8000-000000000521',collectionId:'00000000-0000-4000-8000-000000000531'};
 const request=(body:unknown=validEnvironmentalPayload(),key='50000000-0000-4000-8000-000000000001')=>new Request('http://local.test',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify(body)});
 const context=()=>({params:Promise.resolve(ctx)});
-const principal=async()=>({id:'session-author',firstName:'Test',lastName:'Test',image:'',isAdmin:false});
+const principal=async()=>({id:'session-author',firstName:'Test',lastName:'Test',image:'',role:'USER' as const});
 test('POST/GET envelopes, session author, Location, no-store and replay',async()=>{
  for(const created of [true,false]) {
   let author='';const h=createEnvironmentalHandlers({requireAuth:principal,service:{create:async c=>{author=c.userId;return {created,environmentalData:null as never};},detail:async()=>({environmentalData:null})}});

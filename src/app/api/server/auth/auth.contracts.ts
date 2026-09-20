@@ -1,4 +1,8 @@
-import type { AuthFailure, PublicUserDto } from "@/types/auth.type";
+import type {
+  AuthenticatedDestination,
+  AuthFailure,
+  PublicUserDto,
+} from "@/types/auth.type";
 
 export type SignInInput = {
   email: string;
@@ -81,4 +85,10 @@ export function serializePublicUser(source: PublicUserSource): PublicUserDto {
     lastName: source.lastName,
     image: source.image,
   };
+}
+
+export function authenticatedDestination(
+  role: "USER" | "ADMIN" | "DEVELOPER" | "MODERATOR",
+): AuthenticatedDestination {
+  return role === "ADMIN" ? "/admin" : "/workspace";
 }

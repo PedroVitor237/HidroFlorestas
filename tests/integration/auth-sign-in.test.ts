@@ -9,6 +9,7 @@ const successResult = {
   success: true as const,
   token: "signed.jwt.token",
   user: { firstName: "Ana", lastName: "Silva", image: "" },
+  destination: "/workspace" as const,
 };
 
 function request(body: string) {
@@ -72,6 +73,7 @@ describe("POST /api/auth/sign-in", () => {
     assert.deepEqual(await response.json(), {
       success: true,
       user: { firstName: "Ana", lastName: "Silva", image: "" },
+      destination: "/workspace",
     });
     const cookie = response.headers.get("set-cookie") ?? "";
     assert.match(cookie, /^auth_token=/);
@@ -80,6 +82,23 @@ describe("POST /api/auth/sign-in", () => {
     assert.match(cookie, /Path=\//i);
     assert.match(cookie, /Max-Age=604800/i);
     assert.doesNotMatch(cookie, /Secure/i);
+  });
+
+  it("returns the server-derived admin destination only after successful authentication", async () => {
+    const handler = createSignInHandler({
+      signIn: async () => ({ ...successResult, destination: "/admin" }),
+      nodeEnvironment: "test",
+    });
+    const response = await handler(
+      request(JSON.stringify({ email: "admin@example.test", password: "secret" })),
+    );
+
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      success: true,
+      user: { firstName: "Ana", lastName: "Silva", image: "" },
+      destination: "/admin",
+    });
   });
 
   it("uses one 401 response for absent, incorrect, and ineligible credentials", async () => {

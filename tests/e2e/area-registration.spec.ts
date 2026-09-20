@@ -25,11 +25,11 @@ test("backend enforces current role, isolation, ownership privacy and account el
   await login(context,info,2);
   expect((await context.request.get(api)).status()).toBe(200);
   expect((await context.request.post(api,{data:{name:"IMP-003 E2E forbidden",latitude:0,longitude:0}})).status()).toBe(403);
-  await db.user.update({where:{id:AREA_FIXTURES.userIds[2]},data:{role:"ADMIN",isAdmin:true}});
+  await db.user.update({where:{id:AREA_FIXTURES.userIds[2]},data:{role:"ADMIN",}});
   expect((await context.request.post(api,{data:{name:"IMP-003 E2E global",latitude:0,longitude:0}})).status()).toBe(403);
   await db.user.update({where:{id:AREA_FIXTURES.userIds[2]},data:{status:"BLOCKED"}});
   expect((await context.request.get(api)).status()).toBe(401);
-  await db.user.update({where:{id:AREA_FIXTURES.userIds[2]},data:{status:"ACTIVE",role:"USER",isAdmin:false}});
+  await db.user.update({where:{id:AREA_FIXTURES.userIds[2]},data:{status:"ACTIVE",role:"USER",}});
   await db.researchersLinked.delete({where:{userId_laboratoryRoomId:{userId:AREA_FIXTURES.userIds[2],laboratoryRoomId:lab}}});
   expect((await context.request.get(api)).status()).toBe(404);
   await db.researchersLinked.create({data:{userId:AREA_FIXTURES.userIds[2],laboratoryRoomId:lab,role:"MEMBER"}});
