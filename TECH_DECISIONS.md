@@ -40,6 +40,20 @@ As escolhas `TD-001` a `TD-007` foram informadas como adotadas; sua classificaç
 | `TD-015` | solicitação da equipe para consolidação decisória da IMP-006 | 2026-09-18 | equipe HidroFlorestas | [ADR-0001](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) e manifesto versionado; implementação ainda inexistente. | suplemento `ihfr-diagnosis-input-experimental-v0.1.0`; `ihfr-measurement-v1` | Decisão restrita à v0.1 experimental; `VALIDACAO_CIENTIFICA_PENDENTE` e recalibração futura preservadas. | `ADR-0001` |
 | `TD-016` | solicitação da equipe para auditoria e consolidação focal de `landUseType` | 2026-09-19 | equipe HidroFlorestas | [ADR-0001 §7](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md#7-decisão-focal-de-landusetype), `DOC-RAW-013`, manifesto e contratos da IMP-006. | suplemento `ihfr-diagnosis-input-experimental-v0.1.0`; `TD-015` | Perfil `GENERAL_EXPERIMENTAL`; aplicabilidade territorial científica não comprovada; implementação e validação científica pendentes. | `ADR-0001` |
 
+## Decisões confirmadas ainda não implementadas
+
+| Identificador | Assunto | Decisão ou alternativa | Classificação | Estado decisório | Estado de implementação |
+|---|---|---|---|---|---|
+| `TD-010` | Gráficos e visualizações analíticas territoriais | Adotar Plotly como direção para gráficos e visualizações analíticas futuros relacionados aos registros do contexto territorial, sempre em entrega posterior à IMP-009. A entrega poderá ocorrer em paralelo com a IMP-010, sem depender dela. | `DECISAO_CONFIRMADA` | `CONFIRMADO` | `NAO_IMPLEMENTADO` |
+
+O registro inicial de `TD-010` era uma avaliação sem aprovação. A confirmação acima substitui esse estado decisório sem apagar o evento histórico e sem alterar o estado de implementação; integração, entradas e gráficos concretos continuam abertos.
+
+### Origem, condições e limites da decisão confirmada
+
+| Identificador | Origem | Data | Responsável | Evidências | Dependências | Observações | ADR relacionado |
+|---|---|---|---|---|---|---|---|
+| `TD-010` | confirmação explícita da equipe nas solicitações aprovadas de atualização documental da IMP-008 | 2026-09-18 | equipe solicitante | Decisão registrada em `specs/008-territorial-map/spec.md`, `plan.md` e `research.md`; nenhuma implementação ou dependência Plotly foi verificada. | Condição temporal: entrega futura somente após a IMP-009. Dados ambientais e IHFR exigem contratos integrados e, quando aplicável, aprovação científica. | Plotly não integra o mapa mínimo da IMP-008; Leaflet/React-Leaflet permanecem a escolha local planejada para esse mapa. Permanecem abertas arquitetura de execução, frontend versus Plotly Python, dados/contratos de entrada e gráficos concretos. Não autoriza Python, PostGIS, nova dependência ou segundo motor do mapa. Paralelismo eventual com a IMP-010 não cria dependência. | não especificado |
+
 ## Alternativas ainda não aprovadas
 
 As entradas abaixo não têm autoridade normativa e não devem ser tratadas como decisões confirmadas.
@@ -48,7 +62,6 @@ As entradas abaixo não têm autoridade normativa e não devem ser tratadas como
 |---|---|---|---|---|---|
 | `TD-008` | Base cartográfica | Avaliar o uso de OpenStreetMap. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
 | `TD-009` | Cálculos científicos | Avaliar o uso futuro de Python para cálculos científicos e do IHFR; alternativa não selecionada para a v0.1 experimental. | `EM_AVALIACAO` | `ADIADO` | `NAO_IMPLEMENTADO` |
-| `TD-010` | Visualizações de mapa | Avaliar o uso de Plotly em visualizações relacionadas ao mapa. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
 | `TD-011` | Biblioteca de mapas | Considerar a possibilidade de uso de Leaflet. | `PROPOSTA` | `PROPOSTO` | `NAO_AVALIADO` |
 | `TD-012` | Integração de componentes | Avaliar futuramente a integração Python–Next.js caso Python seja aprovado; não aplicável à v0.1 experimental. | `EM_AVALIACAO` | `ADIADO` | `NAO_IMPLEMENTADO` |
 | `TD-013` | Hospedagem futura | Avaliar a estratégia futura de hospedagem. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
@@ -60,7 +73,6 @@ As entradas abaixo não têm autoridade normativa e não devem ser tratadas como
 |---|---|---|---|---|---|---|---|
 | `TD-008` | Item informado pela equipe para registro de governança, sem aprovação | não especificado | não especificado | Registro da alternativa; não constitui aprovação nem evidência de implementação. | `PD-007` em `docs/governance/PENDING_DECISIONS.md` | Critérios de adoção não especificados. | não especificado |
 | `TD-009` | Item informado pela equipe para registro de governança, sem aprovação | não especificado | não especificado | Registro da alternativa; não constitui aprovação nem evidência de implementação. | `PD-008` em `docs/governance/PENDING_DECISIONS.md` | Escopo dos componentes e critérios científicos não especificados. | não especificado |
-| `TD-010` | Item informado pela equipe para registro de governança, sem aprovação | não especificado | não especificado | Registro da alternativa; não constitui aprovação nem evidência de implementação. | `PD-009` em `docs/governance/PENDING_DECISIONS.md` | Plotly ter sido considerado não implica rejeição de Leaflet. | não especificado |
 | `TD-011` | Item informado pela equipe para registro de governança, sem aprovação | não especificado | não especificado | Registro da proposta; não constitui aprovação nem evidência de implementação. | `PD-010` em `docs/governance/PENDING_DECISIONS.md` | A consideração de Plotly não rejeita nem substitui esta proposta. | não especificado |
 | `TD-012` | Item informado pela equipe para registro de governança, sem aprovação | não especificado | não especificado | Registro do tema em avaliação; estratégia não definida. | `PD-011` em `docs/governance/PENDING_DECISIONS.md` | Interfaces, responsabilidades e forma de implantação não especificadas. | não especificado |
 | `TD-013` | Item informado pela equipe para registro de governança, sem aprovação | não especificado | não especificado | Registro do tema em avaliação; estratégia futura não definida. | `PD-012` em `docs/governance/PENDING_DECISIONS.md` | A escolha relatada de Vercel não resolve automaticamente a estratégia futura. | não especificado |
@@ -90,5 +102,6 @@ Cada mudança deve acrescentar uma linha com a origem e manter as linhas anterio
 | `TD-012` | 2026-09-18 | Integração Python–Next.js tornou-se inaplicável à v0.1 e permanece futura | `ADIADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
 | `TD-015` | 2026-09-18 | Registro inicial do avaliador experimental interno | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
 | `TD-016` | 2026-09-19 | Registro inicial da classificação focal de `landUseType` para a v0.1 experimental | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` §7 |
+| `TD-010` | 2026-09-18 | Plotly confirmado somente como direção de gráficos e visualizações analíticas futuros, posteriores à IMP-009; forma de integração e gráficos concretos permanecem abertos | `CONFIRMADO` | `NAO_IMPLEMENTADO` | confirmação explícita da equipe nas solicitações aprovadas de atualização documental da IMP-008 |
 
 `TD-015` e `TD-016` possuem `ADR-0001`. As demais entradas continuam sem ADR relacionado; novos ADRs exigem decisão aprovada e natureza compatível.

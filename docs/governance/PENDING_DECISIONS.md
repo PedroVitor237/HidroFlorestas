@@ -6,7 +6,7 @@ Este registro reúne pontos que dependem de decisão, validação ou designaçã
 
 Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e `CANCELADA`. Ao resolver uma entrada, registre a decisão, origem, data e responsável, atualize o documento canônico de destino e preserve esta linha como histórico `RESOLVIDA`. Cancelamentos também exigem origem registrada.
 
-## Pendências abertas
+## Pendências abertas e histórico de resoluções
 
 | Identificador | Assunto | Descrição | Classificação | Impacto | Estado |
 |---|---|---|---|---|---|
@@ -18,7 +18,7 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-006` | Autoridade sobre arquitetura | Designar quem confirma decisões e aceita ADRs de arquitetura. | `PENDENCIA_DE_DECISAO` | `FATO_DOCUMENTADO` — Propostas técnicas não têm autoridade normativa enquanto não forem confirmadas. | `ABERTA` |
 | `PD-007` | OpenStreetMap | Definir o status definitivo do uso de OpenStreetMap. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a futura solução de mapas e suas dependências. | `ABERTA` |
 | `PD-008` | Python futuro | Definir o status de Python para versões futuras. O `ADR-0001` confirmou que Python não participa da v0.1 experimental. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta somente evolução posterior, integração e validação futura. | `ABERTA` |
-| `PD-009` | Plotly | Definir o status do uso de Plotly em visualizações relacionadas ao mapa. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a composição futura das visualizações. | `ABERTA` |
+| `PD-009` | Plotly | Definir o status do uso de Plotly em visualizações relacionadas ao mapa. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a composição futura das visualizações. | `RESOLVIDA` |
 | `PD-010` | Leaflet | Definir o status da possibilidade de uso de Leaflet. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a solução futura de mapas. `FATO_DOCUMENTADO` — Plotly ter sido considerado não implica rejeição de Leaflet. | `ABERTA` |
 | `PD-011` | Integração futura entre Python e Next.js | Definir a estratégia somente se Python for aprovado em versão posterior; não se aplica à v0.1 experimental. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta interfaces, responsabilidades, implantação e operação futuras. | `ABERTA` |
 | `PD-012` | Hospedagem futura | Definir a estratégia futura de hospedagem além da escolha atualmente relatada para a aplicação. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a arquitetura e a operação futuras. | `ABERTA` |
@@ -40,7 +40,7 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-006` | Mandato de governança; [SOURCE_AUTHORITY.md](SOURCE_AUTHORITY.md) | Pessoa ou grupo a designar; alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `SOURCE_AUTHORITY.md` e [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md); manter o histórico. |
 | `PD-007` | `TD-008` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Adotar OpenStreetMap; demais alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md`; criar ADR somente se posteriormente aprovado e aplicável; manter o histórico. |
 | `PD-008` | `TD-009` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Usar Python para cálculos científicos e do IHFR; demais alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md`; registrar validações científicas aplicáveis; manter o histórico. |
-| `PD-009` | `TD-010` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Usar Plotly nas visualizações relacionadas ao mapa; demais alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md`; criar ADR somente se posteriormente aprovado e aplicável; manter o histórico. |
+| `PD-009` | `TD-010` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md); confirmação explícita da equipe nas solicitações aprovadas de atualização documental da IMP-008 | Registro histórico da alternativa: usar Plotly nas visualizações relacionadas ao mapa; demais alternativas não especificadas. | equipe solicitante | resolução em 2026-09-18 | Plotly foi escolhido como direção para gráficos e visualizações analíticas futuros relacionados ao contexto territorial. A implementação ocorrerá após a IMP-009, possivelmente em entrega própria e sem depender da IMP-010. Integração técnica, frontend versus Plotly Python, contratos e dados de entrada e gráficos concretos continuam pendentes. Plotly não integra o mapa mínimo Leaflet/React-Leaflet da IMP-008 e não foi implementado; a decisão não aprova Python, PostGIS, dependência nova ou segundo motor cartográfico. | `TECH_DECISIONS.md` atualizado em `TD-010`; manter esta entrada como histórico `RESOLVIDA` e decidir os pontos técnicos remanescentes no planejamento da entrega futura. |
 | `PD-010` | `TD-011` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Usar Leaflet; demais alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md`; criar ADR somente se posteriormente aprovado e aplicável; manter o histórico. |
 | `PD-011` | `TD-009` e `TD-012` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Estratégias de integração não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md` e eventual ADR aceito; manter o histórico. |
 | `PD-012` | `TD-007` e `TD-013` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | A escolha atual relatada é Vercel; alternativas futuras não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md` e eventual ADR aceito; manter o histórico. |
@@ -50,7 +50,7 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-016` | Mandato de governança; autoridades de produto, dados e UX ainda não designadas | Regras não especificadas. | não especificado | não especificado | não especificado | Atualizar os registros normativos de produto, dados e UX aplicáveis e manter o histórico. |
 | `PD-017` | Mandato de governança; autoridade de UX ainda não designada | Estados a disciplinar: `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` e `IMPLEMENTADO_NAO_APROVADO`; critérios não especificados. | não especificado | não especificado | não especificado | Atualizar o registro normativo de UX aplicável e manter o histórico. |
 
-Plotly ter sido considerado não implica rejeição de Leaflet. Nenhuma entrada deste registro deve ser encerrada por inferência ou pela mera existência de uma implementação.
+O registro histórico de Plotly como alternativa considerada não implica rejeição de Leaflet, e sua confirmação posterior para gráficos analíticos futuros tampouco altera o mapa mínimo Leaflet/React-Leaflet. Nenhuma entrada deste registro deve ser encerrada por inferência ou pela mera existência de uma implementação; `PD-009` foi resolvida pela confirmação explícita identificada acima.
 
 ## Decisões confirmadas retiradas do bloqueio da IMP-006
 
@@ -74,7 +74,7 @@ Essas decisões não encerram `PD-002`, que agora representa somente a validaç�
 | `PD-006` | `DEC-PKG-007`–`015` | `CON-FND-036`,`040`,`049`–`057` | Arquitetura, contratos, mapas, NFR e hospedagem continuam sem confirmação normativa. |
 | `PD-007` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de OpenStreetMap continua aberto. |
 | `PD-008` | `DEC-PKG-009`,`010`; `ADR-0001` | `CON-FND-052`,`056`; `CON-Q-048`,`049` | Python foi excluído da v0.1; seu uso futuro continua aberto. |
-| `PD-009` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de Plotly continua aberto. |
+| `PD-009` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Registro histórico da consolidação: o estado de Plotly estava aberto. Estado atual: `TD-010` confirmou Plotly para gráficos analíticos futuros após a IMP-009; integração técnica, frontend versus Plotly Python, entradas e gráficos concretos permanecem pendentes, sem dependência da IMP-010. |
 | `PD-010` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de Leaflet continua aberto; Plotly não implica rejeição. |
 | `PD-011` | `DEC-PKG-009`,`010`; `ADR-0001` | `CON-FND-052`,`056`; `CON-Q-048`,`049` | Integração não se aplica à v0.1 e continua não especificada para versões futuras. |
 | `PD-012` | `DEC-PKG-013` | `CON-FND-057`; `CON-Q-051` | Relato atual e estratégia futura de hospedagem permanecem distintos. |
@@ -84,7 +84,7 @@ Essas decisões não encerram `PD-002`, que agora representa somente a validaç�
 | `PD-016` | `DEC-PKG-006`,`008`,`012`,`015` | `CON-FND-031`,`032`,`038`,`041`,`042`,`048` | Participação, propriedade, acesso e isolamento continuam pendentes. |
 | `PD-017` | `DEC-PKG-007` | `CON-FND-044`; `CON-Q-038`; `GAP-008` | Critérios de estado/proveniência permanecem abertos; a ausência de Figma continua não bloqueante. |
 
-As 17 pendências cobrem todas as decisões materiais identificadas por `DOC-013`; nenhuma nova pendência foi necessária.
+As 17 entradas originalmente levantadas cobrem todas as decisões materiais identificadas por `DOC-013`; `PD-009` foi posteriormente resolvida conforme `TD-010`, sem criação de nova pendência ou novo identificador `IMP-*`.
 
 ## Referências da auditoria de implementação
 
@@ -100,7 +100,7 @@ As 17 pendências cobrem todas as decisões materiais identificadas por `DOC-013
 | `PD-006` | `IMP-FND-001`–`004`,`006`,`012`,`014`,`015`,`018` | Stack localizada não confirma arquitetura normativa, NFR, operação ou ADR. |
 | `PD-007` | `IMP-FND-012`; OpenStreetMap não localizado | Ausência no baseline não rejeita nem aprova OpenStreetMap. |
 | `PD-008` | `IMP-FND-010`; Python não localizado; `ADR-0001` | Ausência não decidiu o futuro, mas Python está fora da v0.1 experimental. |
-| `PD-009` | `IMP-FND-012`; Plotly não localizado | Ausência no baseline não rejeita nem aprova Plotly. |
+| `PD-009` | `IMP-FND-012`; Plotly não localizado | Registro histórico da auditoria: a ausência no baseline não rejeitava nem aprovava Plotly. A confirmação posterior em `TD-010` decidiu a direção futura sem alterar a evidência: Plotly continua não implementado e fora do mapa mínimo da IMP-008. |
 | `PD-010` | `IMP-FND-012`; Leaflet não localizado | Ausência no baseline não rejeita nem aprova Leaflet; estado segue independente de Plotly. |
 | `PD-011` | `IMP-FND-001`,`010`; `ADR-0001` | Fronteira Next.js↔Python é inaplicável à v0.1 e condicional em versões futuras. |
 | `PD-012` | `IMP-FND-003`,`015`; Neon parcial e Vercel/deploy não avaliados | Hospedagem atual relatada e estratégia futura continuam distintas e abertas. |
@@ -110,4 +110,4 @@ As 17 pendências cobrem todas as decisões materiais identificadas por `DOC-013
 | `PD-016` | `IMP-FND-006`,`008`,`017`; ausência de enforcement de membership/ownership | Regras de criação, participação, propriedade e acesso continuam abertas. |
 | `PD-017` | `IMP-FND-016`; Figma não consultado e não necessário | A implementação observada não define estado ou aprovação dos artefatos de UX. |
 
-As 17 pendências foram revisadas e permanecem `ABERTA`. Nenhuma nova pendência foi necessária e nenhuma evidência de implementação foi tratada como decisão.
+As 17 entradas foram revisadas na auditoria; posteriormente, `PD-009` foi resolvida por confirmação explícita e as outras 16 permanecem `ABERTA`. Nenhuma nova pendência foi necessária e nenhuma evidência de implementação foi tratada como decisão.

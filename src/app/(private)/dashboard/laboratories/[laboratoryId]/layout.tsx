@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, MapPinned, Users } from "lucide-react";
+import { LayoutDashboard, Map, MapPinned, Users } from "lucide-react";
 import { getLaboratoryContext } from "@/components/workspace/laboratory-context";
 export const dynamic = "force-dynamic";
 export default async function LaboratoryLayout({
@@ -42,6 +42,12 @@ export default async function LaboratoryLayout({
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-green-700"
             >
               <MapPinned aria-hidden="true" size={18} /> Áreas
+            </Link>
+            <Link
+              href={`/dashboard/laboratories/${laboratoryId}/map`}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2"
+            >
+              <Map aria-hidden="true" size={18} /> Mapa
             </Link>
             {context.membershipRole === "OWNER" && (
               <Link
