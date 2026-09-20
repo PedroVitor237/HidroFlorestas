@@ -84,6 +84,21 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - A falha é determinística e T022 permanece aberta. Nenhuma correção de nomenclatura foi feita nesta execução depois da falha sequencial.
 - O lifecycle descartou o schema da tentativa. A inspeção final confirmou zero schemas `imp006_test_*` antes da limpeza, zero removidos e zero restantes.
 
+### Retomada de T022 — nomes físicos PostgreSQL
+
+- Checkpoint anterior à correção: `c1bc88b62fa367884ab9840d0adfd55b521d163d` (`feat(ihfr): checkpoint diagnosis schema and migration`), publicado em `origin/006-ihfr-diagnosis` com divergência `0/0`. O commit preserva T021 GREEN e T022 aberta.
+- Mapeamentos de índices, todos ASCII e explícitos no Prisma/SQL:
+  - `ExperimentalIHFRInputSupplement_collectionDataId_payloadHash_key` (64 bytes) → `ExperimentalIHFRInput_collection_payload_key` (44 bytes).
+  - `ExperimentalIHFRInputSupplement_environmentalMeasurementSetId_idx` (65 bytes) → `ExperimentalIHFRInput_measurement_idx` (37 bytes).
+  - `IHFRDiagnosisOperation_laboratoryRoomId_collectionAreaId_collectionDataId_idx` (77 bytes) → `IHFRDiagnosisOperation_context_idx` (34 bytes).
+- A auditoria completa de identificadores encontrou também a FK `ExperimentalIHFRInputSupplement_environmentalMeasurementSetId_fkey` (66 bytes), corrigida para `ExperimentalIHFRInput_measurement_fkey` (38 bytes).
+- Somente nomes físicos e expectativas relacionadas foram alterados; colunas, ordem, unicidade, predicados, cardinalidade e estratégia de consulta foram preservados.
+- O gate pré-banco aprovou `git diff --check`, `prisma format`, `prisma validate`, `prisma generate`, `tsc --noEmit`, testes estáticos, busca de nomes antigos e secrets. A auditoria encontrou 66 identificadores explícitos, todos ASCII, sem duplicidade, com máximo de 62 bytes.
+- Antes da rodada PostgreSQL, `DATABASE_URL` respondeu a `SELECT 1` e havia zero schemas `imp006_test_*`.
+- A rodada combinada aprovou novamente banco vazio, legado, finitude e os quatro testes estáticos. A verificação estrutural comprovou os 15 nomes de índices, unicidade dos nomes, limite de 63 bytes e ausência de predicados parciais antes de falhar na primeira comparação de colunas.
+- Novo bloqueio determinístico de T022: código `ERR_ASSERTION`; o driver retornou a coluna agregada PostgreSQL como texto `"{diagnosisId}"`, enquanto o teste esperava o array JavaScript `["diagnosisId"]`. A migration não emitiu erro PostgreSQL, mas a ordem completa das colunas, unicidade dos índices, triggers e zero backfill não foram todos alcançados pela asserção corrente; T022 permanece aberta e não houve repetição automática.
+- O teardown da rodada foi confirmado: zero schemas `imp006_test_*` antes da inspeção final, zero removidos e zero restantes. Nenhuma alteração foi aplicada em `public`.
+
 ## Validações humanas
 
 | Validação | Estado |

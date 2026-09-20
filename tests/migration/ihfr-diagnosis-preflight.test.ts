@@ -35,7 +35,10 @@ test("legacy, IMP-005 and additive IMP-006 models coexist", () => {
   assert.match(schema, /model EnvironmentalMeasurementSet\s*\{/);
   assert.match(schema, /model ExperimentalIHFRDiagnosis\s*\{/);
   assert.match(schema, /model ExperimentalIHFRInputSupplement\s*\{/);
-  assert.match(schema, /@@unique\(\[collectionDataId, payloadHash\]\)/);
+  assert.match(
+    schema,
+    /@@unique\(\[collectionDataId, payloadHash\], map: "ExperimentalIHFRInput_collection_payload_key"\)/,
+  );
   assert.doesNotMatch(schema, /inputSupplementId\s+String\s+@unique/);
 });
 
@@ -47,6 +50,28 @@ test("migration is additive, immutable and contains no backfill", () => {
   assert.match(sql, /imp006_diagnosis_immutable/);
   assert.match(sql, /imp006_event_immutable/);
   assert.match(sql, /CurrentExperimentalIHFRDiagnosis_collectionDataId_fkey/);
+});
+
+test("all explicit IMP-006 database identifiers are ASCII, unique and PostgreSQL-safe", () => {
+  const sql = readFileSync(`${migrationDirectory}/migration.sql`, "utf8");
+  const patterns = [
+    /CREATE TYPE "([^"]+)"/g,
+    /CREATE TABLE "([^"]+)"/g,
+    /CREATE (?:UNIQUE )?INDEX "([^"]+)"/g,
+    /CONSTRAINT "([^"]+)"/g,
+    /CREATE TRIGGER ([A-Za-z0-9_]+)/g,
+    /CREATE FUNCTION ([A-Za-z0-9_]+)/g,
+    /CREATE SEQUENCE "([^"]+)"/g,
+  ];
+  const identifiers = patterns.flatMap((pattern) =>
+    [...sql.matchAll(pattern)].map((match) => match[1]),
+  );
+
+  assert.equal(new Set(identifiers).size, identifiers.length);
+  for (const identifier of identifiers) {
+    assert.match(identifier, /^[\x20-\x7e]+$/);
+    assert.ok(Buffer.byteLength(identifier, "utf8") <= 63, `${identifier} exceeds 63 bytes`);
+  }
 });
 
 test(
@@ -119,23 +144,67 @@ test(
         "ExperimentalIHFRDiagnosis_environmentalMeasurementSetId_idx",
         "ExperimentalIHFRDiagnosis_inputSupplementId_idx",
         "ExperimentalIHFRDiagnosis_mathContractVersion_contractHash_idx",
-        "ExperimentalIHFRInputSupplement_collectionDataId_payloadHash_key",
+        "ExperimentalIHFRInput_collection_payload_key",
         "ExperimentalIHFRInputSupplement_createdByUserId_idx",
-        "ExperimentalIHFRInputSupplement_environmentalMeasurementSetId_idx",
+        "ExperimentalIHFRInput_measurement_idx",
         "IHFRDiagnosisLifecycleEvent_collectionDataId_occurredAt_idx",
         "IHFRDiagnosisLifecycleEvent_diagnosisId_occurredAt_idx",
         "IHFRDiagnosisLifecycleEvent_operationId_idx",
         "IHFRDiagnosisOperation_actorUserId_idempotencyKey_key",
         "IHFRDiagnosisOperation_diagnosisId_idx",
-        "IHFRDiagnosisOperation_laboratoryRoomId_collectionAreaId_collectionDataId_idx",
+        "IHFRDiagnosisOperation_context_idx",
       ];
       const indexes = await client.query(
-        `SELECT indexname FROM pg_indexes
-          WHERE schemaname = current_schema() AND indexname = ANY($1::text[])
-          ORDER BY indexname`,
+        `SELECT index_class.relname AS indexname,
+                indexed_table.relname AS tablename,
+                index_meta.indisunique,
+                pg_get_expr(index_meta.indpred, index_meta.indrelid) AS predicate,
+                array_agg(column_meta.attname ORDER BY key_column.ordinality) AS columns
+           FROM pg_index index_meta
+           JOIN pg_class index_class ON index_class.oid = index_meta.indexrelid
+           JOIN pg_class indexed_table ON indexed_table.oid = index_meta.indrelid
+           JOIN pg_namespace namespace ON namespace.oid = indexed_table.relnamespace
+           CROSS JOIN LATERAL unnest(index_meta.indkey)
+             WITH ORDINALITY AS key_column(attnum, ordinality)
+           JOIN pg_attribute column_meta
+             ON column_meta.attrelid = index_meta.indrelid
+            AND column_meta.attnum = key_column.attnum
+          WHERE namespace.nspname = current_schema()
+            AND index_class.relname = ANY($1::text[])
+            AND key_column.ordinality <= index_meta.indnkeyatts
+          GROUP BY index_class.relname, indexed_table.relname,
+                   index_meta.indisunique, index_meta.indpred, index_meta.indrelid
+          ORDER BY index_class.relname`,
         [expectedIndexes],
       );
       assert.deepEqual(indexes.rows.map((row) => row.indexname), [...expectedIndexes].sort());
+      assert.equal(new Set(indexes.rows.map((row) => row.indexname)).size, 15);
+      assert.equal(indexes.rows.every((row) => Buffer.byteLength(row.indexname) <= 63), true);
+      assert.equal(indexes.rows.every((row) => row.predicate === null), true);
+
+      const expectedIndexShape = new Map<string, { columns: string[]; unique: boolean }>([
+        ["CurrentExperimentalIHFRDiagnosis_diagnosisId_key", { columns: ["diagnosisId"], unique: true }],
+        ["CurrentExperimentalIHFRDiagnosis_operationId_key", { columns: ["operationId"], unique: true }],
+        ["ExperimentalIHFRDiagnosis_collectionDataId_calculatedAt_idx", { columns: ["collectionDataId", "calculatedAt"], unique: false }],
+        ["ExperimentalIHFRDiagnosis_environmentalMeasurementSetId_idx", { columns: ["environmentalMeasurementSetId"], unique: false }],
+        ["ExperimentalIHFRDiagnosis_inputSupplementId_idx", { columns: ["inputSupplementId"], unique: false }],
+        ["ExperimentalIHFRDiagnosis_mathContractVersion_contractHash_idx", { columns: ["mathContractVersion", "contractHash"], unique: false }],
+        ["ExperimentalIHFRInput_collection_payload_key", { columns: ["collectionDataId", "payloadHash"], unique: true }],
+        ["ExperimentalIHFRInputSupplement_createdByUserId_idx", { columns: ["createdByUserId"], unique: false }],
+        ["ExperimentalIHFRInput_measurement_idx", { columns: ["environmentalMeasurementSetId"], unique: false }],
+        ["IHFRDiagnosisLifecycleEvent_collectionDataId_occurredAt_idx", { columns: ["collectionDataId", "occurredAt"], unique: false }],
+        ["IHFRDiagnosisLifecycleEvent_diagnosisId_occurredAt_idx", { columns: ["diagnosisId", "occurredAt"], unique: false }],
+        ["IHFRDiagnosisLifecycleEvent_operationId_idx", { columns: ["operationId"], unique: false }],
+        ["IHFRDiagnosisOperation_actorUserId_idempotencyKey_key", { columns: ["actorUserId", "idempotencyKey"], unique: true }],
+        ["IHFRDiagnosisOperation_diagnosisId_idx", { columns: ["diagnosisId"], unique: false }],
+        ["IHFRDiagnosisOperation_context_idx", { columns: ["laboratoryRoomId", "collectionAreaId", "collectionDataId"], unique: false }],
+      ]);
+      for (const row of indexes.rows) {
+        const expected = expectedIndexShape.get(row.indexname);
+        assert.ok(expected);
+        assert.deepEqual(row.columns, expected.columns);
+        assert.equal(row.indisunique, expected.unique);
+      }
 
       const expectedTriggers = [
         "imp006_current_context",

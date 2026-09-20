@@ -21,12 +21,12 @@ CREATE TABLE "ExperimentalIHFRInputSupplement" (
   CONSTRAINT "ExperimentalIHFRInputSupplement_input_version_check" CHECK ("inputContractVersion" = 'ihfr-diagnosis-input-experimental-v0.1.0'),
   CONSTRAINT "ExperimentalIHFRInputSupplement_payload_hash_check" CHECK ("payloadHash" ~ '^sha256:[0-9a-f]{64}$'),
   CONSTRAINT "ExperimentalIHFRInputSupplement_collectionDataId_fkey" FOREIGN KEY ("collectionDataId") REFERENCES "CollectionData"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT "ExperimentalIHFRInputSupplement_environmentalMeasurementSetId_fkey" FOREIGN KEY ("environmentalMeasurementSetId") REFERENCES "EnvironmentalMeasurementSet"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT "ExperimentalIHFRInput_measurement_fkey" FOREIGN KEY ("environmentalMeasurementSetId") REFERENCES "EnvironmentalMeasurementSet"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT "ExperimentalIHFRInputSupplement_createdByUserId_fkey" FOREIGN KEY ("createdByUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-CREATE UNIQUE INDEX "ExperimentalIHFRInputSupplement_collectionDataId_payloadHash_key" ON "ExperimentalIHFRInputSupplement"("collectionDataId", "payloadHash");
-CREATE INDEX "ExperimentalIHFRInputSupplement_environmentalMeasurementSetId_idx" ON "ExperimentalIHFRInputSupplement"("environmentalMeasurementSetId");
+CREATE UNIQUE INDEX "ExperimentalIHFRInput_collection_payload_key" ON "ExperimentalIHFRInputSupplement"("collectionDataId", "payloadHash");
+CREATE INDEX "ExperimentalIHFRInput_measurement_idx" ON "ExperimentalIHFRInputSupplement"("environmentalMeasurementSetId");
 CREATE INDEX "ExperimentalIHFRInputSupplement_createdByUserId_idx" ON "ExperimentalIHFRInputSupplement"("createdByUserId");
 
 CREATE TABLE "ExperimentalIHFRDiagnosis" (
@@ -101,7 +101,7 @@ CREATE TABLE "IHFRDiagnosisOperation" (
 );
 
 CREATE UNIQUE INDEX "IHFRDiagnosisOperation_actorUserId_idempotencyKey_key" ON "IHFRDiagnosisOperation"("actorUserId", "idempotencyKey");
-CREATE INDEX "IHFRDiagnosisOperation_laboratoryRoomId_collectionAreaId_collectionDataId_idx" ON "IHFRDiagnosisOperation"("laboratoryRoomId", "collectionAreaId", "collectionDataId");
+CREATE INDEX "IHFRDiagnosisOperation_context_idx" ON "IHFRDiagnosisOperation"("laboratoryRoomId", "collectionAreaId", "collectionDataId");
 CREATE INDEX "IHFRDiagnosisOperation_diagnosisId_idx" ON "IHFRDiagnosisOperation"("diagnosisId");
 
 CREATE TABLE "CurrentExperimentalIHFRDiagnosis" (

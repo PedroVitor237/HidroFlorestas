@@ -324,12 +324,12 @@ model ExperimentalIHFRInputSupplement {
   createdAt                     DateTime                    @default(now()) @db.Timestamptz(3)
 
   collectionData              CollectionData              @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  environmentalMeasurementSet EnvironmentalMeasurementSet @relation(fields: [environmentalMeasurementSetId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  environmentalMeasurementSet EnvironmentalMeasurementSet @relation(fields: [environmentalMeasurementSetId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ExperimentalIHFRInput_measurement_fkey")
   createdByUser               User                        @relation(fields: [createdByUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   diagnoses                   ExperimentalIHFRDiagnosis[]
 
-  @@unique([collectionDataId, payloadHash])
-  @@index([environmentalMeasurementSetId])
+  @@unique([collectionDataId, payloadHash], map: "ExperimentalIHFRInput_collection_payload_key")
+  @@index([environmentalMeasurementSetId], map: "ExperimentalIHFRInput_measurement_idx")
   @@index([createdByUserId])
 }
 
@@ -404,7 +404,7 @@ model IHFRDiagnosisOperation {
   lifecycleEvents IHFRDiagnosisLifecycleEvent[]
 
   @@unique([actorUserId, idempotencyKey])
-  @@index([laboratoryRoomId, collectionAreaId, collectionDataId])
+  @@index([laboratoryRoomId, collectionAreaId, collectionDataId], map: "IHFRDiagnosisOperation_context_idx")
   @@index([diagnosisId])
 }
 
