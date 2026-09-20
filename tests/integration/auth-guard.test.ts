@@ -10,8 +10,8 @@ const principal = {
   id: "user-1",
   firstName: "Ana",
   lastName: "Silva",
-  image: "",
-  isAdmin: true,
+  image: "", role: "USER" as const,
+
 };
 
 describe("requireAuth adapter", () => {

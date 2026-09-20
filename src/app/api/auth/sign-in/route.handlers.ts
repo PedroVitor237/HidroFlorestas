@@ -47,6 +47,7 @@ export function createSignInHandler(dependencies: SignInHandlerDependencies) {
             const response = NextResponse.json({
                 success: true as const,
                 user: serializePublicUser(result.user),
+                destination: result.destination,
             });
             response.cookies.set(
                 AUTH_COOKIE_NAME,

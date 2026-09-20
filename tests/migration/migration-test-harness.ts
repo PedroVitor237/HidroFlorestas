@@ -31,7 +31,7 @@ export async function withMigrationDatabase(
   const connectionString = migrationTestEnvironment();
   neonConfig.webSocketConstructor = ws;
   const pool = new Pool({ connectionString, connectionTimeoutMillis: 15_000, max: 1 });
-  if (!/^imp00[3456]_test$/.test(schemaPrefix)) {
+  if (!/^imp00[34569]_test$/.test(schemaPrefix)) {
     throw new Error("Migration schema prefix is not allowlisted");
   }
   const schema = `${schemaPrefix}_${randomUUID().replaceAll("-", "")}`;

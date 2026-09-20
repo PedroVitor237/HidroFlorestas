@@ -29,7 +29,7 @@ export async function setupLaboratoryFixtures(environment: Record<string, string
         image: "",
         status: "ACTIVE",
         role: "USER",
-        isAdmin: false,
+
       },
       update: { email: LABORATORY_SECOND_USER.email, status: "ACTIVE" },
     });

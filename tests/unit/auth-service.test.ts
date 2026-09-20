@@ -15,7 +15,7 @@ const baseUser = {
   image: "avatar.png",
   password: "stored-hash",
   status: "ACTIVE",
-  isAdmin: true,
+  role: "USER" as const,
 };
 
 function dependencies(
@@ -52,12 +52,30 @@ describe("AuthService.signIn", () => {
         lastName: "Silva",
         image: "avatar.png",
       },
+      destination: "/workspace",
     });
     assert.deepEqual(Object.keys(result.success ? result.user : {}).sort(), [
       "firstName",
       "image",
       "lastName",
     ]);
+  });
+
+  it("routes only a successfully authenticated global ADMIN to the admin area", async () => {
+    for (const role of ["ADMIN", "USER", "DEVELOPER", "MODERATOR"] as const) {
+      const service = new AuthService(
+        dependencies({ findCredentialUser: async () => ({ ...baseUser, role }) }),
+      );
+      const result = await service.signIn({
+        email: `${role.toLowerCase()}@example.test`,
+        password: "correct-password",
+      });
+
+      assert.equal(result.success, true);
+      if (result.success) {
+        assert.equal(result.destination, role === "ADMIN" ? "/admin" : "/workspace");
+      }
+    }
   });
 
   it("returns the same failure for an absent user and an incorrect password", async () => {

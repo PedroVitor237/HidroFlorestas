@@ -219,7 +219,7 @@ function createPrismaFixtureActions(
             ...user,
             password: passwordHash,
             role: "USER",
-            isAdmin: false,
+
           },
           update: {
             email: user.email,
@@ -229,7 +229,7 @@ function createPrismaFixtureActions(
             password: passwordHash,
             status: user.status,
             role: "USER",
-            isAdmin: false,
+
           },
         });
       }

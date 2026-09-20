@@ -4,7 +4,7 @@ export type UserType = {
     lastName: string;
     password?: string;
     image?: string;
-    isAdmin?: boolean;
+    role?: 'USER' | 'ADMIN' | 'DEVELOPER' | 'MODERATOR';
     createdAt?: string;
     updatedAt?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'BLOCKED';

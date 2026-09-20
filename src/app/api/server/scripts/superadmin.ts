@@ -50,6 +50,7 @@ async function createSuperAdmin(): Promise<void> {
         if (rootPass !== ROOT_PASS) {
             terminalHeader();
             console.log('\nSenha Root inválida!')
+            return;
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -59,7 +60,6 @@ async function createSuperAdmin(): Promise<void> {
                 firstName,
                 lastName,
                 email,
-                isAdmin: true,
                 password: hashedPassword,
                 role: 'ADMIN',
                 status: 'ACTIVE',

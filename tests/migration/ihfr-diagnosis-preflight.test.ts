@@ -16,17 +16,19 @@ import {
 const migrationDirectory =
   "prisma/migrations/20260920000100_ihfr_experimental_diagnosis";
 
-test("IMP-006 migration uses the reserved slot after the integrated baseline", () => {
+test("IMP-006 migration keeps its published slot in the integrated IMP-009 chain", () => {
   const migrations = readdirSync("prisma/migrations", { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
+  const administrationMigration = "20260919000100_user_administration";
+  const ihfrMigration = "20260920000100_ihfr_experimental_diagnosis";
+  const legacyRemovalMigration = "20260920000100_remove_legacy_is_admin";
+
   assert.equal(existsSync(`${migrationDirectory}/migration.sql`), true);
-  assert.equal(
-    migrations.some((name) => name > "20260920000100_ihfr_experimental_diagnosis"),
-    false,
-  );
-  assert.equal(migrations.at(-1), "20260920000100_ihfr_experimental_diagnosis");
+  assert.ok(migrations.indexOf(administrationMigration) < migrations.indexOf(ihfrMigration));
+  assert.ok(migrations.indexOf(ihfrMigration) < migrations.indexOf(legacyRemovalMigration));
+  assert.equal(migrations.at(-1), legacyRemovalMigration);
 });
 
 test("legacy, IMP-005 and additive IMP-006 models coexist", () => {

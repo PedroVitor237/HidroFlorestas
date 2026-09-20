@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { NextRequest } from "next/server";
 import { createLaboratorySettingsHandlers } from "../../src/app/api/laboratories/[laboratoryId]/route.handlers";
 
-const principal = { id: "owner", firstName: "Ana", lastName: "Silva", image: "", isAdmin: false };
+const principal = { id: "owner", firstName: "Ana", lastName: "Silva", image: "", role: "USER" as const, };
 const context = { params: Promise.resolve({ laboratoryId: "lab-id" }) };
 const request = (method: string, confirmationName = "Lab") => new NextRequest("http://localhost/api/laboratories/lab-id", method === "GET" ? { method } : { method, headers: { "content-type": "application/json" }, body: JSON.stringify({ confirmationName }) });
 

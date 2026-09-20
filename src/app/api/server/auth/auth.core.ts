@@ -8,7 +8,7 @@ export type CredentialUser = {
   image: string;
   password: string;
   status: string;
-  isAdmin: boolean;
+  role: "USER" | "ADMIN" | "DEVELOPER" | "MODERATOR";
 };
 
 export type CurrentIdentity = Omit<CredentialUser, "password">;
@@ -18,7 +18,7 @@ export type AuthenticatedPrincipal = {
   firstName: string;
   lastName: string;
   image: string;
-  isAdmin: boolean;
+  role: "USER" | "ADMIN" | "DEVELOPER" | "MODERATOR";
 };
 
 type CredentialDependencies = {
@@ -50,7 +50,7 @@ function toPrincipal(user: CurrentIdentity): AuthenticatedPrincipal {
     firstName: user.firstName,
     lastName: user.lastName,
     image: user.image,
-    isAdmin: user.isAdmin,
+    role: user.role,
   };
 }
 

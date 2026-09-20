@@ -4,7 +4,7 @@ import { createAreaHandlers } from "../../src/app/api/laboratories/[laboratoryId
 import { createAreaDetailHandler } from "../../src/app/api/laboratories/[laboratoryId]/areas/[areaId]/route.handlers";
 import { AreaAccessError } from "../../src/app/api/server/areas/area.authorization";
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
-const principal={id:"server-user",firstName:"T",lastName:"U",image:"",isAdmin:false};
+const principal={id:"server-user",firstName:"T",lastName:"U",image:"",role:"USER" as const,};
 const route={params:Promise.resolve({laboratoryId:"lab",areaId:"area"})};
 const area={id:"area",name:"Area",latitude:0,longitude:0,municipality:null,state:null,landType:null,description:null,createdAt:"2026-09-15T00:00:00Z",laboratory:{id:"lab",name:"Lab",status:"ACTIVE" as const},readOnly:false};
 const context={id:"lab",name:"Lab",status:"ACTIVE" as const,membershipRole:"OWNER" as const,readOnly:false};

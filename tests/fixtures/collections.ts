@@ -125,7 +125,7 @@ export function createCollectionFixtureActions(
               password: passwordHash,
               status: "ACTIVE",
               role: "USER",
-              isAdmin: false,
+
             },
           });
         }

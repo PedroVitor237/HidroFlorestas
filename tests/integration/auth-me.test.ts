@@ -15,7 +15,7 @@ const principal = {
   firstName: "Ana",
   lastName: "Silva",
   image: "avatar.png",
-  isAdmin: true,
+  role: "USER" as const,
 };
 
 function request(token?: string) {
