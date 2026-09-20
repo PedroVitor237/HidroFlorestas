@@ -6,6 +6,8 @@ import ws from "ws";
 
 export const migrationPath = "prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql";
 export const collectionMigrationPath = "prisma/migrations/20260915000100_collection_registration_metadata/migration.sql";
+export const environmentalMigrationPath = "prisma/migrations/20260917000100_environmental_measurement_set/migration.sql";
+export const ihfrDiagnosisMigrationPath = "prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql";
 
 export function migrationTestEnvironment() {
   dotenv.config({ path: ".env", quiet: true });
@@ -29,7 +31,7 @@ export async function withMigrationDatabase(
   const connectionString = migrationTestEnvironment();
   neonConfig.webSocketConstructor = ws;
   const pool = new Pool({ connectionString, connectionTimeoutMillis: 15_000, max: 1 });
-  if (!/^imp00[345]_test$/.test(schemaPrefix)) {
+  if (!/^imp00[3456]_test$/.test(schemaPrefix)) {
     throw new Error("Migration schema prefix is not allowlisted");
   }
   const schema = `${schemaPrefix}_${randomUUID().replaceAll("-", "")}`;
@@ -63,4 +65,12 @@ export async function applyAreaMigration(client: PoolClient) {
 
 export async function applyCollectionMigration(client: PoolClient) {
   await client.query(await readFile(collectionMigrationPath, "utf8"));
+}
+
+export async function applyEnvironmentalMigration(client: PoolClient) {
+  await client.query(await readFile(environmentalMigrationPath, "utf8"));
+}
+
+export async function applyIHFRDiagnosisMigration(client: PoolClient) {
+  await client.query(await readFile(ihfrDiagnosisMigrationPath, "utf8"));
 }

@@ -10,16 +10,16 @@
 
 **Objetivo**: confirmar o baseline e congelar as fronteiras existentes antes de qualquer alteração de implementação.
 
-- [ ] T001 Registrar branch, HEAD, upstream, divergência e working tree inicial em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T002 Confirmar `origin/development@df856194b3341137d6d863feefcb0a203deb5905` e o head IMP-008 `c6c13f7dc97d4ed873f67cb99fb6c36d60579601` como ancestrais e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T003 Executar os hooks Spec Kit aplicáveis, se `.specify/extensions.yml` vier a existir, e registrar resultado/ausência em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T004 Validar os dois manifestos, reproduzir seus hashes e provar que `contracts/ihfr-math-experimental-v0.1.0.json` não mudou e está inativo em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T005 Caracterizar scripts, versões Node/Prisma e comandos de teste atuais em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T006 Caracterizar schema, migrations, models legados e implementação da IMP-005 em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T007 Caracterizar autenticação, autorização contextual e semântica de laboratório inativo das IMP-003/004/005 em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T008 Caracterizar resumo/histórico da IMP-007 e confirmar ausência de projeção IHFR em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T009 Caracterizar mapa/lista/endpoint da IMP-008 e confirmar ausência de score, classe, risco, `landUseType` e auditoria IHFR em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T010 Fixar a matriz inicial de comandos, resultados esperados e stop conditions em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T001 Registrar branch, HEAD, upstream, divergência e working tree inicial em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T002 Confirmar `origin/development@df856194b3341137d6d863feefcb0a203deb5905` e o head IMP-008 `c6c13f7dc97d4ed873f67cb99fb6c36d60579601` como ancestrais e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T003 Executar os hooks Spec Kit aplicáveis, se `.specify/extensions.yml` vier a existir, e registrar resultado/ausência em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T004 Validar os dois manifestos, reproduzir seus hashes e provar que `contracts/ihfr-math-experimental-v0.1.0.json` não mudou e está inativo em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T005 Caracterizar scripts, versões Node/Prisma e comandos de teste atuais em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T006 Caracterizar schema, migrations, models legados e implementação da IMP-005 em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T007 Caracterizar autenticação, autorização contextual e semântica de laboratório inativo das IMP-003/004/005 em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T008 Caracterizar resumo/histórico da IMP-007 e confirmar ausência de projeção IHFR em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T009 Caracterizar mapa/lista/endpoint da IMP-008 e confirmar ausência de score, classe, risco, `landUseType` e auditoria IHFR em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T010 Fixar a matriz inicial de comandos, resultados esperados e stop conditions em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 
 **Checkpoint**: baseline e fronteiras documentados; nenhuma alteração funcional ainda realizada.
 
@@ -29,19 +29,19 @@
 
 **Objetivo**: tornar schema, client e dados de teste reais disponíveis antes dos testes comportamentais.
 
-- [ ] T011 Criar o preflight estático do schema e do legado em `tests/migration/ihfr-diagnosis-preflight.test.ts`
-- [ ] T012 Executar o preflight contra o baseline ainda não alterado e registrar as invariantes legadas em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T013 Verificar que `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql` está livre e que nenhuma migration posterior invalida a ordem; parar a implementação se qualquer condição falhar
-- [ ] T014 Projetar enums, suplemento, diagnóstico, ponteiro, operação e evento em `prisma/schema.prisma`, preservando `UNIQUE(collectionDataId,payloadHash)` e sem `UNIQUE(inputSupplementId)`
-- [ ] T015 Criar a migration aditiva em `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`, incluindo FK/constraints/índices/triggers e sem backfill
-- [ ] T016 Executar `prisma format` e inspecionar somente as mudanças esperadas em `prisma/schema.prisma`
-- [ ] T017 Inspecionar SQL, ordem, nomes, reversibilidade operacional e preservação do legado em `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`
-- [ ] T018 Executar `prisma validate` antes de aplicar a migration e registrar o resultado em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T019 Criar o lifecycle de schema PostgreSQL por execução em `tests/fixtures/postgresql-schema-lifecycle.ts`
-- [ ] T020 Preparar baseline vazio e baseline com legado para migration em `tests/fixtures/ihfr-diagnosis-migration-baseline.ts`
-- [ ] T021 Aplicar a cadeia real de migrations nos schemas isolados vazio e legado, sem desabilitar triggers, e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T011 Criar o preflight estático do schema e do legado em `tests/migration/ihfr-diagnosis-preflight.test.ts`
+- [X] T012 Executar o preflight contra o baseline ainda não alterado e registrar as invariantes legadas em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T013 Verificar que `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql` está livre e que nenhuma migration posterior invalida a ordem; parar a implementação se qualquer condição falhar
+- [X] T014 Projetar enums, suplemento, diagnóstico, ponteiro, operação e evento em `prisma/schema.prisma`, preservando `UNIQUE(collectionDataId,payloadHash)` e sem `UNIQUE(inputSupplementId)`
+- [X] T015 Criar a migration aditiva em `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`, incluindo FK/constraints/índices/triggers e sem backfill
+- [X] T016 Executar `prisma format` e inspecionar somente as mudanças esperadas em `prisma/schema.prisma`
+- [X] T017 Inspecionar SQL, ordem, nomes, reversibilidade operacional e preservação do legado em `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`
+- [X] T018 Executar `prisma validate` antes de aplicar a migration e registrar o resultado em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T019 Criar o lifecycle de schema PostgreSQL por execução em `tests/fixtures/postgresql-schema-lifecycle.ts`
+- [X] T020 Preparar baseline vazio e baseline com legado para migration em `tests/fixtures/ihfr-diagnosis-migration-baseline.ts`
+- [X] T021 Aplicar a cadeia real de migrations nos schemas isolados vazio e legado, sem desabilitar triggers, e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 - [ ] T022 Verificar objetos, constraints, triggers, zero backfill e ordem aplicada nos schemas isolados em `tests/migration/ihfr-diagnosis-preflight.test.ts`
-- [ ] T023 Executar `prisma generate` somente após a aplicação isolada bem-sucedida e registrar o resultado em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T023 Executar `prisma generate` somente após a aplicação isolada bem-sucedida e registrar o resultado em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 - [ ] T024 [P] Criar fixtures explícitas de OWNER/ADMIN/MEMBER, usuário sem vínculo, conta ativa/inativa, vínculo atual/revogado e laboratório ativo/inativo em `tests/fixtures/ihfr-diagnosis-actors.ts`
 - [ ] T025 [P] Criar fixtures de dois laboratórios, áreas, coletas confirmadas próprias/cruzadas e `EnvironmentalMeasurementSet` presente/ausente em `tests/fixtures/ihfr-diagnosis-contexts.ts`
 - [ ] T026 [P] Criar fixtures de suplemento válido/inválido/ausente, diagnósticos CURRENT/SUPERSEDED/REVOKED, operações idempotentes, eventos restritos, conflitos e dados insuficientes em `tests/fixtures/ihfr-diagnosis-domain.ts`

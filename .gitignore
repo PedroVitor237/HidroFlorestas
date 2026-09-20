@@ -69,3 +69,7 @@ prisma/migrations/*
 # IMP-005: versioned environmental measurement set.
 !prisma/migrations/20260917000100_environmental_measurement_set/
 !prisma/migrations/20260917000100_environmental_measurement_set/migration.sql
+
+# IMP-006: versioned experimental IHFR diagnosis.
+!prisma/migrations/20260920000100_ihfr_experimental_diagnosis/
+!prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql
