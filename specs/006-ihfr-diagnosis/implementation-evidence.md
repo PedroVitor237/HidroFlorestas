@@ -29,6 +29,14 @@ Este registro distingue conformidade técnica de validação científica. Valore
 | Regressão | IMP-003/004/005/007/008, lint, typecheck, build | sem regressões | PENDENTE |
 | Teardown | descarte allowlisted e contagens finais | zero resíduos | PENDENTE |
 
+## Reconciliação com a IMP-009 — 2026-09-20
+
+- `origin/development@100351e07d9f89f34ebb0ea4de17b526297d6350` foi integrado por merge normal na branch publicada, no commit `4816cd6` (`merge: integrate development into IMP-006`). Não houve rebase, force-push, merge em `development` nem abertura de PR.
+- Os conflitos foram resolvidos por composição em `.gitignore`, `prisma/schema.prisma` e `tests/migration/migration-test-harness.ts`: permaneceram as migrations e relações IHFR; `User.revision`, `AdministrativeAuditEvent` e as relações administrativas foram incorporadas; `User.isAdmin` não foi restaurado no schema/runtime; e o harness passou a permitir os prefixos isolados das IMP-003/004/005/006/009.
+- A ordem lexicográfica integrada foi comprovada como `20260919000100_user_administration` → `20260920000100_ihfr_experimental_diagnosis` → `20260920000100_remove_legacy_is_admin`. O preflight passou a verificar essa ordem real sem renomear ou reescrever migrations publicadas.
+- Gates do merge: `npx prisma format`, `npx prisma validate`, `npx prisma generate`, `npm run typecheck` e `git diff --check` concluíram com código 0. Cinco arquivos focais de autenticação/autoridade administrativa passaram. O preflight IMP-006 concluiu quatro verificações estáticas e deixou uma verificação PostgreSQL explicitamente `SKIP` porque as variáveis protegidas não haviam sido carregadas naquele processo.
+- Após o push, `HEAD` e `origin/006-ihfr-diagnosis` ficaram sincronizados (`0/0`). A branch integrada ficou 18 commits à frente e zero atrás de `origin/development`. O arquivo local não rastreado `specs/005-environmental-collection-data/coverage-review.md` foi preservado e não entrou no commit.
+
 ## RED/GREEN e comandos executados
 
 | Etapa | Comando sanitizado | Código | Resultado |
