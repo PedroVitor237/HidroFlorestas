@@ -4,7 +4,7 @@
 
 **Input**: `specs/006-ihfr-diagnosis/spec.md`
 
-**Status**: planejamento técnico concluído para a v0.1 experimental. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos para planejamento; `G2-SCI` permanece futuro e não é simulado por testes técnicos.
+**Status**: planejamento técnico concluído para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos para planejamento; `G2-SCI` permanece futuro e não é simulado por testes técnicos. O pacote aguarda nova análise independente antes da implementação.
 
 ## Summary
 
@@ -42,7 +42,7 @@ Gate avaliado antes da Phase 0 e novamente após o design.
 |---|---|---|
 | I — Hierarquia de fontes | PASS — ADR-0001, manifesto, spec/checklist e contratos integrados da IMP-005 governam seus assuntos; código comprova somente baseline. | PASS — o desenho não reabre os 15 conflitos nem promove histórico ou legado a contrato atual. |
 | II — Entregas verticais | PASS — uma jornada contextual produz e consulta o diagnóstico experimental. | PASS — dashboard/histórico e ciência definitiva continuam fora; reconciliação com IMP-007 não bloqueia o núcleo. |
-| III — Especificação por funcionalidade | PASS — branch e diretório `specs/006-ihfr-diagnosis/**` confirmados pelo setup. | PASS — plano, pesquisa, modelo, contratos e quickstart estão no diretório; nenhum `tasks.md` foi criado. |
+| III — Especificação por funcionalidade | PASS — branch e diretório `specs/006-ihfr-diagnosis/**` confirmados pelo setup. | PASS — plano, pesquisa, modelo, contratos, quickstart e tarefas `T001–T127` estão no diretório da feature. |
 | IV — Evidência e rastreabilidade | PASS — decisão, implementação, inferência e recomendação permanecem separadas. | PASS — cada resultado conserva quatro versões/referências, hash, origem, transformação e rótulos experimentais. |
 | V — Qualidade e segurança | PASS — riscos centrais são isolamento, autorização, precisão, imutabilidade, concorrência e minimização. | PASS — API contextual, DTO fechado, transações, constraints, auditoria restrita e matriz de testes cobrem os riscos. |
 | VI — Documentação evolutiva | PASS — `docs/raw/**` permanece imutável e G2-SCI explícito. | PASS — alteração normativa exige nova versão/hash e nunca reinterpreta resultado histórico. |
@@ -62,13 +62,15 @@ specs/006-ihfr-diagnosis/
 ├── research.md
 ├── data-model.md
 ├── quickstart.md
+├── tasks.md
+├── pr-description.md
 └── contracts/
     ├── ihfr-math-experimental-v0.1.0.json
     ├── ihfr-diagnosis-input-experimental-v0.1.0.schema.json
     └── ihfr-diagnosis-api.openapi.yaml
 ```
 
-`.specify/feature.json` aponta localmente para esta feature e é ignorado pelo Git. `tasks.md` pertence exclusivamente a uma execução posterior de `$speckit-tasks`.
+`.specify/feature.json` aponta localmente para esta feature e é ignorado pelo Git. `tasks.md` contém a sequência executável `T001–T127`; `pr-description.md` prepara somente o texto de um PR futuro.
 
 ### Source Code (repository root)
 
@@ -99,6 +101,8 @@ tests/{fixtures,unit,integration,migration,e2e}/
 - IMP-007: head publicado `9e3a818be1690298e70586ac640151fecba02b82`, ancestral de `origin/development` `10fdb8bbb8e4895614575fedc9de8e08a5121afe`.
 - Integração IMP-007: merge commit do PR #26 `10fdb8b`, pais `5d9ca6f` e `9e3a818`; merge normal, sem squash.
 - Baseline deste plano: merge normal de `origin/development` na IMP-006, commit `36243f4`, sem conflito e preservando os commits próprios.
+- IMP-008: head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`, integrada pelo PR #27 no merge `df856194b3341137d6d863feefcb0a203deb5905`.
+- Baseline reconciliada atual: merge normal `96dac7c` de `origin/development@df85619` na IMP-006, com dois conflitos exclusivamente documentais em `TECH_DECISIONS.md` e `docs/governance/PENDING_DECISIONS.md`; a resolução preservou integralmente TD-009/TD-012/TD-015/TD-016 e a confirmação de TD-010. `origin/development` tornou-se ancestral do HEAD.
 
 ### Fronteira com a IMP-007 integrada
 
@@ -106,9 +110,15 @@ tests/{fixtures,unit,integration,migration,e2e}/
 
 A IMP-006 não modifica a IMP-007. `CREATED`, `SUPERSEDED` e `REVOKED` ficam em eventos internos restritos; nenhuma lista histórica pública é criada agora. Uma projeção futura para dashboard deve derivar dos registros canônicos da IMP-006, jamais copiar auditoria ou criar segunda fonte de verdade.
 
+### Fronteira com a IMP-008 integrada
+
+`EVIDENCIA_IMPLEMENTACAO`: a IMP-008 expõe um mapa Leaflet/React-Leaflet e uma lista textual sobre `CollectionArea` e coletas confirmadas, por endpoint contextual privado e projeção transitória. Ela não altera schema, migrations, dependências, `EnvironmentalMeasurementSet`, contratos da IMP-005, permissões contextuais ou a semântica de laboratório inativo.
+
+A IMP-006 não modifica o mapa nem projeta diagnóstico nesta entrega. Leaflet não calcula IHFR; coordenadas, pontos territoriais e `CollectionArea.landType` não substituem `landUseType` nem medições ausentes. Eventos e evidência restrita do diagnóstico não alimentam a API territorial. Qualquer score, classe, risco, cor, gráfico ou camada IHFR exige requisito, contrato de projeção, minimização e reconciliação futuros. Plotly continua posterior à IMP-009 e fora da v0.1.
+
 ## Phase 0 — Research Outcome
 
-[research.md](research.md) resolve taxonomia, avaliador, manifesto/hash, persistência, estados, idempotência, autorização, API, auditoria e fronteira com a IMP-007. Não restou `NEEDS CLARIFICATION`.
+[research.md](research.md) resolve taxonomia, avaliador, manifesto/hash, persistência, estados, idempotência, autorização, API, auditoria e fronteiras com as IMP-007/008. Não restou `NEEDS CLARIFICATION`.
 
 ## Phase 1 — Design
 
@@ -149,7 +159,7 @@ O servidor exige conta ativa e vínculo atual, resolve laboratório → área �
 
 ### 6. Testes
 
-[quickstart.md](quickstart.md) cobre vetores técnicos, limites/classes/precisão/`clamp`, manifesto/hash/compatibilidade, parser fechado/null/legado, autorização/isolamento/inatividade, idempotência/timeout/concorrência, substituição/revogação, migration/OpenAPI/integração/E2E e regressões das IMP-003/004/005/007. Vetores científicos permanecem pendentes.
+[quickstart.md](quickstart.md) cobre vetores técnicos, limites/classes/precisão/`clamp`, manifesto/hash/compatibilidade, parser fechado/null/legado, autorização/isolamento/inatividade, idempotência/timeout/concorrência, substituição/revogação, migration/OpenAPI/integração/E2E e regressões das IMP-003/004/005/007/008. Vetores científicos permanecem pendentes.
 
 ### 7. Requirement coverage
 
@@ -176,8 +186,9 @@ Os cenários SC-001–SC-007 são materializados na matriz de unitários, integr
 | G2-SCI — validação definitiva | **NAO_VERIFICADO_VALIDACAO_POSTERIOR** | Revisão, calibração, vetores científicos e campo; não bloqueia a v0.1 rotulada |
 | G3-ENG — ciclo operacional | **RESOLVIDO DOCUMENTALMENTE PARA PLANEJAMENTO** | Implementar/testar autorização, transações, ciclo e auditoria |
 | IMP-007 | **INTEGRADA E RECONCILIADA NO BASELINE** | Não alterar agora; extensão futura deriva da fonte canônica da IMP-006 |
+| IMP-008 | **INTEGRADA E RECONCILIADA NO BASELINE** | Preservar mapa/lista sem camada IHFR; executar caracterização e regressão em T127; qualquer projeção diagnóstica permanece futura |
 
-O plano está completo e `landUseType` não possui pendência. Antes de codificar, o fluxo esperado é `$speckit-tasks` e, recomendado, `$speckit-analyze`; eles não foram executados nesta etapa.
+O plano e as tarefas `T001–T127` estão completos e `landUseType` não possui pendência. Antes de codificar, o fluxo esperado é uma nova execução independente de `$speckit-analyze`; ela não foi executada nesta reconciliação.
 
 ## Risks and Mitigations
 

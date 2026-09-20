@@ -238,6 +238,7 @@ description: "Tarefas executáveis da IMP-006 — Diagnóstico IHFR experimental
 - [ ] T124 Separar comandos executados, evidências reaproveitadas, validações humanas `NAO_VERIFICADO`, testes de campo futuros e limitações conhecidas em `specs/006-ihfr-diagnosis/pr-description.md`, sem inventar resultados
 - [ ] T125 Conferir que o texto efetivamente usado no PR corresponde ao HEAD validado e ao conteúdo de `specs/006-ihfr-diagnosis/pr-description.md`
 - [ ] T126 Executar `git diff --check`, conferir árvore e escopo finais e anexar o resultado à `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [ ] T127 Executar caracterização e regressão da IMP-008 integrada em `tests/unit/territorial-map-contracts.test.ts`, `tests/unit/territorial-map-openapi-contract.test.ts`, `tests/unit/territorial-map-service.test.ts`, `tests/unit/territorial-map-state.test.ts`, `tests/integration/territorial-map-route.test.ts` e `tests/e2e/territorial-map.spec.ts`, confirmando que mapa/lista/endpoint continuam funcionais e sem score, classe, risco, cor, diagnóstico, `landUseType`, payload ambiental ou auditoria restrita da IMP-006; registrar a reconciliação territorial futura como não bloqueante em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 
 ---
 
@@ -252,7 +253,7 @@ description: "Tarefas executáveis da IMP-006 — Diagnóstico IHFR experimental
 - **Phase 5** depende da implementação das duas histórias e é gate obrigatório de segurança/contrato.
 - **Phase 6** depende de T065/T066 e de autorização explícita para banco descartável.
 - **Phase 7** depende das Phases 3–6 e não converte conformidade técnica em validação científica.
-- **Phase 8** depende das evidências reais da Phase 7; T117–T121 são humanas/futuras e permanecem `NAO_VERIFICADO` até execução real.
+- **Phase 8** depende das evidências reais da Phase 7; T117–T121 são humanas/futuras e permanecem `NAO_VERIFICADO` até execução real; T127 depende da IMP-008 integrada e preserva sua fronteira sem adicionar camada IHFR.
 
 ### User story dependencies
 
@@ -315,14 +316,14 @@ T055 migration preflight || T056–T058 integração/concorrência/E2E
 |---|---|
 | US1; FR-001, FR-002, FR-005–FR-010; SC-001–SC-003, SC-005 | T023–T045, T084, T087–T093 |
 | US2; FR-003, FR-004, FR-011–FR-017; SC-004, SC-006, SC-007 | T046–T083, T086, T088–T103 |
-| FR-018 e fronteira IMP-007 | T007, T091, T109, T110, T114 |
+| FR-018 e fronteiras IMP-007/008 | T007, T091, T109, T110, T114, T127 |
 | Manifesto/hash/versões | T004, T012, T020, T047, T060, T080, T086 |
 | Suplemento e sete `landUseType` | T009–T011, T048, T061, T065–T066, T085 |
 | Avaliador W/S/V/T, clamp, precisão, qualidade e decomposição | T013, T017, T049–T052, T062–T064, T080 |
 | Estados e ciclo imutável | T010, T025, T034, T054–T057, T065–T072, T099–T103 |
 | Sete endpoints OpenAPI e segurança | T023, T026–T027, T032–T038, T056, T073–T076, T084, T087–T092 |
 | G1 / G2-ENG / G2-SCI / G3-ENG | T001–T008, T115–T121 |
-| Evidência e PR futuro | T116, T122–T126 |
+| Evidência e PR futuro | T116, T122–T127 |
 
 ## Implementation Strategy
 
@@ -340,4 +341,5 @@ T055 migration preflight || T056–T058 integração/concorrência/E2E
 - Não arredondar antes da apresentação e não usar `displayScore` para classe ou novo cálculo.
 - Não persistir suplemento candidato ausente/inválido, diagnóstico insuficiente ou sucesso parcial.
 - Não criar feed, dashboard, mapa, gráfico, recomendação, Python/FastAPI, serviço externo, IA ou processo autônomo.
+- Preservar a IMP-008 integrada: Leaflet não executa o IHFR, coordenadas não substituem entrada científica e auditoria restrita não alimenta o mapa; qualquer camada diagnóstica exige entrega futura própria.
 - Nenhum teste automatizado pode marcar revisão científica, vetor científico ou campo como aprovado.

@@ -4,9 +4,9 @@
 
 **Created**: 2026-09-16
 
-**Status**: Especificação e plano consolidados para `$speckit-tasks`; G1 fechado, `G2-ENG — landUseType` resolvido e rastreável para a v0.1 experimental, `G2-SCI` não verificado e G3 resolvido documentalmente. Implementação permanece pendente.
+**Status**: Especificação, plano e tarefas `T001–T127` consolidados para nova análise independente; G1 fechado, `G2-ENG — landUseType` resolvido e rastreável para a v0.1 experimental, `G2-SCI` não verificado e G3 resolvido documentalmente. Implementação permanece pendente.
 
-**Input**: IMP-006 — calcular, tornar vigente e consultar um diagnóstico IHFR experimental ligado à coleta e à área de origem, com contrato versionado, proveniência e ciclo imutável. Esta consolidação antecede `$speckit-tasks` e não implementa a feature.
+**Input**: IMP-006 — calcular, tornar vigente e consultar um diagnóstico IHFR experimental ligado à coleta e à área de origem, com contrato versionado, proveniência e ciclo imutável. Esta consolidação prepara nova análise independente e não implementa a feature.
 
 ## Authority and Scope
 
@@ -22,6 +22,8 @@
 - `DECISAO_CONFIRMADA` — a solicitação da equipe de 2026-09-18 atribui ao professor Fábio Mesquita a concepção científica da formulação histórica, seleciona `DOC-RAW-013` como base da primeira versão experimental e autoriza um contrato provisório de engenharia. A decisão exige os rótulos `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
 - `DECISAO_CONFIRMADA` — [ADR-0001](../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) é o registro canônico da matemática, dos conflitos, da compatibilidade e do ciclo operacional. O manifesto `ihfr-math-experimental-v0.1.0` tem `contractHash = sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`.
 - `DECISAO_EXPERIMENTAL_DE_ENGENHARIA` — a solicitação da equipe de 2026-09-19 confirmou focalmente a classificação de sete valores de `landUseType`, suas regras de predominância, invalidade, ausência, imutabilidade e aplicabilidade geral experimental. A seção 7 do ADR-0001 concentra fontes, hashes, alternativas e limites; não houve mudança do manifesto ou de seu hash.
+- `EVIDENCIA_IMPLEMENTACAO` — o PR #27 incorporou a IMP-008 no merge `df856194b3341137d6d863feefcb0a203deb5905`, com head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`. A IMP-006 incorporou essa baseline pelo merge normal `96dac7c`, preservando seus 11 commits próprios e resolvendo somente metadados documentais concorrentes de governança.
+- `EVIDENCIA_IMPLEMENTACAO` — a IMP-008 fornece uma projeção territorial privada e transitória de áreas-ponto e coletas confirmadas, com Leaflet/React-Leaflet, lista textual e endpoint próprio. Ela não consulta dados ambientais, não produz diagnóstico IHFR, não usa `landUseType`, não cria auditoria ou fonte de atividade e não altera schema, migrations ou contratos científicos integrados.
 - `PENDENCIA_DE_DECISAO` — a validação científica definitiva por especialistas, os vetores científicos e os testes de campo permanecem futuros. Essa pendência não impede a construção experimental, mas impede apresentar seus resultados como ciência definitiva.
 
 ## Clarifications
@@ -189,7 +191,7 @@ O conjunto ambiental não implementa `mathContractVersion`, `algorithmVersion` n
 | G2-SCI — Validação definitiva | `PENDENCIA_DE_DECISAO`: revisão especializada e campo | Pareceres, calibração, comparação, vetores científicos, amostra, método, métricas e limitações | `NAO_VERIFICADO_VALIDACAO_POSTERIOR`; não bloqueia construção experimental rotulada, mas proíbe alegação definitiva |
 | G3-ENG — Produção, responsabilidade e ciclo | `DECISAO_CONFIRMADA`: ADR-0001 §10 | Avaliador interno determinístico, OWNER/ADMIN, imutabilidade, estados, chave própria, concorrência, recuperação e auditoria definidos | `RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`; implementação pendente |
 
-O escopo documental e o plano estão prontos para `$speckit-tasks`. A ordem planejada começa pela entrada suplementar, depois manifesto/avaliador, persistência/ciclo, API/DTO, auditoria e testes. `$speckit-tasks` não foi executado nesta auditoria; análise e implementação permanecem posteriores.
+O escopo documental, o plano e as tarefas `T001–T127` estão prontos para nova execução independente de `$speckit-analyze`. A ordem planejada começa pela entrada suplementar, depois manifesto/avaliador, persistência/ciclo, API/DTO, auditoria e testes. Implementação permanece posterior e condicionada ao resultado dessa análise.
 
 As invariantes de G3 vigentes são as do ADR-0001 §10: OWNER/ADMIN calculam e transitam; MEMBER consulta; processo autônomo fica adiado; há no máximo um `CURRENT`; registros e entradas são imutáveis; transições são auditáveis; consulta expõe proveniência mínima e estado experimental sem identidades restritas.
 
@@ -217,7 +219,7 @@ Histórico preservado: a primeira leitura usou `d3fade93e71473b88e44bb473fb2adb9
 - **IMP-001 a IMP-004 — integradas**: fornecem acesso autenticado, laboratório, área e coleta confirmada. A IMP-006 deve preservar seus contratos observados na base integrada.
 - **IMP-005 — integrada**: o head `e775ebc` fornece o conjunto ambiental versionado implementado; sua fronteira matemática futura continua sem ciência ativável.
 - **IMP-007 — integrada sem projeção de diagnóstico**: o PR #26 integrou `9e3a818be1690298e70586ac640151fecba02b82` a `origin/development` no merge `10fdb8bbb8e4895614575fedc9de8e08a5121afe`. A IMP-006 incorporou essa baseline pelo merge normal `36243f4`. Resumo e histórico continuam sem DTO, evento, link, score, classe ou projeção de diagnóstico; a IMP-006 não modifica a IMP-007.
-- **IMP-008 — posterior**: mapa, gráficos, visualização analítica e acompanhamento territorial não pertencem à IMP-006.
+- **IMP-008 — integrada sem camada IHFR**: o PR #27 fornece mapa territorial Leaflet e lista acessível como fonte visual independente sobre áreas e coletas confirmadas. Coordenadas, pontos, relações territoriais e `CollectionArea.landType` não substituem `landUseType` nem qualquer entrada científica ausente. A IMP-006 não adiciona score, classe, risco, cor, gráfico ou diagnóstico ao mapa e não usa sua auditoria restrita como fonte pública. Visualização territorial do IHFR exige reconciliação futura, requisito e contrato próprios. Plotly permanece direção futura posterior à IMP-009 e fora desta implementação; Leaflet não executa nem substitui o avaliador IHFR.
 
 ### Fora do escopo
 
@@ -225,4 +227,4 @@ Validação científica definitiva, calibração regional, perfil `35/30/25/10`,
 
 ### Fontes e baseline
 
-Baseline original: `origin/development` `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`, com IMP-004 integrada. Reconciliação planejada: IMP-005 `1235387ded9854be20a92f8639a502a80a2bd952`, sucedendo a leitura inicial `d3fade93e71473b88e44bb473fb2adb9718f2f4c`. Baseline integrada vigente: head IMP-005 `e775ebcdc1112c0d18117e4023a578a4ef62cf1c`, merge PR #25 `5d9ca6f8f848867e8152bc25e86abc9a6e73358f`, incorporado à IMP-006 por `62b54fa8d98b2bce2c03d7b6e2181ed4c94ab07d`; head IMP-007 `9e3a818be1690298e70586ac640151fecba02b82`, merge PR #26 `10fdb8bbb8e4895614575fedc9de8e08a5121afe`, incorporado à IMP-006 pelo merge normal `36243f4`. A auditoria focal iniciou em `fbfc5c58bc2e91c80ac178d06ac4ec2a8089b152`, local/remoto `0/0`, com `origin/development` contido. Foram relidos os artefatos da IMP-006, contratos relevantes da IMP-005, schema e código somente para os campos existentes. O pacote Code-First foi excluído como autoridade científica desta análise; implementação técnica não foi promovida a aprovação científica.
+Baseline original: `origin/development` `37fb3a4fbf7dda04b9bc3b9f2fc1c64ed3b14e13`, com IMP-004 integrada. Reconciliação planejada: IMP-005 `1235387ded9854be20a92f8639a502a80a2bd952`, sucedendo a leitura inicial `d3fade93e71473b88e44bb473fb2adb9718f2f4c`. Baselines integradas preservadas: head IMP-005 `e775ebcdc1112c0d18117e4023a578a4ef62cf1c`, merge PR #25 `5d9ca6f8f848867e8152bc25e86abc9a6e73358f`, incorporado à IMP-006 por `62b54fa8d98b2bce2c03d7b6e2181ed4c94ab07d`; head IMP-007 `9e3a818be1690298e70586ac640151fecba02b82`, merge PR #26 `10fdb8bbb8e4895614575fedc9de8e08a5121afe`, incorporado por `36243f4`; head IMP-008 `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`, merge PR #27 e novo `origin/development` `df856194b3341137d6d863feefcb0a203deb5905`, incorporado à IMP-006 pelo merge normal `96dac7c`. `origin/development@df85619` é ancestral do HEAD reconciliado. Foram relidos os artefatos das IMP-006/008, os contratos relevantes das IMP-005/007 e o delta completo do PR #27. O pacote Code-First não foi promovido a autoridade científica; implementação técnica não foi promovida a aprovação científica.

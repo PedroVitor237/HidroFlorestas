@@ -103,11 +103,19 @@
 
 ## R-013 — Estratégia de testes
 
-**Decision**: separar vetores técnicos derivados do manifesto de vetores científicos futuros. Avaliador/hash em unitários; autorização/ciclo/concorrência em integração; constraints/triggers em migration; jornada mínima E2E; regressões IMP-003/004/005/007.
+**Decision**: separar vetores técnicos derivados do manifesto de vetores científicos futuros. Avaliador/hash em unitários; autorização/ciclo/concorrência em integração; constraints/triggers em migration; jornada mínima E2E; regressões IMP-003/004/005/007/008.
 
 **Rationale**: testes técnicos provam conformidade executável, não validade científica. PostgreSQL real é necessário para concorrência e triggers.
 
 **Alternatives considered**: somente mocks; chamar vetores derivados de científicos; E2E como única camada.
+
+## R-014 — Baseline territorial da IMP-008
+
+**Decision**: planejar sobre `origin/development` `df856194b3341137d6d863feefcb0a203deb5905`, que integrou a IMP-008 pelo PR #27 com head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`, incorporado à IMP-006 pelo merge normal `96dac7c`. Preservar o mapa territorial como projeção independente e adicionar somente uma regressão explícita da fronteira na tarefa T127.
+
+**Rationale**: o delta real da IMP-008 não altera schema, migrations, dependências, medições ambientais, contratos científicos, autorização ou semântica de laboratório inativo. O endpoint territorial consulta apenas áreas e a tupla confirmada de coletas, não cria fonte paralela, não expõe auditoria e não contém diagnóstico, `landUseType`, score, classe, Plotly ou camada científica.
+
+**Alternatives considered**: projetar IHFR automaticamente no mapa, rejeitada por ausência de requisito e contrato próprios; usar coordenadas ou `CollectionArea.landType` como entrada científica, rejeitada por incompatibilidade com o suplemento imutável; alimentar o mapa pela auditoria restrita, rejeitada por privacidade e fonte de verdade; omitir regressão territorial, rejeitada porque a integração introduziu uma superfície existente que a IMP-006 deve preservar.
 
 ## Resolved Unknowns
 

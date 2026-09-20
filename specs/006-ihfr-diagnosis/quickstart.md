@@ -188,7 +188,11 @@ Confirmar explicitamente:
 - captura/leitura ambiental, parser, idempotência e imutabilidade da IMP-005;
 - resumo/histórico, paginação e minimização da IMP-007;
 - dashboard continua contendo somente `AREA_CREATED` e `COLLECTION_CONFIRMED` nesta entrega;
+- mapa territorial, lista textual, endpoint privado e minimização da IMP-008;
+- mapa permanece sem score, classe, risco, cor, diagnóstico, `landUseType`, payload ambiental ou auditoria restrita da IMP-006;
 - nenhuma nova fonte paralela de atividade/auditoria.
+
+Executar também os testes territoriais unitários e de integração e a spec E2E `tests/e2e/territorial-map.spec.ts`, com tiles interceptados conforme o contrato da IMP-008. Essa regressão preserva o mapa existente; não autoriza adicionar camada IHFR.
 
 ## 9. Evidence record
 

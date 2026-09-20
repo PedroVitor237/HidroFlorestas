@@ -13,3 +13,12 @@
 - Hash: `contractHash = sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`.
 - Validação: os vetores desta entrega são técnicos e derivados do manifesto; vetores científicos, revisão especializada, calibração e testes de campo permanecem pendentes.
 - Compromisso: evidência especializada ou de campo divergente produzirá nova versão/hash e novo diagnóstico, sem alterar resultados históricos.
+
+## Integração territorial preservada
+
+- A IMP-008 já está integrada pelo PR #27; seu mapa territorial Leaflet e sua lista textual permanecem preservados como projeção independente de áreas e coletas confirmadas.
+- Esta entrega não adiciona score, classe, risco, cor, diagnóstico ou auditoria restrita ao mapa. Visualização territorial do IHFR permanece evolução futura com requisito, contrato e minimização próprios.
+- Leaflet não executa nem substitui o cálculo IHFR. Coordenadas, projeções territoriais e `CollectionArea.landType` não substituem `landUseType` nem entradas científicas ausentes.
+- Plotly permanece direção futura posterior à IMP-009 e não integra esta implementação.
+
+Antes do futuro PR, T123 deve acrescentar links relativos para ADR-0001, manifesto, schema do suplemento, spec, plano, pesquisa, modelo de dados, OpenAPI, quickstart e evidência de implementação; T124 deve separar comandos realmente executados, evidências reaproveitadas, validações humanas pendentes e limitações, sem inventar resultados.

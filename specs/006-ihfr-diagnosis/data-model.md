@@ -223,3 +223,9 @@ A migration é aditiva: cria enums/models/índices/triggers e não modifica dado
 - rollback seguro antes de produção conforme prática do projeto.
 
 O model legado permanece compilável e intacto. Nenhuma linha antiga recebe versão/hash ou aparece no endpoint experimental.
+
+## 11. Fronteira com a projeção territorial integrada
+
+A IMP-008 não acrescenta entidade persistente: seu mapa e sua lista derivam transitoriamente de `CollectionArea` e `CollectionData`. Nenhum model desta IMP-006 alimenta automaticamente essa projeção. `CurrentExperimentalIHFRDiagnosis`, snapshots e eventos restritos permanecem fora do DTO territorial.
+
+Coordenadas, ponto da área e `CollectionArea.landType` não constituem suplemento nem substituem `landUseType`. Eventual relação territorial futura deve projetar dados mínimos a partir da fonte canônica do diagnóstico, sem copiar auditoria, criar contador ou introduzir segunda fonte de verdade.
