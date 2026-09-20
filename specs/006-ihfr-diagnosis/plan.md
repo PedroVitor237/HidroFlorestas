@@ -1,10 +1,10 @@
 # Implementation Plan: Diagnóstico IHFR experimental
 
-**Branch**: `006-ihfr-diagnosis` | **Date**: 2026-09-19 | **Spec**: [spec.md](spec.md)
+**Branch**: `006-ihfr-diagnosis` | **Date**: 2026-09-20 | **Spec**: [spec.md](spec.md)
 
 **Input**: `specs/006-ihfr-diagnosis/spec.md`
 
-**Status**: planejamento técnico concluído para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos para planejamento; `G2-SCI` permanece futuro e não é simulado por testes técnicos. O pacote aguarda nova análise independente antes da implementação.
+**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos para planejamento; `G2-SCI` permanece futuro e não é simulado por testes técnicos. O pacote aguarda nova análise independente antes da implementação.
 
 ## Summary
 
@@ -30,7 +30,7 @@ Produzir, tornar vigente, consultar, substituir e revogar um diagnóstico IHFR e
 
 **Performance Goals**: sem meta de latência ou volume autorizada. Uma operação lê um conjunto ambiental, um suplemento e um manifesto pequeno; serialização é por coleta e a resposta não executa consulta histórica geral.
 
-**Constraints**: exatamente um `CURRENT` por coleta; entradas/resultados imutáveis; laboratório inativo somente leitura; OWNER/ADMIN escrevem e MEMBER consulta; versões explicitamente compatíveis; `null` nunca vira zero; sem arredondamento intermediário; DTO mínimo e `Cache-Control: no-store`.
+**Constraints**: exatamente um `CURRENT` por coleta; entradas/resultados imutáveis; laboratório inativo somente leitura; OWNER/ADMIN escrevem e MEMBER consulta; versões explicitamente compatíveis; opcional conhecido ausente/`null` permitido é excluído, entrada desconhecida/alias/caixa/`OTHER(S)` é `INVALID_INPUT`, `null` nunca vira zero; sem arredondamento intermediário; DTO mínimo e `Cache-Control: no-store`.
 
 **Scale/Scope**: elegibilidade, cálculo/criação ou substituição, consulta do vigente, detalhe contextual, revogação e recuperação por chave. Dashboard, lista histórica pública, mapa, gráficos, recomendações, validação científica definitiva e manutenção da IMP-005/007 ficam fora.
 
@@ -42,7 +42,7 @@ Gate avaliado antes da Phase 0 e novamente após o design.
 |---|---|---|
 | I — Hierarquia de fontes | PASS — ADR-0001, manifesto, spec/checklist e contratos integrados da IMP-005 governam seus assuntos; código comprova somente baseline. | PASS — o desenho não reabre os 15 conflitos nem promove histórico ou legado a contrato atual. |
 | II — Entregas verticais | PASS — uma jornada contextual produz e consulta o diagnóstico experimental. | PASS — dashboard/histórico e ciência definitiva continuam fora; reconciliação com IMP-007 não bloqueia o núcleo. |
-| III — Especificação por funcionalidade | PASS — branch e diretório `specs/006-ihfr-diagnosis/**` confirmados pelo setup. | PASS — plano, pesquisa, modelo, contratos, quickstart e tarefas `T001–T127` estão no diretório da feature. |
+| III — Especificação por funcionalidade | PASS — branch e diretório `specs/006-ihfr-diagnosis/**` confirmados pelo setup. | PASS — plano, pesquisa, modelo, contratos, quickstart e tarefas `T001–T134` remediadas estão no diretório da feature. |
 | IV — Evidência e rastreabilidade | PASS — decisão, implementação, inferência e recomendação permanecem separadas. | PASS — cada resultado conserva quatro versões/referências, hash, origem, transformação e rótulos experimentais. |
 | V — Qualidade e segurança | PASS — riscos centrais são isolamento, autorização, precisão, imutabilidade, concorrência e minimização. | PASS — API contextual, DTO fechado, transações, constraints, auditoria restrita e matriz de testes cobrem os riscos. |
 | VI — Documentação evolutiva | PASS — `docs/raw/**` permanece imutável e G2-SCI explícito. | PASS — alteração normativa exige nova versão/hash e nunca reinterpreta resultado histórico. |
@@ -66,11 +66,12 @@ specs/006-ihfr-diagnosis/
 ├── pr-description.md
 └── contracts/
     ├── ihfr-math-experimental-v0.1.0.json
+    ├── ihfr-math-experimental-v0.1.1.json
     ├── ihfr-diagnosis-input-experimental-v0.1.0.schema.json
     └── ihfr-diagnosis-api.openapi.yaml
 ```
 
-`.specify/feature.json` aponta localmente para esta feature e é ignorado pelo Git. `tasks.md` contém a sequência executável `T001–T127`; `pr-description.md` prepara somente o texto de um PR futuro.
+`.specify/feature.json` aponta localmente para esta feature e é ignorado pelo Git. `tasks.md` contém a sequência executável `T001–T134`; `pr-description.md` prepara somente o texto de um PR futuro.
 
 ### Source Code (repository root)
 
@@ -78,7 +79,7 @@ Estrutura planejada; nenhum destes arquivos de implementação é criado nesta e
 
 ```text
 prisma/schema.prisma
-prisma/migrations/<timestamp>_experimental_ihfr_diagnosis/migration.sql
+prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql
 src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/
 ├── eligibility/route.ts
 ├── current/route.ts
@@ -103,6 +104,7 @@ tests/{fixtures,unit,integration,migration,e2e}/
 - Baseline deste plano: merge normal de `origin/development` na IMP-006, commit `36243f4`, sem conflito e preservando os commits próprios.
 - IMP-008: head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`, integrada pelo PR #27 no merge `df856194b3341137d6d863feefcb0a203deb5905`.
 - Baseline reconciliada atual: merge normal `96dac7c` de `origin/development@df85619` na IMP-006, com dois conflitos exclusivamente documentais em `TECH_DECISIONS.md` e `docs/governance/PENDING_DECISIONS.md`; a resolução preservou integralmente TD-009/TD-012/TD-015/TD-016 e a confirmação de TD-010. `origin/development` tornou-se ancestral do HEAD.
+- Estado inicial desta remediação: HEAD local/remoto `66e22f486bec9ab5417c287a2379d0da631e61ae`, divergência `0/0`, working tree limpa; `origin/development@df856194b3341137d6d863feefcb0a203deb5905` e o head IMP-008 `c6c13f7dc97d4ed873f67cb99fb6c36d60579601` são ancestrais.
 
 ### Fronteira com a IMP-007 integrada
 
@@ -124,13 +126,13 @@ A IMP-006 não modifica o mapa nem projeta diagnóstico nesta entrega. Leaflet n
 
 ### 1. Entrada suplementar
 
-O contrato [ihfr-diagnosis-input-experimental-v0.1.0.schema.json](contracts/ihfr-diagnosis-input-experimental-v0.1.0.schema.json) descreve o suplemento confirmado fechado e contém `inputContractVersion`, `landUseType` e `provenance`. A fronteira HTTP aceita um candidato ainda sem `landUseType` somente para produzir `INSUFFICIENT_DATA`; ele não satisfaz o schema nem é persistido. IDs contextuais e autoria vêm do servidor. O suplemento válido é criado atomicamente com um diagnóstico bem-sucedido e nasce imutável, ligado a `CollectionData` e `EnvironmentalMeasurementSet`. Requests insuficientes/incompatíveis podem ter operação terminal recuperável, mas não fabricam suplemento confirmado nem diagnóstico. Legado não recebe backfill.
+O contrato [ihfr-diagnosis-input-experimental-v0.1.0.schema.json](contracts/ihfr-diagnosis-input-experimental-v0.1.0.schema.json) descreve o suplemento confirmado fechado e contém `inputContractVersion`, `landUseType` e `provenance`. A fronteira HTTP aceita um candidato ainda sem `landUseType` somente para produzir `INSUFFICIENT_DATA`; ele não satisfaz o schema nem é persistido. IDs contextuais e autoria vêm do servidor. O suplemento válido é criado ou reutilizado atomicamente com um diagnóstico bem-sucedido e nasce imutável, pertencente a `CollectionData` e referenciando `EnvironmentalMeasurementSet`. A deduplicação é `UNIQUE(collectionDataId, payloadHash)`; um suplemento pode alimentar N diagnósticos compatíveis, sem `UNIQUE(inputSupplementId)`. Nova observação cria novo suplemento; nova versão matemática compatível pode reutilizar o existente. Requests insuficientes/incompatíveis podem ter operação terminal recuperável, mas não fabricam suplemento confirmado nem diagnóstico. Legado não recebe backfill.
 
 ### 2. Manifesto e avaliador
 
-O carregador lê o JSON empacotado server-side, valida forma/versão, remove somente `contractHash`, canonicaliza objetos por chaves lexicográficas recursivas preservando arrays e calcula SHA-256 UTF-8. O valor deve ser exatamente `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`; divergência impede ativação.
+O carregador lê o JSON empacotado server-side, valida forma/versão, remove somente `contractHash`, canonicaliza objetos por chaves lexicográficas recursivas preservando arrays e calcula SHA-256 UTF-8. Para novos diagnósticos, o valor deve ser exatamente `sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89` da versão `ihfr-math-experimental-v0.1.1`; divergência impede ativação. A v0.1.0 e seu hash ficam preservados somente para reprodutibilidade histórica.
 
-`evaluate(input, manifest)` é puro: não usa banco, sessão, relógio ou rede. Aceita somente as quatro versões explicitadas e preserva valores brutos e cada transformação. `terrain.slopePercent = null` produz `INSUFFICIENT_DATA`; acima de 45 permanece intacto na origem e aparece na decomposição com `raw`, `normalizedInput=45`, fórmula, score e `clamped=true`.
+`evaluate(input, manifest)` é puro: não usa banco, sessão, relógio ou rede. Aceita somente as quatro versões explicitadas e preserva valores brutos e cada transformação. Opcional conhecido ausente, `null` permitido ou não aplicável é excluído da média; campo/enum desconhecido, alias, caixa divergente e `OTHER(S)` retornam `INVALID_INPUT` e nunca são ignorados. `terrain.slopePercent = null` produz `INSUFFICIENT_DATA`; acima de 45 permanece intacto na origem e aparece na decomposição com `raw`, `normalizedInput=45`, fórmula, score e `clamped=true`.
 
 ### 3. Persistência e ciclo
 
@@ -153,13 +155,25 @@ Precedência: autenticar/autorizar → validar contexto/estado → resolver repl
 
 ### 5. API, segurança e privacidade
 
-[ihfr-diagnosis-api.openapi.yaml](contracts/ihfr-diagnosis-api.openapi.yaml) define elegibilidade, criação/substituição, vigente, detalhe, revogação e recuperação, sem listagem completa. Todas as respostas usam `Cache-Control: no-store` e DTOs fechados.
+[ihfr-diagnosis-api.openapi.yaml](contracts/ihfr-diagnosis-api.openapi.yaml) define seis operações HTTP e sete comportamentos funcionais: elegibilidade, vigente, detalhe, revogação, recuperação e o POST compartilhado para CREATE/REPLACE discriminado por `mode`. CREATE admite `expectedCurrentDiagnosisId` ausente ou `null`; REPLACE exige UUID. Elegibilidade malformada ou com categoria inválida retorna `400 INVALID_REQUEST`; ausência válida ou predominância indeterminável retorna outcome `INSUFFICIENT_DATA`. `PublicDiagnosis.areaId` é obrigatório e derivado no servidor. Não há listagem completa. Todas as respostas usam `Cache-Control: no-store` e DTOs fechados.
 
 O servidor exige conta ativa e vínculo atual, resolve laboratório → área → coleta → conjunto/suplemento/diagnóstico e retorna `404` indistinguível. OWNER/ADMIN escrevem em laboratório ativo; MEMBER consulta; laboratório inativo mantém leitura; vínculo revogado elimina acesso. Ator, chave, request hash, payload completo e evidência restrita não entram no DTO normal.
 
 ### 6. Testes
 
-[quickstart.md](quickstart.md) cobre vetores técnicos, limites/classes/precisão/`clamp`, manifesto/hash/compatibilidade, parser fechado/null/legado, autorização/isolamento/inatividade, idempotência/timeout/concorrência, substituição/revogação, migration/OpenAPI/integração/E2E e regressões das IMP-003/004/005/007/008. Vetores científicos permanecem pendentes.
+[quickstart.md](quickstart.md) cobre vetores técnicos, limites/classes/precisão/`clamp`, manifesto/hash/compatibilidade, parser fechado/null/legado, autorização/isolamento/inatividade, idempotência/timeout/concorrência, substituição/revogação, migration/OpenAPI/integração/E2E e regressões das IMP-003/004/005/007/008. PostgreSQL usa schema isolado por execução, fixtures explícitas e teardown obrigatório em finalização, sem desabilitar triggers. Vetores científicos permanecem pendentes.
+
+### 6.1 Ordem executável obrigatória
+
+1. setup e guards; caracterização da baseline integrada;
+2. preflight de banco/legado e reserva do caminho `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`;
+3. design Prisma, criação da migration, `prisma format`, inspeção, `prisma validate`, aplicação em banco isolado e `prisma generate`;
+4. fixtures/lifecycle de schema e então shells compiláveis;
+5. testes comportamentais realmente RED, implementação, unitários verdes, integração PostgreSQL verde e E2E;
+6. regressões, incluindo a IMP-008 territorial, antes do teardown global;
+7. teardown verificável, evidências, validações humanas registradas, PR e encerramento final.
+
+Rollback transacional da operação, limpeza de fixture entre cenários, rollback da migration em schema descartável, descarte do schema da execução e recuperação operacional de produção são procedimentos distintos. O teardown deve ocorrer mesmo após falha e verificar ausência de schemas, registros órfãos e processos remanescentes.
 
 ### 7. Requirement coverage
 
@@ -168,13 +182,15 @@ O servidor exige conta ativa e vínculo atual, resolve laboratório → área �
 | FR-001–FR-002 | autorização contextual, capacidades de leitura/escrita e resolução integral da cadeia na API/serviço |
 | FR-003–FR-006 | carregador/hash, matriz de compatibilidade, snapshot com versões separadas e DTO público |
 | FR-007–FR-010 | estados distintos, laboratório inativo, 404 indistinguível, auditoria separada e legado isolado |
-| FR-011–FR-012 | transação atômica, modelos imutáveis, suplemento fechado e insuficiência por slope/land use |
+| FR-011–FR-012 | transação atômica, modelos imutáveis, suplemento 1:N deduplicado, distinção entre ausência conhecida e entrada desconhecida, insuficiência por slope/land use |
 | FR-013–FR-014 | ponteiro único, eventos de ciclo, expected current, ledger idempotente e recuperação |
 | FR-015–FR-016 | avaliador puro TypeScript, quatro dimensões, clamp, precisão e apresentação |
 | FR-017 | evento/evidência restritos, autoria interna e minimização do DTO |
-| FR-018 | limites explícitos e não alteração das IMP-005/007 |
+| FR-018 | limites explícitos e não alteração das IMP-005/007/008 |
+| FR-019 | OpenAPI com seis operações/sete comportamentos, discriminador `mode`, condicionais CREATE/REPLACE e `400 INVALID_REQUEST` |
+| FR-020 | schema PostgreSQL isolado, fixtures completas, triggers ativos e teardown verificável |
 
-Os cenários SC-001–SC-007 são materializados na matriz de unitários, integração, migration e E2E do quickstart. A cobertura é planejada; não afirma que a IMP-006 já esteja implementada.
+Os cenários SC-001–SC-008 são materializados na matriz de unitários, integração, migration e E2E do quickstart. A cobertura é planejada; não afirma que a IMP-006 já esteja implementada.
 
 ## Gates
 
@@ -186,9 +202,9 @@ Os cenários SC-001–SC-007 são materializados na matriz de unitários, integr
 | G2-SCI — validação definitiva | **NAO_VERIFICADO_VALIDACAO_POSTERIOR** | Revisão, calibração, vetores científicos e campo; não bloqueia a v0.1 rotulada |
 | G3-ENG — ciclo operacional | **RESOLVIDO DOCUMENTALMENTE PARA PLANEJAMENTO** | Implementar/testar autorização, transações, ciclo e auditoria |
 | IMP-007 | **INTEGRADA E RECONCILIADA NO BASELINE** | Não alterar agora; extensão futura deriva da fonte canônica da IMP-006 |
-| IMP-008 | **INTEGRADA E RECONCILIADA NO BASELINE** | Preservar mapa/lista sem camada IHFR; executar caracterização e regressão em T127; qualquer projeção diagnóstica permanece futura |
+| IMP-008 | **INTEGRADA E RECONCILIADA NO BASELINE** | Preservar mapa/lista sem camada IHFR; executar caracterização e regressão territorial antes de teardown/evidências; qualquer projeção diagnóstica permanece futura |
 
-O plano e as tarefas `T001–T127` estão completos e `landUseType` não possui pendência. Antes de codificar, o fluxo esperado é uma nova execução independente de `$speckit-analyze`; ela não foi executada nesta reconciliação.
+O plano e as tarefas `T001–T134` remediados estão completos e `landUseType` não possui pendência. Antes de codificar, o fluxo esperado é uma nova execução independente de `$speckit-analyze`; ela não foi executada nesta remediação.
 
 ## Risks and Mitigations
 
@@ -197,11 +213,13 @@ O plano e as tarefas `T001–T127` estão completos e `landUseType` não possui 
 | Legado parecer contrato atual | Models experimentais novos; nenhum backfill ou leitura do `IHFRDiagnosis` legado |
 | Alteração silenciosa do manifesto | canonicalização independente, hash fixo e ativação fail-closed |
 | Dois vigentes | ponteiro `UNIQUE(collectionDataId)`, lock da coleta e transação serializável |
+| Suplemento bloqueado por cardinalidade errada | `UNIQUE(collectionDataId,payloadHash)` no suplemento e FK não única no diagnóstico; testes de reuso compatível |
 | Resultado mutável para refletir ciclo | snapshot imutável; estado derivado de ponteiro + eventos |
 | Replay vazar dado após perda de acesso | autorização contextual antes de qualquer projeção recuperada |
 | Auditoria virar histórico público | eventos restritos sem endpoint normal; futura IMP-007 usa projeção mínima |
 | Score apresentado alterar classe | classe sobre score bruto; half-up apenas na apresentação |
 | G2-SCI confundido com testes verdes | quatro rótulos obrigatórios e separação de vetores técnicos/científicos |
+| Vazamento de banco após falha de teste | schema por execução, finalização obrigatória e asserções de zero órfãos/processos |
 
 ## Complexity Tracking
 

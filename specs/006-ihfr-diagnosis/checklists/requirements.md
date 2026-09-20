@@ -31,7 +31,7 @@
 
 ## Validation Evidence
 
-As iterações 1 a 4 abaixo são evidências históricas preservadas. Seus estados de gates são substituídos, para o recorte experimental v0.1, pela Iteração 5; não devem ser lidos como estado vigente.
+As iterações 1 a 5 abaixo são evidências históricas preservadas e não são homologadas retroativamente. A Iteração 6 registra os achados da análise independente; somente a Iteração 7 representa o estado documental corrente.
 
 Iteração 1: 16/16 critérios documentais atendidos. US1 cobre consulta, ausência, origem, inatividade, isolamento e legado; US2 cobre associação condicionada, rejeições, preservação e recuperação. FR-001–FR-015 são verificáveis pelos cenários e limites; SC-001–SC-007 definem resultados observáveis sem escolher arquitetura ou ciência ausentes.
 
@@ -61,4 +61,32 @@ Iteração 5: os 16 critérios permanecem atendidos após a auditoria focal de `
 
 `G2-ENG — landUseType` está `RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`; `G2-ENG` geral está `RESOLVIDO_PARA_PLANEJAMENTO`; `G2-SCI` permanece `NAO_VERIFICADO_VALIDACAO_POSTERIOR`. A fronteira HTTP distingue candidato incompleto, que produz `INSUFFICIENT_DATA`, de suplemento confirmado, que continua estrito e imutável. Manifesto, versão e hash matemáticos não mudaram. A próxima skill aplicável é `$speckit-tasks`; ela não foi executada nesta auditoria.
 
-Iteração 6: os 16 critérios permanecem atendidos após incorporar `origin/development@df856194b3341137d6d863feefcb0a203deb5905` pelo merge normal `96dac7c`. O PR #27 integrou a IMP-008 no head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`; seu mapa Leaflet e sua lista são projeções independentes de áreas/coletas, sem IHFR, `landUseType`, camada científica ou auditoria paralela. A tarefa T127 foi acrescentada para caracterização e regressão explícitas dessa fronteira, preservando T001–T126. O pacote aguarda nova execução independente de `$speckit-analyze`; nenhuma implementação foi executada nesta reconciliação.
+Iteração 6 — análise independente histórica: após incorporar `origin/development@df856194b3341137d6d863feefcb0a203deb5905` pelo merge normal `96dac7c`, a análise encontrou 12 inconsistências — 5 `HIGH`, 5 `MEDIUM` e 2 `LOW` — e não aprovou o pacote como pronto. Os itens abaixo registram o estado naquele momento e permanecem propositalmente desmarcados; esta seção não é reescrita para simular aprovação retroativa.
+
+- [ ] `HIGH` I1 — política contraditória para entrada desconhecida no manifesto
+- [ ] `HIGH` I2 — cardinalidade 1:1 do suplemento incompatível com reuso entre diagnósticos
+- [ ] `HIGH` I3 — testes GREEN de US1 antes da persistência/fixtures necessárias
+- [ ] `HIGH` I4 — preflight, migration, aplicação, generate e GREEN em ordem não executável
+- [ ] `HIGH` G1 — fixtures, isolamento e teardown PostgreSQL insuficientemente definidos
+- [ ] `MEDIUM` I5 — contagem de seis operações HTTP versus sete comportamentos ambígua
+- [ ] `MEDIUM` U1 — condicionais CREATE/REPLACE e erro de elegibilidade incompletos no OpenAPI
+- [ ] `MEDIUM` G2 — `PublicDiagnosis.areaId` ausente/inconsistente
+- [ ] `MEDIUM` I6 — marcações `[P]` concorrendo sobre os mesmos arquivos
+- [ ] `MEDIUM` I7 — encerramento antecedendo a regressão territorial
+- [ ] `LOW` U2 — caminho de migration ainda era placeholder
+- [ ] `LOW` I8 — checklist não refletia a análise corrente
+
+Iteração 7 — remediação focal corrente, 2026-09-20: os 16 critérios de qualidade documental estão novamente atendidos no conteúdo atual, sem alterar o registro histórico da Iteração 6. A v0.1.0 foi preservada integralmente; a clarificação normativa gera `ihfr-math-experimental-v0.1.1` e hash novo, sem mudança de fórmula, pesos ou scores.
+
+- [x] I1 — ausência opcional conhecida é excluída; campo/enum desconhecido, alias, caixa e `OTHER(S)` retornam `INVALID_INPUT`; `null` nunca vira zero
+- [x] I2 — suplemento pertence à coleta, é deduplicado por `(collectionDataId,payloadHash)` e tem relação 1:N com diagnósticos
+- [x] I3/I4 — tarefas ordenam setup, caracterização, banco/Prisma/migration, apply/generate, fixtures, shells, RED real, implementação e verdes
+- [x] G1 — schema por execução, matriz explícita de fixtures, triggers ativos e teardown após falha estão definidos
+- [x] I5/U1 — OpenAPI declara seis operações/sete comportamentos, `mode` discriminado, condicionais e `400 INVALID_REQUEST`
+- [x] G2 — `PublicDiagnosis.areaId` é obrigatório, UUID, coerente e derivado no servidor
+- [x] I6 — `[P]` foi recalculado somente para arquivos independentes
+- [x] I7 — regressão territorial antecede teardown, evidências e fechamento; o fechamento é a última tarefa real
+- [x] U2 — caminho reservado é `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`, com stop condition
+- [x] I8 — esta iteração registra a remediação sem reclassificar as anteriores
+
+Revisão especializada e testes de campo continuam `NAO_VERIFICADO`, classificados como `VALIDACAO_POSTERIOR`. Isso não bloqueia o contrato experimental rotulado, mas bloqueia sua promoção a contrato científico definitivo. Nenhuma implementação foi executada nesta remediação; o próximo passo é uma nova análise independente.

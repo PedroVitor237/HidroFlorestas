@@ -1,11 +1,13 @@
 openapi: 3.1.0
 info:
   title: IMP-006 Diagnóstico IHFR experimental
-  version: 0.1.0
+  version: 0.1.1
   description: >-
     API contextual para elegibilidade, cálculo, consulta, substituição, revogação e
     recuperação idempotente. CONTRATO_EXPERIMENTAL; VALIDACAO_CIENTIFICA_PENDENTE;
     SUJEITO_A_RECALIBRACAO; NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO.
+    São seis operações HTTP e sete comportamentos funcionais, pois CREATE e REPLACE
+    compartilham o mesmo POST discriminado por `mode`.
 servers:
   - url: /
 security:
@@ -30,6 +32,7 @@ paths:
             type: string
             enum: [FOREST, AGROFORESTRY, CROPLAND, PASTURE, DEGRADED_PASTURE, BARE_SOIL, URBAN]
       responses:
+        '400': { $ref: '#/components/responses/InvalidRequest' }
         '200':
           description: Elegibilidade atual autorizada.
           headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
@@ -201,6 +204,7 @@ components:
       required: true
       schema: { $ref: '#/components/schemas/Uuid' }
   responses:
+    InvalidRequest: { $ref: '#/components/responses/Error400InvalidRequest' }
     InvalidInput: { $ref: '#/components/responses/Error400' }
     Unauthenticated: { $ref: '#/components/responses/Error401' }
     Forbidden: { $ref: '#/components/responses/Error403' }
@@ -212,6 +216,20 @@ components:
       description: Request fechado inválido.
       headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
       content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
+    Error400InvalidRequest:
+      description: Query malformada ou com categoria/estrutura inválida.
+      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorEnvelope'
+              - type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code: { const: INVALID_REQUEST }
     Error401:
       description: Sessão ausente/inválida ou conta inelegível.
       headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
@@ -284,24 +302,46 @@ components:
             kind: { type: string, enum: [FIELD_OBSERVATION, AUTHORIZED_RECORD] }
             observedAt: { type: string, format: date-time }
     CalculateRequest:
+      oneOf:
+        - $ref: '#/components/schemas/CalculateCreateRequest'
+        - $ref: '#/components/schemas/CalculateReplaceRequest'
+      discriminator:
+        propertyName: mode
+        mapping:
+          CREATE: '#/components/schemas/CalculateCreateRequest'
+          REPLACE: '#/components/schemas/CalculateReplaceRequest'
+    CalculateCreateRequest:
       type: object
       additionalProperties: false
-      required: [action, expectedCurrentDiagnosisId, supplement, versions]
+      required: [mode, supplement, versions]
       properties:
-        action: { type: string, enum: [CREATE, REPLACE] }
+        mode: { const: CREATE }
         expectedCurrentDiagnosisId:
-          oneOf: [{ $ref: '#/components/schemas/Uuid' }, { type: 'null' }]
-          description: Deve ser null em CREATE e obrigatório em REPLACE.
+          type: 'null'
+          description: Pode ser null ou ausente em CREATE.
         supplement: { $ref: '#/components/schemas/SupplementCandidateInput' }
         versions:
-          type: object
-          additionalProperties: false
-          required: [measurementContractVersion, mathContractVersion, algorithmVersion, contractHash]
-          properties:
-            measurementContractVersion: { const: ihfr-measurement-v1 }
-            mathContractVersion: { const: ihfr-math-experimental-v0.1.0 }
-            algorithmVersion: { const: ihfr-evaluator-ts-v0.1.0 }
-            contractHash: { const: 'sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b' }
+          $ref: '#/components/schemas/VersionSelection'
+    CalculateReplaceRequest:
+      type: object
+      additionalProperties: false
+      required: [mode, expectedCurrentDiagnosisId, supplement, versions]
+      properties:
+        mode: { const: REPLACE }
+        expectedCurrentDiagnosisId:
+          $ref: '#/components/schemas/Uuid'
+        supplement: { $ref: '#/components/schemas/SupplementCandidateInput' }
+        versions:
+          $ref: '#/components/schemas/VersionSelection'
+    VersionSelection:
+      type: object
+      additionalProperties: false
+      required: [measurementContractVersion, mathContractVersion, algorithmVersion, contractHash]
+      properties:
+        measurementContractVersion: { const: ihfr-measurement-v1 }
+        mathContractVersion: { const: ihfr-math-experimental-v0.1.1 }
+        algorithmVersion: { const: ihfr-evaluator-ts-v0.1.0 }
+        contractHash: { const: 'sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89' }
     RevokeRequest:
       type: object
       additionalProperties: false
@@ -312,9 +352,13 @@ components:
     EligibilityResponse:
       type: object
       additionalProperties: false
-      required: [eligible, reasons, hasCurrentDiagnosis]
+      required: [eligible, outcome, reasons, hasCurrentDiagnosis]
       properties:
         eligible: { type: boolean }
+        outcome:
+          type: string
+          enum: [ELIGIBLE, INSUFFICIENT_DATA, INCOMPATIBLE_VERSION]
+          description: Ausência válida ou predominância indeterminável usa INSUFFICIENT_DATA; entrada estruturalmente inválida usa HTTP 400.
         reasons:
           type: array
           uniqueItems: true
@@ -355,9 +399,13 @@ components:
     PublicDiagnosis:
       type: object
       additionalProperties: false
-      required: [id, collectionId, environmentalMeasurementSetId, inputSupplementId, lifecycleState, rawScore, displayScore, ihfrClass, dataQuality, componentScores, decomposition, drivers, explanation, versions, calculatedAt, validFrom, scientificState, scientificLabels]
+      required: [id, areaId, collectionId, environmentalMeasurementSetId, inputSupplementId, lifecycleState, rawScore, displayScore, ihfrClass, dataQuality, componentScores, decomposition, drivers, explanation, versions, calculatedAt, validFrom, scientificState, scientificLabels]
       properties:
         id: { $ref: '#/components/schemas/Uuid' }
+        areaId:
+          allOf:
+            - $ref: '#/components/schemas/Uuid'
+          description: Área derivada pelo servidor da coleta autorizada; nunca aceita do cliente.
         collectionId: { $ref: '#/components/schemas/Uuid' }
         environmentalMeasurementSetId: { $ref: '#/components/schemas/Uuid' }
         inputSupplementId: { $ref: '#/components/schemas/Uuid' }
@@ -389,9 +437,9 @@ components:
           properties:
             measurementContractVersion: { const: ihfr-measurement-v1 }
             inputContractVersion: { const: ihfr-diagnosis-input-experimental-v0.1.0 }
-            mathContractVersion: { const: ihfr-math-experimental-v0.1.0 }
+            mathContractVersion: { const: ihfr-math-experimental-v0.1.1 }
             algorithmVersion: { const: ihfr-evaluator-ts-v0.1.0 }
-            contractHash: { const: 'sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b' }
+            contractHash: { const: 'sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89' }
         calculatedAt: { type: string, format: date-time }
         validFrom: { type: string, format: date-time }
         transitionedAt: { type: [string, 'null'], format: date-time }
@@ -418,5 +466,5 @@ components:
           additionalProperties: false
           required: [code, message]
           properties:
-            code: { type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, FORBIDDEN, NOT_FOUND, READ_ONLY, IDEMPOTENCY_CONFLICT, STATE_CONFLICT, INCOMPATIBLE_VERSION, TECHNICAL_FAILURE] }
+            code: { type: string, enum: [INVALID_REQUEST, INVALID_INPUT, UNAUTHENTICATED, FORBIDDEN, NOT_FOUND, READ_ONLY, IDEMPOTENCY_CONFLICT, STATE_CONFLICT, INCOMPATIBLE_VERSION, TECHNICAL_FAILURE] }
             message: { type: string }

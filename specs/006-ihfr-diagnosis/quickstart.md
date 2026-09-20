@@ -10,7 +10,11 @@
 - banco de teste sem dados reais, credenciais ou PII;
 - manifesto e contratos presentes em [contracts/](contracts/).
 
-Nunca executar migration/fixtures contra banco não confirmado como descartável. Não registrar valores de ambiente nos relatórios.
+Nunca executar migration/fixtures contra produção, banco comum reutilizado silenciosamente ou banco não confirmado como descartável e explicitamente autorizado para teste. Não registrar valores de ambiente nos relatórios.
+
+### Ordem da execução de implementação
+
+Executar nesta ordem: guards e caracterização → preflight de banco/legado → design Prisma → criar `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql` → `prisma format` → inspecionar → `prisma validate` → aplicar em schema PostgreSQL isolado → `prisma generate` → fixtures → shells compiláveis → testes comportamentais RED → implementação → unitários verdes → integração PostgreSQL verde → E2E → regressões → teardown → evidências e encerramento. Parar se o caminho de migration já existir ou se migration posterior tornar a ordem inválida.
 
 ## 2. Static contract checks
 
@@ -27,12 +31,16 @@ Validar JSON e YAML com parsers locais e executar os testes de contrato OpenAPI.
 - nenhuma rota omite laboratório, área ou coleta;
 - nenhum DTO público contém `userId`, ator, chave idempotente, request/payload hash, credencial ou payload ambiental completo;
 - o schema do suplemento expõe somente sete `landUseType`.
+- o OpenAPI expõe seis operações HTTP e sete comportamentos, com CREATE/REPLACE no mesmo POST;
+- `mode=CREATE` aceita `expectedCurrentDiagnosisId` ausente ou `null`, enquanto `mode=REPLACE` exige UUID;
+- elegibilidade malformada/categoria inválida declara `400 INVALID_REQUEST`, enquanto ausência válida/predominância indeterminável retorna outcome `INSUFFICIENT_DATA`;
+- `PublicDiagnosis.areaId` é obrigatório, UUID e derivado no servidor.
 
 ## 3. Reproduce the normative manifest hash
 
 Algoritmo de verificação:
 
-1. ler `ihfr-math-experimental-v0.1.0.json` como UTF-8;
+1. ler `ihfr-math-experimental-v0.1.1.json` como UTF-8;
 2. validar JSON;
 3. remover somente a propriedade raiz `contractHash`;
 4. ordenar lexicograficamente, de modo recursivo, as chaves de cada objeto;
@@ -43,10 +51,12 @@ Algoritmo de verificação:
 Resultado obrigatório:
 
 ```text
-sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b
+sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89
 ```
 
 Qualquer diferença deve falhar o teste e bloquear ativação. O teste não pode reescrever o manifesto ou “corrigir” seu hash.
+
+Repetir a verificação histórica da v0.1.0 e obter `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`; provar que o arquivo não mudou e que não é ativado para novos diagnósticos.
 
 ## 4. Unit validation — supplement and evaluator
 
@@ -77,7 +87,8 @@ npm run test:unit
 - confirmar que declividade acima de 45 mantém `raw`, usa `normalizedInput=45`, marca `clamped=true` e não altera a origem;
 - testar cobertura/solo exposto em 0 e 100;
 - preservar `false` e zero informados;
-- excluir opcionais null da média, nunca convertê-los em zero;
+- excluir da média somente opcionais conhecidos ausentes, `null` permitido ou não aplicáveis, nunca convertê-los em zero;
+- recusar campo/enum desconhecido, alias, caixa divergente e `OTHER(S)` como `INVALID_INPUT`, nunca ignorá-los;
 - exigir pelo menos dois scores em cada dimensão e as quatro dimensões válidas;
 - conferir qualidade abaixo de 0.5, em 0.5, abaixo de 0.8, em 0.8 e em 1;
 - conferir classes imediatamente abaixo, exatamente e acima de 0.25/0.50/0.75;
@@ -105,6 +116,14 @@ Provar:
 6. operação única por ator/chave;
 7. triggers impedem update/delete de suplemento, snapshot e evento;
 8. rollback não deixa objetos parciais.
+9. `UNIQUE(collectionDataId,payloadHash)` deduplica suplemento, sem `UNIQUE(inputSupplementId)` no diagnóstico;
+10. um suplemento pode ser referenciado por N diagnósticos compatíveis, nova observação cria outro e nova matemática compatível pode reutilizá-lo.
+
+### Fixtures e lifecycle do banco
+
+Cada execução cria schema PostgreSQL isolado e fixtures explícitas para OWNER/ADMIN/MEMBER, vínculo atual/revogado, laboratório ativo/inativo, contexto próprio/cruzado, coleta com/sem conjunto, suplemento válido/inválido/ausente e diagnóstico `CURRENT`/`SUPERSEDED`/`REVOKED`. Triggers de imutabilidade permanecem ativos; nenhum cenário pode desabilitá-los linha a linha.
+
+Rollback transacional valida atomicidade de uma operação. Limpeza entre cenários remove dados da fixture. Rollback da migration valida reversão somente em schema descartável. Descarte do schema termina a execução. Recuperação operacional de produção é procedimento separado, explicitamente autorizado e não é substituído por nenhum dos anteriores. O harness deve registrar finalização mesmo após falha.
 
 ## 6. Integration validation
 
@@ -136,7 +155,7 @@ Montar pelo menos dois laboratórios, duas áreas e duas coletas:
 ### Idempotency and timeout
 
 - mesma chave, ator, contexto e request: replay retorna o mesmo resultado, sem novo snapshot/evento;
-- mesma chave com contexto/body/ação/motivo diferente: `409 IDEMPOTENCY_CONFLICT`;
+- mesma chave com contexto/body/`mode`/motivo diferente: `409 IDEMPOTENCY_CONFLICT`;
 - chave ambiental ou da coleta não é reutilizada internamente;
 - após simular perda da resposta, GET da operação no mesmo contexto recupera o terminal;
 - recuperação depois de perda de vínculo retorna `404`, sem vazamento.
@@ -145,7 +164,7 @@ Montar pelo menos dois laboratórios, duas áreas e duas coletas:
 
 - duas criações concorrentes: no máximo um `CURRENT`; perdedora reavalia e conflita;
 - duas substituições com mesmo expected ID: primeira vence, segunda `STATE_CONFLICT`;
-- substituição cria novo snapshot/suplemento, torna o anterior `SUPERSEDED` e não os edita;
+- substituição cria novo snapshot, cria ou reutiliza suplemento compatível, torna o anterior `SUPERSEDED` e não edita snapshots/suplementos;
 - revogação do vigente registra motivo restrito, torna-o `REVOKED`, remove current e mantém detalhe;
 - revogar/substituir alvo não vigente retorna conflito;
 - falha injetada em cada ponto transacional resulta em rollback integral.
@@ -194,7 +213,17 @@ Confirmar explicitamente:
 
 Executar também os testes territoriais unitários e de integração e a spec E2E `tests/e2e/territorial-map.spec.ts`, com tiles interceptados conforme o contrato da IMP-008. Essa regressão preserva o mapa existente; não autoriza adicionar camada IHFR.
 
-## 9. Evidence record
+## 9. Teardown verificável
+
+Após todas as regressões — inclusive a territorial — executar o teardown global em bloco de finalização, também quando algum teste falhar. Verificar e registrar:
+
+- schema isolado removido;
+- zero registros órfãos da execução;
+- zero processos de servidor/test runner deixados em execução;
+- triggers nunca desabilitados;
+- nenhuma credencial ou valor de ambiente copiado à evidência.
+
+## 10. Evidence record
 
 Para cada comando registrar commit, ambiente sanitizado, resultado e falhas. Separar:
 

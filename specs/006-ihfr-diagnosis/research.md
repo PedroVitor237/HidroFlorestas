@@ -1,6 +1,6 @@
 # Research: Diagnóstico IHFR experimental
 
-**Date**: 2026-09-19
+**Date**: 2026-09-20
 **Status**: Phase 0 concluída; nenhuma `NEEDS CLARIFICATION` remanescente.
 
 ## R-001 — Baseline da IMP-007
@@ -23,9 +23,9 @@
 
 ## R-003 — Forma do suplemento
 
-**Decision**: request fechado com `inputContractVersion`, proveniência observacional mínima e candidato de `landUseType`; o candidato pode estar ausente apenas para produzir `INSUFFICIENT_DATA`. Contexto, conjunto ambiental, autoria e timestamps finais são derivados no servidor. Persistir suplemento completo somente junto de diagnóstico concluído.
+**Decision**: request fechado com `inputContractVersion`, proveniência observacional mínima e candidato de `landUseType`; o candidato pode estar ausente apenas para produzir `INSUFFICIENT_DATA`. Contexto, conjunto ambiental, autoria e timestamps finais são derivados no servidor. Persistir suplemento completo somente junto de diagnóstico concluído. O suplemento pertence à coleta, é deduplicado por `UNIQUE(collectionDataId,payloadHash)` e pode ser referenciado por N diagnósticos compatíveis; `inputSupplementId` não é único no diagnóstico.
 
-**Rationale**: reduz autoridade do cliente, liga o snapshot à coleta/conjunto exatos e o torna imutável desde a criação. Tentativa insuficiente pode ser recuperada pela operação, sem parecer entrada confirmada.
+**Rationale**: reduz autoridade do cliente, liga o snapshot à coleta/conjunto exatos e o torna imutável desde a criação. Tentativa insuficiente pode ser recuperada pela operação, sem parecer entrada confirmada. Nova observação cria novo suplemento; nova versão matemática compatível pode reutilizar o existente sem duplicá-lo.
 
 **Alternatives considered**: CRUD independente, que permite órfão/mutação; alterar IMP-005; reutilizar campo livre legado.
 
@@ -49,7 +49,7 @@
 
 **Decision**: importar o manifesto server-side, validar versão/forma, excluir somente a propriedade raiz `contractHash`, ordenar recursivamente chaves de objetos, preservar arrays, serializar JSON compacto UTF-8 e calcular SHA-256 com prefixo `sha256:`.
 
-**Rationale**: reproduz a regra normativa e o hash `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`. Qualquer divergência falha fechada.
+**Rationale**: reproduz a regra normativa. A versão ativa `ihfr-math-experimental-v0.1.1` usa `sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89`; a v0.1.0 e `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b` permanecem imutáveis e históricas. Qualquer divergência falha fechada.
 
 **Alternatives considered**: confiar no hash embutido, corrigir automaticamente ou buscar manifesto remoto/no banco.
 
@@ -63,7 +63,7 @@
 
 ## R-008 — Imutabilidade e ciclo
 
-**Decision**: snapshot do resultado e suplemento append-only; ponteiro vigente separado com `UNIQUE(collectionDataId)`; eventos append-only `CREATED`, `SUPERSEDED` e `REVOKED`. Estado público é derivado.
+**Decision**: snapshot do resultado e suplemento append-only; suplemento 1:N para diagnósticos; ponteiro vigente separado com `UNIQUE(collectionDataId)`; eventos append-only `CREATED`, `SUPERSEDED` e `REVOKED`. Estado público é derivado.
 
 **Rationale**: permite trocar/remover vigência sem editar scores, entradas ou versões. A transação mantém no máximo um `CURRENT` e preserva anteriores.
 
@@ -71,7 +71,7 @@
 
 ## R-009 — Idempotência, concorrência e timeout
 
-**Decision**: chave UUID própria e request hash canônico incluindo ação, contexto, suplemento/versões, alvo/motivo. Ledger único por ator+chave; transação serializável e lock da coleta; replay idêntico retorna resposta terminal e divergente retorna `IDEMPOTENCY_CONFLICT`.
+**Decision**: chave UUID própria e request hash canônico incluindo `mode`, contexto, suplemento/versões, alvo/motivo. Ledger único por ator+chave; transação serializável e lock da coleta; replay idêntico retorna resposta terminal e divergente retorna `IDEMPOTENCY_CONFLICT`.
 
 **Rationale**: preserva o padrão seguro sem reutilizar `confirmationKey`/`payloadHash`. `expectedCurrentDiagnosisId` impede lost update. Recuperação reautoriza o contexto.
 
@@ -95,7 +95,7 @@
 
 ## R-012 — API e histórico
 
-**Decision**: rotas contextuais para elegibilidade, vigente, detalhe, criação/substituição, revogação e operação; nenhuma lista histórica completa.
+**Decision**: seis operações HTTP contextuais e sete comportamentos: elegibilidade, vigente, detalhe, revogação, recuperação e um POST discriminado por `mode` para CREATE/REPLACE; nenhuma lista histórica completa. CREATE aceita `expectedCurrentDiagnosisId` ausente ou `null`; REPLACE exige UUID. Elegibilidade inválida retorna `400 INVALID_REQUEST`; ausência válida ou predominância indeterminável retorna outcome `INSUFFICIENT_DATA`. `PublicDiagnosis.areaId` é obrigatório e derivado no servidor.
 
 **Rationale**: detalhe por ID preserva consulta contextual sem sobrepor a IMP-007. Auditoria não vira feed. Projeção futura deve derivar da fonte canônica.
 
@@ -103,7 +103,7 @@
 
 ## R-013 — Estratégia de testes
 
-**Decision**: separar vetores técnicos derivados do manifesto de vetores científicos futuros. Avaliador/hash em unitários; autorização/ciclo/concorrência em integração; constraints/triggers em migration; jornada mínima E2E; regressões IMP-003/004/005/007/008.
+**Decision**: separar vetores técnicos derivados do manifesto de vetores científicos futuros. Avaliador/hash em unitários; autorização/ciclo/concorrência em integração; constraints/triggers em migration; jornada mínima E2E; regressões IMP-003/004/005/007/008. PostgreSQL usa schema isolado por execução, fixtures explícitas e teardown em finalização mesmo após falha, sem desabilitar triggers.
 
 **Rationale**: testes técnicos provam conformidade executável, não validade científica. PostgreSQL real é necessário para concorrência e triggers.
 
@@ -111,11 +111,19 @@
 
 ## R-014 — Baseline territorial da IMP-008
 
-**Decision**: planejar sobre `origin/development` `df856194b3341137d6d863feefcb0a203deb5905`, que integrou a IMP-008 pelo PR #27 com head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`, incorporado à IMP-006 pelo merge normal `96dac7c`. Preservar o mapa territorial como projeção independente e adicionar somente uma regressão explícita da fronteira na tarefa T127.
+**Decision**: planejar sobre `origin/development` `df856194b3341137d6d863feefcb0a203deb5905`, que integrou a IMP-008 pelo PR #27 com head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`, incorporado à IMP-006 pelo merge normal `96dac7c`. Preservar o mapa territorial como projeção independente e executar sua regressão explícita antes de teardown, evidências e encerramento.
 
 **Rationale**: o delta real da IMP-008 não altera schema, migrations, dependências, medições ambientais, contratos científicos, autorização ou semântica de laboratório inativo. O endpoint territorial consulta apenas áreas e a tupla confirmada de coletas, não cria fonte paralela, não expõe auditoria e não contém diagnóstico, `landUseType`, score, classe, Plotly ou camada científica.
 
 **Alternatives considered**: projetar IHFR automaticamente no mapa, rejeitada por ausência de requisito e contrato próprios; usar coordenadas ou `CollectionArea.landType` como entrada científica, rejeitada por incompatibilidade com o suplemento imutável; alimentar o mapa pela auditoria restrita, rejeitada por privacidade e fonte de verdade; omitir regressão territorial, rejeitada porque a integração introduziu uma superfície existente que a IMP-006 deve preservar.
+
+## R-015 — Remediação de consistência e ordem executável
+
+**Decision**: ativar a v0.1.1 para clarificar validação sem alterar matemática; reservar a migration `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`; ordenar setup → caracterização → preflight → Prisma/migration → validação/aplicação isolada → generate → fixtures → shells → RED real → implementação → verdes → regressões → teardown → evidências → encerramento. A implementação deve parar se o caminho de migration estiver ocupado ou uma migration posterior invalidar a ordem.
+
+**Rationale**: testes comportamentais não podem ficar RED por falta de schema/client/fixtures, paralelismo não pode atingir os mesmos arquivos e o encerramento não pode preceder regressões ou teardown. A v0.1.1 resolve a contradição entre ignorar desconhecidos e rejeitar enums/aliases sem reescrever a v0.1.0 histórica.
+
+**Alternatives considered**: editar retroativamente a v0.1.0, proibido pela governança de versionamento; criar testes antes da infraestrutura mínima, que produz RED falso; teardown parcial ou manual, que deixa estado residual; manter migration placeholder, que não é executável.
 
 ## Resolved Unknowns
 

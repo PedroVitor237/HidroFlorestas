@@ -58,6 +58,8 @@ O registro histórico de Plotly como alternativa considerada não implica rejei�
 
 `DECISAO_EXPERIMENTAL_DE_ENGENHARIA` — Em 2026-09-19, a equipe autorizou a consolidação focal descrita no [ADR-0001 §7](ADR-0001-contrato-experimental-ihfr-v0-1.md#7-decisão-focal-de-landusetype). Os sete valores/scores, predominância, categoria desconhecida, ausência, imutabilidade, autoria e separação regional ficaram resolvidos para engenharia. O estado focal é `G2-ENG — landUseType: RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`; o `G2-ENG` geral está `RESOLVIDO_PARA_PLANEJAMENTO` e G3 permanece `RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`.
 
+`DECISAO_CONFIRMADA` — Em 2026-09-20, a remediação focal criou a v0.1.1 somente para distinguir ausência opcional conhecida de entrada desconhecida, preservando fórmula, pesos, scores e a v0.1.0 histórica. Também fechou inconsistências documentais de cardinalidade, API, ordem de implementação e lifecycle de testes. Essa decisão de engenharia não fornece parecer especializado, calibração, vetor científico aprovado nem evidência de campo.
+
 Essas decisões não encerram `PD-002`, que agora representa somente a validação científica definitiva, nem `PD-008`/`PD-011`, que permanecem abertos apenas para versões futuras. Não existe pendência genérica adicional de `landUseType` para executar `$speckit-tasks`.
 
 ## Referências da consolidação transversal

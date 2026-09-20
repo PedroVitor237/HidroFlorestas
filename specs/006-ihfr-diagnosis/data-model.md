@@ -1,6 +1,6 @@
 # Data Model: Diagnóstico IHFR experimental
 
-**Date**: 2026-09-19
+**Date**: 2026-09-20
 **Status**: desenho lógico da v0.1; `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO`, `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
 
 ## 1. Relações
@@ -20,7 +20,7 @@ LaboratoryRoom 1 ── * CollectionArea 1 ── * CollectionData
 
 ## 2. ExperimentalIHFRInputSupplement
 
-Snapshot fechado `ihfr-diagnosis-input-experimental-v0.1.0` consumido por exatamente um diagnóstico.
+Snapshot fechado `ihfr-diagnosis-input-experimental-v0.1.0` pertencente a uma coleta e reutilizável por diagnósticos compatíveis.
 
 | Campo | Regra |
 |---|---|
@@ -38,7 +38,8 @@ Snapshot fechado `ihfr-diagnosis-input-experimental-v0.1.0` consumido por exatam
 Invariantes:
 
 - `UNIQUE(collectionDataId, payloadHash)` evita duplicação acidental sem impedir novo snapshot quando a entrada muda;
-- relação 1:1 com `ExperimentalIHFRDiagnosis` por unique no diagnóstico;
+- relação 1:N com `ExperimentalIHFRDiagnosis`; `inputSupplementId` é FK não única no diagnóstico;
+- nova observação de uso da terra cria novo suplemento; nova versão matemática compatível pode reutilizar o mesmo suplemento;
 - trigger recusa `UPDATE` e `DELETE` após criação;
 - `CollectionArea.landType`, drenagem, elevação e tamanho não alimentam o campo;
 - `soilTexture`, `landscapeDegradation`, `vegetationCoverPercent`, declividade e os demais campos ambientais não substituem o uso da terra;
@@ -71,7 +72,7 @@ Snapshot técnico/científico imutável de um cálculo suficiente.
 | `id` | UUID, PK |
 | `collectionDataId` | FK da coleta, `RESTRICT` |
 | `environmentalMeasurementSetId` | FK do conjunto exato, `RESTRICT` |
-| `inputSupplementId` | FK obrigatória e única, `RESTRICT` |
+| `inputSupplementId` | FK obrigatória não única, `RESTRICT`; N diagnósticos podem referenciar o mesmo suplemento compatível |
 | `rawScore` | double precision finito em `[0,1]`, não arredondado |
 | `displayScore` | decimal de duas casas, half-up, somente apresentação |
 | `ihfrClass` | `LOW`, `MODERATE`, `HIGH`, `CRITICAL` |
@@ -82,7 +83,7 @@ Snapshot técnico/científico imutável de um cálculo suficiente.
 | `explanation` | texto determinístico das templates do manifesto; nunca IA |
 | `measurementContractVersion` | literal `ihfr-measurement-v1` |
 | `inputContractVersion` | literal do suplemento v0.1.0 |
-| `mathContractVersion` | literal `ihfr-math-experimental-v0.1.0` |
+| `mathContractVersion` | literal ativo `ihfr-math-experimental-v0.1.1` |
 | `algorithmVersion` | literal `ihfr-evaluator-ts-v0.1.0` |
 | `contractHash` | hash normativo completo com prefixo `sha256:` |
 | `calculatedAt` | instante do servidor fornecido pela camada de aplicação |
@@ -96,7 +97,8 @@ Invariantes:
 - decomposição preserva `terrain.slopePercent` original e registra saturação em 45 somente quando aplicável;
 - os quatro rótulos de limitação são constantes de projeção/contrato, validados contra `scientificState`;
 - trigger recusa `UPDATE` e `DELETE`;
-- nenhuma coluna substitui outra versão/referência.
+- nenhuma coluna substitui outra versão/referência;
+- não há `UNIQUE(inputSupplementId)`; a unicidade de conteúdo pertence ao suplemento por `(collectionDataId, payloadHash)`.
 
 ## 4. CurrentExperimentalIHFRDiagnosis
 
@@ -127,7 +129,7 @@ Ledger interno para idempotência e recuperação após timeout.
 | `laboratoryRoomId`, `collectionAreaId`, `collectionDataId` | contexto materializado e validado |
 | `actorUserId` | principal interno; nunca DTO normal |
 | `idempotencyKey` | UUID fornecido em `Idempotency-Key` |
-| `requestHash` | SHA-256 de request canônico próprio da operação |
+| `requestHash` | SHA-256 de request canônico próprio da operação, incluindo `mode`, contexto, suplemento e versões |
 | `operationType` | `CREATE_OR_REPLACE` ou `REVOKE` |
 | `outcome` | `SUCCEEDED`, `INSUFFICIENT_DATA` ou `INCOMPATIBLE_VERSION` |
 | `diagnosisId` | nullable; presente quando a resposta terminal o possui |
@@ -204,7 +206,7 @@ A projeção de elegibilidade avalia, sem criar domínio:
 
 Inclui somente:
 
-- IDs contextuais de coleta/área e ID público do diagnóstico;
+- `areaId` e `collectionId` obrigatórios e coerentes, derivados no servidor da cadeia autorizada, além do ID público do diagnóstico;
 - `lifecycleState`, `rawScore`, `displayScore`, classe, qualidade, componentes e decomposição pública necessária;
 - origem mínima: ID do conjunto e suplemento, datas e quatro versões/referências;
 - `contractHash`, `calculatedAt`, `validFrom` e, quando aplicável, data pública da transição;
@@ -214,7 +216,7 @@ Exclui ator, `userId`, idempotency key, request/payload hashes internos, payload
 
 ## 10. Migration and legacy
 
-A migration é aditiva: cria enums/models/índices/triggers e não modifica dados existentes. Deve validar:
+A migration aditiva terá o caminho determinístico `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`: cria enums/models/índices/triggers e não modifica dados existentes. A implementação deve parar se esse caminho estiver ocupado ou se uma migration posterior invalidar a ordem. Deve validar:
 
 - banco vazio e banco com `IHFRDiagnosis`/dados ambientais legados;
 - ausência de backfill;
@@ -223,6 +225,14 @@ A migration é aditiva: cria enums/models/índices/triggers e não modifica dado
 - rollback seguro antes de produção conforme prática do projeto.
 
 O model legado permanece compilável e intacto. Nenhuma linha antiga recebe versão/hash ou aparece no endpoint experimental.
+
+### 10.1 Fixtures, isolamento e teardown
+
+- cada execução PostgreSQL cria um schema isolado com nome próprio e aplica a cadeia real de migrations;
+- fixtures explícitas cobrem OWNER, ADMIN e MEMBER; vínculo atual e revogado; laboratório ativo e inativo; contexto próprio e cruzado; coleta com e sem conjunto ambiental; suplemento válido, inválido e ausente; diagnóstico `CURRENT`, `SUPERSEDED` e `REVOKED`;
+- triggers de imutabilidade permanecem ativos durante todos os cenários e nunca são desabilitados linha a linha;
+- rollback transacional reverte uma operação sob teste; limpeza entre cenários remove somente dados da fixture; rollback da migration valida a reversão em schema descartável; descarte do schema encerra a execução; recuperação operacional de produção é procedimento separado e explicitamente autorizado;
+- o teardown roda em bloco de finalização mesmo após falha e verifica schema removido, zero registros órfãos e zero processos da suíte deixados em execução.
 
 ## 11. Fronteira com a projeção territorial integrada
 

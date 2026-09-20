@@ -4,9 +4,11 @@
 
 **Estado de implementação**: `NAO_IMPLEMENTADO`
 
-**Versão do ADR**: `1.1`
+**Versão do ADR**: `1.2`
 
 **Data**: 2026-09-18
+
+**Última revisão**: 2026-09-20
 
 **Responsável pela decisão provisória**: equipe HidroFlorestas
 
@@ -49,14 +51,15 @@ Também foram lidos os demais documentos de `docs/raw/`, os relatórios `DOC-009
 ### 4.1 Identidade, fórmula e escopo
 
 - Nome humano: **IHFR v0.1 experimental**.
-- `mathContractVersion`: `ihfr-math-experimental-v0.1.0`.
+- `mathContractVersion` ativa: `ihfr-math-experimental-v0.1.1`.
 - `algorithmVersion` reservada para a implementação: `ihfr-evaluator-ts-v0.1.0`.
 - Estado: `EXPERIMENTAL`.
 - Fórmula: `IHFR = 0,25W + 0,25S + 0,25V + 0,25T`.
 - Perfil: `GENERAL_EXPERIMENTAL`, sem afirmar universalidade ou calibração regional.
 - Compatibilidade de medição: `ihfr-measurement-v1` mais o suplemento imutável `ihfr-diagnosis-input-experimental-v0.1.0`.
-- Manifesto normativo experimental: [`../../specs/006-ihfr-diagnosis/contracts/ihfr-math-experimental-v0.1.0.json`](../../specs/006-ihfr-diagnosis/contracts/ihfr-math-experimental-v0.1.0.json).
-- `contractHash`: `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`.
+- Manifesto normativo experimental ativo: [`../../specs/006-ihfr-diagnosis/contracts/ihfr-math-experimental-v0.1.1.json`](../../specs/006-ihfr-diagnosis/contracts/ihfr-math-experimental-v0.1.1.json).
+- `contractHash` ativo: `sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89`.
+- Manifesto histórico preservado e não ativável para novos diagnósticos: [`../../specs/006-ihfr-diagnosis/contracts/ihfr-math-experimental-v0.1.0.json`](../../specs/006-ihfr-diagnosis/contracts/ihfr-math-experimental-v0.1.0.json), hash `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`.
 
 O hash é SHA-256 da serialização JSON UTF-8 sem espaços, com chaves de objetos ordenadas lexicograficamente de forma recursiva, ordem de arrays preservada e a propriedade raiz `contractHash` excluída. Qualquer alteração normativa exige nova versão e novo hash; edição retroativa é proibida.
 
@@ -66,7 +69,7 @@ Cada variável produz risco entre 0 e 1 conforme o manifesto. Cada dimensão é 
 
 Na dimensão `T`, somente `terrain.slopePercent` e `supplement.landUseType` pontuam. Ambos são necessários. `area_size_ha` é apenas contextual; `drainageDensityKmPerKm2` e `elevationMeters` não participam da v0.1.
 
-`null`, ausente, desconhecido e não aplicável nunca viram zero. Entradas opcionais sem score são excluídas da média da dimensão. Entrada inválida resulta em `INVALID_INPUT`; dimensão com menos de dois scores ou falta de `slopePercent`/`landUseType` resulta em `INSUFFICIENT_DATA`.
+`null` nunca vira zero. Campo opcional conhecido ausente, campo opcional conhecido com `null` permitido ou entrada conhecida não aplicável é excluído da média da dimensão. Campo desconhecido, valor de enum desconhecido, alias, variação de caixa e `OTHER`/`OTHERS` são entrada inválida e resultam em `INVALID_INPUT`; nunca são ignorados. Dimensão obrigatória incalculável, dimensão com menos de dois scores ou falta de `slopePercent`/`landUseType` resulta em `INSUFFICIENT_DATA`.
 
 ### 4.3 Qualidade, classes e precisão
 
@@ -133,7 +136,7 @@ Estratégias: `S1` contexto autorizado; `S2` extensão da medição; `S3` suplem
 | densidade de drenagem | `terrain.drainageDensityKmPerKm2` | Não há função aprovada na fonte-base | `S4`; não substituir uso da terra | Definir papel, método e normalização antes de qualquer uso futuro |
 | elevação | `terrain.elevationMeters` | Sem papel matemático documentado | `S4` | Definir hipótese e função matemática antes de qualquer uso futuro |
 
-O suplemento confirmado contém somente `landUseType` nos sete valores do manifesto, é ligado à coleta e ao conjunto ambiental, registra autoria/instante/proveniência, torna-se imutável ao calcular e entra no hash canônico da requisição. A tentativa de cálculo pode transportar um candidato incompleto apenas para produzir `INSUFFICIENT_DATA`; candidato incompleto nunca é persistido como suplemento. O suplemento não modifica nem reclassifica `ihfr-measurement-v1`.
+O suplemento confirmado contém somente `landUseType` nos sete valores do manifesto, pertence à coleta, referencia o conjunto ambiental, registra autoria/instante/proveniência, torna-se imutável ao calcular e entra no hash canônico da requisição. Um suplemento imutável pode ser referenciado por N diagnósticos da mesma coleta quando a entrada continuar compatível; a deduplicação usa `UNIQUE(collectionDataId, payloadHash)` e não existe unicidade em `inputSupplementId` no diagnóstico. Nova observação de uso da terra cria novo suplemento; nova versão matemática compatível pode reutilizar o mesmo suplemento. A tentativa de cálculo pode transportar um candidato incompleto apenas para produzir `INSUFFICIENT_DATA`; candidato incompleto nunca é persistido como suplemento. O suplemento não modifica nem reclassifica `ihfr-measurement-v1`.
 
 Resultado da compatibilidade: a evolução de entrada está fechada e planejada — implementar o suplemento acima e exigir `slopePercent` presente. A decisão focal da seção 7 torna `landUseType` rastreável e o estado geral passa a `G2-ENG: RESOLVIDO_PARA_PLANEJAMENTO`; nenhuma decisão científica genérica adicional bloqueia `$speckit-tasks`.
 
@@ -223,7 +226,7 @@ Resultado focal: `G2-ENG — landUseType: RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPER
 
 ### 7.6 Versionamento, hash e gatilhos
 
-As sete categorias e scores já integram o conteúdo normativo que produziu `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`. Esta auditoria acrescenta proveniência, interpretação operacional e rastreabilidade; não altera categorias, scores, fórmula ou regras matemáticas canonicalizadas. Por isso, `ihfr-math-experimental-v0.1.0` e o hash são preservados.
+As sete categorias e scores já integram o conteúdo normativo histórico que produziu `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`. O arquivo `ihfr-math-experimental-v0.1.0` e esse hash permanecem imutáveis para reprodutibilidade, mas foram substituídos antes de qualquer ativação. A clarificação normativa entre ausência opcional conhecida e entrada desconhecida cria `ihfr-math-experimental-v0.1.1`, hash `sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89`, sem alterar fórmula, pesos, scores, classes ou decisão científica.
 
 Revisão especializada, vetor científico divergente, evidência de campo, necessidade de composição/mosaico, nova categoria, alteração de score, ativação regional, mudança na direção do risco ou inconsistência reproduzível são gatilhos de recalibração. Qualquer mudança normativa cria nova versão e novo hash e produz novos diagnósticos, sem alterar suplementos ou resultados anteriores.
 
@@ -271,14 +274,26 @@ O perfil `0,35H + 0,30S + 0,25V + 0,10T`, presente em `R06`, `R10` e `R11`, perm
 
 ## 12. Consequências, riscos e recalibração
 
-- A IMP-006 pode seguir para `$speckit-tasks`; o plano já inclui o suplemento de uso da terra antes do avaliador.
+- A IMP-006 possui tarefas remediadas e pode seguir para nova análise independente antes da implementação; o plano inclui o suplemento de uso da terra antes do avaliador.
 - Não há cálculo válido com `landUseType` ou `slopePercent` ausente.
 - Scores experimentais devem ser identificados como tal em persistência, API e UI.
 - Resultado produzido sob uma versão nunca é reinterpretado após mudança de contrato.
 - Nova evidência especializada, vetor científico divergente, teste de campo, mudança territorial ou inconsistência reproduzível aciona revisão. Alteração normativa cria nova versão/hash e pode gerar novo diagnóstico, preservando o anterior.
 - O maior risco científico é usar os resultados além do escopo experimental; o controle é rotulagem obrigatória, proveniência, imutabilidade e separação entre G2-ENG e G2-SCI.
 
-## 13. Histórico da decisão
+## 13. Emenda documental de remediação — 2026-09-20
+
+`DECISAO_CONFIRMADA` — A solicitação de remediação focal da IMP-006 confirmou as resoluções de engenharia desta seção antes da implementação. Ela não representa validação científica e mantém integralmente os quatro rótulos de cautela deste ADR.
+
+1. A v0.1.1 distingue ausência opcional conhecida de entrada desconhecida conforme a seção 4.2; o primeiro caso pode ser excluído da média e o segundo sempre falha com `INVALID_INPUT`.
+2. O suplemento tem cardinalidade N diagnósticos para 1 suplemento, com deduplicação por coleta e payload, conforme a seção 6; não existe `UNIQUE(inputSupplementId)` no diagnóstico.
+3. O contrato HTTP possui seis operações e sete comportamentos. CREATE e REPLACE compartilham o POST de cálculo, discriminado por `mode`; CREATE aceita `expectedCurrentDiagnosisId` ausente ou `null`, REPLACE exige UUID. Elegibilidade malformada ou com categoria inválida retorna `400 INVALID_REQUEST`; ausência válida ou predominância indeterminável retorna outcome `INSUFFICIENT_DATA`.
+4. `PublicDiagnosis.areaId` é obrigatório e derivado no servidor da relação contextual com a coleta; cliente não o fornece.
+5. A migração futura tem caminho reservado `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`. A implementação deve parar se esse caminho estiver ocupado ou se migração posterior invalidar a ordem.
+6. Testes PostgreSQL usam schema isolado por execução, fixtures explícitas para papéis, contextos e estados e teardown verificável mesmo após falha. Triggers de imutabilidade não podem ser desabilitados linha a linha; rollback transacional, limpeza entre cenários, rollback da migration, descarte do schema e recuperação operacional de produção são mecanismos distintos.
+7. O encerramento documental não antecipa revisão humana: revisão especializada e teste de campo permanecem `NAO_VERIFICADO`, não bloqueiam a implementação experimental e bloqueiam promoção a contrato científico definitivo.
+
+## 14. Histórico da decisão
 
 | Data | Evento |
 |---|---|
@@ -287,3 +302,4 @@ O perfil `0,35H + 0,30S + 0,25V + 0,10T`, presente em `R06`, `R10` e `R11`, perm
 | 2026-09-18 | A equipe confirmou origem científica, autorizou contrato provisório de engenharia, selecionou `R13` como base e exigiu validação futura e recalibração. |
 | 2026-09-18 | Este ADR resolveu os conflitos para v0.1 experimental, preservou o perfil regional e separou G2-ENG de G2-SCI. |
 | 2026-09-19 | A equipe autorizou a auditoria focal de `landUseType`; a classificação de sete categorias foi confirmada como `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`, as alternativas e casos extremos foram preservados e o subgate ficou `RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`, sem mudança normativa do manifesto/hash. |
+| 2026-09-20 | A remediação focal preservou a v0.1.0 como histórica, criou a v0.1.1 para clarificar validação de entrada sem alterar matemática e alinhou cardinalidade, API, migration planejada, lifecycle de testes e tarefas para nova análise independente. |

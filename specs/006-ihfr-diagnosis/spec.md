@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-16
 
-**Status**: Especificação, plano e tarefas `T001–T127` consolidados para nova análise independente; G1 fechado, `G2-ENG — landUseType` resolvido e rastreável para a v0.1 experimental, `G2-SCI` não verificado e G3 resolvido documentalmente. Implementação permanece pendente.
+**Status**: Remediação documental focal concluída em 2026-09-20, com tarefas `T001–T134`, para nova análise independente; G1 fechado, `G2-ENG — landUseType` resolvido e rastreável para a v0.1 experimental, `G2-SCI` não verificado e G3 resolvido documentalmente. Implementação permanece pendente.
 
 **Input**: IMP-006 — calcular, tornar vigente e consultar um diagnóstico IHFR experimental ligado à coleta e à área de origem, com contrato versionado, proveniência e ciclo imutável. Esta consolidação prepara nova análise independente e não implementa a feature.
 
@@ -20,11 +20,12 @@
 - `EVIDENCIA_IMPLEMENTACAO` — o conjunto ambiental persiste `measurementContractVersion = "ihfr-measurement-v1"`, `payloadHash` interno e `confirmationKey` própria. Não persiste `mathContractVersion`, `algorithmVersion` nem o `contractHash` normativo de um diagnóstico; esses elementos pertencem à futura cadeia científica do IHFR.
 - `FATO_DOCUMENTADO` — a IMP-005 também publica `ihfr-math-contract-v1` como fronteira de formato e governança para consumo futuro. Ela exige manifesto e vetores dourados, mas não contém fórmula ativa, coeficientes, limiares ou aprovação científica do IHFR.
 - `DECISAO_CONFIRMADA` — a solicitação da equipe de 2026-09-18 atribui ao professor Fábio Mesquita a concepção científica da formulação histórica, seleciona `DOC-RAW-013` como base da primeira versão experimental e autoriza um contrato provisório de engenharia. A decisão exige os rótulos `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
-- `DECISAO_CONFIRMADA` — [ADR-0001](../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) é o registro canônico da matemática, dos conflitos, da compatibilidade e do ciclo operacional. O manifesto `ihfr-math-experimental-v0.1.0` tem `contractHash = sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`.
+- `DECISAO_CONFIRMADA` — [ADR-0001](../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) é o registro canônico da matemática, dos conflitos, da compatibilidade e do ciclo operacional. O manifesto ativo `ihfr-math-experimental-v0.1.1` tem `contractHash = sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89`; a v0.1.0 permanece imutável e histórica.
 - `DECISAO_EXPERIMENTAL_DE_ENGENHARIA` — a solicitação da equipe de 2026-09-19 confirmou focalmente a classificação de sete valores de `landUseType`, suas regras de predominância, invalidade, ausência, imutabilidade e aplicabilidade geral experimental. A seção 7 do ADR-0001 concentra fontes, hashes, alternativas e limites; não houve mudança do manifesto ou de seu hash.
 - `EVIDENCIA_IMPLEMENTACAO` — o PR #27 incorporou a IMP-008 no merge `df856194b3341137d6d863feefcb0a203deb5905`, com head `c6c13f7dc97d4ed873f67cb99fb6c36d60579601`. A IMP-006 incorporou essa baseline pelo merge normal `96dac7c`, preservando seus 11 commits próprios e resolvendo somente metadados documentais concorrentes de governança.
 - `EVIDENCIA_IMPLEMENTACAO` — a IMP-008 fornece uma projeção territorial privada e transitória de áreas-ponto e coletas confirmadas, com Leaflet/React-Leaflet, lista textual e endpoint próprio. Ela não consulta dados ambientais, não produz diagnóstico IHFR, não usa `landUseType`, não cria auditoria ou fonte de atividade e não altera schema, migrations ou contratos científicos integrados.
 - `PENDENCIA_DE_DECISAO` — a validação científica definitiva por especialistas, os vetores científicos e os testes de campo permanecem futuros. Essa pendência não impede a construção experimental, mas impede apresentar seus resultados como ciência definitiva.
+- `DECISAO_CONFIRMADA` — a remediação focal de 2026-09-20 resolve as inconsistências de entrada desconhecida, cardinalidade do suplemento, ordem executável, fixtures/teardown, contagem HTTP, condicionais do request, `areaId`, paralelismo, encerramento, migration path e checklist. Ela não implementa a feature nem antecipa validação científica.
 
 ## Clarifications
 
@@ -43,7 +44,7 @@ As sessões anteriores ficam preservadas como histórico. A expressão antiga �
 
 ### Session 2026-09-18
 
-- Q: Qual contrato pode orientar a primeira implementação? → A: `ihfr-math-experimental-v0.1.0`, baseado em `DOC-RAW-013`, com pesos iguais e estado experimental; o perfil regional `35/30/25/10` permanece inativo.
+- Q: Qual contrato foi inicialmente selecionado? → A: `ihfr-math-experimental-v0.1.0`, baseado em `DOC-RAW-013`, com pesos iguais e estado experimental; ele foi posteriormente preservado como histórico e substituído pela clarificação v0.1.1, sem mudança matemática. O perfil regional `35/30/25/10` permanece inativo.
 - Q: A entrada integrada é suficiente? → A: Não integralmente. `landUseType` deve ser fornecido por `ihfr-diagnosis-input-experimental-v0.1.0`, e `slopePercent` deve estar presente; ausência de qualquer deles produz `INSUFFICIENT_DATA`.
 - Q: Como separar engenharia e ciência? → A: `G2-ENG` depende apenas dessa evolução de entrada; `G2-SCI` permanece `NAO_VERIFICADO_VALIDACAO_POSTERIOR`.
 - Q: Qual é o ciclo operacional mínimo? → A: avaliador determinístico interno, execução explícita por OWNER/ADMIN, resultado imutável, um vigente por coleta, substituição/revogação auditáveis, idempotência própria, concorrência transacional e recuperação pela chave da operação.
@@ -53,6 +54,12 @@ As sessões anteriores ficam preservadas como histórico. A expressão antiga �
 - Q: Qual classificação de uso da terra governa a v0.1? → A: Os sete valores e scores de `DOC-RAW-013`, representados em `UPPER_SNAKE_CASE`, sem agrupamento ou categoria criada por inferência; `DOC-RAW-007` corrobora os seis scores não urbanos e `DOC-RAW-005` o domínio completo.
 - Q: Como tratar uso misto, valor desconhecido e ausência? → A: Registrar uma única categoria predominante; sem predominância determinável, retornar `INSUFFICIENT_DATA`; token fora dos sete valores retorna `INVALID_INPUT`; não existe `OTHER` nem média entre categorias.
 - Q: Qual é o alcance da decisão? → A: `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`, perfil `GENERAL_EXPERIMENTAL` com aplicabilidade territorial científica não comprovada; `G2-ENG — landUseType` fica `RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL` e `G2-SCI` permanece `NAO_VERIFICADO_VALIDACAO_POSTERIOR`.
+
+### Session 2026-09-20
+
+- Q: Como distinguir ausência opcional de entrada desconhecida? → A: Campo opcional conhecido ausente, `null` permitido ou não aplicável é excluído da média; campo/enum desconhecido, alias, caixa divergente e `OTHER(S)` retornam `INVALID_INPUT`; `null` nunca vira zero. Dimensão obrigatória incalculável retorna `INSUFFICIENT_DATA`.
+- Q: Um suplemento confirmado pode alimentar mais de um diagnóstico? → A: Sim. Ele pertence à coleta e pode ser referenciado por N diagnósticos compatíveis; a deduplicação é `UNIQUE(collectionDataId, payloadHash)`, sem unicidade de `inputSupplementId` no diagnóstico. Nova observação cria novo suplemento; nova versão matemática compatível pode reutilizá-lo.
+- Q: Qual é o fechamento do contrato HTTP? → A: São seis operações HTTP e sete comportamentos; CREATE e REPLACE compartilham POST e usam `mode`. CREATE aceita ID vigente esperado ausente ou `null`; REPLACE exige UUID. Elegibilidade inválida retorna `400 INVALID_REQUEST`, e `PublicDiagnosis.areaId` é obrigatório e derivado no servidor.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -118,29 +125,31 @@ Os requisitos definem comportamento seguro e rastreável para a v0.1 experimenta
 
 - **FR-001**: Toda consulta ou escrita MUST exigir principal autenticado, autorização contextual vigente e laboratório explicitamente selecionado. OWNER, ADMIN e MEMBER vinculados podem consultar. Somente OWNER e ADMIN podem calcular, substituir ou revogar; MEMBER e processo sem contrato próprio não executam escrita.
 - **FR-002**: A operação MUST resolver laboratório autorizado, área subordinada, coleta subordinada e diagnóstico subordinado nessa ordem. Identificadores isolados MUST NOT conceder acesso nem permitir associação cruzada.
-- **FR-003**: Produção MUST usar exatamente o manifesto `ihfr-math-experimental-v0.1.0` e seu `contractHash`; MUST identificar o resultado como `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
-- **FR-004**: O diagnóstico conforme MUST preservar coleta, conjunto ambiental, suplemento, scores, `measurementContractVersion`, versão do suplemento, `mathContractVersion`, `algorithmVersion`, `contractHash` e `calculatedAt`. Nenhuma referência substitui outra.
+- **FR-003**: Produção MUST usar exatamente o manifesto ativo `ihfr-math-experimental-v0.1.1` e seu `contractHash`; MUST identificar o resultado como `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`. A v0.1.0 MUST permanecer imutável, histórica e não ativável para novos diagnósticos.
+- **FR-004**: O diagnóstico conforme MUST preservar área derivada no servidor, coleta, conjunto ambiental, suplemento, scores, `measurementContractVersion`, versão do suplemento, `mathContractVersion`, `algorithmVersion`, `contractHash` e `calculatedAt`. `PublicDiagnosis.areaId` MUST ser obrigatório e coerente com a coleta contextual. Nenhuma referência substitui outra.
 - **FR-005**: A consulta normal MUST apresentar resultado experimental, origem, versões, hash, vigência e datas, sem identidades internas, chave idempotente, hashes internos de payload ou evidências restritas.
 - **FR-006**: Versões e hashes MUST ser mostrados sem alteração. Referência ausente ou incompatível MUST impedir produção/conformidade e MUST NOT ser fabricada.
 - **FR-007**: Ausência de diagnóstico vigente, `INSUFFICIENT_DATA`, zero, falha e resultado revogado MUST permanecer estados distintos.
 - **FR-008**: Laboratório inativo MUST permitir somente a leitura autorizada de diagnóstico existente e MUST recusar produção, associação, substituição ou qualquer outra escrita, inclusive por acesso direto.
 - **FR-009**: Recursos inexistentes e inacessíveis MUST ser indistinguíveis. A auditoria restrita MUST ser separada do DTO normal.
 - **FR-010**: Diagnóstico legado MUST ser preservado sem promoção automática ao contrato experimental e sem backfill inventado.
-- **FR-011**: Criação e associação MUST ser atômicas e preservar a cadeia laboratório → área → coleta → conjunto ambiental/suplemento → diagnóstico. Entradas e resultado confirmados MUST ser imutáveis.
-- **FR-012**: A IMP-006 MUST consumir `ihfr-measurement-v1` e `ihfr-diagnosis-input-experimental-v0.1.0`. `landUseType` MUST usar exatamente um dos sete valores do manifesto e representar o uso predominante. Valor desconhecido, alias ou categoria concorrente MUST produzir `INVALID_INPUT`; ausência ou falta de predominância determinável MUST produzir `INSUFFICIENT_DATA`. `CollectionArea.landType` livre, `soilTexture`, `landscapeDegradation`, `vegetationCoverPercent`, estruturas legadas, drenagem, elevação, declividade ou tamanho da área MUST NOT substituir `landUseType`. `slopePercent` ausente também MUST produzir `INSUFFICIENT_DATA`, sem redistribuir pesos.
+- **FR-011**: Criação e associação MUST ser atômicas e preservar a cadeia laboratório → área → coleta → conjunto ambiental/suplemento → diagnóstico. Entradas e resultado confirmados MUST ser imutáveis. Um suplemento pertence à coleta e MAY ser referenciado por N diagnósticos compatíveis; MUST ser deduplicado por `(collectionDataId, payloadHash)` e `inputSupplementId` MUST NOT ser único no diagnóstico. Nova observação de uso da terra MUST criar novo suplemento; nova matemática compatível MAY reutilizar o suplemento existente.
+- **FR-012**: A IMP-006 MUST consumir `ihfr-measurement-v1` e `ihfr-diagnosis-input-experimental-v0.1.0`. `landUseType` MUST usar exatamente um dos sete valores do manifesto e representar o uso predominante. Campo ou enum desconhecido, alias, caixa divergente, `OTHER`/`OTHERS` ou categoria concorrente MUST produzir `INVALID_INPUT` e MUST NOT ser ignorado. Campo opcional conhecido ausente, `null` quando permitido ou não aplicável MUST ser excluído da média; `null` MUST NOT virar zero. Ausência de entrada obrigatória, falta de predominância determinável ou dimensão obrigatória incalculável MUST produzir `INSUFFICIENT_DATA`. `CollectionArea.landType` livre, `soilTexture`, `landscapeDegradation`, `vegetationCoverPercent`, estruturas legadas, drenagem, elevação, declividade ou tamanho da área MUST NOT substituir `landUseType`. `slopePercent` ausente também MUST produzir `INSUFFICIENT_DATA`, sem redistribuir pesos.
 - **FR-013**: Cada coleta MUST ter no máximo um diagnóstico `CURRENT`. Substituição cria novo registro e transita o anterior para `SUPERSEDED`; revogação registra motivo e transita para `REVOKED`; correção usa substituição. Concorrência MUST serializar por coleta e substituição MUST informar o ID vigente esperado.
 - **FR-014**: Cada escrita MUST usar chave UUID própria e hash canônico da requisição. Replay idêntico no mesmo contexto retorna o resultado anterior; chave divergente retorna conflito; timeout é recuperado por consulta contextual da chave. A `confirmationKey` ambiental MUST NOT ser reutilizada.
 - **FR-015**: O avaliador MUST ser puro, determinístico, server-side e sem IA generativa. Para v0.1, a implementação principal é interna ao backend TypeScript; Python, FastAPI, serviço externo, importação manual e processo autônomo ficam fora do escopo.
 - **FR-016**: O cálculo MUST seguir o manifesto: quatro dimensões válidas, pelo menos dois scores por dimensão, `clamp` nas normalizações declaradas, classes contínuas, score interno não arredondado e arredondamento somente de apresentação.
 - **FR-017**: Auditoria restrita MUST registrar ator, chave, hash da requisição, entradas de origem, versões/hash, resultado, transição, motivo e timestamps. Retenção e acesso seguem as políticas gerais aplicáveis a serem materializadas no plano sem ampliar o DTO público.
 - **FR-018**: Dashboard, histórico, mapa, gráficos, recomendações, edição/exclusão de coleta, manutenção da IMP-005, Python, serviço externo e validação científica definitiva permanecem fora desta feature.
+- **FR-019**: O contrato HTTP MUST expor seis operações e sete comportamentos funcionais. O POST de cálculo MUST discriminar CREATE/REPLACE por `mode`; CREATE aceita `expectedCurrentDiagnosisId` ausente ou `null`, REPLACE exige UUID. Query de elegibilidade malformada ou categoria inválida MUST retornar `400 INVALID_REQUEST`; ausência válida ou predominância indeterminável MUST retornar elegibilidade com outcome `INSUFFICIENT_DATA`.
+- **FR-020**: Testes PostgreSQL MUST usar schema isolado por execução, fixtures explícitas para todos os papéis, contextos, entidades e estados, e teardown verificável mesmo após falha. Triggers de imutabilidade MUST NOT ser desabilitados por cenário; rollback transacional, limpeza entre cenários, descarte do schema e recuperação operacional MUST permanecer mecanismos distintos.
 
 ### Key Entities
 
 - **Diagnóstico IHFR experimental conforme**: resultado produzido exatamente pelo manifesto e algoritmo versionados, associado atomicamente à origem e rotulado como experimental. Não representa validação científica definitiva. Pode estar `CURRENT`, `SUPERSEDED` ou `REVOKED`; conteúdo e associação são imutáveis.
 - **Coleta de origem**: registro confirmado integrado pela IMP-004, associado a área, laboratório e autoria histórica; não é editado pela associação do diagnóstico.
 - **Dados ambientais aplicáveis**: `EnvironmentalMeasurementSet` integrado, integral, único e imutável por coleta, com água, solo, vegetação e terreno, autoria interna, `confirmedAt` e `measurementContractVersion = "ihfr-measurement-v1"`. Sua captura técnica implementada não prova adequação científica para cálculo IHFR. `payloadHash`, `confirmationKey` e autoria interna não pertencem automaticamente à projeção pública do diagnóstico.
-- **Suplemento de diagnóstico**: entrada imutável `ihfr-diagnosis-input-experimental-v0.1.0`, ligada à coleta e contendo o `landUseType` predominante com autoria derivada da sessão e instante. Um candidato ausente pode gerar insuficiência, mas não vira suplemento confirmado.
+- **Suplemento de diagnóstico**: entrada imutável `ihfr-diagnosis-input-experimental-v0.1.0`, pertencente à coleta e contendo o `landUseType` predominante com autoria derivada da sessão e instante. Pode ser referenciada por N diagnósticos compatíveis e é deduplicada por coleta/payload. Um candidato ausente pode gerar insuficiência, mas não vira suplemento confirmado.
 - **Referência do contrato matemático experimental**: identifica manifesto, versão e hash exatos; não prova aprovação científica definitiva.
 - **Referência do algoritmo**: identifica a implementação determinística usada e não substitui o contrato matemático.
 - **Contexto de acesso**: pessoa elegível, vínculo atual, papel e estado do laboratório. OWNER/ADMIN escrevem e consultam; MEMBER somente consulta.
@@ -156,6 +165,7 @@ Os requisitos definem comportamento seguro e rastreável para a v0.1 experimenta
 - **SC-005**: Na matriz OWNER/ADMIN/MEMBER, MEMBER executa zero escrita, laboratório inativo admite zero escrita e recursos inexistentes/inacessíveis são indistinguíveis (US1/US2).
 - **SC-006**: Falha, replay, concorrência, substituição, revogação, correção e timeout terminam sem sucesso falso, associação parcial, alteração das entradas, duplicação da operação ou mais de um `CURRENT` (US2).
 - **SC-007**: Ausência de `landUseType`, ausência de `slopePercent` ou qualquer dimensão insuficiente produz `INSUFFICIENT_DATA` e zero diagnóstico vigente (US2).
+- **SC-008**: Em toda execução PostgreSQL, fixtures cobrem OWNER/ADMIN/MEMBER, vínculo atual/revogado, laboratório ativo/inativo, contexto próprio/cruzado, coleta com/sem conjunto e diagnóstico CURRENT/SUPERSEDED/REVOKED; após sucesso ou falha, o schema isolado é removido sem registros órfãos nem processos deixados em execução.
 
 Esses critérios são metas verificáveis, não resultados já alcançados. Vetores científicos, calibração e validação de campo permanecem em G2-SCI e não são substituídos pelos testes técnicos.
 
@@ -186,12 +196,12 @@ O conjunto ambiental não implementa `mathContractVersion`, `algorithmVersion` n
 | Gate | Classificação e fonte | Evidência exigida para liberação | Impacto atual |
 |---|---|---|---|
 | G1 — Dados ambientais integrados | `EVIDENCIA_IMPLEMENTACAO`: IMP-005 `e775ebc` integrada pelo PR #25 no merge `5d9ca6f`; baseline incorporada à IMP-006 em `62b54fa` | Entidade, contrato, API, migration, autorização, testes, imutabilidade e legado reconciliados; conjunto confirmado disponível sem alterar a coleta | **FECHADO** em 2026-09-18. A IMP-006 deve consumir o contrato real descrito acima sem ampliar sua autoridade científica |
-| G2-ENG — Contrato experimental | `DECISAO_CONFIRMADA`: ADR-0001 e manifesto `ihfr-math-experimental-v0.1.0` | Manifesto/hash, fórmula, mapeamentos, ausências, classes, precisão, entrada suplementar e vetores técnicos definidos | `RESOLVIDO_PARA_PLANEJAMENTO`; implementação pendente |
+| G2-ENG — Contrato experimental | `DECISAO_CONFIRMADA`: ADR-0001 e manifesto ativo `ihfr-math-experimental-v0.1.1`; v0.1.0 histórica preservada | Manifesto/hash, fórmula, mapeamentos, ausências, classes, precisão, entrada suplementar e vetores técnicos definidos | `RESOLVIDO_PARA_PLANEJAMENTO`; implementação pendente |
 | G2-ENG — `landUseType` | `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`: ADR-0001 §7 | Sete categorias/scores, predominância, desconhecido, ausência, origem, imutabilidade, escopo e alternativas rastreados | `RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL` |
 | G2-SCI — Validação definitiva | `PENDENCIA_DE_DECISAO`: revisão especializada e campo | Pareceres, calibração, comparação, vetores científicos, amostra, método, métricas e limitações | `NAO_VERIFICADO_VALIDACAO_POSTERIOR`; não bloqueia construção experimental rotulada, mas proíbe alegação definitiva |
 | G3-ENG — Produção, responsabilidade e ciclo | `DECISAO_CONFIRMADA`: ADR-0001 §10 | Avaliador interno determinístico, OWNER/ADMIN, imutabilidade, estados, chave própria, concorrência, recuperação e auditoria definidos | `RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`; implementação pendente |
 
-O escopo documental, o plano e as tarefas `T001–T127` estão prontos para nova execução independente de `$speckit-analyze`. A ordem planejada começa pela entrada suplementar, depois manifesto/avaliador, persistência/ciclo, API/DTO, auditoria e testes. Implementação permanece posterior e condicionada ao resultado dessa análise.
+O escopo documental, o plano e as tarefas `T001–T134` remediados estão prontos para nova execução independente de `$speckit-analyze`. A ordem executável começa por setup e caracterização da baseline, segue por preflight de banco, design Prisma, migration, validação/aplicação isolada, geração do client, fixtures, shells compiláveis, RED comportamental, implementação, verdes e regressões; teardown, evidências e encerramento vêm por último. Implementação permanece posterior e condicionada ao resultado dessa análise.
 
 As invariantes de G3 vigentes são as do ADR-0001 §10: OWNER/ADMIN calculam e transitam; MEMBER consulta; processo autônomo fica adiado; há no máximo um `CURRENT`; registros e entradas são imutáveis; transições são auditáveis; consulta expõe proveniência mínima e estado experimental sem identidades restritas.
 
@@ -223,7 +233,7 @@ Histórico preservado: a primeira leitura usou `d3fade93e71473b88e44bb473fb2adb9
 
 ### Fora do escopo
 
-Validação científica definitiva, calibração regional, perfil `35/30/25/10`, Python/FastAPI, serviço externo, processo autônomo, edição dos dados da IMP-005, dashboard, histórico, mapa, gráficos, recomendações e IA. Esta consolidação não executa `$speckit-tasks`, análise ou implementação.
+Validação científica definitiva, calibração regional, perfil `35/30/25/10`, Python/FastAPI, serviço externo, processo autônomo, edição dos dados da IMP-005, dashboard, histórico, mapa, gráficos, recomendações e IA. Esta consolidação atualiza as tarefas, mas não executa análise independente nem implementação.
 
 ### Fontes e baseline
 
