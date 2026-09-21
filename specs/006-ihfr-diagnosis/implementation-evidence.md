@@ -206,6 +206,14 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - Resultado: RED comportamental porque nenhum dos dois caminhos venceu (`fulfilled=0`, esperado futuro `1 vencedor + 1 conflito/replay`). A falha não decorreu de barreira, timeout, SQL, fixture, migration ou teardown.
 - O schema isolado foi removido em `finally`; triggers permaneceram ativos. T073 é a primeira tarefa pendente e T076 permanece aberta.
 
+### RED de cardinalidade e suplemento — T073
+
+- Dois grupos cobrem reuso 1:N, unique `(collectionDataId,payloadHash)`, ausência de unique em `inputSupplementId`, payload diferente, mesmo hash em coleta diferente, coerência coleta/conjunto ambiental, concorrência e privacidade.
+- PASS estrutural PostgreSQL: três diagnósticos reutilizam o mesmo suplemento; índice único indevido não existe; duplicata na mesma coleta é recusada; payload diferente cria nova linha; outra coleta mantém suplemento próprio mesmo com hash igual; conjunto cruzado é recusado pelo trigger contextual.
+- Imutabilidade direta foi comprovada sem desabilitar triggers: UPDATE de `landUseType`, versão, proveniência, hash, coleta, conjunto ambiental, autoria e confirmação, além de DELETE, foi recusado e o snapshot permaneceu byte-a-byte equivalente na projeção do driver.
+- RED comportamental: duas operações compatíveis simultâneas produziram zero vencedores pelo shell, quando o futuro esperado é um vencedor controlado/replay e exatamente um suplemento. O banco permaneceu com uma linha para a coleta, sem vazamento de hash, autoria, proveniência ou ID interno no resultado observado.
+- Ambos os schemas isolados foram removidos em `finally`. T074 é a primeira tarefa pendente; T076 permanece aberta.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |
