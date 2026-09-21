@@ -165,6 +165,13 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 
 ## Validações humanas
 
+### RED unitário inicial da US2 — T065–T068
+
+- Quatro arquivos definem o comportamento esperado de manifesto ativo/histórico e hashes exatos, parser fechado CREATE/REPLACE, avaliação determinística, precisão/drivers, ausência opcional conhecida e rejeição de campos/enums desconhecidos.
+- `npm run typecheck`: PASS; portanto o RED não decorre de import, tipos, Prisma Client, schema ou fixture.
+- Execução focal: 0/4 arquivos PASS e 4/4 FAIL pelos shells deliberadamente não implementados (`IHFR_MANIFEST_LOADER_NOT_IMPLEMENTED`, `IHFR_REQUEST_PARSER_NOT_IMPLEMENTED` e `IHFR_EVALUATOR_NOT_IMPLEMENTED`). Este RED não foi enfraquecido nem recebeu implementação antecipada.
+- T069 é a primeira tarefa pendente; T076 permanece aberta até a matriz T065–T075 estar definida e executada.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |

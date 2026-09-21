@@ -124,10 +124,10 @@
 
 ### Testes RED da US2
 
-- [ ] T065 [P] [US2] Criar testes de canonicalização e hashes v0.1.0/v0.1.1 em `tests/unit/ihfr-diagnosis-manifest-loader.test.ts`
-- [ ] T066 [P] [US2] Criar testes de parser fechado e condicionais `mode=CREATE/REPLACE` em `tests/unit/ihfr-diagnosis-contracts.test.ts`
-- [ ] T067 [P] [US2] Criar testes de scores, limites, classes, precisão e drivers em `tests/unit/ihfr-diagnosis-evaluator.test.ts`
-- [ ] T068 [P] [US2] Criar testes de ausência opcional conhecida versus campo/enum desconhecido em `tests/unit/ihfr-diagnosis-input-policy.test.ts`
+- [X] T065 [P] [US2] Criar testes de canonicalização e hashes v0.1.0/v0.1.1 em `tests/unit/ihfr-diagnosis-manifest-loader.test.ts`
+- [X] T066 [P] [US2] Criar testes de parser fechado e condicionais `mode=CREATE/REPLACE` em `tests/unit/ihfr-diagnosis-contracts.test.ts`
+- [X] T067 [P] [US2] Criar testes de scores, limites, classes, precisão e drivers em `tests/unit/ihfr-diagnosis-evaluator.test.ts`
+- [X] T068 [P] [US2] Criar testes de ausência opcional conhecida versus campo/enum desconhecido em `tests/unit/ihfr-diagnosis-input-policy.test.ts`
 - [ ] T069 [P] [US2] Criar testes de elegibilidade e `400 INVALID_REQUEST` em `tests/integration/ihfr-diagnosis-eligibility-route.test.ts`
 - [ ] T070 [P] [US2] Criar testes de CREATE/REPLACE, insuficiência e incompatibilidade em `tests/integration/ihfr-diagnosis-write-route.test.ts`
 - [ ] T071 [P] [US2] Criar testes de replay, divergência e recuperação por chave em `tests/integration/ihfr-diagnosis-idempotency.test.ts`
