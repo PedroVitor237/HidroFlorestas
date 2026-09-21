@@ -134,6 +134,13 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - `npm run typecheck`: código 0. ESLint focal: zero erros e 21 warnings esperados de parâmetros ainda não usados nos shells. `git diff --check`: código 0.
 - Não há import ou dependência da administração global; nenhum `isAdmin`; tipos internos de store/manifesto não fazem parte de `PublicDiagnosis`.
 
+### RED da consulta — T041–T047
+
+- `npm run typecheck`: código 0 antes da execução; imports, schema, client e fixtures permaneceram válidos.
+- Execução focal Node: 1/5 conjuntos passou (autorização contextual de leitura ativa/inativa) e 4/5 falharam pelo comportamento deliberadamente ausente: parser contextual, projeção de ciclo e remoção do `501` nas rotas current/detail. Nenhuma falha foi de compilação ou infraestrutura.
+- O E2E focal não possui `IMP006_E2E_COLLECTION_URL` autenticada configurada. Após liberar somente a inicialização do Chromium fora do sandbox, concluiu com `1 skipped`; não foi contado como PASS. A primeira tentativa sem permissão ampliada falhou na inicialização do sandbox do Chromium e não foi tratada como RED do produto.
+- A topologia real do App Router usa `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/page.tsx`; T057 será aplicada nesse caminho canônico, sem criar página duplicada.
+
 ## Validações humanas
 
 | Validação | Estado |

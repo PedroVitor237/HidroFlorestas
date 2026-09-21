@@ -81,13 +81,13 @@
 
 ### Testes RED da US1
 
-- [ ] T041 [P] [US1] Criar testes do DTO e de `areaId` derivado/coerente em `tests/unit/ihfr-diagnosis-public-dto.test.ts`
-- [ ] T042 [P] [US1] Criar testes de projeção de ciclo CURRENT/SUPERSEDED/REVOKED em `tests/unit/ihfr-diagnosis-lifecycle-projection.test.ts`
-- [ ] T043 [P] [US1] Criar testes de autorização de leitura e 404 indistinguível em `tests/integration/ihfr-diagnosis-read-authorization.test.ts`
-- [ ] T044 [P] [US1] Criar testes do endpoint current, incluindo ausência, em `tests/integration/ihfr-diagnosis-current-route.test.ts`
-- [ ] T045 [P] [US1] Criar testes do endpoint detail, legado e minimização em `tests/integration/ihfr-diagnosis-detail-route.test.ts`
-- [ ] T046 [P] [US1] Criar jornada de consulta/ausência/inatividade em `tests/e2e/ihfr-diagnosis-read.spec.ts`
-- [ ] T047 [US1] Executar os testes T041–T046 e registrar RED comportamental esperado, sem erro de schema/client/fixture, em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T041 [P] [US1] Criar testes do DTO e de `areaId` derivado/coerente em `tests/unit/ihfr-diagnosis-public-dto.test.ts`
+- [X] T042 [P] [US1] Criar testes de projeção de ciclo CURRENT/SUPERSEDED/REVOKED em `tests/unit/ihfr-diagnosis-lifecycle-projection.test.ts`
+- [X] T043 [P] [US1] Criar testes de autorização de leitura e 404 indistinguível em `tests/integration/ihfr-diagnosis-read-authorization.test.ts`
+- [X] T044 [P] [US1] Criar testes do endpoint current, incluindo ausência, em `tests/integration/ihfr-diagnosis-current-route.test.ts`
+- [X] T045 [P] [US1] Criar testes do endpoint detail, legado e minimização em `tests/integration/ihfr-diagnosis-detail-route.test.ts`
+- [X] T046 [P] [US1] Criar jornada de consulta/ausência/inatividade em `tests/e2e/ihfr-diagnosis-read.spec.ts`
+- [X] T047 [US1] Executar os testes T041–T046 e registrar RED comportamental esperado, sem erro de schema/client/fixture, em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 
 ### Implementação da US1
 

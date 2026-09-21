@@ -10,3 +10,10 @@ export function parseIHFRRouteContext(_value: unknown): IHFRRouteContext {
 export function parseIHFRDiagnosisRequest(_value: unknown): IHFRDiagnosisRequest {
   throw new Error("IHFR_REQUEST_PARSER_NOT_IMPLEMENTED");
 }
+
+export function deriveIHFRLifecycleState(_input: {
+  current: boolean;
+  terminalEvent: "REVOKED" | "SUPERSEDED" | null;
+}) {
+  throw new Error("IHFR_LIFECYCLE_PROJECTION_NOT_IMPLEMENTED");
+}
