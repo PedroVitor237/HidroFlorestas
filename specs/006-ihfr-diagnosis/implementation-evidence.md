@@ -172,6 +172,15 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - Execução focal: 0/4 arquivos PASS e 4/4 FAIL pelos shells deliberadamente não implementados (`IHFR_MANIFEST_LOADER_NOT_IMPLEMENTED`, `IHFR_REQUEST_PARSER_NOT_IMPLEMENTED` e `IHFR_EVALUATOR_NOT_IMPLEMENTED`). Este RED não foi enfraquecido nem recebeu implementação antecipada.
 - T069 é a primeira tarefa pendente; T076 permanece aberta até a matriz T065–T075 estar definida e executada.
 
+### RED de elegibilidade — T069
+
+- A autoridade foi reconciliada entre OpenAPI 3.1, spec, schema do suplemento e ADR-0001: elegibilidade é GET contextual, recebe somente `landUseType` opcional na query, retorna `400 INVALID_REQUEST` para query/categoria malformada e mantém ausência válida como outcome `INSUFFICIENT_DATA`.
+- A matriz possui 10 casos: sessão ausente/inválida; 404 indistinguível para vínculo ausente/revogado e contexto cruzado; OWNER/ADMIN contextual/MEMBER; laboratório inativo somente leitura; sete enums exatos; aliases/caixa/OTHER/OTHERS/extra/duplicado; UUID malformado; cinco causas de insuficiência; versão incompatível; e ausência de efeitos colaterais.
+- Foi criada somente uma factory estrutural injetável ainda fail-closed; a rota continua respondendo `501` e nenhum comportamento de T091 foi antecipado.
+- Execução focal PostgreSQL: 1/10 PASS estrutural (contagens antes/depois idênticas para suplemento, diagnóstico, ponteiro, operação, evento, conjunto ambiental, coleta, área, laboratório e vínculo) e 9/10 RED comportamental exclusivamente pelo `501` esperado.
+- Migration, fixtures, cliente PostgreSQL e teardown concluíram; nenhum trigger foi desabilitado e o schema isolado foi removido em `finally`.
+- T070 é a primeira tarefa pendente. T076 permanece aberta.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |
