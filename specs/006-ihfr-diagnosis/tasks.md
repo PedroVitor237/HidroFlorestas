@@ -133,9 +133,9 @@
 - [X] T071 [P] [US2] Criar testes de replay, divergência e recuperação por chave em `tests/integration/ihfr-diagnosis-idempotency.test.ts`
 - [X] T072 [P] [US2] Criar testes de concorrência e ID vigente esperado em `tests/integration/ihfr-diagnosis-concurrency.test.ts`
 - [X] T073 [P] [US2] Criar testes de cardinalidade/reuso do suplemento em `tests/integration/ihfr-diagnosis-supplement-cardinality.test.ts`
-- [ ] T074 [P] [US2] Criar testes de revogação, correção por substituição e imutabilidade em `tests/integration/ihfr-diagnosis-revocation.test.ts`
-- [ ] T075 [P] [US2] Criar jornada de gestão OWNER/ADMIN/MEMBER em `tests/e2e/ihfr-diagnosis-manage.spec.ts`
-- [ ] T076 [US2] Executar T065–T075 e registrar RED comportamental esperado, sem erro de schema/client/fixture, em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T074 [P] [US2] Criar testes de revogação, correção por substituição e imutabilidade em `tests/integration/ihfr-diagnosis-revocation.test.ts`
+- [X] T075 [P] [US2] Criar jornada de gestão OWNER/ADMIN/MEMBER em `tests/e2e/ihfr-diagnosis-manage.spec.ts` — `2 SKIP` registrados; executar definitivamente em T116 com fixtures isoladas persistentes
+- [X] T076 [US2] Executar T065–T075 e registrar RED comportamental esperado, sem erro de schema/client/fixture, em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 
 ### Implementação da US2
 

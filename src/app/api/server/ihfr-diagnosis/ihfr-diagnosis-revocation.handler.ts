@@ -1,0 +1,23 @@
+import type { IHFRDiagnosisService } from "../services/ihfr-diagnosis.service";
+import { ihfrNotImplemented } from "./ihfr-diagnosis.http";
+
+type Dependencies = {
+  requireAuth(): Promise<{ id: string }>;
+  service: Pick<IHFRDiagnosisService, "revoke">;
+};
+
+export function createIHFRRevocationHandler(_dependencies: Dependencies) {
+  return async function POST(
+    _request: Request,
+    _route: {
+      params: Promise<{
+        laboratoryId: string;
+        areaId: string;
+        collectionId: string;
+        diagnosisId: string;
+      }>;
+    },
+  ) {
+    return ihfrNotImplemented();
+  };
+}

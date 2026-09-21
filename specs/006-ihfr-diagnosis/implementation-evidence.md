@@ -214,6 +214,46 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - RED comportamental: duas operações compatíveis simultâneas produziram zero vencedores pelo shell, quando o futuro esperado é um vencedor controlado/replay e exatamente um suplemento. O banco permaneceu com uma linha para a coleta, sem vazamento de hash, autoria, proveniência ou ID interno no resultado observado.
 - Ambos os schemas isolados foram removidos em `finally`. T074 é a primeira tarefa pendente; T076 permanece aberta.
 
+### RED de revogação — T074
+
+- A matriz possui 10 grupos e 66 cenários explícitos: autenticação e WRITE contextual; hierarquia laboratório/área/coleta/diagnóstico; revogação válida e privacidade; motivo fechado de 1–500 caracteres; ID vigente esperado; alvos não vigentes/legados/cruzados; replay/divergência/escopo do ator; quatro disputas determinísticas; imutabilidade/rollback; e correção exclusivamente por substituição.
+- Foi adicionada somente uma factory estrutural injetável ainda fail-closed. POST revocations continua em `501`; autorização, parser, ledger, idempotência, transação, remoção do ponteiro e evento `REVOKED` não foram implementados antecipadamente.
+- Execução focal PostgreSQL: 2/10 grupos PASS estruturais e 8/10 RED comportamental. As falhas comportamentais foram exclusivamente `501` ou zero vencedores dos serviços ainda não implementados; TypeScript, migration, fixtures, SQL e barreira chegaram aos pontos esperados.
+- O PASS estrutural recusou UPDATE/DELETE do diagnóstico e UPDATE/DELETE do evento com triggers ativos. Sete pontos de falha transacional restauraram ponteiro, contagens de eventos/operações e o snapshot original com score bruto/exibido, classe, qualidade, componentes, decomposição, drivers, explicação, quatro versões/hash e timestamps intactos.
+- REVOKE×REVOKE e REVOKE×REPLACE usam latch determinístico e comprovam `reached=2`; o RED atual produz zero vencedores, enquanto o futuro GREEN exige uma transição válida mais replay/conflito controlado.
+- O lifecycle executou rollback/reset/drop em `finally` e confirmou a remoção do schema gerado; nenhum trigger foi desabilitado e nenhum cenário usou `public`. T075 é a primeira tarefa pendente; T076 permanece aberta.
+
+### Jornada E2E de gestão preparada — T075
+
+- Dois cenários cobrem OWNER e ADMIN contextual gerenciando CREATE/REPLACE/REVOKE/recuperação, e MEMBER/laboratório inativo permanecendo read-only. Papel global não é usado como autoridade contextual.
+- A jornada prepara confirmação destrutiva, foco inicial no diálogo, contenção por Tab, Escape, retorno ao acionador, foco no status após sucesso, foco no alerta após `409`, recuperação após timeout, teclado e viewports de 320 e 1280 px sem overflow.
+- Primeira tentativa local não iniciou o web server e não foi classificada como resultado E2E. A tentativa sem permissão ampliada falhou ao iniciar o sandbox do Chromium e também não foi classificada como comportamento do produto.
+- Execução focal autorizada do Chromium, sem servidor local desnecessário: `2 SKIP`, não PASS. Faltam as URLs/identidades persistentes e isoladas de OWNER, ADMIN contextual, MEMBER e laboratório inativo visíveis pelo servidor.
+- A execução definitiva permanece vinculada à T116. A criação da jornada está concluída, mas acessibilidade e comportamento reais continuam `NAO_VERIFICADO` até a fixture segura existir.
+
+### Consolidação RED completa da US2 — T076
+
+- Rodada conjunta T065–T074: 50 grupos de teste, 7 PASS estruturais e 43 RED comportamentais em 62,99 s. As falhas corresponderam somente aos shells declarados (`IHFR_*_NOT_IMPLEMENTED`, HTTP `501`) ou ao futuro vencedor ainda ausente nas disputas; não houve falha de TypeScript, migration, Prisma Client, fixture, SQL, teardown ou conexão residual.
+- T075 foi executada separadamente porque usa Playwright: 2 SKIP reais por ausência das fixtures isoladas persistentes, não contabilizados como PASS. A primeira tentativa de navegador sem permissão ampliada foi descartada como falha de ambiente; a execução autorizada produziu os dois SKIPs esperados.
+
+| Tarefa | Grupos/casos | PASS estrutural | RED comportamental | SKIP | Resíduo |
+| ------ | -----------: | --------------: | -----------------: | ---: | ------: |
+| T065 | 2 | 0 | 2 | 0 | 0 |
+| T066 | 3 | 0 | 3 | 0 | 0 |
+| T067 | 2 | 0 | 2 | 0 | 0 |
+| T068 | 2 | 0 | 2 | 0 | 0 |
+| T069 | 10 | 1 | 9 | 0 | 0 |
+| T070 | 10 | 1 | 9 | 0 | 0 |
+| T071 | 8 | 2 | 6 | 0 | 0 |
+| T072 | 1 | 0 | 1 | 0 | 0 |
+| T073 | 2 | 1 | 1 | 0 | 0 |
+| T074 | 10 | 2 | 8 | 0 | 0 |
+| T075 | 2 | 0 | 0 | 2 | 0 |
+
+- `npm run typecheck` passou. ESLint focal terminou sem erros; os três warnings são parâmetros deliberadamente não usados na nova factory fail-closed, equivalentes aos shells RED anteriores. `git diff --check` passou.
+- Inspeção externa posterior no catálogo retornou zero schemas `imp006_test_*`. Os pools foram encerrados pelo harness; não restou processo Next, Playwright ou teste IHFR. Triggers permaneceram ativos, `public` não recebeu fixtures e nenhuma credencial foi registrada.
+- T065–T076 estão concluídas como especificação executável RED. A próxima tarefa é T077; o estado científico permanece `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |
