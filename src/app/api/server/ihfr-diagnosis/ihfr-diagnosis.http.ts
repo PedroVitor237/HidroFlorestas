@@ -13,6 +13,6 @@ export function ihfrNotImplemented() {
 
 export function ihfrError(error: unknown) {
   if (error instanceof AuthBoundaryError && error.code === "UNAUTHORIZED") return ihfrJson({ error: { code: "UNAUTHENTICATED", message: "Authentication required" } }, 401);
-  if ((error instanceof AreaAccessError && ["NOT_FOUND", "UNAUTHENTICATED"].includes(error.code)) || (error instanceof IHFRDiagnosisServiceError && error.code === "NOT_FOUND")) return ihfrJson({ error: { code: "NOT_FOUND", message: "Resource not found" } }, 404);
+  if ((error instanceof TypeError && error.message === "INVALID_CONTEXT") || (error instanceof AreaAccessError && ["NOT_FOUND", "UNAUTHENTICATED"].includes(error.code)) || (error instanceof IHFRDiagnosisServiceError && error.code === "NOT_FOUND")) return ihfrJson({ error: { code: "NOT_FOUND", message: "Resource not found" } }, 404);
   return ihfrJson({ error: { code: "INTERNAL_ERROR", message: "Unable to process IHFR diagnosis" } }, 500);
 }

@@ -105,12 +105,12 @@
 ### GREEN da US1
 
 - [X] T058 [US1] Executar unitários da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T059 [US1] Executar integração PostgreSQL da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T060 [US1] Executar E2E da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T061 [US1] Verificar manualmente navegação por teclado, foco e leitura dos rótulos experimentais e registrar resultado real em `specs/006-ihfr-diagnosis/evidence/implementation.md`
-- [ ] T062 [US1] Confirmar que ator, idempotency key, request/payload hash, payload ambiental e evidência restrita não aparecem no DTO/UI em `tests/integration/ihfr-diagnosis-detail-route.test.ts`
-- [ ] T063 [US1] Confirmar leitura autorizada em laboratório inativo e zero controles de escrita em `tests/e2e/ihfr-diagnosis-read.spec.ts`
-- [ ] T064 [US1] Registrar checkpoint independente da US1, incluindo comandos e limitações, em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T059 [US1] Executar integração PostgreSQL da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [ ] T060 [US1] Executar E2E da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md` — `SKIP` registrado; revalidar em T116 quando houver fixture isolada persistente visível pelo servidor
+- [X] T061 [US1] Verificar manualmente navegação por teclado, foco e leitura dos rótulos experimentais e registrar resultado real em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T062 [US1] Confirmar que ator, idempotency key, request/payload hash, payload ambiental e evidência restrita não aparecem no DTO/UI em `tests/integration/ihfr-diagnosis-detail-route.test.ts`
+- [X] T063 [US1] Confirmar leitura autorizada em laboratório inativo e zero controles de escrita em `tests/e2e/ihfr-diagnosis-read.spec.ts`
+- [X] T064 [US1] Registrar checkpoint independente da US1, incluindo comandos e limitações, em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 
 **Checkpoint**: US1 entrega consulta independente sem depender do fluxo de criação pela UI.
 

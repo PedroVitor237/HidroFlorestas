@@ -148,7 +148,20 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - GET current/detail removem o `501`, autenticam no servidor, uniformizam 401/404/500 e usam `Cache-Control: no-store`.
 - Página canônica da coleta recebeu resumo responsivo/read-only com os quatro rótulos e estado de ausência, sem controles de escrita.
 - Typecheck: código 0. Testes focais Node: 5/5 PASS. ESLint focal: zero erros e warnings apenas nos shells de escrita ainda não implementados.
-- T059–T064 permanecem abertas: integração PostgreSQL autenticada e E2E real ainda não foram executados; o E2E focal anterior ficou SKIP por ausência de URL/sessão autenticada.
+- T059–T064 foram consolidadas no checkpoint abaixo; o E2E continua pendente de revalidação final em T116 porque a execução focal permaneceu `SKIP`, não `PASS`.
+
+### Checkpoint independente da consulta — T059–T064
+
+- Integração PostgreSQL em schema isolado: 3/3 PASS. Foram exercitados fixtures de atores/contextos, diagnóstico CURRENT e legados SUPERSEDED/REVOKED, contexto cruzado, vínculos ausente/revogado e leitura contextual em laboratório inativo. A falha injetada propagou o erro e o teardown em `finally` passou.
+- Inspeção externa pós-execução: zero schemas `imp006_test_*`. Triggers não foram desabilitados, o schema `public` não recebeu fixtures IMP-006 e nenhum segredo ou URL de banco foi registrado.
+- Handlers current/detail passaram a aceitar dependências injetáveis. Contexto inválido agora compartilha o envelope 404 indistinguível; as rotas do App Router continuam exportando somente o método HTTP.
+- Testes focais Node finais: 8/8 PASS, cobrindo autenticação encaminhada, contexto server-derived, ausência, lifecycle, DTO allowlist, privacidade, semântica acessível e ausência de controles de escrita. `PublicDiagnosis.areaId` permanece obrigatório e é projetado do contexto validado, não de payload do cliente.
+- Privacidade/minimização: o corpo público não contém `actorUserId`, identidade do produtor/revisor, idempotency key, request/payload hash interno, payload ambiental, evidência, ledger/eventos internos, SQL ou campos fora da allowlist. Contextos cruzados e acesso sem vínculo retornam o mesmo 404.
+- Laboratório inativo: OWNER, ADMIN contextual e MEMBER com vínculo atual mantêm permissão READ; a superfície entregue é estritamente read-only, sem criar/substituir/revogar. As rotas de escrita ainda estão fail-closed (`501`) e serão revalidadas após T083 e T096–T098.
+- Automação de acessibilidade: PASS para região nomeada, hierarquia `h2`, listas de descrição `dl/dt/dd`, quatro rótulos em texto, estado de ausência sem score/classe inventados e ausência de botões de escrita. A suíte Playwright também contém verificações de teclado, overflow em 320/768/1280 e conteúdo textual, mas elas não executaram sem a fixture E2E isolada.
+- Revisão humana com leitor de tela: `NAO_VERIFICADO`.
+- E2E focal: 2 SKIP, não PASS. Foram inspecionados `playwright.config.ts`, scripts do `package.json`, cookie `auth_token` assinado, helpers administrativos e suítes das IMPs 003/004/005/007/008/009. A infraestrutura existente persiste fixtures E2E no schema `public` e não fornece `IMP006_E2E_COLLECTION_URL`, `IMP006_E2E_ABSENT_COLLECTION_URL`, `IMP006_E2E_INACTIVE_COLLECTION_URL` e `IMP006_E2E_ACTOR_ID` associados a um schema isolado visível pelo servidor. Reutilizá-la violaria o isolamento da IMP-006; o E2E fica explicitamente pendente para T116.
+- Gates locais: `npm run typecheck` PASS; `git diff --check` PASS; nenhum processo Next, Playwright ou teste IHFR permaneceu ativo. O arquivo local `specs/005-environmental-collection-data/coverage-review.md` permaneceu intocado e fora do Git; `docs/raw/**` não mudou.
 
 ## Validações humanas
 
