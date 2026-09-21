@@ -262,6 +262,16 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - O request hash usa canonicalização independente da ordem das propriedades e inclui contexto, tipo de operação, modo, ID esperado normalizado, suplemento e versões. Alterar a coleta produz hash diferente.
 - `npm run typecheck`: PASS. Suítes focais T065/T066: 2 arquivos PASS; canonicalização, hashes, imutabilidade em memória, parser e request hash passaram. T080 é a próxima tarefa.
 
+### GREEN do avaliador determinístico — T080–T082
+
+- `src/app/api/server/ihfr-diagnosis/evaluator.ts` permanece uma função pura: recebe manifesto verificado e entrada parseada, sem Prisma, rede, sessão, relógio, UUID, persistência, UI ou IA. A v0.1.0 histórica não é ativada e combinação divergente retorna `INCOMPATIBLE_VERSION`.
+- Os sete `landUseType` e scores ativos foram implementados literalmente. Alias, caixa/espaço divergente, `OTHER`/`OTHERS`, categoria nova, array e composição mista falham como `INVALID_INPUT`; ausência/null de predominância produz insuficiência, nunca score neutro ou média territorial inventada.
+- W/S/V/T usam somente os campos manifestados, média aritmética dos disponíveis e mínimo de dois componentes. Opcionais conhecidos ausentes/null são excluídos e registrados; obrigatórios ausentes podem tornar a dimensão insuficiente; desconhecidos e valores inválidos falham fechados. Clamps existem apenas para infiltração/profundidade `[0,60]` e declividade `[0,45]`; percentuais fora de `[0,100]`, negativos e não finitos são recusados.
+- O resultado suficiente preserva scores por variável/dimensão, incluídos/excluídos, peso `0,25`, contribuição, `rawScore`, `displayScore`, classe, qualidade, dois drivers, explicação por templates, versões/hash ativos e os quatro rótulos científicos. A fórmula ativa é exclusivamente `0,25W + 0,25S + 0,25V + 0,25T`; nenhum perfil regional foi implementado.
+- Half-up usa conversão decimal explícita e foi coberto abaixo/no/acima do meio, `1.005`, `2.675`, zero e um. A classificação usa o bruto não arredondado nas fronteiras 0/0,25/0,50/0,75/1 e imediatamente ao redor. Drivers ordenam por score, desempate W/S/V/T, limite dois; chamadas idênticas retornam estruturas idênticas.
+- Vetores ampliados continuam `TECHNICAL_CONTRACT_VECTOR`, não evidência científica. Revisão especializada, calibração, vetores científicos e campo permanecem `NAO_VERIFICADO (VALIDACAO_POSTERIOR)`.
+- Gate focal: 17 casos unitários em quatro arquivos GREEN; `npm run typecheck` PASS; ESLint focal sem erros; `git diff --check` PASS. T083 é a próxima tarefa.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |

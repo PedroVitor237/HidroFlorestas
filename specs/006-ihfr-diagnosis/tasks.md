@@ -142,9 +142,9 @@
 - [X] T077 [US2] Implementar canonicalização recursiva e verificação fail-closed da v0.1.1 em `src/app/api/server/ihfr-diagnosis/manifest-loader.ts`
 - [X] T078 [US2] Preservar leitura verificável da v0.1.0 histórica sem permitir ativação em `src/app/api/server/ihfr-diagnosis/manifest-loader.ts`
 - [X] T079 [US2] Implementar parser fechado, discriminador `mode` e request hash canônico em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.contracts.ts`
-- [ ] T080 [US2] Implementar mapeamentos exatos e política known-optional/unknown em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
-- [ ] T081 [US2] Implementar dimensões, suficiência, clamp e decomposição em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
-- [ ] T082 [US2] Implementar score, classe, qualidade, half-up e drivers determinísticos em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
+- [X] T080 [US2] Implementar mapeamentos exatos e política known-optional/unknown em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
+- [X] T081 [US2] Implementar dimensões, suficiência, clamp e decomposição em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
+- [X] T082 [US2] Implementar score, classe, qualidade, half-up e drivers determinísticos em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
 - [ ] T083 [US2] Implementar autorização WRITE, laboratório ativo e bloqueio de MEMBER/processo autônomo em `src/app/api/server/services/ihfr-diagnosis.service.ts`
 - [ ] T084 [US2] Implementar elegibilidade sem persistência em `src/app/api/server/services/ihfr-diagnosis.service.ts`
 - [ ] T085 [US2] Implementar criação/reuso atômico de suplemento por `(collectionDataId,payloadHash)` em `src/app/api/server/services/ihfr-diagnosis.service.ts`
