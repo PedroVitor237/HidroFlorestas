@@ -4,15 +4,39 @@ import { setupIHFRDiagnosisFixtures } from "../fixtures/ihfr-diagnosis-fixtures"
 import { selectedImp006DatabaseVariable, withImp006PostgresqlSchema } from "../fixtures/postgresql-schema-lifecycle";
 import { ihfrDiagnosisService } from "../../src/app/api/server/services/ihfr-diagnosis.service";
 
-test("concurrent lifecycle attempts yield one winner and one controlled conflict", async () => {
+const actor = "60000000-0000-4000-8000-000000000001";
+const context = { laboratoryId: "60000000-0000-4000-8000-000000000011", areaId: "60000000-0000-4000-8000-000000000031", collectionId: "60000000-0000-4000-8000-000000000041" };
+const current = "60000000-0000-4000-8000-000000000062";
+const supplement = (landUseType = "FOREST") => ({ inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0", landUseType, provenance: { kind: "FIELD_OBSERVATION", observedAt: "2026-09-20T12:00:00.000Z" } });
+type Operation = () => Promise<unknown>;
+
+function synchronizedPair(first: Operation, second: Operation) {
+  let reached = 0; let release!: () => void;
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  const wrap = (operation: Operation) => async () => { reached += 1; if (reached === 2) release(); await gate; return operation(); };
+  return { run: () => Promise.allSettled([wrap(first)(), wrap(second)()]), reached: () => reached };
+}
+
+test("eight lifecycle races overlap at a deterministic barrier and preserve PostgreSQL invariants", async () => {
   await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client) => {
     await setupIHFRDiagnosisFixtures(client);
-    const context = { laboratoryId: "60000000-0000-4000-8000-000000000011", areaId: "60000000-0000-4000-8000-000000000031", collectionId: "60000000-0000-4000-8000-000000000041" };
-    const request = { mode: "REPLACE" as const, expectedCurrentDiagnosisId: "60000000-0000-4000-8000-000000000062", supplement: { inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0", landUseType: "FOREST", provenance: { kind: "FIELD_OBSERVATION", observedAt: "2026-09-20T12:00:00.000Z" } } };
-    const results = await Promise.allSettled([ihfrDiagnosisService.createOrReplace("60000000-0000-4000-8000-000000000001", context, request), ihfrDiagnosisService.createOrReplace("60000000-0000-4000-8000-000000000001", context, request)]);
-    assert.equal(results.filter((result) => result.status === "fulfilled").length, 1);
-    assert.equal(results.filter((result) => result.status === "rejected").length, 1);
-    const pointers = await client.query(`SELECT count(*)::int AS count FROM "CurrentExperimentalIHFRDiagnosis" WHERE "collectionDataId"=$1`, [context.collectionId]);
-    assert.equal(pointers.rows[0].count, 1);
+    const create = (landUseType = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "CREATE", expectedCurrentDiagnosisId: null, supplement: supplement(landUseType) });
+    const replace = (expected = current, landUseType = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "REPLACE", expectedCurrentDiagnosisId: expected, supplement: supplement(landUseType) });
+    const revoke = () => ihfrDiagnosisService.revoke(actor, context, current, { expectedCurrentDiagnosisId: current, reason: "Correção autorizada" });
+    const scenarios: Array<[string, Operation, Operation]> = [
+      ["CREATE same key/request", create(), create()], ["CREATE distinct keys", create(), create()],
+      ["CREATE divergent payloads", create("FOREST"), create("URBAN")], ["REPLACE versus REPLACE", replace(), replace()],
+      ["REPLACE correct versus stale", replace(), replace("60000000-0000-4000-8000-000000000063")],
+      ["CREATE versus REPLACE", create(), replace()], ["REPLACE versus REVOKE", replace(), revoke],
+      ["same key divergent request", replace(current, "FOREST"), replace(current, "URBAN")],
+    ];
+    const observations: Array<{ name: string; fulfilled: number; rejected: number }> = [];
+    for (const [name, first, second] of scenarios) {
+      const pair = synchronizedPair(first, second); const results = await pair.run(); assert.equal(pair.reached(), 2, name);
+      observations.push({ name, fulfilled: results.filter((result) => result.status === "fulfilled").length, rejected: results.filter((result) => result.status === "rejected").length });
+      const state = await client.query(`SELECT (SELECT count(*)::int FROM "CurrentExperimentalIHFRDiagnosis" WHERE "collectionDataId"=$1) current,(SELECT count(*)::int FROM "ExperimentalIHFRDiagnosis" WHERE "collectionDataId"=$1) diagnoses,(SELECT count(*)::int FROM "ExperimentalIHFRInputSupplement" WHERE "collectionDataId"=$1) supplements,(SELECT count(*)::int FROM "IHFRDiagnosisOperation" WHERE "collectionDataId"=$1) operations,(SELECT count(*)::int FROM "IHFRDiagnosisLifecycleEvent" WHERE "collectionDataId"=$1) events`, [context.collectionId]);
+      assert.deepEqual(state.rows[0], { current: 1, diagnoses: 3, supplements: 1, operations: 4, events: 3 }, name);
+    }
+    for (const observation of observations) { assert.equal(observation.fulfilled, 1, observation.name); assert.equal(observation.rejected, 1, observation.name); }
   });
 });

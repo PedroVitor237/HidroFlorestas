@@ -198,6 +198,14 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - TypeScript, migration, fixtures e SQL permaneceram válidos; teardown removeu o schema isolado em `finally`.
 - T072 é a primeira tarefa pendente. T076 permanece aberta.
 
+### RED de concorrência — T072
+
+- O teste executa oito disputas: CREATE×CREATE mesma requisição; CREATE×CREATE chaves distintas; payloads divergentes; REPLACE×REPLACE; ID correto×obsoleto; CREATE×REPLACE; REPLACE×REVOKE; e mesma chave com requests divergentes.
+- Cada par usa uma barreira Promise determinística. As duas operações incrementam o latch, aguardam a mesma liberação e somente prosseguem quando `reached=2`; não há sequência acidental nem sleep.
+- Depois de cada disputa, consulta direta no PostgreSQL confirmou o baseline coerente enquanto os shells permanecem fail-closed: 1 CURRENT, 3 diagnósticos, 1 suplemento, 4 operações e 3 eventos, sem órfãos ou transições parciais.
+- Resultado: RED comportamental porque nenhum dos dois caminhos venceu (`fulfilled=0`, esperado futuro `1 vencedor + 1 conflito/replay`). A falha não decorreu de barreira, timeout, SQL, fixture, migration ou teardown.
+- O schema isolado foi removido em `finally`; triggers permaneceram ativos. T073 é a primeira tarefa pendente e T076 permanece aberta.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |
