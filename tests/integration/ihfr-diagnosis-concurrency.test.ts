@@ -7,7 +7,8 @@ import { ihfrDiagnosisService } from "../../src/app/api/server/services/ihfr-dia
 const actor = "60000000-0000-4000-8000-000000000001";
 const context = { laboratoryId: "60000000-0000-4000-8000-000000000011", areaId: "60000000-0000-4000-8000-000000000031", collectionId: "60000000-0000-4000-8000-000000000041" };
 const current = "60000000-0000-4000-8000-000000000062";
-const supplement = (landUseType = "FOREST") => ({ inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0", landUseType, provenance: { kind: "FIELD_OBSERVATION", observedAt: "2026-09-20T12:00:00.000Z" } });
+const versions = { measurementContractVersion: "ihfr-measurement-v1", mathContractVersion: "ihfr-math-experimental-v0.1.1", algorithmVersion: "ihfr-evaluator-ts-v0.1.0", contractHash: "sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89" } as const;
+const supplement = (landUseType: "FOREST" | "URBAN" = "FOREST") => ({ inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0" as const, landUseType, provenance: { kind: "FIELD_OBSERVATION" as const, observedAt: "2026-09-20T12:00:00.000Z" } });
 type Operation = () => Promise<unknown>;
 
 function synchronizedPair(first: Operation, second: Operation) {
@@ -20,8 +21,8 @@ function synchronizedPair(first: Operation, second: Operation) {
 test("eight lifecycle races overlap at a deterministic barrier and preserve PostgreSQL invariants", async () => {
   await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client) => {
     await setupIHFRDiagnosisFixtures(client);
-    const create = (landUseType = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "CREATE", expectedCurrentDiagnosisId: null, supplement: supplement(landUseType) });
-    const replace = (expected = current, landUseType = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "REPLACE", expectedCurrentDiagnosisId: expected, supplement: supplement(landUseType) });
+    const create = (landUseType: "FOREST" | "URBAN" = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "CREATE", expectedCurrentDiagnosisId: null, supplement: supplement(landUseType), versions });
+    const replace = (expected = current, landUseType: "FOREST" | "URBAN" = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "REPLACE", expectedCurrentDiagnosisId: expected, supplement: supplement(landUseType), versions });
     const revoke = () => ihfrDiagnosisService.revoke(actor, context, current, { expectedCurrentDiagnosisId: current, reason: "Correção autorizada" });
     const scenarios: Array<[string, Operation, Operation]> = [
       ["CREATE same key/request", create(), create()], ["CREATE distinct keys", create(), create()],

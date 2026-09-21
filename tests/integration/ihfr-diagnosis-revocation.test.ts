@@ -100,7 +100,7 @@ function synchronizedPair(first: Operation, second: Operation) {
 
 test("REVOKE x REVOKE and REVOKE x REPLACE overlap at a deterministic barrier", async () => {
   const revoke = (requestReason = reason) => () => ihfrDiagnosisService.revoke(IHFR_ACTORS.owner, context, context.diagnosisId, { expectedCurrentDiagnosisId: context.diagnosisId, reason: requestReason });
-  const replace = () => () => ihfrDiagnosisService.createOrReplace(IHFR_ACTORS.contextualAdmin, context, { mode: "REPLACE", expectedCurrentDiagnosisId: context.diagnosisId, supplement: { inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0", landUseType: "FOREST", provenance: { kind: "FIELD_OBSERVATION", observedAt: "2026-09-20T12:00:00.000Z" } } });
+  const replace = () => () => ihfrDiagnosisService.createOrReplace(IHFR_ACTORS.contextualAdmin, context, { mode: "REPLACE", expectedCurrentDiagnosisId: context.diagnosisId, supplement: { inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0", landUseType: "FOREST", provenance: { kind: "FIELD_OBSERVATION", observedAt: "2026-09-20T12:00:00.000Z" } }, versions: { measurementContractVersion: "ihfr-measurement-v1", mathContractVersion: "ihfr-math-experimental-v0.1.1", algorithmVersion: "ihfr-evaluator-ts-v0.1.0", contractHash: "sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89" } });
   for (const [name, first, second] of [["same request", revoke(), revoke()], ["different reasons", revoke(), revoke("Outra correção autorizada")], ["revoke wins or replace wins", revoke(), replace()], ["replace wins or revoke wins", replace(), revoke()]] as const) {
     const pair = synchronizedPair(first, second); const results = await pair.run();
     assert.equal(pair.reached(), 2, name);

@@ -9,9 +9,13 @@ import { selectedImp006DatabaseVariable, withImp006PostgresqlSchema } from "../f
 const context = { laboratoryId: "60000000-0000-4000-8000-000000000011", areaId: "60000000-0000-4000-8000-000000000031", collectionId: "60000000-0000-4000-8000-000000000041" };
 const current = "60000000-0000-4000-8000-000000000062";
 const supplement = { inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0", landUseType: "FOREST", provenance: { kind: "FIELD_OBSERVATION", observedAt: "2026-09-20T12:00:00.000Z" } };
+const versions = { measurementContractVersion: "ihfr-measurement-v1", mathContractVersion: "ihfr-math-experimental-v0.1.1", algorithmVersion: "ihfr-evaluator-ts-v0.1.0", contractHash: "sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89" };
 const service = (result: unknown = { outcome: "SUFFICIENT", diagnosis: { id: "new", areaId: context.areaId } }) => ({ createOrReplace: async () => result });
 const route = (params = context) => ({ params: Promise.resolve(params) });
-const request = (body: unknown, key = crypto.randomUUID()) => new Request("http://local.test", { method: "POST", headers: { "content-type": "application/json", "idempotency-key": key }, body: JSON.stringify(body) });
+const request = (body: unknown, key = crypto.randomUUID()) => {
+  const versioned = body && typeof body === "object" && "mode" in body ? { versions, ...body } : body;
+  return new Request("http://local.test", { method: "POST", headers: { "content-type": "application/json", "idempotency-key": key }, body: JSON.stringify(versioned) });
+};
 
 test("missing session is 401 and inaccessible or crossed context is indistinguishable 404", async () => {
   const unauthenticated = createIHFRWriteHandler({ requireAuth: async () => { throw new AuthBoundaryError("UNAUTHORIZED"); }, service: service() });

@@ -254,6 +254,14 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - Inspeção externa posterior no catálogo retornou zero schemas `imp006_test_*`. Os pools foram encerrados pelo harness; não restou processo Next, Playwright ou teste IHFR. Triggers permaneceram ativos, `public` não recebeu fixtures e nenhuma credencial foi registrada.
 - T065–T076 estão concluídas como especificação executável RED. A próxima tarefa é T077; o estado científico permanece `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
 
+### GREEN de manifesto e parser — T077–T079
+
+- O carregador remove somente `contractHash` da raiz para o cálculo, ordena recursivamente chaves de objetos, preserva arrays, serializa JSON compacto UTF-8 e calcula SHA-256 prefixado. A v0.1.1 só é retornada após versão, algoritmo, hash declarado e hash reproduzido coincidirem exatamente; divergência falha fechada.
+- O hash ativo foi reproduzido como `sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89`. A v0.1.0 foi verificada separadamente como `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`, permanece apenas histórica e não participa da seleção ativa. Nenhum manifesto JSON foi alterado.
+- O parser aceita somente CREATE/REPLACE e objetos fechados. CREATE normaliza ID esperado ausente/null para `null`; REPLACE exige UUID. Suplemento, proveniência, sete usos da terra e quatro identificadores de versão/hash são validados exatamente, sem aliases, caixa alternativa, campos derivados do servidor ou propriedades extras.
+- O request hash usa canonicalização independente da ordem das propriedades e inclui contexto, tipo de operação, modo, ID esperado normalizado, suplemento e versões. Alterar a coleta produz hash diferente.
+- `npm run typecheck`: PASS. Suítes focais T065/T066: 2 arquivos PASS; canonicalização, hashes, imutabilidade em memória, parser e request hash passaram. T080 é a próxima tarefa.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |
