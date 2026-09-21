@@ -141,6 +141,15 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - O E2E focal não possui `IMP006_E2E_COLLECTION_URL` autenticada configurada. Após liberar somente a inicialização do Chromium fora do sandbox, concluiu com `1 skipped`; não foi contado como PASS. A primeira tentativa sem permissão ampliada falhou na inicialização do sandbox do Chromium e não foi tratada como RED do produto.
 - A topologia real do App Router usa `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/page.tsx`; T057 será aplicada nesse caminho canônico, sem criar página duplicada.
 
+### Implementação de leitura e GREEN focal — T048–T058
+
+- Serviço Prisma resolve laboratório → área → coleta e somente modelos experimentais; diagnóstico legado não é fallback. Autorização reconsulta conta/vínculo contextual e permite leitura em laboratório inativo.
+- Projeção allowlist deriva `areaId` do contexto validado, deriva CURRENT/SUPERSEDED/REVOKED de ponteiro/eventos e omite ator, chaves, hashes internos, payload ambiental e evidência.
+- GET current/detail removem o `501`, autenticam no servidor, uniformizam 401/404/500 e usam `Cache-Control: no-store`.
+- Página canônica da coleta recebeu resumo responsivo/read-only com os quatro rótulos e estado de ausência, sem controles de escrita.
+- Typecheck: código 0. Testes focais Node: 5/5 PASS. ESLint focal: zero erros e warnings apenas nos shells de escrita ainda não implementados.
+- T059–T064 permanecem abertas: integração PostgreSQL autenticada e E2E real ainda não foram executados; o E2E focal anterior ficou SKIP por ausência de URL/sessão autenticada.
+
 ## Validações humanas
 
 | Validação | Estado |

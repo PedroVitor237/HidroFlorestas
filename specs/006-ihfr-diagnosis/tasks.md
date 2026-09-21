@@ -91,20 +91,20 @@
 
 ### Implementação da US1
 
-- [ ] T048 [US1] Implementar lookup laboratório → área → coleta → diagnóstico em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T049 [US1] Implementar autorização READ e semântica de laboratório inativo em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T050 [US1] Implementar projeção pública allowlist com `areaId` server-derived em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.contracts.ts`
-- [ ] T051 [US1] Implementar estado de ciclo derivado de ponteiro/eventos em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T052 [P] [US1] Implementar GET current em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/current/route.ts`
-- [ ] T053 [P] [US1] Implementar GET detail em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/diagnoses/[diagnosisId]/route.ts`
-- [ ] T054 [US1] Implementar mapeamento uniforme 401/404/500 e `Cache-Control: no-store` em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.http.ts`
-- [ ] T055 [P] [US1] Criar componente de estado experimental e quatro rótulos em `src/components/ihfr-diagnosis/experimental-diagnosis-summary.tsx`
-- [ ] T056 [P] [US1] Criar componente de ausência sem score/classe inventados em `src/components/ihfr-diagnosis/no-current-diagnosis.tsx`
-- [ ] T057 [US1] Integrar consulta read-only na superfície contextual da coleta em `src/app/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/page.tsx`
+- [X] T048 [US1] Implementar lookup laboratório → área → coleta → diagnóstico em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T049 [US1] Implementar autorização READ e semântica de laboratório inativo em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T050 [US1] Implementar projeção pública allowlist com `areaId` server-derived em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.contracts.ts`
+- [X] T051 [US1] Implementar estado de ciclo derivado de ponteiro/eventos em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T052 [P] [US1] Implementar GET current em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/current/route.ts`
+- [X] T053 [P] [US1] Implementar GET detail em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/diagnoses/[diagnosisId]/route.ts`
+- [X] T054 [US1] Implementar mapeamento uniforme 401/404/500 e `Cache-Control: no-store` em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.http.ts`
+- [X] T055 [P] [US1] Criar componente de estado experimental e quatro rótulos em `src/components/ihfr-diagnosis/experimental-diagnosis-summary.tsx`
+- [X] T056 [P] [US1] Criar componente de ausência sem score/classe inventados em `src/components/ihfr-diagnosis/no-current-diagnosis.tsx`
+- [X] T057 [US1] Integrar consulta read-only na superfície contextual da coleta em `src/app/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/page.tsx`
 
 ### GREEN da US1
 
-- [ ] T058 [US1] Executar unitários da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
+- [X] T058 [US1] Executar unitários da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 - [ ] T059 [US1] Executar integração PostgreSQL da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 - [ ] T060 [US1] Executar E2E da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/evidence/implementation.md`
 - [ ] T061 [US1] Verificar manualmente navegação por teclado, foco e leitura dos rótulos experimentais e registrar resultado real em `specs/006-ihfr-diagnosis/evidence/implementation.md`
