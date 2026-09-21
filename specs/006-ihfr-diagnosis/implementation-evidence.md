@@ -189,6 +189,15 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - TypeScript, migration, fixtures e SQL permaneceram válidos; teardown removeu o schema isolado em `finally`, sem desabilitar triggers ou usar `public`.
 - T071 é a primeira tarefa pendente. T076 permanece aberta.
 
+### RED de idempotência e recuperação — T071
+
+- O teste possui 8 grupos: autenticação/reautorização; cinco snapshots terminais; privacidade; isolamento por laboratório/área/coleta; chave inválida/desconhecida; equivalência canônica e divergências; concorrência simultânea da mesma chave; e contagens/IDs/timestamps PostgreSQL.
+- A matriz cobre mesmo ator/chave/request, outro ator, contexto divergente, CREATE/REPLACE/revogação, insuficiência, incompatibilidade, conflito, resposta perdida e recuperação sem nova execução. A chave ambiental não é reutilizada.
+- Foi adicionada somente uma factory estrutural injetável ainda fail-closed. GET operation permanece `501`; replay, hash, ledger e reautorização não foram implementados antecipadamente.
+- Execução focal PostgreSQL: 2/8 PASS estruturais e 6/8 RED comportamental pelo `501`. Duas recuperações foram disparadas simultaneamente; operações, diagnósticos, eventos, suplementos, ponteiro, `completedAt` e `calculatedAt` permaneceram idênticos ao baseline.
+- TypeScript, migration, fixtures e SQL permaneceram válidos; teardown removeu o schema isolado em `finally`.
+- T072 é a primeira tarefa pendente. T076 permanece aberta.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |

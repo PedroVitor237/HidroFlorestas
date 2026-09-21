@@ -130,7 +130,7 @@
 - [X] T068 [P] [US2] Criar testes de ausência opcional conhecida versus campo/enum desconhecido em `tests/unit/ihfr-diagnosis-input-policy.test.ts`
 - [X] T069 [P] [US2] Criar testes de elegibilidade e `400 INVALID_REQUEST` em `tests/integration/ihfr-diagnosis-eligibility-route.test.ts`
 - [X] T070 [P] [US2] Criar testes de CREATE/REPLACE, insuficiência e incompatibilidade em `tests/integration/ihfr-diagnosis-write-route.test.ts`
-- [ ] T071 [P] [US2] Criar testes de replay, divergência e recuperação por chave em `tests/integration/ihfr-diagnosis-idempotency.test.ts`
+- [X] T071 [P] [US2] Criar testes de replay, divergência e recuperação por chave em `tests/integration/ihfr-diagnosis-idempotency.test.ts`
 - [ ] T072 [P] [US2] Criar testes de concorrência e ID vigente esperado em `tests/integration/ihfr-diagnosis-concurrency.test.ts`
 - [ ] T073 [P] [US2] Criar testes de cardinalidade/reuso do suplemento em `tests/integration/ihfr-diagnosis-supplement-cardinality.test.ts`
 - [ ] T074 [P] [US2] Criar testes de revogação, correção por substituição e imutabilidade em `tests/integration/ihfr-diagnosis-revocation.test.ts`
