@@ -181,6 +181,14 @@ O banco de teste remoto permaneceu indisponível nas duas tentativas permitidas.
 - Migration, fixtures, cliente PostgreSQL e teardown concluíram; nenhum trigger foi desabilitado e o schema isolado foi removido em `finally`.
 - T070 é a primeira tarefa pendente. T076 permanece aberta.
 
+### RED de CREATE/REPLACE — T070
+
+- A matriz possui 10 grupos e cobre sessão, vínculo/contexto, OWNER/ADMIN contextual, MEMBER, laboratório inativo, CREATE ausente/null, parser fechado e chave UUID, CURRENT existente, REPLACE e IDs esperados conflitantes, oito causas de insuficiência, oito incompatibilidades e rollback em sete pontos.
+- Foi adicionada somente uma factory estrutural injetável ainda fail-closed; POST diagnoses continua em `501` e nenhum comportamento T083–T095 foi implementado.
+- Execução focal PostgreSQL: 1/10 PASS estrutural e 9/10 RED comportamental pelo `501`. O caso estrutural preservou contagens de suplemento, diagnóstico, ponteiro, operação e evento após falhas injetadas depois de suplemento/operação/diagnóstico, antes/depois do ponteiro, antes do evento e durante a resposta terminal.
+- TypeScript, migration, fixtures e SQL permaneceram válidos; teardown removeu o schema isolado em `finally`, sem desabilitar triggers ou usar `public`.
+- T071 é a primeira tarefa pendente. T076 permanece aberta.
+
 | Validação | Estado |
 |---|---|
 | Revisão do professor Fábio e especialistas | `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`) |
