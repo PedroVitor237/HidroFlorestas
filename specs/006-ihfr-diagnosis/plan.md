@@ -4,7 +4,7 @@
 
 **Input**: `specs/006-ihfr-diagnosis/spec.md`
 
-**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos para planejamento; `G2-SCI` permanece futuro e não é simulado por testes técnicos. O pacote aguarda nova análise independente antes da implementação.
+**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos para planejamento; `G2-SCI` permanece futuro e não é simulado por testes técnicos. Execução parcial até T082; T060 e T083–T134 permanecem pendentes.
 
 ## Summary
 
@@ -75,7 +75,7 @@ specs/006-ihfr-diagnosis/
 
 ### Source Code (repository root)
 
-Estrutura planejada; nenhum destes arquivos de implementação é criado nesta etapa:
+Estrutura planejada no momento da elaboração do plano; schema, migration, rotas, componentes de leitura e testes focais já foram criados até T082, conforme `implementation-evidence.md`. O bloco abaixo registra a estrutura alvo e não o inventário atual:
 
 ```text
 prisma/schema.prisma
@@ -204,7 +204,7 @@ Os cenários SC-001–SC-008 são materializados na matriz de unitários, integr
 | IMP-007 | **INTEGRADA E RECONCILIADA NO BASELINE** | Não alterar agora; extensão futura deriva da fonte canônica da IMP-006 |
 | IMP-008 | **INTEGRADA E RECONCILIADA NO BASELINE** | Preservar mapa/lista sem camada IHFR; executar caracterização e regressão territorial antes de teardown/evidências; qualquer projeção diagnóstica permanece futura |
 
-O plano e as tarefas `T001–T134` remediados estão completos e `landUseType` não possui pendência. Antes de codificar, o fluxo esperado é uma nova execução independente de `$speckit-analyze`; ela não foi executada nesta remediação.
+No encerramento da remediação documental de 2026-09-20, o plano e as tarefas `T001–T134` estavam preparados para análise independente; essa análise não foi executada naquela remediação. A execução posterior avançou parcialmente até T082, sem encerrar T060 nem T083–T134. A decisão experimental de `landUseType` não possui pendência focal de engenharia; a validação científica continua futura.
 
 ## Risks and Mitigations
 

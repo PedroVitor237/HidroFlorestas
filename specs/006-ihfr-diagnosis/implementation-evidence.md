@@ -23,11 +23,17 @@ Este registro distingue conformidade técnica de validação científica. Valore
 | Etapa | Comando/ação | Resultado esperado | Estado |
 |---|---|---|---|
 | Contratos | parsing JSON/YAML, hashes e schemas | contratos íntegros | CONCLUÍDO para preflight |
-| Migration | preflight, format, validate, aplicação isolada, generate | schema aditivo e client atual | PENDENTE |
-| US1 | RED comportamental → implementação → unit/integration/E2E | consulta segura | PENDENTE |
-| US2 | RED comportamental → implementação → unit/integration/E2E | ciclo completo | PENDENTE |
+| Migration | preflight, format, validate, aplicação isolada, generate | schema aditivo e client atual | CONCLUÍDO em schema PostgreSQL isolado; estado de outros bancos não verificado |
+| US1 | RED comportamental → implementação → unit/integration/E2E | consulta segura | PARCIAL: unit/integration GREEN, E2E SKIP e pendente |
+| US2 | RED comportamental → implementação → unit/integration/E2E | ciclo completo | PARCIAL até T082; serviço de escrita e E2E pendentes |
 | Regressão | IMP-003/004/005/007/008, lint, typecheck, build | sem regressões | PENDENTE |
 | Teardown | descarte allowlisted e contagens finais | zero resíduos | PENDENTE |
+
+### Reconciliação estática do contrato de leitura — 2026-09-21
+
+- `EVIDENCIA_IMPLEMENTACAO`: `src/types/ihfr-diagnosis.type.ts` e `projectPublicDiagnosis` publicam `laboratoryId`, versões em campos planos, `labels`, `displayScore` como string e qualidade `MODERATE`; `src/app/api/server/services/ihfr-diagnosis.service.ts` não seleciona IDs do conjunto/suplemento, decomposição, drivers, explicação ou `validFrom`.
+- `FATO_DOCUMENTADO`: `contracts/ihfr-diagnosis-api.openapi.yaml` requer em `PublicDiagnosis` IDs de conjunto/suplemento, decomposição, drivers, explicação, `versions` aninhado, `scientificLabels`, `scientificState`, `validFrom`, `displayScore` numérico e qualidade `MEDIUM`.
+- A leitura atual é minimizada e os testes focais anteriores passaram, mas ela ainda não está conforme ao schema OpenAPI completo. T104/T113 devem detectar a diferença, e a implementação futura deve reconciliar a projeção antes de declarar contrato GREEN. Nenhum comportamento de runtime foi alterado nesta revisão documental.
 
 ## Reconciliação com a IMP-009 — 2026-09-20
 

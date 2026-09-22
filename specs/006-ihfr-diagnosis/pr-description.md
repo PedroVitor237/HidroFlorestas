@@ -28,7 +28,7 @@
 - Os 12 achados da análise independente foram tratados em spec, plano, pesquisa, modelo, quickstart, tarefas, checklist, ADR, contratos e registros de governança.
 - O suplemento pertence à coleta, usa `UNIQUE(collectionDataId,payloadHash)` e pode ser referenciado por N diagnósticos compatíveis; não existe `UNIQUE(inputSupplementId)` no diagnóstico.
 - O OpenAPI declara seis operações HTTP e sete comportamentos. CREATE/REPLACE compartilham POST com discriminador `mode`; CREATE aceita ID vigente esperado ausente ou `null`, REPLACE exige UUID; elegibilidade inválida retorna `400 INVALID_REQUEST`, enquanto ausência válida/predominância indeterminável retorna `INSUFFICIENT_DATA`; `PublicDiagnosis.areaId` é obrigatório e derivado no servidor.
-- A migration futura está reservada em `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql`; a implementação para se o caminho estiver ocupado ou a ordem estiver invalidada.
+- A migration aditiva já existe em `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql` e foi aplicada em schema PostgreSQL isolado conforme `implementation-evidence.md`; a aplicação em outros ambientes exige verificação própria da ordem e do destino.
 - As tarefas agora seguem a ordem executável banco → Prisma/migration → aplicação isolada/generate → fixtures → shells → RED real → implementação → verdes/regressões → teardown/evidências → encerramento, com `[P]` somente em arquivos independentes.
 - Testes PostgreSQL exigem schema isolado por execução, matriz explícita de fixtures, triggers sempre ativos e teardown verificável mesmo após falha.
 

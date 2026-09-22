@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-16
 
-**Status**: Remediação documental focal concluída em 2026-09-20, com tarefas `T001–T134`, para nova análise independente; G1 fechado, `G2-ENG — landUseType` resolvido e rastreável para a v0.1 experimental, `G2-SCI` não verificado e G3 resolvido documentalmente. Implementação permanece pendente.
+**Status**: Remediação documental focal concluída em 2026-09-20, com tarefas `T001–T134`; G1 fechado, `G2-ENG — landUseType` resolvido e rastreável para a v0.1 experimental, `G2-SCI` não verificado e G3 resolvido documentalmente. Execução parcial até T082; T060 e T083–T134 permanecem pendentes.
 
 **Input**: IMP-006 — calcular, tornar vigente e consultar um diagnóstico IHFR experimental ligado à coleta e à área de origem, com contrato versionado, proveniência e ciclo imutável. Esta consolidação prepara nova análise independente e não implementa a feature.
 

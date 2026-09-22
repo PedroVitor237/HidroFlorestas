@@ -24,7 +24,7 @@ npm install
 
 ### 2. Configuração do Banco de Dados (Prisma)
 
-O Prisma é o nosso ORM (Object-Relational Mapper). Você precisará rodar dois comandos fundamentais:
+O Prisma é o ORM do projeto. Configure `DATABASE_URL` para o ambiente pretendido antes de executar os comandos abaixo. As migrations existentes em `prisma/migrations/` formam o histórico autoritativo; não crie uma nova migration `init` para instalar o projeto.
 
 #### **Gerar o Client do Prisma**
 
@@ -38,20 +38,19 @@ npx prisma generate
 
 > **Por que?** Este comando lê o arquivo de esquema e gera o código TypeScript/JavaScript necessário para que o seu editor (VS Code) entenda as tabelas do banco e ofereça o auto-complete (IntelliSense).
 
-#### **Sincronizar e Migrar o Banco**
+#### **Aplicar as migrations existentes**
 
-Para criar as tabelas no seu banco de dados local, utilize:
+Em um banco de desenvolvimento autorizado, após conferir `npx prisma migrate status`, aplique a cadeia existente com:
 
 **Bash**
 
 ```
-npx prisma migrate dev --name init
+npx prisma migrate dev
 ```
 
-> **Atenção ao `--name`:** > \* O nome `init` deve ser usado apenas na **primeira vez**.
->
-> * Nas próximas vezes que você alterar o banco, substitua `init` por algo descritivo, como `add-user-table` ou `fix-product-relation`.
-> * **Importância:** Esse comando registra o "histórico" do banco. Se você não rodar isso, o seu código tentará salvar dados em tabelas que ainda não existem fisicamente no seu computador.
+Em um ambiente de implantação, a aplicação não deve gerar migrations interativamente. Após confirmar o destino, a cadeia existente é aplicada com `npx prisma migrate deploy`. A política de provisionamento e aprovação de cada ambiente ainda não está definida neste README; confirme-a antes de executar qualquer migration fora do banco de desenvolvimento autorizado.
+
+`npx prisma generate` gera o Client a partir do schema local; não aplica SQL ao banco. Confira o estado real do banco antes de iniciar a aplicação, especialmente se houver migrations pendentes ou histórico divergente.
 
 ---
 
@@ -65,7 +64,7 @@ Com as dependências instaladas e o banco de dados configurado, inicie o servido
 npm run dev
 ```
 
-Acesse [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) no seu navegador para visualizar a aplicação.
+Acesse [http://localhost:3000](http://localhost:3000) no seu navegador para visualizar a aplicação.
 
 ---
 
@@ -82,6 +81,3 @@ Acesse [http://localhost:3000](https://www.google.com/search?q=http://localhost:
 
 * Certifique-se de ter um arquivo `.env` na raiz com a sua `DATABASE_URL` configurada antes de rodar os comandos do Prisma.
 * Para visualizar os dados do banco de forma gráfica, você pode usar o comando `npx prisma studio`.
-
-
-Pedir chaves de ambientes
