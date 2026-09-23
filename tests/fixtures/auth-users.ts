@@ -1,9 +1,7 @@
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { neonConfig } from "@neondatabase/serverless";
 import bcrypt from "bcrypt";
-import ws from "ws";
 
 import { PrismaClient } from "../../src/generated/prisma/index.js";
+import { testPostgresqlAdapter } from "./test-postgresql-adapter";
 
 export const AUTH_FIXTURE_CONFIRMATION = "HIDROFLORESTAS_AUTH_TEST";
 
@@ -173,10 +171,7 @@ export async function countAuthFixtureUsers(
   environment: FixtureEnvironment,
 ): Promise<number> {
   const safeEnvironment = validateAuthFixtureEnvironment(environment);
-  neonConfig.webSocketConstructor = ws;
-  const adapter = new PrismaNeon({
-    connectionString: safeEnvironment.testDatabaseUrl,
-  });
+  const adapter = testPostgresqlAdapter(safeEnvironment.testDatabaseUrl);
   const prisma = new PrismaClient({ adapter });
 
   try {
@@ -196,10 +191,7 @@ export async function countAuthFixtureUsers(
 function createPrismaFixtureActions(
   safeEnvironment: SafeFixtureEnvironment,
 ): AuthFixtureActions {
-  neonConfig.webSocketConstructor = ws;
-  const adapter = new PrismaNeon({
-    connectionString: safeEnvironment.testDatabaseUrl,
-  });
+  const adapter = testPostgresqlAdapter(safeEnvironment.testDatabaseUrl);
   const prisma = new PrismaClient({ adapter });
   const ids = AUTH_FIXTURE_USERS.map((user) => user.id);
   const emails = AUTH_FIXTURE_USERS.map((user) => user.email);

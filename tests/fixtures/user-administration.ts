@@ -1,7 +1,5 @@
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { neonConfig } from "@neondatabase/serverless";
-import ws from "ws";
 import { PrismaClient, type UserRole, type UserStatus } from "../../src/generated/prisma";
+import { testPostgresqlAdapter } from "./test-postgresql-adapter";
 
 export const ADMINISTRATION_FIXTURE_PREFIX = "90000000-0000-4000-8000-";
 export const administrationFixtureId = (index: number) => `${ADMINISTRATION_FIXTURE_PREFIX}${String(index).padStart(12, "0")}`;
@@ -9,8 +7,7 @@ export const administrationFixtureId = (index: number) => `${ADMINISTRATION_FIXT
 export function createAdministrationClient() {
   const connectionString = process.env.TEST_DATABASE_URL;
   if (process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST" || !connectionString) throw new Error("Unsafe administration fixture environment");
-  neonConfig.webSocketConstructor = ws;
-  return new PrismaClient({ adapter: new PrismaNeon({ connectionString }) });
+  return new PrismaClient({ adapter: testPostgresqlAdapter(connectionString) });
 }
 
 export async function setupAdministrationFixtures(db: PrismaClient, count = 54) {

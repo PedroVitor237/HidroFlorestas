@@ -84,7 +84,7 @@ Iteração 7 — remediação focal corrente, 2026-09-20: os 16 critérios de qu
 - [x] I2 — suplemento pertence à coleta, é deduplicado por `(collectionDataId,payloadHash)` e tem relação 1:N com diagnósticos
 - [x] I3/I4 — tarefas ordenam setup, caracterização, banco/Prisma/migration, apply/generate, fixtures, shells, RED real, implementação e verdes
 - [x] G1 — schema por execução, matriz explícita de fixtures, triggers ativos e teardown após falha estão definidos
-- [x] I5/U1 — OpenAPI declara seis operações/sete comportamentos, `mode` discriminado, condicionais e `400 INVALID_REQUEST`
+- [x] I5/U1 — OpenAPI declara seis operações/sete comportamentos, `mode` discriminado, condicionais e `400 INVALID_INPUT` para query estruturalmente inválida
 - [x] G2 — `PublicDiagnosis.areaId` é obrigatório, UUID, coerente e derivado no servidor
 - [x] I6 — `[P]` foi recalculado somente para arquivos independentes
 - [x] I7 — regressão territorial antecede teardown, evidências e fechamento; o fechamento é a última tarefa real

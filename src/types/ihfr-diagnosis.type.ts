@@ -4,22 +4,25 @@ export type IHFRLandUseType = "FOREST" | "AGROFORESTRY" | "CROPLAND" | "PASTURE"
 
 export type PublicDiagnosis = {
   id: string;
-  laboratoryId: string;
   areaId: string;
   collectionId: string;
-  rawScore: number;
-  displayScore: string;
-  ihfrClass: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
-  dataQuality: "LOW" | "MODERATE" | "HIGH";
-  componentScores: Readonly<Record<"W" | "S" | "V" | "T", number>>;
+  environmentalMeasurementSetId: string;
+  inputSupplementId: string;
   lifecycleState: IHFRLifecycleState;
-  measurementContractVersion: string;
-  inputContractVersion: string;
-  mathContractVersion: string;
-  algorithmVersion: string;
-  contractHash: string;
+  rawScore: number;
+  displayScore: number;
+  ihfrClass: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  dataQuality: "LOW" | "MEDIUM" | "HIGH";
+  componentScores: Readonly<Record<"W" | "S" | "V" | "T", number>>;
+  decomposition: ReadonlyArray<{ input: string; available: boolean; raw: number | string | boolean | null; normalizedInput: number | string | boolean | null; transformation: string | null; score: number | null; clamped: boolean }>;
+  drivers: readonly ("W" | "S" | "V" | "T")[];
+  explanation: string;
+  versions: { measurementContractVersion: string; inputContractVersion: string; mathContractVersion: string; algorithmVersion: string; contractHash: string };
   calculatedAt: string;
-  labels: readonly string[];
+  validFrom: string;
+  transitionedAt?: string | null;
+  scientificState: "EXPERIMENTAL";
+  scientificLabels: readonly string[];
 };
 
 export type IHFRRouteContext = {

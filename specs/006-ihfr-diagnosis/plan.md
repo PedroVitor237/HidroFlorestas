@@ -4,7 +4,21 @@
 
 **Input**: `specs/006-ihfr-diagnosis/spec.md`
 
-**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos para planejamento; `G2-SCI` permanece futuro e não é simulado por testes técnicos. Execução parcial até T082; T060 e T083–T134 permanecem pendentes.
+**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos; `G2-SCI` permanece `VALIDACAO_POSTERIOR`. O encerramento técnico anterior de T001–T134 está registrado como histórico; T116 e T134 foram reabertas e encerradas novamente após a rodada corretiva focal e seus gates, conforme `implementation-evidence.md`.
+
+## Rodada corretiva focal — 2026-09-23
+
+`DECISAO_CONFIRMADA` — solicitação explícita da equipe nesta conversa: corrigir somente (1) autorização de leitura contextual e idempotente de GET operation, inclusive laboratório inativo e papel MEMBER do mesmo ator; (2) replay POST incompatível 422 sem nova escrita, com recuperação GET 200; (3) reconciliação de current/eligibility e foco programático da UI; (4) restauração exata das sete variáveis de processo pelo runner PowerShell; (5) precedência autorização/contexto antes da validação fechada do request de escrita. Não alterar matemática, manifestos, migrations ou ciência; preservar cluster PostgreSQL e alterações preexistentes.
+
+**Execução**: T116/T134 reabertas → oráculos focais RED → correção de serviço/handlers/OpenAPI/UI/script → GREEN focal → `npm test`, contrato, E2E IHFR, regressões materiais, typecheck, lint, build e `git diff --check` → migration repetida pelo ajuste do runner PostgreSQL → auditoria de schemas/fixtures/processos/triggers → fingerprint e evidência atualizados → T116/T134 encerradas. Resultados observados em `implementation-evidence.md`.
+
+## Execução crítica iniciada em 2026-09-23
+
+**Estado**: `EM_ANDAMENTO`. O checkout atual está em `007-ihfr-evolution@97d95583fa62ed1f3dc88f7a7c69e150afddb968`, limpo e sem upstream configurado. Após `git fetch origin --prune`, `origin/006-ihfr-diagnosis` coincide com HEAD e `origin/development@100351e07d9f89f34ebb0ea4de17b526297d6350` é ancestral (0 atrás, 36 à frente). A identidade da feature decorre do conteúdo e da ancestralidade, não do nome da branch. O arquivo alheio `specs/005-environmental-collection-data/coverage-review.md` citado no runbook histórico não existe neste checkout. Nenhuma alteração preexistente foi encontrada.
+
+**Ordem executável corrigida**: (1) auditoria A–H e segurança do banco; (2) oráculos de contrato, correção dos testes antigos e infraestrutura de schema/E2E que os gates usam; (3) autorização, elegibilidade e serviço transacional T083–T090; (4) handlers, DTO e UI T091–T098; (5) GREEN da US2 T099–T103; (6) contratos, migration e segurança T104–T113; (7) T060 e T114–T126 com fixture E2E persistente e limpeza em `finally`; (8) T127–T134 somente pelo aceite demonstrado. Antecipar a infraestrutura de T102/T060/T116 não marca essas tarefas como concluídas. Testes de serviço podem ser verificados antes do handler; API só é GREEN quando handler e serviço reais passam.
+
+**Condição ambiental**: nenhum `DATABASE_URL`/`TEST_DATABASE_URL` nem binário PostgreSQL local foi encontrado no preflight. Banco e E2E permanecem sem prova até haver destino descartável autorizado e isolamento verificado nas conexões da aplicação. Nenhuma flag de confirmação será preenchida por inferência. O histórico abaixo e o runbook continuam como snapshots de suas datas.
 
 ## Summary
 
@@ -155,7 +169,7 @@ Precedência: autenticar/autorizar → validar contexto/estado → resolver repl
 
 ### 5. API, segurança e privacidade
 
-[ihfr-diagnosis-api.openapi.yaml](contracts/ihfr-diagnosis-api.openapi.yaml) define seis operações HTTP e sete comportamentos funcionais: elegibilidade, vigente, detalhe, revogação, recuperação e o POST compartilhado para CREATE/REPLACE discriminado por `mode`. CREATE admite `expectedCurrentDiagnosisId` ausente ou `null`; REPLACE exige UUID. Elegibilidade malformada ou com categoria inválida retorna `400 INVALID_REQUEST`; ausência válida ou predominância indeterminável retorna outcome `INSUFFICIENT_DATA`. `PublicDiagnosis.areaId` é obrigatório e derivado no servidor. Não há listagem completa. Todas as respostas usam `Cache-Control: no-store` e DTOs fechados.
+[ihfr-diagnosis-api.openapi.yaml](contracts/ihfr-diagnosis-api.openapi.yaml) define seis operações HTTP e sete comportamentos funcionais: elegibilidade, vigente, detalhe, revogação, recuperação e o POST compartilhado para CREATE/REPLACE discriminado por `mode`. CREATE admite `expectedCurrentDiagnosisId` ausente ou `null`; REPLACE exige UUID. Elegibilidade malformada ou com categoria inválida retorna `400 INVALID_INPUT`; ausência válida ou predominância indeterminável retorna outcome `INSUFFICIENT_DATA`. `PublicDiagnosis.areaId` é obrigatório e derivado no servidor. Não há listagem completa. Todas as respostas usam `Cache-Control: no-store` e DTOs fechados.
 
 O servidor exige conta ativa e vínculo atual, resolve laboratório → área → coleta → conjunto/suplemento/diagnóstico e retorna `404` indistinguível. OWNER/ADMIN escrevem em laboratório ativo; MEMBER consulta; laboratório inativo mantém leitura; vínculo revogado elimina acesso. Ator, chave, request hash, payload completo e evidência restrita não entram no DTO normal.
 
@@ -187,7 +201,7 @@ Rollback transacional da operação, limpeza de fixture entre cenários, rollbac
 | FR-015–FR-016 | avaliador puro TypeScript, quatro dimensões, clamp, precisão e apresentação |
 | FR-017 | evento/evidência restritos, autoria interna e minimização do DTO |
 | FR-018 | limites explícitos e não alteração das IMP-005/007/008 |
-| FR-019 | OpenAPI com seis operações/sete comportamentos, discriminador `mode`, condicionais CREATE/REPLACE e `400 INVALID_REQUEST` |
+| FR-019 | OpenAPI com seis operações/sete comportamentos, discriminador `mode`, condicionais CREATE/REPLACE e `400 INVALID_INPUT` para input estruturalmente inválido |
 | FR-020 | schema PostgreSQL isolado, fixtures completas, triggers ativos e teardown verificável |
 
 Os cenários SC-001–SC-008 são materializados na matriz de unitários, integração, migration e E2E do quickstart. A cobertura é planejada; não afirma que a IMP-006 já esteja implementada.
@@ -224,3 +238,11 @@ No encerramento da remediação documental de 2026-09-20, o plano e as tarefas `
 ## Complexity Tracking
 
 Nenhuma violação constitucional. Separar snapshot, ponteiro, operação e evento é necessário para satisfazer imutabilidade, um único vigente, replay, concorrência e auditoria; o legado ou um JSON único não oferecem essas garantias.
+
+## Atualização da execução de 2026-09-23
+
+O plano acima registra a intenção histórica. O estado observado da implementação e os comandos executados estão em [implementation-evidence.md](implementation-evidence.md), com aceites por ID em [tasks.md](tasks.md). A infraestrutura foi antecipada conforme a ordem material: cluster PostgreSQL local próprio, schema isolado visível tanto pelo harness quanto por Prisma/Next, oráculos OpenAPI 3.1, serviço, handlers, UI, regressões e teardown. A migration e os manifestos publicados foram preservados.
+
+O cluster local permanece instalado e ativo a pedido do usuário, com comando de descarte futuro em `scripts/imp006-local-postgresql.ps1 -Action Dispose`; o comando não foi executado. Schemas, fixtures e processos transitórios são removidos por rodada. Não foi usado Python nem um ambiente base/default.
+
+`DECISAO_CONFIRMADA` — `PD-018`, confirmação explícita da equipe nesta conversa em 2026-09-23: o parser e o schema de entrada de `VersionSelection` validam somente a estrutura das três versões e do `contractHash`; formato, tipo, campo obrigatório ou propriedade extra inválidos geram `400 INVALID_INPUT`. Uma seleção bem formada que não corresponda à combinação ativa/suportada gera `422 INCOMPATIBLE_VERSION`, como já ocorre para a versão incompatível da medição persistida. Dentro da transação, depois de autorização, replay e verificação do estado vigente, a incompatibilidade registra um terminal idempotente no ledger, sem suplemento confirmado, diagnóstico, `CURRENT` ou evento de ciclo; repetição idêntica não escreve, e GET operation recupera `200 OperationResponse` com `outcome = INCOMPATIBLE_VERSION`. A saída de diagnóstico produzido sob a versão ativa mantém valores exatos no OpenAPI. T134 foi encerrada após a repetição dos gates afetados e a auditoria final documentadas em `implementation-evidence.md`. `G2-SCI` continua `NAO_VERIFICADO_VALIDACAO_POSTERIOR` e impede apenas a promoção científica definitiva.

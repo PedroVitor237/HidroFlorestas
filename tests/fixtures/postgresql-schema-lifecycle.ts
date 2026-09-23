@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
-import { Pool, neonConfig, type PoolClient } from "@neondatabase/serverless";
-import ws from "ws";
+import { Pool, type PoolClient } from "pg";
+import { createPrismaClient } from "../../src/app/api/server/lib/prisma";
 
 const IMP006_SCHEMA_PREFIX = "imp006_test_";
 const IMP006_SCHEMA_MARKER = "hidroflorestas:imp006-test-harness";
@@ -42,7 +42,7 @@ export function selectedImp006DatabaseVariable(): Imp006DatabaseVariable {
  */
 export async function withImp006PostgresqlSchema(
   databaseVariable: Imp006DatabaseVariable,
-  run: (client: PoolClient) => Promise<void>,
+  run: (client: PoolClient, applicationDb: ReturnType<typeof createPrismaClient>) => Promise<void>,
 ) {
   const connectionString = selectedConnectionString(databaseVariable);
   const schema = `${IMP006_SCHEMA_PREFIX}${randomUUID().replaceAll("-", "")}`;
@@ -50,15 +50,20 @@ export async function withImp006PostgresqlSchema(
     throw new Error("Generated IMP-006 schema is not allowlisted");
   }
 
-  neonConfig.webSocketConstructor = ws;
   const pool = new Pool({ connectionString, connectionTimeoutMillis: 15_000, max: 1 });
   let client: PoolClient | undefined;
+  let applicationDb: ReturnType<typeof createPrismaClient> | undefined;
   let primaryError: unknown;
+  let cleanupError: unknown;
+  let schemaCreated = false;
+  let markerSet = false;
 
   try {
     client = await pool.connect();
     await client.query(`CREATE SCHEMA "${schema}"`);
+    schemaCreated = true;
     await client.query(`COMMENT ON SCHEMA "${schema}" IS '${IMP006_SCHEMA_MARKER}'`);
+    markerSet = true;
     await client.query(`SET search_path TO "${schema}"`);
     const selected = await client.query("SELECT current_schema() AS schema");
     if (selected.rows[0]?.schema !== schema || selected.rows[0]?.schema === "public") {
@@ -66,31 +71,42 @@ export async function withImp006PostgresqlSchema(
     }
     await client.query("SET statement_timeout = '15s'");
     await client.query(await readFile("tests/migration/area-registration-baseline.sql", "utf8"));
-    await run(client);
+    applicationDb = createPrismaClient(connectionString, schema);
+    const appSchema = await applicationDb.$queryRawUnsafe<Array<{ schema: string }>>("SELECT current_schema() AS schema");
+    if (appSchema[0]?.schema !== schema) throw new Error("IMP-006 application Prisma schema isolation failed");
+    await run(client, applicationDb);
   } catch (error) {
     primaryError = error;
-    throw error;
   } finally {
-    try {
-      if (client) {
-        try {
-          await client.query("ROLLBACK");
-          await client.query("RESET search_path");
-          await client.query("RESET statement_timeout");
-          await client.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
-          const remaining = await client.query(
-            "SELECT count(*)::int AS count FROM pg_namespace WHERE nspname = $1",
-            [schema],
-          );
-          if (remaining.rows[0]?.count !== 0 && primaryError === undefined) {
-            throw new Error("IMP-006 schema cleanup failed");
-          }
-        } finally {
-          client.release();
+    const cleanupFailures: unknown[] = [];
+    try { await applicationDb?.$disconnect(); } catch (error) { cleanupFailures.push(error); }
+    if (client) {
+      try {
+        try { await client.query("ROLLBACK"); } catch (error) { cleanupFailures.push(error); }
+        try { await client.query("RESET search_path"); } catch (error) { cleanupFailures.push(error); }
+        try { await client.query("RESET statement_timeout"); } catch (error) { cleanupFailures.push(error); }
+        if (schemaCreated) {
+          try {
+            const ownership = await client.query(
+              "SELECT obj_description(oid, 'pg_namespace') AS marker FROM pg_namespace WHERE nspname = $1",
+              [schema],
+            );
+            if (markerSet && ownership.rows[0]?.marker !== IMP006_SCHEMA_MARKER) {
+              throw new Error("IMP-006 schema ownership marker changed; cleanup refused");
+            }
+            await client.query(`DROP SCHEMA "${schema}" CASCADE`);
+          } catch (error) { cleanupFailures.push(error); }
         }
-      }
-    } finally {
-      await pool.end();
+        try {
+          const remaining = await client.query("SELECT count(*)::int AS count FROM pg_namespace WHERE nspname = $1", [schema]);
+          if (remaining.rows[0]?.count !== 0) throw new Error("IMP-006 schema cleanup failed");
+        } catch (error) { cleanupFailures.push(error); }
+      } finally { try { client.release(); } catch (error) { cleanupFailures.push(error); } }
     }
+    try { await pool.end(); } catch (error) { cleanupFailures.push(error); }
+    if (cleanupFailures.length) cleanupError = new AggregateError(cleanupFailures, "IMP-006 schema cleanup failed");
   }
+  if (primaryError !== undefined && cleanupError !== undefined) throw new AggregateError([primaryError, cleanupError], "IMP-006 scenario and cleanup failed");
+  if (primaryError !== undefined) throw primaryError;
+  if (cleanupError !== undefined) throw cleanupError;
 }

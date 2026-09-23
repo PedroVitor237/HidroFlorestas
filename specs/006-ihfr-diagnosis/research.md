@@ -95,7 +95,7 @@
 
 ## R-012 — API e histórico
 
-**Decision**: seis operações HTTP contextuais e sete comportamentos: elegibilidade, vigente, detalhe, revogação, recuperação e um POST discriminado por `mode` para CREATE/REPLACE; nenhuma lista histórica completa. CREATE aceita `expectedCurrentDiagnosisId` ausente ou `null`; REPLACE exige UUID. Elegibilidade inválida retorna `400 INVALID_REQUEST`; ausência válida ou predominância indeterminável retorna outcome `INSUFFICIENT_DATA`. `PublicDiagnosis.areaId` é obrigatório e derivado no servidor.
+**Decision**: seis operações HTTP contextuais e sete comportamentos: elegibilidade, vigente, detalhe, revogação, recuperação e um POST discriminado por `mode` para CREATE/REPLACE; nenhuma lista histórica completa. CREATE aceita `expectedCurrentDiagnosisId` ausente ou `null`; REPLACE exige UUID. Elegibilidade inválida retorna `400 INVALID_INPUT` conforme `PD-018`; ausência válida ou predominância indeterminável retorna outcome `INSUFFICIENT_DATA`. `PublicDiagnosis.areaId` é obrigatório e derivado no servidor.
 
 **Rationale**: detalhe por ID preserva consulta contextual sem sobrepor a IMP-007. Auditoria não vira feed. Projeção futura deve derivar da fonte canônica.
 

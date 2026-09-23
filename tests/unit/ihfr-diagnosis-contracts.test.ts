@@ -13,6 +13,17 @@ test("closed parser accepts CREATE and rejects unknown fields", () => {
   assert.throws(() => parseIHFRDiagnosisRequest({ mode: "CREATE", supplement, versions, unexpected: true }), /INVALID_REQUEST/);
 });
 
+test("candidate permits absent or null predominant land use without confirming a supplement", () => {
+  const { landUseType: _landUseType, ...withoutLandUse } = supplement;
+  void _landUseType;
+  assert.deepEqual(parseIHFRDiagnosisRequest({ mode: "CREATE", supplement: withoutLandUse, versions }).supplement, withoutLandUse);
+  assert.deepEqual(parseIHFRDiagnosisRequest({ mode: "CREATE", supplement: { ...withoutLandUse, landUseType: null }, versions }).supplement, { ...withoutLandUse, landUseType: null });
+  for (const invalid of ["OTHER", "forest", "FOREST ", 0, ["FOREST", "URBAN"]]) {
+    assert.throws(() => parseIHFRDiagnosisRequest({ mode: "CREATE", supplement: { ...withoutLandUse, landUseType: invalid }, versions }), /INVALID_REQUEST/);
+  }
+  assert.throws(() => parseIHFRDiagnosisRequest({ mode: "CREATE", supplement: { ...withoutLandUse, unexpected: true }, versions }), /INVALID_REQUEST/);
+});
+
 test("REPLACE requires an expected current diagnosis while CREATE cannot target one", () => {
   assert.equal(parseIHFRDiagnosisRequest({ mode: "REPLACE", expectedCurrentDiagnosisId: current, supplement, versions }).expectedCurrentDiagnosisId, current);
   assert.throws(() => parseIHFRDiagnosisRequest({ mode: "REPLACE", supplement, versions }), /INVALID_REQUEST/);
@@ -23,7 +34,31 @@ test("rejects unknown mode, enum aliases and server-derived input", () => {
   assert.throws(() => parseIHFRDiagnosisRequest({ mode: "UPSERT", supplement, versions }), /INVALID_REQUEST/);
   assert.throws(() => parseIHFRDiagnosisRequest({ mode: "CREATE", supplement: { ...supplement, landUseType: "forest" }, versions }), /INVALID_REQUEST/);
   assert.throws(() => parseIHFRDiagnosisRequest({ mode: "CREATE", supplement: { ...supplement, areaId: current }, versions }), /INVALID_REQUEST/);
-  assert.throws(() => parseIHFRDiagnosisRequest({ mode: "CREATE", supplement, versions: { ...versions, mathContractVersion: "ihfr-math-experimental-v0.1.0" } }), /INVALID_REQUEST/);
+});
+
+test("well-formed version mismatches remain available for semantic compatibility and request hashing", () => {
+  const cases = [
+    { measurementContractVersion: "ihfr-measurement-v2" },
+    { mathContractVersion: "ihfr-math-experimental-v0.1.0" },
+    { algorithmVersion: "ihfr-evaluator-ts-v0.1.1" },
+    { contractHash: `sha256:${"0".repeat(64)}` },
+  ];
+  const active = parseIHFRDiagnosisRequest({ mode: "CREATE", supplement, versions });
+  for (const changed of cases) {
+    const parsed = parseIHFRDiagnosisRequest({ mode: "CREATE", supplement, versions: { ...versions, ...changed } });
+    assert.deepEqual(parsed.versions, { ...versions, ...changed });
+    assert.notEqual(hashIHFRDiagnosisRequest(context, parsed), hashIHFRDiagnosisRequest(context, active));
+  }
+  for (const changed of [
+    { measurementContractVersion: "legacy-measurement" },
+    { mathContractVersion: "ihfr-math-experimental-v0.1" },
+    { algorithmVersion: 2 },
+    { contractHash: "sha256:bad" },
+    { contractHash: `md5:${"0".repeat(32)}` },
+    { extra: true },
+  ]) {
+    assert.throws(() => parseIHFRDiagnosisRequest({ mode: "CREATE", supplement, versions: { ...versions, ...changed } }), /INVALID_REQUEST/);
+  }
 });
 
 test("canonical request hash ignores property order but includes context and relevant input", () => {

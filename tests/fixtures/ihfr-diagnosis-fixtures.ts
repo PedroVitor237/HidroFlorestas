@@ -1,4 +1,4 @@
-import type { PoolClient } from "@neondatabase/serverless";
+import type { PoolClient } from "pg";
 import { insertIHFRActorFixtures } from "./ihfr-diagnosis-actors";
 import { insertIHFRContextFixtures } from "./ihfr-diagnosis-contexts";
 import { insertIHFRDomainFixtures } from "./ihfr-diagnosis-domain";

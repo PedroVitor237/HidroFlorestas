@@ -4,7 +4,7 @@ import type { VerifiedManifest } from "./manifest-loader";
 
 export type IHFREvaluationInput = { environmental: unknown; landUseType?: IHFRLandUseType | null };
 type Dimension = "W" | "S" | "V" | "T";
-type VariableDecomposition = { included: boolean; score: number | null; normalizedInput?: number; clamped: boolean };
+type VariableDecomposition = { included: boolean; raw: number | string | boolean | null; normalizedInput: number | string | boolean | null; transformation: string | null; score: number | null; clamped: boolean };
 type DimensionDecomposition = { included: string[]; excluded: string[]; score: number; weight: number; contribution: number };
 export type IHFREvaluationResult =
   | { outcome: "INSUFFICIENT_DATA" | "INCOMPATIBLE_VERSION"; reasons: string[]; labels: readonly string[] }
@@ -17,6 +17,13 @@ const dimensions: Record<Dimension, readonly string[]> = {
   T: ["terrain.slopePercent", "supplement.landUseType"],
 };
 const optional = new Set(["water.wellDepthMeters", "water.salinityIndicator", "soil.soilExposedPercent", "vegetation.hasRiparianApp"]);
+const normalizationFormula: Record<string, string> = {
+  "soil.infiltrationRateMmPerHour": "1 - clamp(value,0,60)/60",
+  "soil.soilExposedPercent": "clamp(value,0,100)/100",
+  "terrain.slopePercent": "clamp(value,0,45)/45",
+  "vegetation.vegetationCoverPercent": "1 - clamp(value,0,100)/100",
+  "water.wellDepthMeters": "1 - clamp(value,0,60)/60",
+};
 const enumScores: Record<string, Record<string, number>> = {
   "water.waterSourceType": { RIVER_STREAM: .4, SPRING: .2, SHALLOW_WELL: .7, TUBULAR_WELL: .6, CISTERN: .5, OTHER: .5 },
   "water.hasSpring": { true: .2, false: .8 }, "water.waterAvailability": { PERMANENT: .2, SEASONAL: .6, SCARCE: .9 }, "water.salinityIndicator": { NONE: .2, SUSPECTED: .7, CONFIRMED: .95 },
@@ -59,21 +66,21 @@ export function evaluateIHFR(manifest: VerifiedManifest, input: IHFREvaluationIn
 }
 
 function scoreVariable(path: string, value: unknown): VariableDecomposition {
-  if (value === undefined || value === null) { if (optional.has(path) || value === undefined || path === "supplement.landUseType") return { included: false, score: null, clamped: false }; invalid(); }
+  if (value === undefined || value === null) { if (optional.has(path) || value === undefined || path === "supplement.landUseType") return { included: false, raw: null, normalizedInput: null, transformation: null, score: null, clamped: false }; invalid(); }
   if (path in enumScores) {
     const key = typeof value === "boolean" ? String(value) : value;
     if (typeof key !== "string" || !(key in enumScores[path])) invalid();
-    return { included: true, score: enumScores[path][key], clamped: false };
+    return { included: true, raw: value as string | boolean, normalizedInput: value as string | boolean, transformation: `enumMappings.${path}`, score: enumScores[path][key], clamped: false };
   }
   if (typeof value !== "number" || !Number.isFinite(value)) invalid();
-  let normalized: number; let clamped = false;
-  if (path === "soil.infiltrationRateMmPerHour" || path === "water.wellDepthMeters") { if (value < 0) invalid(); const bounded = Math.min(value, 60); clamped = bounded !== value; normalized = 1 - bounded / 60; }
-  else if (path === "terrain.slopePercent") { if (value < 0) invalid(); const bounded = Math.min(value, 45); clamped = bounded !== value; normalized = bounded / 45; }
+  let normalized: number; let normalizedInput = value; let clamped = false;
+  if (path === "soil.infiltrationRateMmPerHour" || path === "water.wellDepthMeters") { if (value < 0) invalid(); normalizedInput = Math.min(value, 60); clamped = normalizedInput !== value; normalized = 1 - normalizedInput / 60; }
+  else if (path === "terrain.slopePercent") { if (value < 0) invalid(); normalizedInput = Math.min(value, 45); clamped = normalizedInput !== value; normalized = normalizedInput / 45; }
   else if (path === "vegetation.vegetationCoverPercent") { if (value < 0 || value > 100) invalid(); normalized = 1 - value / 100; }
   else if (path === "soil.soilExposedPercent") { if (value < 0 || value > 100) invalid(); normalized = value / 100; }
   else invalid();
   assertUnit(normalized);
-  return { included: true, score: normalized, normalizedInput: normalized, clamped };
+  return { included: true, raw: value, normalizedInput, transformation: normalizationFormula[path], score: normalized, clamped };
 }
 function compatible(manifest: VerifiedManifest) { return manifest.mathContractVersion === IHFR_CONTRACT.activeMathVersion && manifest.algorithmVersion === IHFR_CONTRACT.algorithmVersion && manifest.contractHash === IHFR_CONTRACT.contractHash; }
 function quality(input: IHFREvaluationInput, variables: Record<string, VariableDecomposition>) { const present = ["soil.infiltrationRateMmPerHour", "soil.compactionLevel", "vegetation.vegetationCoverPercent", "supplement.landUseType", "water.waterAvailability"].filter((path) => path === "supplement.landUseType" ? input.landUseType != null : variables[path].included).length / 5; return present >= .8 ? "HIGH" : present >= .5 ? "MODERATE" : "LOW"; }

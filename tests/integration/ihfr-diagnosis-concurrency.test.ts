@@ -1,43 +1,78 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { test } from "node:test";
+import { IHFRDiagnosisService, type IHFRWriteCheckpoint } from "../../src/app/api/server/services/ihfr-diagnosis.service";
+import { IHFR_CONTRACT } from "../../src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.constants";
+import { IHFR_ACTORS, IHFR_LABORATORIES } from "../fixtures/ihfr-diagnosis-actors";
+import { IHFR_CONTEXTS } from "../fixtures/ihfr-diagnosis-contexts";
+import { IHFR_DOMAIN } from "../fixtures/ihfr-diagnosis-domain";
 import { setupIHFRDiagnosisFixtures } from "../fixtures/ihfr-diagnosis-fixtures";
 import { selectedImp006DatabaseVariable, withImp006PostgresqlSchema } from "../fixtures/postgresql-schema-lifecycle";
-import { ihfrDiagnosisService } from "../../src/app/api/server/services/ihfr-diagnosis.service";
 
-const actor = "60000000-0000-4000-8000-000000000001";
-const context = { laboratoryId: "60000000-0000-4000-8000-000000000011", areaId: "60000000-0000-4000-8000-000000000031", collectionId: "60000000-0000-4000-8000-000000000041" };
-const current = "60000000-0000-4000-8000-000000000062";
-const versions = { measurementContractVersion: "ihfr-measurement-v1", mathContractVersion: "ihfr-math-experimental-v0.1.1", algorithmVersion: "ihfr-evaluator-ts-v0.1.0", contractHash: "sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89" } as const;
-const supplement = (landUseType: "FOREST" | "URBAN" = "FOREST") => ({ inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0" as const, landUseType, provenance: { kind: "FIELD_OBSERVATION" as const, observedAt: "2026-09-20T12:00:00.000Z" } });
-type Operation = () => Promise<unknown>;
+const actor = IHFR_ACTORS.owner;
+const context = { laboratoryId: IHFR_LABORATORIES.active, areaId: IHFR_CONTEXTS.activeArea, collectionId: IHFR_CONTEXTS.confirmedCollection };
+const versions = { measurementContractVersion: IHFR_CONTRACT.measurementVersion, mathContractVersion: IHFR_CONTRACT.activeMathVersion, algorithmVersion: IHFR_CONTRACT.algorithmVersion, contractHash: IHFR_CONTRACT.contractHash };
+const supplement = (landUseType: "FOREST" | "URBAN" = "FOREST") => ({ inputContractVersion: IHFR_CONTRACT.inputVersion, landUseType, provenance: { kind: "FIELD_OBSERVATION" as const, observedAt: "2026-09-20T12:00:00.000Z" } });
+const replace = (landUseType: "FOREST" | "URBAN" = "FOREST") => ({ mode: "REPLACE" as const, expectedCurrentDiagnosisId: IHFR_DOMAIN.currentDiagnosis, supplement: supplement(landUseType), versions });
+const create = (landUseType: "FOREST" | "URBAN" = "FOREST") => ({ mode: "CREATE" as const, expectedCurrentDiagnosisId: null, supplement: supplement(landUseType), versions });
+type Result = Awaited<ReturnType<IHFRDiagnosisService["createOrReplace"]>>;
+type Operation = (service: IHFRDiagnosisService, key: string) => Promise<Result>;
 
-function synchronizedPair(first: Operation, second: Operation) {
-  let reached = 0; let release!: () => void;
+function contestedLock() {
+  let arrivals = 0;
+  let release!: () => void;
   const gate = new Promise<void>((resolve) => { release = resolve; });
-  const wrap = (operation: Operation) => async () => { reached += 1; if (reached === 2) release(); await gate; return operation(); };
-  return { run: () => Promise.allSettled([wrap(first)(), wrap(second)()]), reached: () => reached };
+  const checkpoint = async (stage: IHFRWriteCheckpoint) => {
+    if (stage !== "BEFORE_LOCK") return;
+    arrivals++;
+    if (arrivals === 2) release();
+    await gate;
+  };
+  return { checkpoint, arrivals: () => arrivals };
 }
 
-test("eight lifecycle races overlap at a deterministic barrier and preserve PostgreSQL invariants", async () => {
-  await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client) => {
+const cases: Array<{
+  name: string;
+  empty?: boolean;
+  first: Operation;
+  second: Operation;
+  expected: [number, number];
+  failedCode?: string;
+}> = [
+  { name: "REPLACE same key and request", first: (s, key) => s.createOrReplace(actor, context, replace(), key), second: (s, key) => s.createOrReplace(actor, context, replace(), key), expected: [2, 0] },
+  { name: "REPLACE same key divergent request", first: (s, key) => s.createOrReplace(actor, context, replace(), key), second: (s, key) => s.createOrReplace(actor, context, replace("URBAN"), key), expected: [1, 1], failedCode: "IDEMPOTENCY_CONFLICT" },
+  { name: "REPLACE distinct keys", first: (s) => s.createOrReplace(actor, context, replace(), randomUUID()), second: (s) => s.createOrReplace(actor, context, replace(), randomUUID()), expected: [1, 1], failedCode: "STATE_CONFLICT" },
+  { name: "REPLACE versus REVOKE", first: (s) => s.createOrReplace(actor, context, replace(), randomUUID()), second: (s) => s.revoke(actor, context, IHFR_DOMAIN.currentDiagnosis, { expectedCurrentDiagnosisId: IHFR_DOMAIN.currentDiagnosis, reason: "Correção autorizada" }, randomUUID()), expected: [1, 1], failedCode: "STATE_CONFLICT" },
+  { name: "REVOKE versus REVOKE", first: (s) => s.revoke(actor, context, IHFR_DOMAIN.currentDiagnosis, { expectedCurrentDiagnosisId: IHFR_DOMAIN.currentDiagnosis, reason: "Correção autorizada" }, randomUUID()), second: (s) => s.revoke(actor, context, IHFR_DOMAIN.currentDiagnosis, { expectedCurrentDiagnosisId: IHFR_DOMAIN.currentDiagnosis, reason: "Correção autorizada" }, randomUUID()), expected: [1, 1], failedCode: "STATE_CONFLICT" },
+  { name: "CREATE same key and request", empty: true, first: (s, key) => s.createOrReplace(actor, context, create(), key), second: (s, key) => s.createOrReplace(actor, context, create(), key), expected: [2, 0] },
+  { name: "CREATE distinct keys", empty: true, first: (s) => s.createOrReplace(actor, context, create(), randomUUID()), second: (s) => s.createOrReplace(actor, context, create(), randomUUID()), expected: [1, 1], failedCode: "STATE_CONFLICT" },
+  { name: "CREATE divergent payloads", empty: true, first: (s) => s.createOrReplace(actor, context, create(), randomUUID()), second: (s) => s.createOrReplace(actor, context, create("URBAN"), randomUUID()), expected: [1, 1], failedCode: "STATE_CONFLICT" },
+  { name: "CREATE versus REPLACE", first: (s) => s.createOrReplace(actor, context, create(), randomUUID()), second: (s) => s.createOrReplace(actor, context, replace(), randomUUID()), expected: [1, 1], failedCode: "STATE_CONFLICT" },
+];
+
+for (const scenario of cases) test(`PostgreSQL contested transaction: ${scenario.name}`, async () => {
+  await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client, db) => {
     await setupIHFRDiagnosisFixtures(client);
-    const create = (landUseType: "FOREST" | "URBAN" = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "CREATE", expectedCurrentDiagnosisId: null, supplement: supplement(landUseType), versions });
-    const replace = (expected = current, landUseType: "FOREST" | "URBAN" = "FOREST") => () => ihfrDiagnosisService.createOrReplace(actor, context, { mode: "REPLACE", expectedCurrentDiagnosisId: expected, supplement: supplement(landUseType), versions });
-    const revoke = () => ihfrDiagnosisService.revoke(actor, context, current, { expectedCurrentDiagnosisId: current, reason: "Correção autorizada" });
-    const scenarios: Array<[string, Operation, Operation]> = [
-      ["CREATE same key/request", create(), create()], ["CREATE distinct keys", create(), create()],
-      ["CREATE divergent payloads", create("FOREST"), create("URBAN")], ["REPLACE versus REPLACE", replace(), replace()],
-      ["REPLACE correct versus stale", replace(), replace("60000000-0000-4000-8000-000000000063")],
-      ["CREATE versus REPLACE", create(), replace()], ["REPLACE versus REVOKE", replace(), revoke],
-      ["same key divergent request", replace(current, "FOREST"), replace(current, "URBAN")],
-    ];
-    const observations: Array<{ name: string; fulfilled: number; rejected: number }> = [];
-    for (const [name, first, second] of scenarios) {
-      const pair = synchronizedPair(first, second); const results = await pair.run(); assert.equal(pair.reached(), 2, name);
-      observations.push({ name, fulfilled: results.filter((result) => result.status === "fulfilled").length, rejected: results.filter((result) => result.status === "rejected").length });
-      const state = await client.query(`SELECT (SELECT count(*)::int FROM "CurrentExperimentalIHFRDiagnosis" WHERE "collectionDataId"=$1) current,(SELECT count(*)::int FROM "ExperimentalIHFRDiagnosis" WHERE "collectionDataId"=$1) diagnoses,(SELECT count(*)::int FROM "ExperimentalIHFRInputSupplement" WHERE "collectionDataId"=$1) supplements,(SELECT count(*)::int FROM "IHFRDiagnosisOperation" WHERE "collectionDataId"=$1) operations,(SELECT count(*)::int FROM "IHFRDiagnosisLifecycleEvent" WHERE "collectionDataId"=$1) events`, [context.collectionId]);
-      assert.deepEqual(state.rows[0], { current: 1, diagnoses: 3, supplements: 1, operations: 4, events: 3 }, name);
+    if (scenario.empty) await new IHFRDiagnosisService(db).revoke(actor, context, IHFR_DOMAIN.currentDiagnosis, { expectedCurrentDiagnosisId: IHFR_DOMAIN.currentDiagnosis, reason: "Preparação do cenário" }, randomUUID());
+    const sharedKey = randomUUID();
+    const before = (await client.query(`SELECT (SELECT count(*)::int FROM "ExperimentalIHFRDiagnosis") diagnoses,(SELECT count(*)::int FROM "IHFRDiagnosisOperation") operations,(SELECT count(*)::int FROM "IHFRDiagnosisLifecycleEvent") events`)).rows[0];
+    const barrier = contestedLock();
+    const service = new IHFRDiagnosisService(db, barrier.checkpoint);
+    const results = await Promise.allSettled([scenario.first(service, sharedKey), scenario.second(service, sharedKey)]);
+    assert.ok(barrier.arrivals() >= 2, scenario.name);
+    const fulfilled = results.filter((result): result is PromiseFulfilledResult<Result> => result.status === "fulfilled");
+    const rejected = results.filter((result): result is PromiseRejectedResult => result.status === "rejected");
+    assert.deepEqual([fulfilled.length, rejected.length], scenario.expected, scenario.name);
+    if (scenario.failedCode) assert.equal((rejected[0].reason as { code?: string }).code, scenario.failedCode, scenario.name);
+    if (fulfilled.length === 2) {
+      assert.deepEqual(fulfilled.map((result) => result.value.replayed).sort(), [false, true], scenario.name);
+      assert.deepEqual(fulfilled[0].value.response, fulfilled[1].value.response, scenario.name);
     }
-    for (const observation of observations) { assert.equal(observation.fulfilled, 1, observation.name); assert.equal(observation.rejected, 1, observation.name); }
+    const after = (await client.query(`SELECT (SELECT count(*)::int FROM "ExperimentalIHFRDiagnosis") diagnoses,(SELECT count(*)::int FROM "IHFRDiagnosisOperation") operations,(SELECT count(*)::int FROM "IHFRDiagnosisLifecycleEvent") events,(SELECT count(*)::int FROM "CurrentExperimentalIHFRDiagnosis" WHERE "collectionDataId"=$1) current`, [context.collectionId])).rows[0];
+    assert.equal(after.operations, before.operations + 1, scenario.name);
+    assert.ok(after.diagnoses === before.diagnoses || after.diagnoses === before.diagnoses + 1, scenario.name);
+    assert.ok(after.events >= before.events + 1 && after.events <= before.events + 2, scenario.name);
+    assert.ok(after.current === 0 || after.current === 1, scenario.name);
+    assert.equal((await client.query(`SELECT count(*)::int count FROM "CurrentExperimentalIHFRDiagnosis" WHERE "collectionDataId"=$1`, [context.collectionId])).rows[0].count, after.current);
   });
 });

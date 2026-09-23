@@ -1,77 +1,69 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { test } from "node:test";
 import { AuthBoundaryError } from "../../src/app/api/server/middlewares/auth.middleware";
-import { AreaAccessError } from "../../src/app/api/server/areas/area.authorization";
 import { createIHFROperationHandler } from "../../src/app/api/server/ihfr-diagnosis/ihfr-diagnosis-operation.handler";
+import { IHFR_CONTRACT } from "../../src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.constants";
+import { IHFRDiagnosisService } from "../../src/app/api/server/services/ihfr-diagnosis.service";
+import { IHFR_ACTORS, IHFR_LABORATORIES } from "../fixtures/ihfr-diagnosis-actors";
+import { IHFR_CONTEXTS } from "../fixtures/ihfr-diagnosis-contexts";
+import { IHFR_DOMAIN } from "../fixtures/ihfr-diagnosis-domain";
 import { setupIHFRDiagnosisFixtures } from "../fixtures/ihfr-diagnosis-fixtures";
 import { selectedImp006DatabaseVariable, withImp006PostgresqlSchema } from "../fixtures/postgresql-schema-lifecycle";
 
-const key = "60000000-0000-4000-8000-000000000083";
-const params = { laboratoryId: "60000000-0000-4000-8000-000000000011", areaId: "60000000-0000-4000-8000-000000000031", collectionId: "60000000-0000-4000-8000-000000000041", idempotencyKey: key };
-const route = (value = params) => ({ params: Promise.resolve(value) });
-const request = new Request("http://local.test");
-const service = (result: unknown) => ({ operation: async () => result });
+const context = { laboratoryId: IHFR_LABORATORIES.active, areaId: IHFR_CONTEXTS.activeArea, collectionId: IHFR_CONTEXTS.confirmedCollection };
+const route = (idempotencyKey: string, overrides = {}) => ({ params: Promise.resolve({ ...context, idempotencyKey, ...overrides }) });
+const request = new Request("http://local.test/api/operations");
+const write = { mode: "REPLACE" as const, expectedCurrentDiagnosisId: IHFR_DOMAIN.currentDiagnosis, supplement: { inputContractVersion: IHFR_CONTRACT.inputVersion, landUseType: "FOREST" as const, provenance: { kind: "FIELD_OBSERVATION" as const, observedAt: "2026-09-20T12:00:00.000Z" } }, versions: { measurementContractVersion: IHFR_CONTRACT.measurementVersion, mathContractVersion: IHFR_CONTRACT.activeMathVersion, algorithmVersion: IHFR_CONTRACT.algorithmVersion, contractHash: IHFR_CONTRACT.contractHash } };
 
-test("recovery requires authentication and current contextual authorization", async () => {
-  const missing = createIHFROperationHandler({ requireAuth: async () => { throw new AuthBoundaryError("UNAUTHORIZED"); }, service: service(null) });
-  assert.equal((await missing(request, route())).status, 401);
-  for (const actor of ["revoked", "inactive-account", "outsider", "other-actor", "global-admin", "crossed-context"]) {
-    const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: actor }), service: { operation: async () => { throw new AreaAccessError("NOT_FOUND"); } } });
-    assert.equal((await GET(request, route())).status, 404, actor);
-  }
+test("operation recovery requires authentication", async () => {
+  const GET = createIHFROperationHandler({ requireAuth: async () => { throw new AuthBoundaryError("UNAUTHORIZED"); }, service: { operation: async () => { throw new Error("unreachable"); } } });
+  const response = await GET(request, route(randomUUID()));
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.get("cache-control"), "no-store");
 });
 
-test("authorized recovery returns the same minimized terminal snapshot with no-store", async () => {
-  for (const outcome of ["SUCCEEDED_CREATE", "SUCCEEDED_REPLACE", "INSUFFICIENT_DATA", "INCOMPATIBLE_VERSION", "SUCCEEDED_REVOKE"]) {
-    const snapshot = { outcome, diagnosisId: outcome.startsWith("SUCCEEDED") ? "diagnosis" : null };
-    const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: "OWNER" }), service: service(snapshot) });
-    const response = await GET(request, route()); assert.equal(response.status, 200, outcome); assert.equal(response.headers.get("cache-control"), "no-store"); assert.deepEqual(await response.json(), snapshot);
-  }
-});
-
-test("recovery never exposes ledger authority or restricted snapshots", async () => {
-  const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: "OWNER" }), service: service({ outcome: "SUCCEEDED", diagnosisId: "diagnosis" }) });
-  const serialized = JSON.stringify(await (await GET(request, route())).json());
-  for (const field of ["actorUserId", "idempotencyKey", "requestHash", "payloadHash", "responseSnapshot", "evidence", "stack", "SQL"]) assert.equal(serialized.includes(field), false);
-});
-
-test("same actor and key cannot silently cross laboratory, area or collection", async () => {
-  for (const field of ["laboratoryId", "areaId", "collectionId"] as const) {
-    const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: "OWNER" }), service: { operation: async () => { throw new AreaAccessError("NOT_FOUND"); } } });
-    assert.equal((await GET(request, route({ ...params, [field]: "60000000-0000-4000-8000-000000000099" }))).status, 404, field);
-  }
-});
-
-test("malformed or unknown operation key is sanitized", async () => {
-  for (const idempotencyKey of ["bad", "60000000-0000-4000-8000-000000000099"]) {
-    const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: "OWNER" }), service: service(null) });
-    const response = await GET(request, route({ ...params, idempotencyKey }));
-    assert.ok([400, 404].includes(response.status));
-  }
-});
-
-test("canonical replay treats property order as equal but relevant differences as conflicts", async () => {
-  const equivalent = [{ mode: "CREATE", supplement: { landUseType: "FOREST", inputContractVersion: "v" } }, { supplement: { inputContractVersion: "v", landUseType: "FOREST" }, mode: "CREATE" }];
-  assert.deepEqual(Object.keys(equivalent[0]).sort(), Object.keys(equivalent[1]).sort());
-  for (const difference of ["mode", "landUseType", "expectedCurrentDiagnosisId", "version", "context", "operationType", "payload"]) assert.notEqual(difference.length, 0);
-  const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: "OWNER" }), service: service({ error: { code: "IDEMPOTENCY_CONFLICT" } }) });
-  assert.equal((await GET(request, route())).status, 409);
-});
-
-test("concurrent same-key recovery is replay-only and never leaks a raw unique error", async () => {
-  const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: "OWNER" }), service: service({ outcome: "SUCCEEDED", diagnosisId: "diagnosis" }) });
-  const responses = await Promise.all([GET(request, route()), GET(request, route())]);
-  assert.deepEqual(responses.map((response) => response.status), [200, 200]);
-  for (const response of responses) assert.equal(JSON.stringify(await response.json()).match(/unique constraint|Prisma|SQL/i), null);
-});
-
-test("replay and recovery do not duplicate PostgreSQL domain rows or timestamps", async () => {
-  await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client) => {
+test("real terminal recovery is actor/context scoped, replay-only and omits restricted ledger fields", async () => {
+  await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client, db) => {
     await setupIHFRDiagnosisFixtures(client);
-    const snapshot = async () => (await client.query(`SELECT (SELECT count(*)::int FROM "IHFRDiagnosisOperation") operations,(SELECT count(*)::int FROM "ExperimentalIHFRDiagnosis") diagnoses,(SELECT count(*)::int FROM "IHFRDiagnosisLifecycleEvent") events,(SELECT count(*)::int FROM "ExperimentalIHFRInputSupplement") supplements,(SELECT count(*)::int FROM "CurrentExperimentalIHFRDiagnosis") current,(SELECT max("completedAt")::text FROM "IHFRDiagnosisOperation") completed_at,(SELECT max("calculatedAt")::text FROM "ExperimentalIHFRDiagnosis") calculated_at`)).rows[0];
+    const service = new IHFRDiagnosisService(db);
+    const key = randomUUID();
+    const writer = IHFR_ACTORS.contextualAdmin;
+    const original = await service.createOrReplace(writer, context, write, key);
+    const GET = (actor: string) => createIHFROperationHandler({ requireAuth: async () => ({ id: actor }), service });
+    const snapshot = async () => (await client.query(`SELECT (SELECT count(*)::int FROM "IHFRDiagnosisOperation") operations,(SELECT count(*)::int FROM "ExperimentalIHFRDiagnosis") diagnoses,(SELECT count(*)::int FROM "IHFRDiagnosisLifecycleEvent") events,(SELECT count(*)::int FROM "ExperimentalIHFRInputSupplement") supplements,(SELECT count(*)::int FROM "CurrentExperimentalIHFRDiagnosis") current,(SELECT max("completedAt")::text FROM "IHFRDiagnosisOperation") completed_at`)).rows[0];
     const before = await snapshot();
-    const GET = createIHFROperationHandler({ requireAuth: async () => ({ id: "OWNER" }), service: service({ outcome: "SUCCEEDED", diagnosisId: "diagnosis" }) });
-    await Promise.all([GET(request, route()), GET(request, route())]);
+    const responses = await Promise.all([GET(writer)(request, route(key)), GET(writer)(request, route(key))]);
+    for (const response of responses) {
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+      assert.deepEqual(await response.json(), original.response);
+    }
     assert.deepEqual(await snapshot(), before);
+    const serialized = JSON.stringify(original.response);
+    for (const restricted of ["actorUserId", "idempotencyKey", "requestHash", "payloadHash", "responseSnapshot", "evidence", "provenance", "reason", "SQL", "stack"]) assert.equal(serialized.includes(restricted), false, restricted);
+    for (const actor of [IHFR_ACTORS.owner, IHFR_ACTORS.outsider, IHFR_ACTORS.revoked]) {
+      assert.equal((await GET(actor)(request, route(key))).status, 404, actor);
+    }
+    for (const [overrides, status] of [[{ laboratoryId: IHFR_LABORATORIES.inactive }, 404], [{ areaId: IHFR_CONTEXTS.inactiveArea }, 404], [{ collectionId: IHFR_CONTEXTS.withoutMeasurementCollection }, 404]] as const) {
+      const response = await GET(writer)(request, route(key, overrides));
+      assert.equal(response.status, status);
+      assert.equal((await response.json()).error.code !== undefined, true);
+    }
+    assert.equal((await GET(writer)(request, route(randomUUID()))).status, 404);
+    const malformedKey = await GET(writer)(request, route("bad"));
+    assert.equal(malformedKey.status, 400);
+    assert.deepEqual(await malformedKey.json(), { error: { code: "INVALID_INPUT", message: "Invalid input" } });
+    const malformedQuery = await GET(writer)(new Request("http://local.test/api/operations?extra=1"), route(key));
+    assert.equal(malformedQuery.status, 400);
+    assert.deepEqual(await malformedQuery.json(), { error: { code: "INVALID_INPUT", message: "Invalid input" } });
+    assert.deepEqual(await snapshot(), before);
+    await client.query(`UPDATE "ResearchersLinked" SET role='MEMBER' WHERE "userId"=$1 AND "laboratoryRoomId"=$2`, [writer, IHFR_LABORATORIES.active]);
+    assert.equal((await GET(writer)(request, route(key))).status, 200);
+    await client.query(`UPDATE "LaboratoryRoom" SET "isActive"=false WHERE id=$1`, [IHFR_LABORATORIES.active]);
+    assert.equal((await GET(writer)(request, route(key))).status, 200);
+    assert.deepEqual(await snapshot(), before);
+    await client.query(`DELETE FROM "ResearchersLinked" WHERE "userId"=$1 AND "laboratoryRoomId"=$2`, [writer, IHFR_LABORATORIES.active]);
+    assert.equal((await GET(writer)(request, route(key))).status, 404);
   });
 });

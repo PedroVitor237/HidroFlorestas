@@ -2,7 +2,7 @@
 
 **Input**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md), [data-model.md](data-model.md), [quickstart.md](quickstart.md) e [contracts/](contracts/).
 
-**Status**: sequência remediada em 2026-09-20; implementação parcial até T082, com T060 e T083–T134 pendentes. `G2-SCI` permanece `NAO_VERIFICADO_VALIDACAO_POSTERIOR` e não bloqueia a implementação experimental rotulada.
+**Status**: rodada corretiva focal após auditoria independente do `imp006-final.diff` concluída em 2026-09-23. T116 e T134 foram reabertas, corrigidas e encerradas novamente após os gates registrados em `implementation-evidence.md`. A conclusão anterior permanece como histórico. O PostgreSQL local permanece disponível a pedido do usuário; `PD-002`, `G2-SCI` e validações humanas seguem `NAO_VERIFICADO_VALIDACAO_POSTERIOR`.
 
 **Formato**: `- [ ] TNNN [P?] [US?] ação com caminho`. `[P]` aparece somente quando as tarefas podem ser executadas simultaneamente sem escrever o mesmo arquivo nem depender de resultado ainda não produzido.
 
@@ -106,7 +106,7 @@
 
 - [X] T058 [US1] Executar unitários da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 - [X] T059 [US1] Executar integração PostgreSQL da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T060 [US1] Executar E2E da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md` — `SKIP` registrado; revalidar em T116 quando houver fixture isolada persistente visível pelo servidor
+- [X] T060 [US1] Executar E2E da US1 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md` — `SKIP` histórico superado: 2/2 cenários de leitura passaram com fixture isolada visível pelo servidor em 2026-09-23.
 - [X] T061 [US1] Verificar semanticamente região, hierarquia, rótulos experimentais e ausência de controles de escrita em `tests/unit/ihfr-diagnosis-read-accessibility.test.tsx` e registrar a limitação de teclado/foco E2E em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 - [X] T062 [US1] Confirmar que ator, idempotency key, request/payload hash, payload ambiental e evidência restrita não aparecem no DTO/UI em `tests/integration/ihfr-diagnosis-detail-route.test.ts`
 - [X] T063 [US1] Confirmar leitura autorizada em laboratório inativo em `tests/integration/ihfr-diagnosis-postgresql-read.test.ts` e zero controles de escrita em `tests/unit/ihfr-diagnosis-read-accessibility.test.tsx`; executar a jornada E2E em T060/T116
@@ -128,7 +128,7 @@
 - [X] T066 [P] [US2] Criar testes de parser fechado e condicionais `mode=CREATE/REPLACE` em `tests/unit/ihfr-diagnosis-contracts.test.ts`
 - [X] T067 [P] [US2] Criar testes de scores, limites, classes, precisão e drivers em `tests/unit/ihfr-diagnosis-evaluator.test.ts`
 - [X] T068 [P] [US2] Criar testes de ausência opcional conhecida versus campo/enum desconhecido em `tests/unit/ihfr-diagnosis-input-policy.test.ts`
-- [X] T069 [P] [US2] Criar testes de elegibilidade e `400 INVALID_REQUEST` em `tests/integration/ihfr-diagnosis-eligibility-route.test.ts`
+- [X] T069 [P] [US2] Criar testes de elegibilidade e `400 INVALID_INPUT` em `tests/integration/ihfr-diagnosis-eligibility-route.test.ts` (código atualizado pela `PD-018`)
 - [X] T070 [P] [US2] Criar testes de CREATE/REPLACE, insuficiência e incompatibilidade em `tests/integration/ihfr-diagnosis-write-route.test.ts`
 - [X] T071 [P] [US2] Criar testes de replay, divergência e recuperação por chave em `tests/integration/ihfr-diagnosis-idempotency.test.ts`
 - [X] T072 [P] [US2] Criar testes de concorrência e ID vigente esperado em `tests/integration/ihfr-diagnosis-concurrency.test.ts`
@@ -145,30 +145,30 @@
 - [X] T080 [US2] Implementar mapeamentos exatos e política known-optional/unknown em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
 - [X] T081 [US2] Implementar dimensões, suficiência, clamp e decomposição em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
 - [X] T082 [US2] Implementar score, classe, qualidade, half-up e drivers determinísticos em `src/app/api/server/ihfr-diagnosis/evaluator.ts`
-- [ ] T083 [US2] Implementar autorização WRITE, laboratório ativo e bloqueio de MEMBER/processo autônomo em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T084 [US2] Implementar elegibilidade sem persistência em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T085 [US2] Implementar criação/reuso atômico de suplemento por `(collectionDataId,payloadHash)` em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T086 [US2] Implementar CREATE suficiente/insuficiente/incompatível e ledger terminal em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T087 [US2] Implementar REPLACE serializável com `expectedCurrentDiagnosisId` em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T088 [US2] Implementar REVOKE append-only com motivo restrito em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T089 [US2] Implementar replay/conflito/recuperação reautorizada em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T090 [US2] Implementar precedência e rollback integral de falhas em `src/app/api/server/services/ihfr-diagnosis.service.ts`
-- [ ] T091 [P] [US2] Implementar GET eligibility em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/eligibility/route.ts`
-- [ ] T092 [P] [US2] Implementar POST diagnoses para CREATE/REPLACE em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/diagnoses/route.ts`
-- [ ] T093 [P] [US2] Implementar POST revocations em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/diagnoses/[diagnosisId]/revocations/route.ts`
-- [ ] T094 [P] [US2] Implementar GET operation em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/operations/[idempotencyKey]/route.ts`
-- [ ] T095 [US2] Implementar envelopes 400/401/403/404/409/422/500 e `no-store` em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.http.ts`
-- [ ] T096 [P] [US2] Criar formulário de suplemento fechado e predominância em `src/components/ihfr-diagnosis/ihfr-diagnosis-form.tsx`
-- [ ] T097 [P] [US2] Criar controles de substituir/revogar com confirmação e ID esperado em `src/components/ihfr-diagnosis/ihfr-diagnosis-actions.tsx`
-- [ ] T098 [US2] Integrar elegibilidade, gestão, timeout e recuperação na página contextual em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/page.tsx`
+- [X] T083 [US2] Implementar autorização WRITE, laboratório ativo e bloqueio de MEMBER/processo autônomo em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T084 [US2] Implementar elegibilidade sem persistência em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T085 [US2] Implementar criação/reuso atômico de suplemento por `(collectionDataId,payloadHash)` em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T086 [US2] Implementar CREATE suficiente/insuficiente/incompatível e ledger terminal em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T087 [US2] Implementar REPLACE serializável com `expectedCurrentDiagnosisId` em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T088 [US2] Implementar REVOKE append-only com motivo restrito em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T089 [US2] Implementar replay/conflito/recuperação reautorizada em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T090 [US2] Implementar precedência e rollback integral de falhas em `src/app/api/server/services/ihfr-diagnosis.service.ts`
+- [X] T091 [P] [US2] Implementar GET eligibility em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/eligibility/route.ts`
+- [X] T092 [P] [US2] Implementar POST diagnoses para CREATE/REPLACE em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/diagnoses/route.ts`
+- [X] T093 [P] [US2] Implementar POST revocations em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/diagnoses/[diagnosisId]/revocations/route.ts`
+- [X] T094 [P] [US2] Implementar GET operation em `src/app/api/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/ihfr-diagnosis/operations/[idempotencyKey]/route.ts`
+- [X] T095 [US2] Implementar envelopes 400/401/403/404/409/422/500 e `no-store` em `src/app/api/server/ihfr-diagnosis/ihfr-diagnosis.http.ts`
+- [X] T096 [P] [US2] Criar formulário de suplemento fechado e predominância em `src/components/ihfr-diagnosis/ihfr-diagnosis-management.tsx` (implementação conjunta com T097, sem duplicar estado)
+- [X] T097 [P] [US2] Criar controles de substituir/revogar com confirmação e ID esperado em `src/components/ihfr-diagnosis/ihfr-diagnosis-management.tsx`
+- [X] T098 [US2] Integrar elegibilidade, gestão, timeout e recuperação na página contextual em `src/app/(private)/dashboard/laboratories/[laboratoryId]/areas/[areaId]/collections/[collectionId]/page.tsx`
 
 ### GREEN da US2
 
-- [ ] T099 [US2] Executar unitários da US2 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T100 [US2] Executar integração PostgreSQL da US2 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T101 [US2] Executar concorrência/replay/falha injetada até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T102 [US2] Executar E2E da US2 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T103 [US2] Registrar checkpoint independente da US2, incluindo seis operações/sete comportamentos e limitações, em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T099 [US2] Executar unitários da US2 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T100 [US2] Executar integração PostgreSQL da US2 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T101 [US2] Executar concorrência/replay/falha injetada até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T102 [US2] Executar E2E da US2 até GREEN e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T103 [US2] Registrar checkpoint independente da US2, incluindo seis operações/sete comportamentos e limitações, em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 
 **Checkpoint**: US2 entrega o ciclo completo sem enfraquecer US1.
 
@@ -178,18 +178,18 @@
 
 **Objetivo**: provar propriedades transversais depois das histórias estarem verdes.
 
-- [ ] T104 [P] Validar OpenAPI 3.1, seis operações/sete comportamentos, `mode`, condicionais e respostas em `tests/contract/ihfr-diagnosis-openapi.test.ts`
-- [ ] T105 [P] Validar schema do suplemento, sete enums e rejeição de extras em `tests/contract/ihfr-diagnosis-input-schema.test.ts`
-- [ ] T106 [P] Validar manifesto v0.1.1 ativo e v0.1.0 histórico, hashes e ausência de alteração matemática em `tests/contract/ihfr-diagnosis-manifests.test.ts`
-- [ ] T107 Criar testes de migration em banco vazio/legado e zero backfill em `tests/migration/ihfr-diagnosis-migration.test.ts`
-- [ ] T108 Criar testes de FK, unique do ponteiro/ledger, deduplicação do suplemento e FK não única no diagnóstico em `tests/migration/ihfr-diagnosis-constraints.test.ts`
-- [ ] T109 Criar testes de triggers append-only sem desabilitá-los em `tests/migration/ihfr-diagnosis-immutability.test.ts`
-- [ ] T110 Criar testes que distingam rollback da migration em schema descartável, rollback transacional e recuperação operacional de produção, provando ausência de objetos parciais em `tests/migration/ihfr-diagnosis-rollback.test.ts`
-- [ ] T111 Criar testes de teardown após falha, zero schemas/órfãos/processos em `tests/integration/ihfr-diagnosis-fixture-lifecycle.test.ts`
-- [ ] T112 Criar matriz de segurança para IDs forjados, contexto cruzado, vínculo revogado e replay sem acesso em `tests/integration/ihfr-diagnosis-security.test.ts`
-- [ ] T113 Criar teste de privacidade do DTO/eventos/evidência e `areaId` coerente em `tests/integration/ihfr-diagnosis-privacy.test.ts`
-- [ ] T114 Executar suítes de contrato/unitárias completas e registrar resultado real em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T115 Executar suítes PostgreSQL de integração/migration completas e registrar resultado real em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T104 [P] Validar OpenAPI 3.1, seis operações/sete comportamentos, `mode`, condicionais e respostas em `tests/contract/ihfr-diagnosis-api.test.ts` e integrações IHFR
+- [X] T105 [P] Validar schema do suplemento, sete enums e rejeição de extras em `tests/contract/ihfr-diagnosis-api.test.ts` e `tests/unit/ihfr-diagnosis-contracts.test.ts`
+- [X] T106 [P] Validar manifesto v0.1.1 ativo e v0.1.0 histórico, hashes e ausência de alteração matemática em `tests/unit/ihfr-diagnosis-manifest-loader.test.ts` e `tests/unit/ihfr-diagnosis-evaluator.test.ts`
+- [X] T107 Criar testes de migration em banco vazio/legado e zero backfill em `tests/migration/ihfr-diagnosis-migration.test.ts`
+- [X] T108 Criar testes de FK, unique do ponteiro/ledger, deduplicação do suplemento e FK não única no diagnóstico em `tests/migration/ihfr-diagnosis-preflight.test.ts` e `tests/integration/ihfr-diagnosis-supplement-cardinality.test.ts`
+- [X] T109 Criar testes de triggers append-only sem desabilitá-los em `tests/migration/ihfr-diagnosis-immutability.test.ts`
+- [X] T110 Criar testes que distingam rollback da migration em schema descartável, rollback transacional e recuperação operacional de produção, provando ausência de objetos parciais em `tests/migration/ihfr-diagnosis-rollback.test.ts`
+- [X] T111 Criar testes de teardown após falha, zero schemas/órfãos/processos em `tests/integration/ihfr-diagnosis-fixture-lifecycle.test.ts`, `scripts/imp006-local-e2e.ts` e `scripts/imp006-local-audit.ts`
+- [X] T112 Criar matriz de segurança para IDs forjados, contexto cruzado, vínculo revogado e replay sem acesso nas integrações `ihfr-diagnosis-eligibility-route`, `ihfr-diagnosis-postgresql-read`, `ihfr-diagnosis-idempotency` e `ihfr-diagnosis-write-route`
+- [X] T113 Criar teste de privacidade do DTO/eventos/evidência e `areaId` coerente em `tests/integration/ihfr-diagnosis-detail-route.test.ts`, `ihfr-diagnosis-idempotency.test.ts` e `tests/contract/ihfr-diagnosis-api.test.ts`
+- [X] T114 Executar suítes de contrato/unitárias completas e registrar resultado real em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T115 Executar suítes PostgreSQL de integração/migration completas e registrar resultado real em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 
 ---
 
@@ -197,15 +197,15 @@
 
 **Objetivo**: provar a jornada integrada e preservar todas as entregas anteriores antes do teardown.
 
-- [ ] T116 Executar E2E completo da IMP-006, inclusive teclado/foco e rótulos científicos, e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T117 Executar regressões de autenticação, laboratório e papéis da IMP-003 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T118 Executar regressões de coleta, detalhe e imutabilidade da IMP-004 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T119 Executar regressões de captura/leitura ambiental, parser, idempotência e imutabilidade da IMP-005 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T120 Executar regressões de resumo/histórico, paginação e minimização da IMP-007 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T121 Confirmar que dashboard permanece sem eventos/projeção IHFR em `tests/integration/dashboard-routes.test.ts`
-- [ ] T122 Executar regressões territoriais unitárias e de integração da IMP-008, confirmando ausência de camada IHFR, e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T123 Executar `tests/e2e/territorial-map.spec.ts` com tiles interceptados antes de qualquer teardown/evidência final e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T124 Executar suíte geral, typecheck, lint e build e registrar resultados reais em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T116 Executar E2E completo da IMP-006, inclusive teclado/foco e rótulos científicos, e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md` — reaberta após auditoria e encerrada com assertions de foco programático, reconciliação de CURRENT/elegibilidade, conflito real e replay 422 sem nova linha no ledger; E2E 5/5 PASS.
+- [X] T117 Executar regressões de autenticação, laboratório e papéis da IMP-003 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T118 Executar regressões de coleta, detalhe e imutabilidade da IMP-004 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T119 Executar regressões de captura/leitura ambiental, parser, idempotência e imutabilidade da IMP-005 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T120 Executar regressões de resumo/histórico, paginação e minimização da IMP-007 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T121 Confirmar que dashboard permanece sem eventos/projeção IHFR em `tests/unit/dashboard-service.test.ts` e `tests/integration/dashboard-routes.test.ts`
+- [X] T122 Executar regressões territoriais unitárias e de integração da IMP-008, confirmando ausência de camada IHFR, e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T123 Executar `tests/e2e/territorial-map.spec.ts` com tiles interceptados antes de qualquer teardown/evidência final e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T124 Executar suíte geral, typecheck, lint e build e registrar resultados reais em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 
 ---
 
@@ -213,16 +213,16 @@
 
 **Objetivo**: remover estado de teste, consolidar evidência e fechar somente depois de todas as regressões.
 
-- [ ] T125 Executar em bloco de finalização o descarte do schema PostgreSQL isolado, inclusive após falha anterior, usando `tests/fixtures/postgresql-schema-lifecycle.ts`
-- [ ] T126 Verificar e registrar zero schemas da execução, zero registros órfãos, zero processos remanescentes e triggers nunca desabilitados em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T127 Consolidar comandos executados, versões, resultados, falhas e evidências sanitizadas em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T128 Registrar revisão do professor Fábio e dos demais especialistas como `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`), sem bloquear a entrega experimental, em `specs/006-ihfr-diagnosis/evidence/human-validation.md`
-- [ ] T129 Registrar calibração, vetores científicos aprovados e testes de campo como `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`), bloqueando promoção definitiva, em `specs/006-ihfr-diagnosis/evidence/human-validation.md`
-- [ ] T130 Atualizar `specs/006-ihfr-diagnosis/pr-description.md` com links, escopo real, comandos executados, resultados, limitações e estado humano sem inventar evidência
-- [ ] T131 Validar links, referências, versões/hashes, seis operações/sete comportamentos e rastreabilidade FR/SC em `specs/006-ihfr-diagnosis/**`
-- [ ] T132 Confirmar que o texto do PR preparado corresponde ao HEAD validado, à branch/base corretas e à evidência existente em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T133 Inspecionar diff e estado Git finais para excluir segredos, PII, alterações em `docs/raw/**`, mudanças fora do escopo e divergência não explicada; registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [ ] T134 Confirmar que T001–T133 estão concluídas ou explicitamente justificadas, que não há estado residual e então registrar o fechamento real da implementação em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T125 Executar em bloco de finalização o descarte do schema PostgreSQL isolado, inclusive após falha anterior, usando `tests/fixtures/postgresql-schema-lifecycle.ts`
+- [X] T126 Verificar e registrar zero schemas da execução, zero registros órfãos, zero processos remanescentes e triggers nunca desabilitados em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T127 Consolidar comandos executados, versões, resultados, falhas e evidências sanitizadas em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T128 Registrar revisão do professor Fábio e dos demais especialistas como `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`), sem bloquear a entrega experimental, em `specs/006-ihfr-diagnosis/evidence/human-validation.md`
+- [X] T129 Registrar calibração, vetores científicos aprovados e testes de campo como `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`), bloqueando promoção definitiva, em `specs/006-ihfr-diagnosis/evidence/human-validation.md`
+- [X] T130 Atualizar `specs/006-ihfr-diagnosis/pr-description.md` com links, escopo real, comandos executados, resultados, limitações e estado humano sem inventar evidência
+- [X] T131 Validar links, referências, versões/hashes, seis operações/sete comportamentos e rastreabilidade FR/SC em `specs/006-ihfr-diagnosis/**`
+- [X] T132 Confirmar que o texto do PR preparado corresponde ao HEAD validado, à branch/base corretas e à evidência existente em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T133 Inspecionar diff e estado Git finais para excluir segredos, PII, alterações em `docs/raw/**`, mudanças fora do escopo e divergência não explicada; registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
+- [X] T134 Confirmar que T001–T133 estão concluídas ou explicitamente justificadas, que não há estado residual e então registrar o fechamento real da implementação em `specs/006-ihfr-diagnosis/implementation-evidence.md` — reaberta e encerrada novamente após 204 unitários, 105 integrações, contrato 2/2, migration 23/23, E2E IHFR 5/5, typecheck, lint, build, smoke do ambiente, `git diff --check` e auditoria de schemas/fixtures/processos/triggers.
 
 ---
 

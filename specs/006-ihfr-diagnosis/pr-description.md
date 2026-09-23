@@ -27,7 +27,7 @@
 
 - Os 12 achados da análise independente foram tratados em spec, plano, pesquisa, modelo, quickstart, tarefas, checklist, ADR, contratos e registros de governança.
 - O suplemento pertence à coleta, usa `UNIQUE(collectionDataId,payloadHash)` e pode ser referenciado por N diagnósticos compatíveis; não existe `UNIQUE(inputSupplementId)` no diagnóstico.
-- O OpenAPI declara seis operações HTTP e sete comportamentos. CREATE/REPLACE compartilham POST com discriminador `mode`; CREATE aceita ID vigente esperado ausente ou `null`, REPLACE exige UUID; elegibilidade inválida retorna `400 INVALID_REQUEST`, enquanto ausência válida/predominância indeterminável retorna `INSUFFICIENT_DATA`; `PublicDiagnosis.areaId` é obrigatório e derivado no servidor.
+- O OpenAPI declara seis operações HTTP e sete comportamentos. CREATE/REPLACE compartilham POST com discriminador `mode`; CREATE aceita ID vigente esperado ausente ou `null`, REPLACE exige UUID; elegibilidade inválida retorna `400 INVALID_INPUT`, enquanto ausência válida/predominância indeterminável retorna `INSUFFICIENT_DATA`; `PublicDiagnosis.areaId` é obrigatório e derivado no servidor.
 - A migration aditiva já existe em `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql` e foi aplicada em schema PostgreSQL isolado conforme `implementation-evidence.md`; a aplicação em outros ambientes exige verificação própria da ordem e do destino.
 - As tarefas agora seguem a ordem executável banco → Prisma/migration → aplicação isolada/generate → fixtures → shells → RED real → implementação → verdes/regressões → teardown/evidências → encerramento, com `[P]` somente em arquivos independentes.
 - Testes PostgreSQL exigem schema isolado por execução, matriz explícita de fixtures, triggers sempre ativos e teardown verificável mesmo após falha.
@@ -39,7 +39,7 @@
 - [schema do suplemento](contracts/ihfr-diagnosis-input-experimental-v0.1.0.schema.json) e [OpenAPI](contracts/ihfr-diagnosis-api.openapi.yaml)
 - [spec](spec.md), [plano](plan.md), [pesquisa](research.md), [modelo de dados](data-model.md), [quickstart](quickstart.md), [tarefas](tasks.md) e [checklist](checklists/requirements.md)
 
-## Validação futura da implementação
+## Plano histórico de validação, executado nesta rodada
 
 - Reproduzir ambos os hashes; validar JSON/YAML/OpenAPI e seis operações/sete comportamentos.
 - Aplicar a migration em PostgreSQL isolado vazio e com legado; provar constraints, cardinalidade 1:N, triggers, concorrência, rollback e teardown.
@@ -50,4 +50,47 @@
 
 - Revisão especializada, vetores científicos aprovados, calibração e testes de campo: `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`).
 - Esses itens não bloqueiam a implementação experimental devidamente rotulada, mas bloqueiam promoção para contrato científico definitivo.
-- Este texto não afirma implementação concluída, testes verdes ou PR aberto; essas evidências devem ser acrescentadas somente quando existirem.
+- Esta observação pertence ao texto histórico de planejamento; os resultados efetivos de 2026-09-23 aparecem abaixo. Nenhum PR foi aberto.
+
+## Delta implementado em 2026-09-23 — descrição preparada, não publicada
+
+**Branch:** `007-ihfr-evolution`, derivada da feature `006-ihfr-diagnosis`; HEAD inicial e atual `97d95583fa62ed1f3dc88f7a7c69e150afddb968`; merge-base conferido com `origin/development`: `100351e07d9f89f34ebb0ea4de17b526297d6350`. As alterações estão na working tree, sem commit. A base alvo proposta para revisão é `development`; revalidar a base antes de qualquer PR futuro.
+
+Identidade atual do código/testes/configuração/OpenAPI não commitados após a rodada corretiva focal: manifesto SHA-256 `0352e9cf9f8c5548d4d098890bfc63855b6ce2ba1f1d5fea1378a770ff0e6a0f` (59 arquivos; método e escopo em [implementation-evidence.md](implementation-evidence.md)). O fingerprint anterior `16f6eba1e280e32f98eb6836622add9c8122eee0c5b4e61de762aa3ec4564b8a` permanece como histórico. O `teste.txt` não rastreado foi preservado e está fora deste delta.
+
+### Escopo entregue
+
+- Serviço real com autorização contextual, elegibilidade sem escrita, CREATE/REPLACE/REVOKE transacionais, CURRENT único, eventos/snapshots imutáveis, ledger terminal, replay e recuperação reautorizada. O suplemento é fechado e deduplicado pela coleta/payload, com cardinalidade 1:N.
+- Seis operações HTTP para sete comportamentos, `no-store`, envelopes fechados, projeção pública allowlist e DTOs conformes ao OpenAPI 3.1, com decomposição e versões explícitas. `PD-018` foi resolvida pela confirmação explícita da equipe em 2026-09-23: input estrutural/sintaticamente inválido recebe `400 INVALID_INPUT`; seleção de versão/hash bem formada porém incompatível, ou medição persistida incompatível, recebe `422 INCOMPATIBLE_VERSION` e terminal idempotente. O terminal não cria suplemento confirmado, diagnóstico, `CURRENT` ou evento; replay idêntico não escreve e GET operation o recupera como `200 OperationResponse`. O schema de entrada valida o formato, enquanto a saída do diagnóstico ativo preserva as constantes exatas.
+- UI na página contextual existente para OWNER/ADMIN em laboratório ativo, com confirmação, teclado/foco, conflitos, insuficiência, incompatibilidade e recuperação com chave estável; MEMBER/inatividade só leem. Nenhuma camada IHFR foi adicionada a dashboard/mapa.
+- Harness PostgreSQL local próprio e preservado para novas rodadas, schema exclusivo por execução, E2E com servidor Next próprio e auditoria de limpeza. O script [imp006-local-postgresql.ps1](../../scripts/imp006-local-postgresql.ps1) inclui `Dispose` futuro, mas ele **não foi executado** a pedido do usuário. Nenhum Python foi instalado/usado.
+
+### Verificação observada
+
+Comandos executados via `scripts/imp006-local-postgresql.ps1 -Action Run` nos modos `Schema` ou `Regression`, conforme [evidência detalhada](implementation-evidence.md):
+
+| Suíte | Resultado |
+|---|---|
+| `npm test` | 204 unitários e 105 integrações, 0 FAIL/SKIP/TODO |
+| `npm run test:migration` | 23/23 PASS, 0 FAIL/SKIP/TODO |
+| `npm run test:contract` | 2/2 PASS, 0 FAIL/SKIP/TODO |
+| `npm run test:e2e:ihfr` | 5/5 PASS, 0 FAIL/SKIP/TODO; inclui foco, reconciliação real, incompatibilidade 422 recuperável e replay sem nova linha |
+| Playwright territorial `tests/e2e/territorial-map.spec.ts` | 3/3 PASS, 0 FAIL/SKIP/TODO; tiles interceptados |
+| `npm run typecheck`, `npm run lint`, `npm run build` | PASS; lint com 0 erros e 4 warnings preexistentes fora da IMP-006 |
+| `scripts/imp006-local-audit.ts` | 0 schemas temporários, 0 fixtures territoriais e 0 linhas IHFR públicas no banco próprio; 4 triggers de imutabilidade IHFR habilitados |
+| `scripts/imp006-local-environment-smoke.ps1`; `git diff --check` | PASS; variáveis de processo restauradas após sucesso/falha e diff sem erro de whitespace |
+
+### Correções focais após auditoria independente
+
+- GET operation reautoriza leitura contextual para o mesmo ator ainda vinculado como OWNER/ADMIN/MEMBER, mesmo após inativação do laboratório ou perda da capacidade de escrita. Outro ator, vínculo perdido e contexto cruzado recebem 404; chave malformada 400 `INVALID_INPUT`.
+- POST incompatível novo e replay idêntico retornam ambos `422 ErrorEnvelope`, sem nova escrita. GET operation recupera o mesmo terminal como `200 OperationResponse`. O OpenAPI, o serviço e os testes unitários, PostgreSQL, contrato e E2E cobrem essa distinção.
+- A UI reconcilia CURRENT e elegibilidade após transições terminais e `STATE_CONFLICT`, move o foco para status/alerta conforme o resultado e preserva a chave somente quando o resultado é desconhecido. O diálogo mantém foco contido, Escape, cancelamento e retorno ao acionador.
+- Os handlers de escrita autorizam o contexto antes de validar query, header e body. MEMBER recebe 403 e laboratório inativo 409 READ_ONLY com input válido ou malformado. O runner PostgreSQL restaura exatamente as sete variáveis de processo após sucesso/falha; há smoke automatizado sem exposição de credenciais.
+- T116 e T134 foram reabertas e encerradas após os gates finais. A falha E2E intermitente anterior permanece registrada como histórico em [implementation-evidence.md](implementation-evidence.md), sem atribuição causal a esta correção.
+
+### Limites para revisão
+
+- `DECISAO_CONFIRMADA` `PD-018`: a equipe confirmou nesta conversa, em 2026-09-23, a precedência 400 estrutural / 422 incompatibilidade semântica. O contrato e a implementação foram corrigidos e os gates afetados foram repetidos conforme [evidência detalhada](implementation-evidence.md).
+- T134 foi encerrada tecnicamente após a auditoria de recursos temporários. Uma repetição intermediária do E2E teve timeout intermitente no primeiro cenário; a suíte completa passou 5/5 na repetição final. `PD-002` e as validações científicas/humanas permanecem `VALIDACAO_POSTERIOR`.
+- [Validação humana e científica](evidence/human-validation.md): revisão do professor Fábio/especialistas, vetores aprovados, calibração, campo e leitor de tela permanecem `NAO_VERIFICADO` (`VALIDACAO_POSTERIOR`). A ciência segue `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+- A migration publicada, os manifestos e `docs/raw/**` não foram alterados. O cluster PostgreSQL permanece ativo para novas rodadas; só os recursos temporários da execução foram removidos. Nenhum PR/commit/push/merge/deploy foi realizado.

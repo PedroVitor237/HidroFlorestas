@@ -12,3 +12,17 @@ it("enforces contextual roles and read-only precedence", () => {
     if (role !== "OWNER") assert.throws(() => assertLaboratoryPermission(role, true, "MANAGE_ROLES"));
   }
 });
+
+it("keeps IHFR management separate from environmental capture permission", () => {
+  for (const role of ["OWNER", "ADMIN", "MEMBER"] as ContextRole[]) {
+    assert.doesNotThrow(() => assertLaboratoryPermission(role, true, "READ_IHFR_DIAGNOSIS"));
+    assert.doesNotThrow(() => assertLaboratoryPermission(role, false, "READ_IHFR_DIAGNOSIS"));
+    assert.throws(() => assertLaboratoryPermission(role, false, "MANAGE_IHFR_DIAGNOSIS", true), (error) => error instanceof AreaAccessError && error.code === "READ_ONLY");
+    if (role === "MEMBER") {
+      assert.doesNotThrow(() => assertLaboratoryPermission(role, true, "CREATE_ENVIRONMENTAL_DATA", true));
+      assert.throws(() => assertLaboratoryPermission(role, true, "MANAGE_IHFR_DIAGNOSIS", true), (error) => error instanceof AreaAccessError && error.code === "FORBIDDEN");
+    } else {
+      assert.doesNotThrow(() => assertLaboratoryPermission(role, true, "MANAGE_IHFR_DIAGNOSIS", true));
+    }
+  }
+});

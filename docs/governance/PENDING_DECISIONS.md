@@ -27,6 +27,7 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-015` | Terminologia e papéis | Definir assinante, usuário, laboratório, proprietário, membro, área monitorada e demais papéis relacionados. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Ambiguidade terminológica compromete requisitos, dados e UX. | `ABERTA` |
 | `PD-016` | Regras de laboratórios | Definir regras de criação, visualização, participação, propriedade e acesso aos laboratórios. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta requisitos, permissões, modelo de dados e fluxos de UX. | `ABERTA` |
 | `PD-017` | Estado dos artefatos do Figma | Definir critérios para classificar arquivos, páginas, frames, telas ou fluxos como `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` ou `IMPLEMENTADO_NAO_APROVADO`. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Sem critérios, artefatos exploratórios podem ser confundidos com requisitos. | `ABERTA` |
+| `PD-018` | Precedência 400/422 da IMP-006 | `DECISAO_CONFIRMADA` em 2026-09-23 por confirmação explícita da equipe nesta conversa: input estrutural/sintaticamente inválido, inclusive formato de versão/hash, recebe `400 INVALID_INPUT`; seleção bem formada, mas incompatível com a combinação ativa/suportada, recebe `422 INCOMPATIBLE_VERSION`, assim como medição persistida incompatível. O 422 registra terminal idempotente no ledger, sem suplemento confirmado, diagnóstico, `CURRENT` ou evento; replay idêntico não escreve e GET operation recupera `200 OperationResponse` com outcome incompatível. | `DECISAO_CONFIRMADA` | `FATO_DOCUMENTADO` — A contradição anterior entre `const` na entrada do OpenAPI e resposta 422 foi identificada em 2026-09-23 e corrigida no contrato, parser, serviço e testes. | `RESOLVIDA` |
 
 ## Fontes, alternativas e encaminhamento
 
@@ -49,6 +50,7 @@ Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e 
 | `PD-015` | Mandato de governança; autoridades de produto e dados ainda não designadas | Definições não especificadas. | não especificado | não especificado | não especificado | Atualizar os registros normativos de produto e dados aplicáveis e manter o histórico. |
 | `PD-016` | Mandato de governança; autoridades de produto, dados e UX ainda não designadas | Regras não especificadas. | não especificado | não especificado | não especificado | Atualizar os registros normativos de produto, dados e UX aplicáveis e manter o histórico. |
 | `PD-017` | Mandato de governança; autoridade de UX ainda não designada | Estados a disciplinar: `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` e `IMPLEMENTADO_NAO_APROVADO`; critérios não especificados. | não especificado | não especificado | não especificado | Atualizar o registro normativo de UX aplicável e manter o histórico. |
+| `PD-018` | Confirmação explícita da equipe nesta conversa em 2026-09-23; [OpenAPI da IMP-006](../../specs/006-ihfr-diagnosis/contracts/ihfr-diagnosis-api.openapi.yaml), [plano](../../specs/006-ihfr-diagnosis/plan.md) e [evidência de implementação](../../specs/006-ihfr-diagnosis/implementation-evidence.md) | Alternativas históricas: 400 `INVALID_INPUT` para versão/hash divergente no request ou 422 `INCOMPATIBLE_VERSION` com tratamento terminal. Escolhida: 400 apenas para falha estrutural/sintática; 422 para seleção bem formada incompatível. | equipe HidroFlorestas (confirmação explícita nesta conversa) | 2026-09-23 | `RESOLVIDA`: terminal idempotente, sem escritas de domínio; GET operation 200 recuperável; saída ativa com constantes exatas. | Contrato, parser, serviço, testes e documentos atualizados; gates afetados e encerramento T134 registrados na evidência. |
 
 O registro histórico de Plotly como alternativa considerada não implica rejeição de Leaflet, e sua confirmação posterior para gráficos analíticos futuros tampouco altera o mapa mínimo Leaflet/React-Leaflet. Nenhuma entrada deste registro deve ser encerrada por inferência ou pela mera existência de uma implementação; `PD-009` foi resolvida pela confirmação explícita identificada acima.
 
@@ -88,6 +90,8 @@ Essas decisões não encerram `PD-002`, que agora representa somente a validaç�
 
 As 17 entradas originalmente levantadas cobrem todas as decisões materiais identificadas por `DOC-013`; `PD-009` foi posteriormente resolvida conforme `TD-010`, sem criação de nova pendência ou novo identificador `IMP-*`.
 
+`PD-018` foi acrescentada após a auditoria original, na execução da IMP-006 de 2026-09-23, e resolvida pela confirmação explícita da equipe nessa data. Ela não altera nem resolve as 17 entradas históricas; `PD-002` permanece `ABERTA` para validação científica definitiva.
+
 ## Referências da auditoria de implementação
 
 `FATO_DOCUMENTADO` — A auditoria [`DOC-014`](../reports/audits/2026-08-28-auditoria-implementacao-infraestrutura.md), ainda `EM_REVISAO`, acrescentou as referências abaixo. `EVIDENCIA_IMPLEMENTACAO` descreve somente o baseline inspecionado e não decide intenção, correção, prioridade ou alternativa. Esta seção não altera assunto, estado, responsável, prazo, alternativas ou decisão resultante.
@@ -112,4 +116,4 @@ As 17 entradas originalmente levantadas cobrem todas as decisões materiais iden
 | `PD-016` | `IMP-FND-006`,`008`,`017`; ausência de enforcement de membership/ownership | Regras de criação, participação, propriedade e acesso continuam abertas. |
 | `PD-017` | `IMP-FND-016`; Figma não consultado e não necessário | A implementação observada não define estado ou aprovação dos artefatos de UX. |
 
-As 17 entradas foram revisadas na auditoria; posteriormente, `PD-009` foi resolvida por confirmação explícita e as outras 16 permanecem `ABERTA`. Nenhuma nova pendência foi necessária e nenhuma evidência de implementação foi tratada como decisão.
+As 17 entradas foram revisadas naquela auditoria; posteriormente, `PD-009` foi resolvida por confirmação explícita e as outras 16 permanecem `ABERTA`. Nenhuma nova pendência foi necessária naquela auditoria e nenhuma evidência de implementação foi tratada como decisão. `PD-018` surgiu depois, na execução da IMP-006, e foi resolvida pela confirmação explícita da equipe em 2026-09-23.

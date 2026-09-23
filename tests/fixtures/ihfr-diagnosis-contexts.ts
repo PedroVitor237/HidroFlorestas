@@ -1,4 +1,4 @@
-import type { PoolClient } from "@neondatabase/serverless";
+import type { PoolClient } from "pg";
 import { IHFR_ACTORS, IHFR_LABORATORIES } from "./ihfr-diagnosis-actors";
 
 const id = (suffix: number) => `60000000-0000-4000-8000-${String(suffix).padStart(12, "0")}`;
@@ -8,6 +8,13 @@ export const IHFR_CONTEXTS = {
   confirmedCollection: id(41), unconfirmedCollection: id(42),
   withoutMeasurementCollection: id(43), inactiveCollection: id(44),
   measurement: id(51), inactiveMeasurement: id(52),
+} as const;
+
+export const IHFR_MEASUREMENT_PAYLOAD = {
+  terrain: { slopePercent: 45 },
+  water: { waterSourceType: "SPRING", hasSpring: true, waterAvailability: "PERMANENT" },
+  soil: { infiltrationRateMmPerHour: 60, compactionLevel: "LOW", erosionSigns: "NONE", soilTexture: "MEDIUM" },
+  vegetation: { vegetationCoverPercent: 100, fragmentationLevel: "LOW", hasRiparianApp: true, landscapeDegradation: "LOW" },
 } as const;
 
 export async function insertIHFRContextFixtures(client: PoolClient) {
@@ -36,6 +43,6 @@ export async function insertIHFRContextFixtures(client: PoolClient) {
     [IHFR_CONTEXTS.measurement, IHFR_CONTEXTS.inactiveMeasurement,
       IHFR_CONTEXTS.confirmedCollection, IHFR_CONTEXTS.inactiveCollection,
       IHFR_ACTORS.owner,
-      JSON.stringify({ terrain: { slopePercent: 12 }, water: {}, soil: {}, vegetation: {} })],
+      JSON.stringify(IHFR_MEASUREMENT_PAYLOAD)],
   );
 }

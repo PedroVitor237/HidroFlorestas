@@ -28,7 +28,7 @@ export function createIHFRDetailHandler(dependencies: Dependencies) {
     try {
       const principal = await dependencies.requireAuth();
       const params = await route.params;
-      const context = parseIHFRRouteContext(params);
+      const context = parseIHFRRouteContext({ laboratoryId: params.laboratoryId, areaId: params.areaId, collectionId: params.collectionId });
       return ihfrJson({ diagnosis: await dependencies.service.readDetail(principal.id, context, params.diagnosisId) });
     } catch (error) {
       return ihfrError(error);

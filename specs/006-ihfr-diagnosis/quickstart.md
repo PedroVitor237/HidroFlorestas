@@ -33,7 +33,7 @@ Validar JSON e YAML com parsers locais e executar os testes de contrato OpenAPI.
 - o schema do suplemento expõe somente sete `landUseType`.
 - o OpenAPI expõe seis operações HTTP e sete comportamentos, com CREATE/REPLACE no mesmo POST;
 - `mode=CREATE` aceita `expectedCurrentDiagnosisId` ausente ou `null`, enquanto `mode=REPLACE` exige UUID;
-- elegibilidade malformada/categoria inválida declara `400 INVALID_REQUEST`, enquanto ausência válida/predominância indeterminável retorna outcome `INSUFFICIENT_DATA`;
+- elegibilidade malformada/categoria inválida declara `400 INVALID_INPUT`, enquanto ausência válida/predominância indeterminável retorna outcome `INSUFFICIENT_DATA`;
 - `PublicDiagnosis.areaId` é obrigatório, UUID e derivado no servidor.
 
 ## 3. Reproduce the normative manifest hash
@@ -142,6 +142,8 @@ Montar pelo menos dois laboratórios, duas áreas e duas coletas:
 - laboratório inativo permite current/detail e recusa cálculo/substituição/revogação;
 - ID cruzado, inexistente ou vínculo ausente retorna o mesmo `404`;
 - após revogar vínculo, inclusive replay/operação por chave deixa de ser acessível;
+- GET operation do mesmo ator continua `200` se ele passar a MEMBER ou se o laboratório ficar inativo; outro ator e contexto cruzado recebem `404`, chave malformada `400 INVALID_INPUT`;
+- para escrita, MEMBER recebe `403` e laboratório inativo `409 READ_ONLY` antes da validação de request válido ou estruturalmente inválido;
 - conta não ativa não lê nem escreve.
 
 ### Creation and insufficiency
@@ -149,12 +151,13 @@ Montar pelo menos dois laboratórios, duas áreas e duas coletas:
 - com `ihfr-measurement-v1`, suplemento válido, versões/hash exatos e quatro dimensões suficientes: `201`, um diagnóstico `CURRENT`;
 - sem conjunto ambiental, slope ou land use: `INSUFFICIENT_DATA`, nenhum diagnóstico/pointer;
 - dimensão com menos de dois scores: `INSUFFICIENT_DATA`;
-- hash ou versão divergente: `422 INCOMPATIBLE_VERSION`, sem ativação;
+- versão ou `contractHash` estruturalmente inválido: `400 INVALID_INPUT`, sem ledger;
+- versão ou `contractHash` bem formado, porém incompatível com a combinação ativa/suportada: `422 INCOMPATIBLE_VERSION`, terminal idempotente no ledger, sem suplemento confirmado, diagnóstico, `CURRENT` ou evento; GET operation recupera `200 OperationResponse` com `outcome = INCOMPATIBLE_VERSION`;
 - score zero válido continua resultado, distinto de ausência/insuficiência.
 
 ### Idempotency and timeout
 
-- mesma chave, ator, contexto e request: replay retorna o mesmo resultado, sem novo snapshot/evento;
+- mesma chave, ator, contexto e request: replay retorna o mesmo resultado/status, sem novo snapshot/evento; POST incompatível novo e repetido retornam `422 ErrorEnvelope` e mantêm uma única linha no ledger, enquanto GET operation recupera `200 OperationResponse`;
 - mesma chave com contexto/body/`mode`/motivo diferente: `409 IDEMPOTENCY_CONFLICT`;
 - chave ambiental ou da coleta não é reutilizada internamente;
 - após simular perda da resposta, GET da operação no mesmo contexto recupera o terminal;

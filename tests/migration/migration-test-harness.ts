@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import dotenv from "dotenv";
-import { Pool, neonConfig, type PoolClient } from "@neondatabase/serverless";
-import ws from "ws";
+import { Pool, type PoolClient } from "pg";
 
 export const migrationPath = "prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql";
 export const collectionMigrationPath = "prisma/migrations/20260915000100_collection_registration_metadata/migration.sql";
@@ -51,7 +50,8 @@ export function migrationTestEnvironment() {
   const test = new URL(process.env.TEST_DATABASE_URL ?? "");
   const development = new URL(process.env.DATABASE_URL ?? "");
   const identity = (url: URL) => `${url.hostname.replace("-pooler.", ".")}:${url.port || "5432"}${decodeURIComponent(url.pathname)}`;
-  if (!['postgres:', 'postgresql:'].includes(test.protocol) || identity(test) === identity(development)) throw new Error("Unsafe test database");
+  const ownedLocal = process.env.IMP006_LOCAL_POSTGRESQL === '1' && test.hostname === '127.0.0.1' && test.port === '55426';
+  if (!['postgres:', 'postgresql:'].includes(test.protocol) || (identity(test) === identity(development) && !ownedLocal)) throw new Error("Unsafe test database");
   // Session settings used by the harness must never leak through Neon's shared
   // pooler into application connections after the temporary schema is dropped.
   test.hostname = test.hostname.replace("-pooler.", ".");
@@ -64,7 +64,6 @@ export async function withMigrationDatabase(
   schemaPrefix = "imp003_test",
 ) {
   const connectionString = migrationTestEnvironment();
-  neonConfig.webSocketConstructor = ws;
   const pool = new Pool({ connectionString, connectionTimeoutMillis: 15_000, max: 1 });
   if (!/^imp00[34569]_test$/.test(schemaPrefix)) {
     throw new Error("Migration schema prefix is not allowlisted");

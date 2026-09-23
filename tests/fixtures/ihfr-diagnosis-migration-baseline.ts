@@ -1,4 +1,4 @@
-import type { PoolClient } from "@neondatabase/serverless";
+import type { PoolClient } from "pg";
 
 export async function insertIHFRLegacyBaseline(client: PoolClient) {
   await client.query(`

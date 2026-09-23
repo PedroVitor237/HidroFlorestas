@@ -32,7 +32,7 @@ paths:
             type: string
             enum: [FOREST, AGROFORESTRY, CROPLAND, PASTURE, DEGRADED_PASTURE, BARE_SOIL, URBAN]
       responses:
-        '400': { $ref: '#/components/responses/InvalidRequest' }
+        '400': { $ref: '#/components/responses/InvalidInput' }
         '200':
           description: Elegibilidade atual autorizada.
           headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
@@ -95,7 +95,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/OperationResponse' }
         '200':
-          description: Replay idêntico de resposta terminal ou insuficiência terminal.
+          description: Replay idêntico de sucesso ou insuficiência terminal; incompatibilidade nova ou repetida por POST retorna 422.
           headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
           content:
             application/json:
@@ -173,11 +173,12 @@ paths:
         - $ref: '#/components/parameters/OperationKey'
       responses:
         '200':
-          description: Resposta terminal reautorizada no contexto atual.
+          description: Resposta terminal do mesmo ator e contexto, reautorizada para leitura por OWNER, ADMIN ou MEMBER em laboratório ativo ou inativo; inclui outcome INCOMPATIBLE_VERSION.
           headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
           content:
             application/json:
               schema: { $ref: '#/components/schemas/OperationResponse' }
+        '400': { $ref: '#/components/responses/InvalidInput' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
         '404': { $ref: '#/components/responses/NotFound' }
         '500': { $ref: '#/components/responses/InternalError' }
@@ -204,7 +205,6 @@ components:
       required: true
       schema: { $ref: '#/components/schemas/Uuid' }
   responses:
-    InvalidRequest: { $ref: '#/components/responses/Error400InvalidRequest' }
     InvalidInput: { $ref: '#/components/responses/Error400' }
     Unauthenticated: { $ref: '#/components/responses/Error401' }
     Forbidden: { $ref: '#/components/responses/Error403' }
@@ -213,23 +213,9 @@ components:
     IncompatibleVersion: { $ref: '#/components/responses/Error422' }
     InternalError: { $ref: '#/components/responses/Error500' }
     Error400:
-      description: Request fechado inválido.
+      description: Request estrutural ou sintaticamente inválido, inclusive versão/hash malformado.
       headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
       content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
-    Error400InvalidRequest:
-      description: Query malformada ou com categoria/estrutura inválida.
-      headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorEnvelope'
-              - type: object
-                properties:
-                  error:
-                    type: object
-                    properties:
-                      code: { const: INVALID_REQUEST }
     Error401:
       description: Sessão ausente/inválida ou conta inelegível.
       headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
@@ -247,7 +233,7 @@ components:
       headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
       content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
     Error422:
-      description: Versão ou hash incompatível; nenhuma ativação automática.
+      description: Versão/hash bem-formado incompatível com a combinação ativa, ou versão da medição persistida incompatível. A operação terminal é recuperável; nenhum snapshot de domínio é criado.
       headers: { Cache-Control: { $ref: '#/components/headers/NoStore' } }
       content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } }
     Error500:
@@ -337,11 +323,15 @@ components:
       type: object
       additionalProperties: false
       required: [measurementContractVersion, mathContractVersion, algorithmVersion, contractHash]
+      description: >-
+        Valida somente a estrutura. Uma combinação bem-formada diferente da ativa
+        recebe 422 INCOMPATIBLE_VERSION e gera operação terminal idempotente;
+        formato inválido recebe 400 INVALID_INPUT.
       properties:
-        measurementContractVersion: { const: ihfr-measurement-v1 }
-        mathContractVersion: { const: ihfr-math-experimental-v0.1.1 }
-        algorithmVersion: { const: ihfr-evaluator-ts-v0.1.0 }
-        contractHash: { const: 'sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89' }
+        measurementContractVersion: { type: string, pattern: '^ihfr-measurement-v[0-9]+(?:\.[0-9]+){0,2}$' }
+        mathContractVersion: { type: string, pattern: '^ihfr-math-experimental-v[0-9]+\.[0-9]+\.[0-9]+$' }
+        algorithmVersion: { type: string, pattern: '^ihfr-evaluator-ts-v[0-9]+\.[0-9]+\.[0-9]+$' }
+        contractHash: { type: string, pattern: '^sha256:[0-9a-fA-F]{64}$' }
     RevokeRequest:
       type: object
       additionalProperties: false
@@ -466,5 +456,5 @@ components:
           additionalProperties: false
           required: [code, message]
           properties:
-            code: { type: string, enum: [INVALID_REQUEST, INVALID_INPUT, UNAUTHENTICATED, FORBIDDEN, NOT_FOUND, READ_ONLY, IDEMPOTENCY_CONFLICT, STATE_CONFLICT, INCOMPATIBLE_VERSION, TECHNICAL_FAILURE] }
+            code: { type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, FORBIDDEN, NOT_FOUND, READ_ONLY, IDEMPOTENCY_CONFLICT, STATE_CONFLICT, INCOMPATIBLE_VERSION, TECHNICAL_FAILURE] }
             message: { type: string }
