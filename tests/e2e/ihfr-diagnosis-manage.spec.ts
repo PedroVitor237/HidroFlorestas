@@ -46,6 +46,65 @@ async function confirmByKeyboard(page: Page, trigger: ReturnType<Page["getByRole
   await dialog.getByRole("button", { name: "Confirmar" }).click();
 }
 
+test("collection, environmental confirmation and IHFR creation work without browser randomUUID", async ({ page }, info) => {
+  test.setTimeout(120_000);
+  const baseURL = String(info.project.use.baseURL);
+  if (new URL(baseURL).hostname === "127.0.0.1") {
+    await page.addInitScript(() => {
+      Object.defineProperty(window.crypto, "randomUUID", { configurable: true, value: undefined });
+    });
+  }
+  await authenticate(page, required("IMP006_E2E_OWNER_ID"), baseURL);
+  const collectionNewUrl = required("IMP006_E2E_MANAGE_URL").replace(/\/collections\/[^/]+$/, "/collections/new");
+  await page.goto(collectionNewUrl);
+  expect(await page.evaluate(() => typeof crypto.randomUUID)).toBe("undefined");
+  expect(await page.evaluate(() => typeof crypto.getRandomValues)).toBe("function");
+  if (new URL(baseURL).hostname !== "127.0.0.1") expect(await page.evaluate(() => window.isSecureContext)).toBe(false);
+  await page.getByLabel("Ocorrência em campo").fill("2026-09-24T09:00:00-03:00");
+  await page.getByRole("button", { name: "Revisar coleta" }).click();
+  const collectionPost = page.waitForResponse((response) => response.url().endsWith("/collections") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Confirmar coleta" }).click();
+  const confirmedCollection = await collectionPost;
+  expect(confirmedCollection.status()).toBe(201);
+  expect(confirmedCollection.request().headers()["idempotency-key"]).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  const collectionId = (await confirmedCollection.json()).collection.id as string;
+  const collectionUrl = collectionNewUrl.replace(/\/new$/, `/${collectionId}`);
+  await expect(page).toHaveURL(`${baseURL}${collectionUrl}`);
+
+  await page.goto(`${collectionUrl}/environmental-data/new`);
+  for (const [field, value] of Object.entries({
+    "water.waterSourceType": "RIVER_STREAM", "water.hasSpring": "false", "water.waterAvailability": "PERMANENT",
+    "soil.soilTexture": "SANDY", "soil.compactionLevel": "LOW", "soil.erosionSigns": "NONE",
+    "vegetation.fragmentationLevel": "LOW", "vegetation.landscapeDegradation": "LOW",
+  })) await page.locator(`[name="${field}"]`).selectOption(value);
+  for (const [field, value] of Object.entries({ "soil.infiltrationRateMmPerHour": "0", "vegetation.vegetationCoverPercent": "100", "terrain.drainageDensityKmPerKm2": "1.5", "terrain.elevationMeters": "180", "terrain.slopePercent": "45" })) await page.locator(`[name="${field}"]`).fill(value);
+  await page.getByRole("button", { name: "Revisar dados" }).click();
+  await expect(page.getByRole("heading", { name: "Revisar dados ambientais" })).toBeVisible();
+  const environmentalPost = page.waitForResponse((response) => response.url().endsWith("/environmental-data") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Confirmar dados ambientais" }).click();
+  const confirmedEnvironmental = await environmentalPost;
+  expect(confirmedEnvironmental.status()).toBe(201);
+  expect(confirmedEnvironmental.request().headers()["idempotency-key"]).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  await expect(page).toHaveURL(`${baseURL}${collectionUrl}/environmental-data`);
+
+  await page.goto(collectionUrl);
+  await page.getByLabel("Uso predominante da terra").selectOption("FOREST");
+  await page.getByLabel("Data e hora da observação").fill("2026-09-24T12:00");
+  const eligibility = page.waitForResponse((response) => response.url().includes("/ihfr-diagnosis/eligibility") && response.request().method() === "GET");
+  await page.getByRole("button", { name: "Verificar elegibilidade" }).click();
+  const eligible = await eligibility;
+  expect(eligible.status()).toBe(200);
+  expect((await eligible.json()).outcome).toBe("ELIGIBLE");
+  const created = page.waitForResponse((response) => response.url().endsWith("/ihfr-diagnosis/diagnoses") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Criar diagnóstico" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Confirmar" }).click();
+  const response = await created;
+  expect(response.status()).toBe(201);
+  expect(response.request().headers()["idempotency-key"]).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  await expect(page.getByRole("status").first()).toContainText("Vigente: sim");
+  await expect(page.getByRole("status").last()).toBeFocused();
+});
+
 test("OWNER and contextual ADMIN create, replace, revoke and recover with one stable key", async ({ page }, info) => {
   test.setTimeout(90_000);
   const actors = [

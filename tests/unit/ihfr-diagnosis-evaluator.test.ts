@@ -2,12 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { classifyIHFRScore, decimalHalfUp, evaluateIHFR } from "../../src/app/api/server/ihfr-diagnosis/evaluator";
 import { loadActiveIHFRManifest } from "../../src/app/api/server/ihfr-diagnosis/manifest-loader";
+import { parseEnvironmentalInput, ENVIRONMENTAL_FIELDS } from "../../src/types/environmental-data.validation";
+import { validEnvironmentalPayload } from "../fixtures/environmental-data";
+import { IHFR_MEASUREMENT_PAYLOAD } from "../fixtures/ihfr-diagnosis-contexts";
 
-const environmental = {
-    terrain: { slopePercent: 45 }, water: { waterSourceType: "SPRING", hasSpring: true, waterAvailability: "PERMANENT" },
-    soil: { infiltrationRateMmPerHour: 60, compactionLevel: "LOW", erosionSigns: "NONE", soilTexture: "MEDIUM" },
-    vegetation: { vegetationCoverPercent: 100, fragmentationLevel: "LOW", hasRiparianApp: true, landscapeDegradation: "LOW" },
-};
+const environmental = IHFR_MEASUREMENT_PAYLOAD;
 
 test("evaluates exact dimensions, formula, half-up display, class and deterministic drivers", () => {
   const result = evaluateIHFR(loadActiveIHFRManifest(), { environmental, landUseType: "FOREST" });
@@ -46,4 +45,37 @@ test("same verified input is deeply deterministic and incompatible manifests fai
   assert.deepEqual(evaluateIHFR(loadActiveIHFRManifest(), input), evaluateIHFR(loadActiveIHFRManifest(), structuredClone(input)));
   const incompatible = { ...loadActiveIHFRManifest(), mathContractVersion: "ihfr-math-experimental-v0.1.0" };
   assert.deepEqual(evaluateIHFR(incompatible, input), { outcome: "INCOMPATIBLE_VERSION", reasons: ["INCOMPATIBLE_VERSION"], labels: ["CONTRATO_EXPERIMENTAL", "VALIDACAO_CIENTIFICA_PENDENTE", "SUJEITO_A_RECALIBRACAO", "NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO"] });
+});
+
+test("complete environmental producer payload is accepted while unscored terrain values leave IHFR unchanged", () => {
+  const produced = validEnvironmentalPayload();
+  produced.water.waterSourceType = "SPRING";
+  produced.water.hasSpring = true;
+  produced.soil.soilTexture = "MEDIUM";
+  produced.soil.infiltrationRateMmPerHour = 60;
+  produced.vegetation.vegetationCoverPercent = 100;
+  produced.vegetation.hasRiparianApp = true;
+  produced.terrain.slopePercent = 45;
+  produced.terrain.drainageDensityKmPerKm2 = 1.5;
+  produced.terrain.elevationMeters = 180;
+  const complete = parseEnvironmentalInput(produced);
+  for (const section of Object.keys(ENVIRONMENTAL_FIELDS) as Array<keyof typeof ENVIRONMENTAL_FIELDS>) {
+    assert.deepEqual(Object.keys(complete[section]).sort(), Object.keys(ENVIRONMENTAL_FIELDS[section]).sort(), section);
+  }
+  const numeric = evaluateIHFR(loadActiveIHFRManifest(), { environmental: complete, landUseType: "FOREST" });
+  assert.equal(numeric.outcome, "SUFFICIENT");
+  const nulls = parseEnvironmentalInput({ ...complete, terrain: { ...complete.terrain, drainageDensityKmPerKm2: null, elevationMeters: null } });
+  const absent = evaluateIHFR(loadActiveIHFRManifest(), { environmental: nulls, landUseType: "FOREST" });
+  assert.equal(absent.outcome, "SUFFICIENT");
+  const changed = parseEnvironmentalInput({ ...complete, terrain: { ...complete.terrain, drainageDensityKmPerKm2: 8, elevationMeters: -100 } });
+  const changedResult = evaluateIHFR(loadActiveIHFRManifest(), { environmental: changed, landUseType: "FOREST" });
+  assert.equal(changedResult.outcome, "SUFFICIENT");
+  if (numeric.outcome === "SUFFICIENT" && absent.outcome === "SUFFICIENT" && changedResult.outcome === "SUFFICIENT") {
+    assert.equal(numeric.rawScore, absent.rawScore);
+    assert.equal(numeric.rawScore, changedResult.rawScore);
+    assert.deepEqual(Object.keys(numeric.decomposition.variables).filter((key) => key.startsWith("terrain.")), ["terrain.slopePercent"]);
+  }
+  assert.throws(() => evaluateIHFR(loadActiveIHFRManifest(), { environmental: { ...complete, terrain: { ...complete.terrain, fooBar: 1 } }, landUseType: "FOREST" }), /INVALID_INPUT/);
+  assert.throws(() => evaluateIHFR(loadActiveIHFRManifest(), { environmental: { ...complete, terrain: { ...complete.terrain, drainageDensityKmPerKm2: -1 } }, landUseType: "FOREST" }), /INVALID_INPUT/);
+  assert.throws(() => evaluateIHFR(loadActiveIHFRManifest(), { environmental: { ...complete, terrain: { ...complete.terrain, elevationMeters: "180" } }, landUseType: "FOREST" }), /INVALID_INPUT/);
 });

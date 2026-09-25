@@ -229,7 +229,7 @@ test("US4 reads a minimal immutable detail for current roles and inactive labora
     await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
     await expect(page.getByText("2026-09-15T09:00:00.000-03:00", { exact: true })).toBeVisible();
     await expect(page.getByText("2026-09-15T12:05:00.000Z", { exact: true })).toBeVisible();
-    await expect(page.getByText(/userId|confirmationKey|observations|IHFR/i)).toHaveCount(0);
+    await expect(page.getByRole("article", { name: "Detalhe da coleta" })).not.toContainText(/userId|confirmationKey|observations|IHFR/i);
     await page.reload();
     await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
   }

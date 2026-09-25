@@ -1,14 +1,10 @@
 import { evaluateIHFR } from "../../src/app/api/server/ihfr-diagnosis/evaluator";
 import { loadActiveIHFRManifest } from "../../src/app/api/server/ihfr-diagnosis/manifest-loader";
 import type { PublicDiagnosis } from "../../src/types/ihfr-diagnosis.type";
+import { IHFR_MEASUREMENT_PAYLOAD } from "./ihfr-diagnosis-contexts";
 
 const evaluation = evaluateIHFR(loadActiveIHFRManifest(), {
-  environmental: {
-    terrain: { slopePercent: 45 },
-    water: { waterSourceType: "SPRING", hasSpring: true, waterAvailability: "PERMANENT" },
-    soil: { infiltrationRateMmPerHour: 60, compactionLevel: "LOW", erosionSigns: "NONE", soilTexture: "MEDIUM" },
-    vegetation: { vegetationCoverPercent: 100, fragmentationLevel: "LOW", hasRiparianApp: true, landscapeDegradation: "LOW" },
-  },
+  environmental: IHFR_MEASUREMENT_PAYLOAD,
   landUseType: "FOREST",
 });
 

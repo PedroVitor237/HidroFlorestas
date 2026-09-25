@@ -1,5 +1,7 @@
 import type { PoolClient } from "pg";
 import { IHFR_ACTORS, IHFR_LABORATORIES } from "./ihfr-diagnosis-actors";
+import { parseEnvironmentalInput } from "../../src/types/environmental-data.validation";
+import { validEnvironmentalPayload } from "./environmental-data";
 
 const id = (suffix: number) => `60000000-0000-4000-8000-${String(suffix).padStart(12, "0")}`;
 
@@ -10,12 +12,15 @@ export const IHFR_CONTEXTS = {
   measurement: id(51), inactiveMeasurement: id(52),
 } as const;
 
-export const IHFR_MEASUREMENT_PAYLOAD = {
-  terrain: { slopePercent: 45 },
-  water: { waterSourceType: "SPRING", hasSpring: true, waterAvailability: "PERMANENT" },
-  soil: { infiltrationRateMmPerHour: 60, compactionLevel: "LOW", erosionSigns: "NONE", soilTexture: "MEDIUM" },
-  vegetation: { vegetationCoverPercent: 100, fragmentationLevel: "LOW", hasRiparianApp: true, landscapeDegradation: "LOW" },
-} as const;
+const measurement = validEnvironmentalPayload();
+measurement.water.waterSourceType = "SPRING";
+measurement.water.hasSpring = true;
+measurement.soil.soilTexture = "MEDIUM";
+measurement.soil.infiltrationRateMmPerHour = 60;
+measurement.vegetation.vegetationCoverPercent = 100;
+measurement.vegetation.hasRiparianApp = true;
+measurement.terrain = { drainageDensityKmPerKm2: 1.5, elevationMeters: 180, slopePercent: 45 };
+export const IHFR_MEASUREMENT_PAYLOAD = parseEnvironmentalInput(measurement);
 
 export async function insertIHFRContextFixtures(client: PoolClient) {
   await client.query(
