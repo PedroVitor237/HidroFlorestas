@@ -72,6 +72,7 @@ test("collection, environmental confirmation and IHFR creation work without brow
   await expect(page).toHaveURL(`${baseURL}${collectionUrl}`);
 
   await page.goto(`${collectionUrl}/environmental-data/new`);
+  await expect(page.locator('[name="water.waterSourceType"]')).toHaveCount(1);
   for (const [field, value] of Object.entries({
     "water.waterSourceType": "RIVER_STREAM", "water.hasSpring": "false", "water.waterAvailability": "PERMANENT",
     "soil.soilTexture": "SANDY", "soil.compactionLevel": "LOW", "soil.erosionSigns": "NONE",

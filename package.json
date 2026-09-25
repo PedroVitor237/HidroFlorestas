@@ -10,14 +10,17 @@
     "lint": "eslint",
     "test:fixtures:auth": "tsx tests/fixtures/auth-users.ts",
     "test:unit": "node --import=tsx --test tests/unit/*.test.ts tests/unit/*.test.tsx",
-    "test:integration": "node --import=tsx --test --test-concurrency=1 tests/integration/*.test.ts",
-    "test:contract": "node --import=tsx --test --test-concurrency=1 tests/contract/*.test.ts",
+    "test:integration": "node --import=tsx scripts/imp006-test-runner.ts integration",
+    "test:integration:ihfr-insufficiency": "node --import=tsx scripts/imp006-test-runner.ts ihfr-insufficiency",
+    "test:contract": "node --import=tsx scripts/imp006-test-runner.ts contract",
+    "test:ihfr:audit": "node --import=tsx scripts/imp006-audit-schemas.ts",
     "test:e2e": "playwright test",
     "test:e2e:ihfr": "node --import=tsx scripts/imp006-local-e2e.ts",
+    "test:e2e:ihfr:full-ui": "node --import=tsx scripts/imp006-full-ui-e2e.ts",
     "test:e2e:https": "node --import=tsx tests/e2e/run-auth-https.mjs",
     "test": "npm run test:unit && npm run test:integration",
     "typecheck": "tsc --noEmit",
-    "test:migration": "node --import=tsx --test --test-concurrency=1 tests/migration/*.test.ts"
+    "test:migration": "node --import=tsx scripts/imp006-test-runner.ts migration"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

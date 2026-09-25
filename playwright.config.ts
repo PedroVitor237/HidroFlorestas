@@ -13,8 +13,8 @@ export default defineConfig({
   testDir: "./tests/e2e",
   testIgnore:
     process.env.AUTH_HTTPS_E2E === "1"
-      ? undefined
-      : "**/authenticated-access-https.spec.ts",
+      ? "**/full-ui-flow.spec.ts"
+      : ["**/authenticated-access-https.spec.ts", "**/full-ui-flow.spec.ts"],
   fullyParallel: false,
   workers: 1,
   retries: 0,

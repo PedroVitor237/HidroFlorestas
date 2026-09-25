@@ -3,10 +3,16 @@ import { readFile } from "node:fs/promises";
 
 import { Pool, type PoolClient } from "pg";
 import { createPrismaClient } from "../../src/app/api/server/lib/prisma";
+import { imp006Target } from "../../scripts/imp006-test-preflight";
+import { matchesImp006Schema } from "../../src/app/api/server/ihfr-diagnosis/schema-guard";
 
 const IMP006_SCHEMA_PREFIX = "imp006_test_";
 const IMP006_SCHEMA_MARKER = "hidroflorestas:imp006-test-harness";
 const TEST_CONFIRMATION = "HIDROFLORESTAS_AUTH_TEST";
+
+export function canDropOwnedImp006Schema(schema: string, marker: string | null | undefined, createdThisRun: boolean): boolean {
+  return createdThisRun && /^imp006_test_[0-9a-f]{32}$/.test(schema) && marker === IMP006_SCHEMA_MARKER;
+}
 
 export type Imp006DatabaseVariable = "TEST_DATABASE_URL" | "DATABASE_URL";
 
@@ -20,11 +26,14 @@ function selectedConnectionString(variable: Imp006DatabaseVariable): string {
 
   const value = process.env[variable];
   if (!value) throw new Error(`Selected IMP-006 database variable is empty: ${variable}`);
+  if (variable === "TEST_DATABASE_URL") imp006Target();
+  else if (process.env.IMP006_LOCAL_POSTGRESQL !== "1") throw new Error("Remote IMP-006 schema tests require TEST_DATABASE_URL");
 
   const url = new URL(value);
   if (!['postgres:', 'postgresql:'].includes(url.protocol)) {
     throw new Error("Selected IMP-006 database must use PostgreSQL");
   }
+  if (url.hostname.split(".")[0].endsWith("-pooler")) throw new Error("IMP-006 isolated schema requires an explicit direct endpoint");
   return value;
 }
 
@@ -64,6 +73,7 @@ export async function withImp006PostgresqlSchema(
     schemaCreated = true;
     await client.query(`COMMENT ON SCHEMA "${schema}" IS '${IMP006_SCHEMA_MARKER}'`);
     markerSet = true;
+    process.stdout.write(`IMP-006 schema owned by this run: ${schema}\n`);
     await client.query(`SET search_path TO "${schema}"`);
     const selected = await client.query("SELECT current_schema() AS schema");
     if (selected.rows[0]?.schema !== schema || selected.rows[0]?.schema === "public") {
@@ -72,8 +82,8 @@ export async function withImp006PostgresqlSchema(
     await client.query("SET statement_timeout = '15s'");
     await client.query(await readFile("tests/migration/area-registration-baseline.sql", "utf8"));
     applicationDb = createPrismaClient(connectionString, schema);
-    const appSchema = await applicationDb.$queryRawUnsafe<Array<{ schema: string }>>("SELECT current_schema() AS schema");
-    if (appSchema[0]?.schema !== schema) throw new Error("IMP-006 application Prisma schema isolation failed");
+    const appSchema = await applicationDb.$queryRawUnsafe<Array<{ schema: string }>>("SELECT current_schema()::text AS schema");
+    if (!matchesImp006Schema(appSchema, schema)) throw new Error("IMP-006 application Prisma schema isolation failed");
     await run(client, applicationDb);
   } catch (error) {
     primaryError = error;
@@ -91,7 +101,7 @@ export async function withImp006PostgresqlSchema(
               "SELECT obj_description(oid, 'pg_namespace') AS marker FROM pg_namespace WHERE nspname = $1",
               [schema],
             );
-            if (markerSet && ownership.rows[0]?.marker !== IMP006_SCHEMA_MARKER) {
+            if (!markerSet || !canDropOwnedImp006Schema(schema, ownership.rows[0]?.marker, schemaCreated)) {
               throw new Error("IMP-006 schema ownership marker changed; cleanup refused");
             }
             await client.query(`DROP SCHEMA "${schema}" CASCADE`);

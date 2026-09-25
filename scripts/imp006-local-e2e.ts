@@ -7,6 +7,7 @@ import { IHFR_ACTORS, IHFR_LABORATORIES } from "../tests/fixtures/ihfr-diagnosis
 import { IHFR_CONTEXTS, IHFR_MEASUREMENT_PAYLOAD } from "../tests/fixtures/ihfr-diagnosis-contexts";
 import { setupIHFRDiagnosisFixtures } from "../tests/fixtures/ihfr-diagnosis-fixtures";
 import { selectedImp006DatabaseVariable, withImp006PostgresqlSchema } from "../tests/fixtures/postgresql-schema-lifecycle";
+import { readOnlyImp006Preflight } from "./imp006-test-preflight";
 
 function privateLanAddress() {
   const address = Object.values(networkInterfaces()).flat().find((item) =>
@@ -46,6 +47,9 @@ async function ready(url: string, child: ChildProcess) {
 }
 
 async function main() {
+  Object.assign(process.env, { NODE_ENV: "test" });
+  const verified = await readOnlyImp006Preflight();
+  process.stdout.write(`IMP-006 E2E preflight passed: target ${verified.fingerprint}, schema ${verified.schema}.\n`);
   await withImp006PostgresqlSchema(selectedImp006DatabaseVariable(), async (client) => {
     await setupIHFRDiagnosisFixtures(client);
     const schema = (await client.query("SELECT current_schema() AS schema")).rows[0].schema as string;
