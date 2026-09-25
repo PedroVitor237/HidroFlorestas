@@ -4,7 +4,13 @@
 
 **Input**: `specs/006-ihfr-diagnosis/spec.md`
 
-**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos; `G2-SCI` permanece `VALIDACAO_POSTERIOR`. O encerramento técnico anterior de T001–T134 está registrado como histórico; T116 e T134 foram reabertas e encerradas novamente após a rodada corretiva focal e seus gates, conforme `implementation-evidence.md`.
+**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos; `G2-SCI` permanece `VALIDACAO_POSTERIOR`. O encerramento técnico de 2026-09-23 permanece como histórico. T116 e T134 foram reabertas e encerradas na correção dos dois defeitos observados em teste persistente em 2026-09-24, após os gates e a auditoria registrados em `implementation-evidence.md`.
+
+## Correção de integração observada em teste persistente — 2026-09-24
+
+`FATO_DOCUMENTADO` — o log externo fornecido pela equipe relata `crypto.randomUUID is not a function` ao acessar a UI por HTTP da rede local e HTTP 500 na elegibilidade/criação IHFR após uma medição ambiental válida. O log contém dados de acesso ao ambiente de teste que não serão copiados para a evidência. `EVIDENCIA_IMPLEMENTACAO` — a investigação local confirmou três chamadas client-side diretas a `crypto.randomUUID()` e a divergência entre `EnvironmentalPayload.terrain` e a allowlist do evaluator; os fixtures IHFR omitiam os dois campos ambientais conhecidos.
+
+**Ordem desta rodada**: preservar o baseline e os arquivos não rastreados → registrar testes RED para UUID ausente, payload completo e integração IMP-005 → IMP-006 → centralizar UUID v4 client-side com `getRandomValues` e alinhar a validação fechada do evaluator sem pontuar drenagem/elevação → tornar os fixtures completos → executar GREEN focal e E2E com `randomUUID` removido antes da hidratação → repetir gates aplicáveis, auditar schemas/fixtures/processos/triggers e diff → atualizar evidência/descrição e encerrar T116/T134 somente com resultados observados. Manifestos, hash ativo, fórmula, scores, classes, migrations e ciência ficam preservados.
 
 ## Rodada corretiva focal — 2026-09-23
 

@@ -2,7 +2,7 @@
 
 **Input**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md), [data-model.md](data-model.md), [quickstart.md](quickstart.md) e [contracts/](contracts/).
 
-**Status**: rodada corretiva focal após auditoria independente do `imp006-final.diff` concluída em 2026-09-23. T116 e T134 foram reabertas, corrigidas e encerradas novamente após os gates registrados em `implementation-evidence.md`. A conclusão anterior permanece como histórico. O PostgreSQL local permanece disponível a pedido do usuário; `PD-002`, `G2-SCI` e validações humanas seguem `NAO_VERIFICADO_VALIDACAO_POSTERIOR`.
+**Status**: as rodadas de 2026-09-23 permanecem como histórico. T116 e T134 foram reabertas em 2026-09-24 para corrigir os dois defeitos relatados no teste persistente: UUID client-side em HTTP de rede local e incompatibilidade entre payload ambiental válido e evaluator IHFR. Ambas foram encerradas após gates e auditoria desta rodada, registrados em `implementation-evidence.md`. O PostgreSQL local permanece disponível; `PD-002`, `G2-SCI` e validações humanas seguem `NAO_VERIFICADO_VALIDACAO_POSTERIOR`.
 
 **Formato**: `- [ ] TNNN [P?] [US?] ação com caminho`. `[P]` aparece somente quando as tarefas podem ser executadas simultaneamente sem escrever o mesmo arquivo nem depender de resultado ainda não produzido.
 
@@ -197,7 +197,7 @@
 
 **Objetivo**: provar a jornada integrada e preservar todas as entregas anteriores antes do teardown.
 
-- [X] T116 Executar E2E completo da IMP-006, inclusive teclado/foco e rótulos científicos, e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md` — reaberta após auditoria e encerrada com assertions de foco programático, reconciliação de CURRENT/elegibilidade, conflito real e replay 422 sem nova linha no ledger; E2E 5/5 PASS.
+- [X] T116 Executar E2E completo da IMP-006, inclusive teclado/foco e rótulos científicos, e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md` — aceite de 2026-09-23 preservado como histórico; reaberta e encerrada em 2026-09-24 com navegador sem `randomUUID`, integração IMP-005 → IMP-006 e 6/6 E2E IHFR; ampliada em 2026-09-25 com confirmação real de coleta/medição e 6/6 E2E em HTTP IPv4 privado.
 - [X] T117 Executar regressões de autenticação, laboratório e papéis da IMP-003 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 - [X] T118 Executar regressões de coleta, detalhe e imutabilidade da IMP-004 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 - [X] T119 Executar regressões de captura/leitura ambiental, parser, idempotência e imutabilidade da IMP-005 e registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
@@ -222,7 +222,7 @@
 - [X] T131 Validar links, referências, versões/hashes, seis operações/sete comportamentos e rastreabilidade FR/SC em `specs/006-ihfr-diagnosis/**`
 - [X] T132 Confirmar que o texto do PR preparado corresponde ao HEAD validado, à branch/base corretas e à evidência existente em `specs/006-ihfr-diagnosis/implementation-evidence.md`
 - [X] T133 Inspecionar diff e estado Git finais para excluir segredos, PII, alterações em `docs/raw/**`, mudanças fora do escopo e divergência não explicada; registrar em `specs/006-ihfr-diagnosis/implementation-evidence.md`
-- [X] T134 Confirmar que T001–T133 estão concluídas ou explicitamente justificadas, que não há estado residual e então registrar o fechamento real da implementação em `specs/006-ihfr-diagnosis/implementation-evidence.md` — reaberta e encerrada novamente após 204 unitários, 105 integrações, contrato 2/2, migration 23/23, E2E IHFR 5/5, typecheck, lint, build, smoke do ambiente, `git diff --check` e auditoria de schemas/fixtures/processos/triggers.
+- [X] T134 Confirmar que T001–T133 estão concluídas ou explicitamente justificadas, que não há estado residual e então registrar o fechamento real da implementação em `specs/006-ihfr-diagnosis/implementation-evidence.md` — aceite de 2026-09-23 preservado como histórico; reaberta e encerrada em 2026-09-24 após repetição dos gates e auditoria final dos dois defeitos de integração.
 
 ---
 

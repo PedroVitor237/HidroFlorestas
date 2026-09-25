@@ -149,6 +149,7 @@ Montar pelo menos dois laboratórios, duas áreas e duas coletas:
 ### Creation and insufficiency
 
 - com `ihfr-measurement-v1`, suplemento válido, versões/hash exatos e quatro dimensões suficientes: `201`, um diagnóstico `CURRENT`;
+- usar também uma medição realmente produzida e persistida pelo serviço da IMP-005, com `terrain.drainageDensityKmPerKm2` e `terrain.elevationMeters` presentes; elegibilidade, CREATE, CURRENT, REPLACE e REVOKE devem concluir sem `500`. Esses dois campos conhecidos são aceitos, validados e preservados sem entrar no score ou na decomposição;
 - sem conjunto ambiental, slope ou land use: `INSUFFICIENT_DATA`, nenhum diagnóstico/pointer;
 - dimensão com menos de dois scores: `INSUFFICIENT_DATA`;
 - versão ou `contractHash` estruturalmente inválido: `400 INVALID_INPUT`, sem ledger;
@@ -190,6 +191,7 @@ Jornadas mínimas:
 6. inativo apresenta somente leitura;
 7. timeout recupera a operação sem anunciar sucesso antes do terminal;
 8. nenhum texto chama o resultado de cientificamente “aceito”, definitivo ou universal.
+9. com `window.crypto.randomUUID` indisponível antes de carregar o aplicativo, o navegador confirma coleta, confirma medição ambiental completa, consulta elegibilidade e cria diagnóstico com chaves UUID v4; os testes de estado verificam chaves estáveis por tentativa/retry. A alternativa usa `crypto.getRandomValues` e falha explicitamente se não houver gerador criptográfico. Para repetir essa jornada em HTTP no IPv4 privado do próprio host, usar o runner isolado com `npm run test:e2e:ihfr -- --lan`; o runner vincula o servidor somente à interface privada selecionada e descarta o schema temporário ao terminar.
 
 Não exigir nesta feature dashboard, feed histórico, mapa, gráfico, recomendação, PDF ou IA.
 
