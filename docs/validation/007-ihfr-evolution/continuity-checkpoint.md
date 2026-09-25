@@ -101,3 +101,13 @@ nesta rodada. Depois, executar `tests/fixtures/auth-users.ts teardown`, que usa
 IDs e e-mails sintéticos allowlisted. Recusar limpeza por padrão amplo, por nome
 parcial ou no banco de desenvolvimento. As migrations e o schema `public` não
 integram a limpeza do cenário.
+
+## Continuidade corretiva local de 2026-09-25
+
+`EVIDENCIA_EXECUCAO_LOCAL`: HEAD `2c63c6749f43542cce4dafbdc452be773fee85fe`, branch `007-ihfr-evolution`. Os cinco documentos do ZIP local eram idênticos à cópia do repositório por SHA-256 antes desta atualização. Os arquivos não rastreados preexistentes foram preservados. O cliente Prisma local foi regenerado; typecheck e testes unitários passaram.
+
+`EVIDENCIA_IMPLEMENTACAO`: o wrapper de PostgreSQL próprio em loopback executou preflight, contrato, migrations, integração e E2E IHFR em schemas descartáveis. O servidor Next.js próprio do E2E e o cluster PostgreSQL local foram encerrados; `test:ihfr:audit` retornou zero schemas candidatos após sucesso e falha tratável. A conexão local `PrismaPg` passou a selecionar `TimeZone=UTC` após reprodução de deslocamento de três horas em `timestamptz`, sem mudar o horário esperado no teste.
+
+`EVIDENCIA_IMPLEMENTACAO`: neste workspace não estão presentes `.env.e2e.local` nem variáveis de banco/conta E2E. O preflight do checkpoint Neon, a consulta ao `public`, a reconfirmação dos quatro usuários sintéticos e a inspeção do cenário `HF007-UI-20260925-2295502` têm estado `NAO_EXECUTADO`. Nenhum servidor, fixture, migration, schema ou registro remoto foi criado/removido nesta rodada. Não reutilizar automaticamente os fingerprints/contagens anteriores como prova do destino atual.
+
+O novo runner `npm run test:e2e:ihfr:full-ui` exige destino direto, confirmação, alvo de desenvolvimento distinto, conta sintética e run ID `HF007-UI-*`; verifica `prisma migrate status` e recusa por leitura o nome exato de laboratório já existente antes de iniciar servidor próprio em loopback. Para retomar o cenário histórico, primeiro consultar somente por leitura se o nome planejado já existe. Se já existir, não executar o teste de criação novamente com o mesmo ID: documentar a continuidade manual desse recurso. O E2E automatizado de criação completa deve usar um run ID exclusivo e registrar a relação com o checkpoint anterior. A retenção de dados de UI em `public` é intencional; `test:ihfr:audit` lista apenas schemas descartáveis e nunca limpa o cenário persistente.

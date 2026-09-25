@@ -228,6 +228,21 @@
 
 ## Dependencies and execution order
 
+### Continuidade corretiva da 007-ihfr-evolution (2026-09-25)
+
+T134 registra o encerramento histórico de 2026-09-24; esta solicitação reabre o pacote existente com novos IDs, sem alterar as marcações históricas.
+
+- [X] T135 [F-001] Reproduzir em RED ausências obrigatórias, opcionais e entradas inválidas no avaliador; corrigir política e proteger elegibilidade/escrita contra diagnóstico indevido.
+- [X] T136 [F-002] Completar resumo público com origem, versões, vigência e datas; testar renderização e navegação responsiva.
+- [ ] T137 [F-007] Aplicar cast `current_schema()::text` mantendo comparação de schema e regressões de isolamento.
+- [X] T138 [F-003/F-004/F-008] Regenerar client local se necessário, classificar scripts e implementar seleção/preflight explícitos de banco direto.
+- [ ] T139 [F-005/F-009] Reconferir identidade autorizada; fortalecer auditoria/teardown e recusa de limpeza insegura.
+- [ ] T140 [F-006] Executar ou preparar E2E reproduzível desde login e criação pela UI, incluindo reload e reabertura pelo histórico.
+- [ ] T141 [F-001–F-009] Repetir gates no diff final, auditar resíduos/processos, atualizar cinco documentos de validação e evidência Spec Kit com matriz de fechamento.
+
+Estado das tarefas abertas nesta rodada: T137 tem cast e regressão PostgreSQL/Prisma locais verdes, mas falta execução no adapter Neon; T139 tem guardas e auditoria locais verdes, mas falta reconfirmar o destino e auditar resíduos remotos; T140 tem E2E integral preparado, porém não executado no destino dedicado; T141 tem gates e documentação locais concluídos, mas aguarda essas três evidências remotas para o fechamento. A ausência da configuração E2E neste workspace não altera os checks históricos.
+
+
 - Phase 1 bloqueia todas as demais.
 - Phase 2 é obrigatória antes dos shells e dos RED comportamentais: schema aplicado, client gerado e fixtures disponíveis.
 - Phase 3 bloqueia T041–T076; os RED devem falhar por comportamento ainda ausente, não por import, schema, client ou fixture.

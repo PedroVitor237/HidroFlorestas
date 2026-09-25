@@ -443,3 +443,54 @@ permaneceu não rastreado e fora do escopo.
    proveniência, embora a execução tenha sido autorizada pelo usuário.
 6. **Validação científica:** continua pendente; nenhum teste técnico aprova a
    v0.1 como contrato científico definitivo.
+
+## 9. Continuidade corretiva no HEAD `2c63c674` (2026-09-25)
+
+Esta seção registra o diff de trabalho desta rodada, separado das execuções históricas das seções 1–8. Branch `007-ihfr-evolution`; HEAD inicial `2c63c6749f43542cce4dafbdc452be773fee85fe`; diff rastreado inicial vazio. Permanecem não rastreados e intocados os arquivos preexistentes `docs/validation/007-ihfr-evolution.zip`, `imp006-final-stat.txt`, `imp006-final-status.txt` e `imp006-final.diff`. O ZIP continha os cinco documentos com SHA-256 idêntico aos do repositório antes das edições. Ferramentas locais/lockfile: Prisma e Client 7.4.2, TypeScript 5.9.3, Node 24.19.0.
+
+### 9.1 Matriz de leitura e autoridade
+
+| Documento e seção lida | Requisito ou achado extraído | Tarefa |
+|---|---|---|
+| `README.md` — objetivo, baseline, continuidade posterior e índice | A branch 007 continua a IMP-006; `3e6a97b` é baseline histórico e 106/106 dependeu de cast revertido. | T135–T141 |
+| `findings.md` — F-001–F-009 | Reproduções de ausência obrigatória, omissão de DTO e incompatibilidade `name`; riscos de comando, destino e teardown. | T135–T139 |
+| `validation-report.md` — §§1–8.6 | Distinguir rodada sem escrita, execução posterior autorizada, 7 migrations e cast temporário; não transferir aceite ao HEAD. | T135–T141 |
+| `end-to-end-checklist.md` — estado, §§1–6 | Vetor independente 0.29 e jornada UI; 0.26/0.32 pertencem a outro cenário; login e criação pela UI ainda não comprovados. | T140 |
+| `continuity-checkpoint.md` — estado, destino, preparação, cenário, retomada e limpeza | `25756b0`/`2295502`, oito migrations em contexto posterior, `public` E2E preservado e cenário `HF007-UI-20260925-2295502` ainda sem login registrado. | T139–T140 |
+
+`FATO_DOCUMENTADO`: FR-005/FR-012/SC-001/SC-007 em `specs/006-ihfr-diagnosis/spec.md` delimitam os requisitos. `EVIDENCIA_IMPLEMENTACAO`: o manifesto v0.1.1 e o parser ambiental delimitam os formatos executáveis. `INFERENCIA`: as contagens de sete e oito migrations referem a contextos/instantes distintos e não demonstram defeito de migration. `PENDENCIA_DE_DECISAO`: a validação científica continua PD-002; nenhuma decisão científica nova foi inferida.
+
+### 9.2 Matriz F-001–F-009 no diff atual
+
+| ID | Estado documental → HEAD inicial | Requisito e reprodução | Mudança desta rodada e teste | Dependência / evidência final |
+|---|---|---|---|---|
+| F-001 | Bug reproduzido → presente | FR-012/SC-007; remover `soil.infiltrationRateMmPerHour` de payload completo dava `SUFFICIENT`. | RED 3 falhas pelo motivo contratual; avaliador agora exige cada entrada obrigatória, preserva opcionais/null/zero/false e fecha enums; testes controlado e PostgreSQL real verificam terminal único sem diagnóstico/CURRENT/evento. | `CORRIGIDO_VERIFICADO_LOCALMENTE`; Neon remoto pendente. |
+| F-002 | DTO completo, resumo incompleto → presente | FR-005/SC-001; renderização estática omitia origem, versões e datas. | Resumo expõe somente DTO público, UTC explícito, estado e IDs com quebra; CURRENT/SUPERSEDED/REVOKED em teste estático e CURRENT em navegador local a 390 × 844 com reload. Desvio de três horas do `PrismaPg` em sessão local não UTC foi reproduzido por consultas comparadas e corrigido selecionando UTC na conexão local. | `CORRIGIDO_VERIFICADO_LOCALMENTE`; percurso integral no Neon pendente. |
+| F-003 | Client local desatualizado resolvido na rodada anterior → sem defeito de schema demonstrado | Typecheck e versão do client. | Regeneração local ignorada pelo Git; `npm run typecheck` verde. | Resolvido localmente; nenhum schema alterado. |
+| F-004 | `test:contract` escreve → confirmado | Evitar descoberta de testes com escrita sem destino. | `test:contract`, `test:integration` e `test:migration` usam preflight único read-only e seleção explícita. | Sem env, comando recusou antes da descoberta; com PostgreSQL local próprio: contrato 2/2, integração 107/107, migrations 23/23. |
+| F-005 | Alvo autorizado historicamente, prova independente ausente → sem env atual | Revalidar mesmo destino, confirmação e identidade antes de escrita. | Preflight exige destino direto e selecionado, confirmação, identidade distinta para remoto e recusa servidor externo/flags herdadas. | `PENDENCIA_EXTERNA`; sem configuração E2E atual ou prova Console/API; zero escrita remota nesta rodada. |
+| F-006 | E2E semeado e cenário `public` preparado → sem login UI comprovado | Criar recursos pela UI, vetor 0.29, reload/histórico. | `full-ui-flow.spec.ts` e runner dedicado/servidor próprio preparados. | `NAO_EXECUTADO`: falta destino e conta neste processo; sem IDs novos. |
+| F-007 | Cast temporário revertido → consultas sem cast | Prisma/Neon falha ao desserializar `name`. | Cast `::text` nas duas consultas Prisma, com schema correto/divergente/inesperado e regressão PostgreSQL/Prisma local sem patch temporário. | `CORRIGIDO_VERIFICADO_LOCALMENTE`; adapter Neon ainda pendente. |
+| F-008 | Pooler/startup/CLI ambíguos → sem política executável | Schema isolado requer endpoint direto; não atribuir erro CLI genérico ao pooler. | Guarda rejeita URL pooled sem reescrever host; preflight verifica banco/schema em transação read-only; conexão `PrismaPg` local seleciona UTC. | Rede/auth/TLS/CLI do Neon não avaliados nesta rodada. |
+| F-009 | Schema residual histórico removido → teardown tinha marcador sem prova de propriedade se comentário falhasse | Limpeza restrita da própria rodada. | Nome aleatório exato, criação local e marcador exato exigidos; comando `test:ihfr:audit` só lista resíduos. | Teste PostgreSQL com falha injetada confirmou descarte; auditoria local encontrou zero candidatos após falhas/sucessos. Auditoria remota pendente. |
+
+O wrapper local histórico continua aceito somente com `IMP006_LOCAL_POSTGRESQL=1` e ambos os URLs em `127.0.0.1:55426`, cluster próprio da regressão. Para Neon remoto, os alvos precisam ser distintos e o URL de teste precisa ser direto. O runner de UI persistente recusa o modo local.
+
+### 9.3 Matriz de comandos e resultados desta rodada
+
+| Comando | Classe/destino/cleanup | Resultado |
+|---|---|---|
+| `npm run test:unit` | Sem banco; nenhum recurso criado. | 217/217 PASS após a correção do adaptador local. |
+| `npm run typecheck` | Sem banco; Client local gerado. | PASS. |
+| `npm run lint` | Sem banco. | PASS, 0 erros e 4 avisos preexistentes fora do patch. |
+| `npm run build` | Sem banco real; datasource fictício local apenas para geração do Client. | PASS; Prisma Client 7.4.2 gerado e Next.js compilado. |
+| `playwright test --config=playwright.imp006-full-ui.config.ts --list` | Apenas descoberta, sem servidor/banco; variáveis sintéticas. | PASS: um teste de percurso UI encontrado, não executado. |
+| `npm run test:contract` | Preflight; PostgreSQL local próprio com schema descartável. | Sem env, recusado antes da descoberta; no banco local, 2/2 PASS. |
+| `npm run test:integration` | PostgreSQL local próprio, bases de regressão separadas e schemas descartáveis. | 107/107 PASS, inclusive insuficiência persistida e descarte após falha injetada. |
+| `npm run test:migration` | PostgreSQL local próprio, schemas descartáveis e triggers ativos. | 23/23 PASS. |
+| `npm run test:e2e:ihfr` | PostgreSQL local próprio, Next.js próprio, Playwright e schema descartável. | 6/6 PASS no diff final; uma tentativa intermediária falhou pela sessão local `PrismaPg` fora de UTC, corrigida sem alterar a expectativa contratual. Servidor encerrado. |
+| `npm run test:e2e:ihfr:full-ui` | PostgreSQL `public` da branch E2E dedicada, servidor próprio; cenário preservado. | Recusado antes de conexão: conta e run ID E2E ausentes. |
+| `npm run test:ihfr:audit` | Somente leitura no PostgreSQL local próprio. | PASS: zero schemas candidatos após E2E falho e verde; banco remoto não auditado. |
+| `git -c core.safecrlf=false diff --check` | Escopo local, sem banco. | PASS; nenhum erro de whitespace. |
+
+Somente o PostgreSQL local próprio recebeu schemas/fixtures descartáveis; o harness os removeu e a auditoria encontrou zero candidatos. O servidor Next.js local usado pelo E2E foi encerrado, assim como o cluster local após os gates. Nenhuma migration foi aplicada em Neon nesta rodada e o checkpoint histórico em `public` não foi consultado nem tocado. O aviso TLS e a prova independente de `branch_id` permanecem assuntos distintos. O contrato segue `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.

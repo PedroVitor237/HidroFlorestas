@@ -96,3 +96,11 @@ cientificamente validado. Os detalhes, limitações e soluções propostas estã
   navegador e vetor técnico esperado.
 - [`findings.md`](findings.md): achados classificados, reprodução, impacto e
   origem histórica sustentada.
+
+## Continuidade corretiva de 2026-09-25 no HEAD `2c63c674`
+
+`EVIDENCIA_IMPLEMENTACAO`: a rodada atual corrigiu no diff local a ausência obrigatória no avaliador (F-001), ampliou a consulta pública (F-002), incorporou o cast Prisma (F-007) e acrescentou preflight e auditoria restrita (F-004/F-008/F-009). O Prisma Client local foi regenerado e o typecheck passou (F-003). O ZIP local foi comparado por SHA-256 com os cinco documentos deste diretório: conteúdo idêntico antes das edições.
+
+`EVIDENCIA_IMPLEMENTACAO`: no PostgreSQL local próprio, contrato 2/2, migrations 23/23, integração 107/107 e E2E IHFR 6/6 passaram no diff, com schemas descartáveis, servidor encerrado e auditoria final de zero candidatos. O navegador confirmou os dados públicos de CURRENT e datas UTC após reload em 390 × 844. O teste também revelou um deslocamento de três horas no `PrismaPg` com sessão local não UTC; o harness agora seleciona UTC e a expectativa contratual permaneceu intacta.
+
+`EVIDENCIA_IMPLEMENTACAO`: não há `.env.e2e.local` nem variáveis de banco/conta E2E disponíveis neste workspace. As suítes Neon, a auditoria remota e o fluxo completo de UI preparado nesta rodada têm estado `NAO_EXECUTADO`. A autorização operacional histórica do destino e a lacuna de prova independente do provedor (F-005) permanecem separadas. Consulte a matriz e os comandos em [`validation-report.md`](validation-report.md#9-continuidade-corretiva-no-head-2c63c674-2026-09-25). As seções históricas acima permanecem evidência de suas próprias rodadas, sem aprovação transferida ao diff atual.

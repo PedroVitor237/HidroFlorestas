@@ -236,3 +236,21 @@ Para cada comando registrar commit, ambiente sanitizado, resultado e falhas. Sep
 - `VALIDACAO_CIENTIFICA_PENDENTE`: revisão especializada, calibração, vetores científicos e campo.
 
 Testes verdes não removem `CONTRATO_EXPERIMENTAL`, `SUJEITO_A_RECALIBRACAO` ou `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
+## Continuidade corretiva 007 — comandos no diff de 2026-09-25
+
+`test:contract`, `test:integration` e `test:migration` escrevem em schemas PostgreSQL descartáveis e agora fazem um preflight único, somente leitura, antes da descoberta. `test:unit`, `typecheck`, `lint` e `build` não exigem banco real; o build pode usar datasource local fictício somente para geração do Client, sem iniciar aplicação conectada. `test:e2e:ihfr` escreve em schema descartável e encerra servidor próprio. `test:e2e:ihfr:full-ui` usa `public` apenas na branch E2E dedicada, cria domínio somente pela interface e preserva o cenário para revisão. `test:ihfr:audit` lista schemas temporários em leitura, sem apagá-los.
+
+| Comando | Banco/escrita | Pré-condição | Cleanup |
+|---|---|---|---|
+| `npm run test:unit` | nenhum | dependências locais | nenhum |
+| `npm run test:contract`, `npm run test:integration`, `npm run test:migration` | PostgreSQL, sim | `TEST_DATABASE_URL` direto, `DATABASE_URL` distinto, `TEST_DATABASE_CONFIRMATION` literal, `IMP006_DATABASE_VARIABLE=TEST_DATABASE_URL` | schema exclusivo com marcador exato |
+| `npm run test:e2e:ihfr` | PostgreSQL/Next.js, sim | mesma seleção e preflight; servidor externo herdado recusado | servidor próprio encerrado; schema exclusivo descartado |
+| `npm run test:e2e:ihfr:full-ui` | PostgreSQL/Next.js, sim | mesmos guards; schema inicial `public` E2E; `IMP006_UI_EMAIL`, `IMP006_UI_PASSWORD`, `IMP006_UI_RUN_ID=HF007-UI-*`; conta ativa já preparada e migrations versionadas aplicadas | servidor próprio encerrado; domínio preservado por run ID exato |
+| `npm run test:ihfr:audit` | PostgreSQL, somente leitura | mesma seleção de destino | nenhuma remoção |
+
+Para a jornada completa, a conta de login é a única pré-condição de domínio fora da interface. Confira antes por leitura que o run ID não corresponde a recurso preexistente; use um ID novo para a execução automatizada. O checkpoint `HF007-UI-20260925-2295502` deve ser consultado antes de retomar, pois esta rodada não teve configuração E2E disponível. Não adaptar um URL pooled removendo `-pooler`: a forma direta precisa ser fornecida explicitamente em `TEST_DATABASE_URL`. A comparação de identidade normaliza esse sufixo apenas para evitar alvo de desenvolvimento igual. Não desative validação TLS.
+
+O wrapper histórico `scripts/imp006-local-postgresql.ps1` continua admitido para as suítes descartáveis quando define `IMP006_LOCAL_POSTGRESQL=1` e aponta ambos os URLs exclusivamente ao cluster próprio `127.0.0.1:55426`; nesse modo local, a igualdade entre eles é esperada. O modo remoto exige identidades distintas. O E2E de `public` da branch dedicada recusa o modo local, exige `prisma migrate status` verde com URL direto e recusa um run ID cujo nome exato de laboratório já exista. Migrations pendentes devem ser avaliadas e aplicadas somente pelo fluxo versionado autorizado, antes de repetir o E2E.
+
+Na validação local de 2026-09-25, `test:contract` passou em 2/2, `test:migration` em 23/23, `test:integration` em 107/107 e `test:e2e:ihfr` em 6/6. O `PrismaPg` local seleciona `TimeZone=UTC` na conexão: uma comparação com `pg` reproduziu deslocamento de três horas em `timestamptz` quando a sessão do adapter usava `America/Sao_Paulo`; o E2E confirma o instante UTC original após reload. O teste de falha injetada descartou o schema e `test:ihfr:audit` retornou zero candidatos. O percurso `full-ui` e os mesmos gates no Neon ainda exigem a configuração E2E do destino autorizado, indisponível neste workspace.

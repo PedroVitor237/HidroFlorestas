@@ -265,3 +265,22 @@ Executar somente depois do cenário feliz e com isolamento confirmado.
   operacional (`F-005`).
 - [ ] Obter validação científica humana; a execução técnica não altera o estado
   experimental da v0.1.
+
+## 7. Continuidade corretiva no diff local de 2026-09-25
+
+Esta seção nova não altera as marcas históricas das seções 1–6.
+
+- [x] F-001: RED de campo obrigatório ausente reproduzido; GREEN unitário com casos individuais, zero/false, opcionais, null e entrada inválida. Serviço exercitado com leitura controlada de payload persistido insuficiente: só operação terminal criada.
+- [x] F-002: renderização estática de origem, versões, estado, datas UTC e valores técnicos do DTO para CURRENT/SUPERSEDED/REVOKED.
+- [x] F-007: consultas Prisma no lifecycle e serviço usam `current_schema()::text`; teste puro de schema correto/divergente/inesperado passou.
+- [x] F-003: Prisma Client local ignorado pelo Git regenerado com versão 7.4.2; typecheck passou.
+- [x] F-004/F-008/F-009: preflight único, endpoint direto e auditoria somente leitura implementados; recusas puras verificadas.
+- [x] Repetir no PostgreSQL local próprio: integração 107/107, contrato 2/2, migrations 23/23 e E2E IHFR 6/6, com schemas descartáveis e preflight somente leitura.
+- [x] Confirmar descarte após falha tratável: teste de integração com falha injetada passou e auditoria somente leitura encontrou zero schemas candidatos após falhas e sucessos do E2E.
+- [ ] Repetir os gates no Prisma/adapter Neon e auditar o destino E2E autorizado: `NAO_EXECUTADO`, configuração indisponível neste workspace.
+- [ ] Executar `npm run test:e2e:ihfr:full-ui` com conta sintética e run ID próprio, após preflight no mesmo destino autorizado: `NAO_EXECUTADO`.
+- [x] Confirmar por navegador local 390 × 844 a consulta CURRENT com origem/versões/datas UTC, quebra sem overflow e persistência após reload; estados SUPERSEDED/REVOKED também passaram na renderização estática.
+- [ ] Confirmar reabertura pelo histórico e estados de ciclo no percurso integral de UI do destino dedicado: `NAO_EXECUTADO`.
+- [ ] Prova independente Neon endpoint → `branch_id`: ausente; autorização operacional histórica não foi convertida em prova do provedor.
+
+O novo E2E integral usa o vetor técnico 0.29 desta lista. Ele está preparado para criar laboratório, área, coleta, medição e IHFR pela UI; não injeta sessão nem recursos de domínio. Sua execução ainda depende do destino dedicado e da conta E2E. Nenhuma identidade ou ID do percurso persistente foi produzida nesta rodada. O E2E local 6/6 usou fixtures em schema descartável e servidor próprio, encerrado ao final.

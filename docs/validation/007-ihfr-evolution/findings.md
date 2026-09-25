@@ -273,3 +273,19 @@ necessidade de auditoria independente do teardown.
 criado por execução, verificar ausência após cada cenário e disponibilizar um
 comando de auditoria que apenas liste resíduos. Qualquer limpeza posterior deve
 continuar exigindo alvo de teste explícito e validação do marcador.
+
+## Estado da continuidade corretiva de 2026-09-25
+
+| Achado | Estado no diff local atual | Limite da evidência |
+|---|---|---|
+| F-001 | `CORRIGIDO_VERIFICADO_LOCALMENTE`: ausências obrigatórias isoladas retornam insuficiência; teste controlado e teste com PostgreSQL real confirmam ledger terminal único sem suplemento/diagnóstico/CURRENT/evento novo. | O produtor normal já rejeitava a ausência; não há alegação de exploração pela UI. Adapter Neon remoto não executado neste diff. |
+| F-002 | `CORRIGIDO_VERIFICADO_LOCALMENTE`: resumo normal mostra IDs de origem, versões, estado e datas UTC; fixtures CURRENT/SUPERSEDED/REVOKED cobertas. E2E local confirmou visibilidade, recarga e largura móvel; um desvio de três horas do `PrismaPg` em sessão não UTC foi reproduzido e corrigido ao selecionar `TimeZone=UTC` somente no harness local. | Browser do percurso integral pela UI no destino Neon ainda não executado. |
+| F-003 | `RESOLVIDO_LOCALMENTE`: client ignorado regenerado com Prisma 7.4.2; typecheck verde. | Não implica alteração de schema nem execução de banco. |
+| F-004 | `CORRIGIDO_VERIFICADO_LOCALMENTE`: comandos com banco passam por preflight único antes da descoberta; sem seleção falham antes da escrita; contrato, integração e migrations passaram em PostgreSQL local próprio. | Destino Neon E2E ainda não verificado nesta rodada. |
+| F-005 | `PENDENCIA_EXTERNA`: autorização e identificação históricas preservadas. | Sem configuração E2E atual ou prova independente Neon endpoint → `branch_id`; nenhuma escrita remota feita. |
+| F-006 | `PREPARADO_NAO_EXECUTADO`: E2E novo cria domínio pela UI desde login e valida recarga/histórico. | O E2E local 6/6 usa fixtures e não equivale a esse percurso. Sem destino/conta Neon neste processo; cenário histórico em `public` não foi consultado nem alterado. |
+| F-007 | `CORRIGIDO_VERIFICADO_LOCALMENTE_PENDENTE_NEON`: dois casts `current_schema()::text` versionados e guarda de schema preservada; suites PostgreSQL/Prisma locais passaram sem patch temporário. | Regressão real pelo Prisma/adapter Neon não executada no diff. |
+| F-008 | `MITIGADO_VERIFICADO_LOCALMENTE_PENDENTE_REDE`: endpoint direto exigido para schema isolado; preflight só leitura, fingerprints sanitizados; sessão local do `PrismaPg` fixa UTC. | DNS/conexão/auth/startup/CLI/TLS do Neon não diagnosticados nesta rodada. |
+| F-009 | `MITIGADO_VERIFICADO_LOCALMENTE`: teardown exige marcador e propriedade desta execução; regressão injeta falha e confirma descarte do schema; auditoria somente leitura encontrou zero candidatos após falhas e sucesso do E2E. | Resíduos remotos não auditados; `public` persistente do checkpoint não foi tratado como resíduo. |
+
+`CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO`, `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO` permanecem vigentes.
