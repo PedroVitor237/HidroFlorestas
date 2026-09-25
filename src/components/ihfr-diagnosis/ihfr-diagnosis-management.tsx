@@ -5,6 +5,7 @@ import type { IHFRLandUseType, IHFRRouteContext, PublicDiagnosis } from "@/types
 import { IHFR_CONTRACT } from "@/app/api/server/ihfr-diagnosis/ihfr-diagnosis.constants";
 import { ExperimentalDiagnosisSummary } from "./experimental-diagnosis-summary";
 import { NoCurrentDiagnosis } from "./no-current-diagnosis";
+import { createClientUuid } from "@/lib/client-uuid";
 
 type OperationResponse = { outcome: "SUCCEEDED" | "INSUFFICIENT_DATA" | "INCOMPATIBLE_VERSION"; diagnosis: PublicDiagnosis | null; insufficiencyReasons: string[] };
 type EligibilityResponse = { eligible: boolean; outcome: "ELIGIBLE" | "INSUFFICIENT_DATA" | "INCOMPATIBLE_VERSION"; reasons: string[]; hasCurrentDiagnosis: boolean; currentDiagnosisId: string | null };
@@ -128,7 +129,7 @@ export function IHFRDiagnosisManagement({ context, initialDiagnosis }: { context
     const kind = confirmation;
     closeConfirmation(false);
     if (!kind) return;
-    const key = crypto.randomUUID();
+    const key = createClientUuid();
     const current: Attempt = kind === "DIAGNOSE" ? {
       key, kind, endpoint: `${base}/diagnoses`, body: {
         mode: diagnosis ? "REPLACE" : "CREATE",

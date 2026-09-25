@@ -31,7 +31,7 @@ const enumScores: Record<string, Record<string, number>> = {
   "vegetation.fragmentationLevel": { LOW: .2, MEDIUM: .6, HIGH: .9 }, "vegetation.hasRiparianApp": { true: .2, false: .85 }, "vegetation.landscapeDegradation": { LOW: .2, MEDIUM: .6, HIGH: .9 },
   "supplement.landUseType": { FOREST: .2, AGROFORESTRY: .25, CROPLAND: .6, PASTURE: .65, DEGRADED_PASTURE: .8, BARE_SOIL: .95, URBAN: .7 },
 };
-const allowedSections = { water: ["waterSourceType", "hasSpring", "wellDepthMeters", "waterAvailability", "salinityIndicator"], soil: ["infiltrationRateMmPerHour", "compactionLevel", "erosionSigns", "soilTexture", "soilExposedPercent"], vegetation: ["vegetationCoverPercent", "fragmentationLevel", "hasRiparianApp", "landscapeDegradation"], terrain: ["slopePercent"] } as const;
+const allowedSections = { water: ["waterSourceType", "hasSpring", "wellDepthMeters", "waterAvailability", "salinityIndicator"], soil: ["infiltrationRateMmPerHour", "compactionLevel", "erosionSigns", "soilTexture", "soilExposedPercent"], vegetation: ["vegetationCoverPercent", "fragmentationLevel", "hasRiparianApp", "landscapeDegradation"], terrain: ["drainageDensityKmPerKm2", "elevationMeters", "slopePercent"] } as const;
 const tieOrder: Dimension[] = ["W", "S", "V", "T"];
 const templates: Record<Dimension, string> = { W: "Risco influenciado por disponibilidade hidrica, fonte de agua, nascente, profundidade do poco ou salinidade.", S: "Risco influenciado por baixa infiltracao, compactacao, erosao, textura ou solo exposto.", V: "Risco influenciado por baixa cobertura vegetal, fragmentacao, ausencia de APP ou degradacao da paisagem.", T: "Risco influenciado por uso da terra com maior exposicao ou declividade favoravel ao escoamento." };
 
@@ -41,6 +41,13 @@ export function evaluateIHFR(manifest: VerifiedManifest, input: IHFREvaluationIn
   for (const [section, keys] of Object.entries(allowedSections)) {
     const value = input.environmental[section];
     if (value !== undefined && (!isRecord(value) || !hasOnlyKeys(value, keys))) invalid();
+  }
+  const terrain = input.environmental.terrain;
+  if (isRecord(terrain)) {
+    for (const field of ["drainageDensityKmPerKm2", "elevationMeters"] as const) {
+      const value = terrain[field];
+      if (value !== undefined && value !== null && (typeof value !== "number" || !Number.isFinite(value) || (field === "drainageDensityKmPerKm2" && value < 0))) invalid();
+    }
   }
   if (Array.isArray(input.landUseType) || (input.landUseType !== undefined && input.landUseType !== null && !(String(input.landUseType) in enumScores["supplement.landUseType"]))) invalid();
 

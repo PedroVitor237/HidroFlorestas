@@ -1,17 +1,26 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { randomBytes, randomUUID } from "node:crypto";
 import { createServer } from "node:net";
+import { networkInterfaces } from "node:os";
 import { setTimeout as delay } from "node:timers/promises";
 import { IHFR_ACTORS, IHFR_LABORATORIES } from "../tests/fixtures/ihfr-diagnosis-actors";
 import { IHFR_CONTEXTS, IHFR_MEASUREMENT_PAYLOAD } from "../tests/fixtures/ihfr-diagnosis-contexts";
 import { setupIHFRDiagnosisFixtures } from "../tests/fixtures/ihfr-diagnosis-fixtures";
 import { selectedImp006DatabaseVariable, withImp006PostgresqlSchema } from "../tests/fixtures/postgresql-schema-lifecycle";
 
-async function freePort() {
+function privateLanAddress() {
+  const address = Object.values(networkInterfaces()).flat().find((item) =>
+    item?.family === "IPv4" && !item.internal && /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(item.address)
+  )?.address;
+  if (!address) throw new Error("No private non-loopback IPv4 address is available for the LAN E2E run");
+  return address;
+}
+
+async function freePort(host: string) {
   const server = createServer();
-  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  await new Promise<void>((resolve, reject) => { server.once("error", reject); server.listen(0, host, resolve); });
   const address = server.address();
-  if (!address || typeof address === "string") throw new Error("No loopback port available");
+  if (!address || typeof address === "string") throw new Error("No E2E port available");
   await new Promise<void>((resolve) => server.close(() => resolve()));
   return address.port;
 }
@@ -48,8 +57,9 @@ async function main() {
       await client.query(`INSERT INTO "EnvironmentalMeasurementSet" (id,"collectionDataId","userId","measurementContractVersion",payload,"payloadHash","confirmationKey","confirmedAt") VALUES ($1,$2,$3,'ihfr-measurement-v1',$4::jsonb,$5,$6,now())`,
         [randomUUID(), collectionId, IHFR_ACTORS.owner, JSON.stringify(IHFR_MEASUREMENT_PAYLOAD), `sha256:${randomBytes(32).toString("hex")}`, randomUUID()]);
     }
-    const port = await freePort();
-    const baseURL = `http://127.0.0.1:${port}`;
+    const host = process.argv.includes("--lan") ? privateLanAddress() : "127.0.0.1";
+    const port = await freePort(host);
+    const baseURL = `http://${host}:${port}`;
     const collectionUrl = (laboratoryId: string, areaId: string, collectionId: string) => `/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}`;
     const env = {
       ...process.env,
@@ -68,7 +78,7 @@ async function main() {
       IMP006_E2E_ADMIN_ID: IHFR_ACTORS.contextualAdmin,
       IMP006_E2E_MEMBER_ID: IHFR_ACTORS.member,
     };
-    const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--hostname", "127.0.0.1", "--port", String(port)], { env: { ...env, NODE_ENV: "development" }, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+    const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--hostname", host, "--port", String(port)], { env: { ...env, NODE_ENV: "development" }, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
     server.stdout?.on("data", () => {});
     server.stderr?.on("data", () => {});
     let primaryError: unknown;
