@@ -21,7 +21,8 @@ export function createPrismaClient(connectionString: string, schema?: string) {
     if (!['postgres:', 'postgresql:'].includes(url.protocol) || url.searchParams.has('options') || url.searchParams.has('schema')) {
       throw new Error('IMP-006 test connection cannot safely select a schema')
     }
-    url.searchParams.set('options', `-csearch_path=${selectedSchema}`)
+    if (url.hostname.split('.')[0].endsWith('-pooler')) throw new Error('IMP-006 isolated schema requires an explicit direct endpoint')
+    url.searchParams.set('options', `-csearch_path=${selectedSchema}${local ? ' -cTimeZone=UTC' : ''}`)
     selectedConnection = url.toString()
   }
   if (local) {
@@ -31,6 +32,11 @@ export function createPrismaClient(connectionString: string, schema?: string) {
     }
     if (regressionPublic && (url.port !== '55426' || url.pathname !== '/imp006_regression_test')) {
       throw new Error('Owned local regression database guard failed')
+    }
+    if (!selectedSchema) {
+      if (url.searchParams.has('options')) throw new Error('IMP-006 local PostgreSQL startup options must be selected by the harness')
+      url.searchParams.set('options', '-cTimeZone=UTC')
+      selectedConnection = url.toString()
     }
     return new PrismaClient({ adapter: new PrismaPg({ connectionString: selectedConnection }, { schema: selectedSchema ?? 'public' }) })
   }

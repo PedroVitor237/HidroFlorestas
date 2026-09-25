@@ -49,7 +49,7 @@ export function evaluateIHFR(manifest: VerifiedManifest, input: IHFREvaluationIn
       if (value !== undefined && value !== null && (typeof value !== "number" || !Number.isFinite(value) || (field === "drainageDensityKmPerKm2" && value < 0))) invalid();
     }
   }
-  if (Array.isArray(input.landUseType) || (input.landUseType !== undefined && input.landUseType !== null && !(String(input.landUseType) in enumScores["supplement.landUseType"]))) invalid();
+  if (input.landUseType !== undefined && input.landUseType !== null && (typeof input.landUseType !== "string" || !Object.hasOwn(enumScores["supplement.landUseType"], input.landUseType))) invalid();
 
   const variables: Record<string, VariableDecomposition> = {};
   for (const paths of Object.values(dimensions)) for (const path of paths) variables[path] = scoreVariable(path, path === "supplement.landUseType" ? input.landUseType : readPath(input.environmental, path));
@@ -59,7 +59,7 @@ export function evaluateIHFR(manifest: VerifiedManifest, input: IHFREvaluationIn
   for (const dimension of tieOrder) {
     const included = dimensions[dimension].filter((path) => variables[path].included);
     const excluded = dimensions[dimension].filter((path) => !variables[path].included);
-    if (included.length < 2) { insufficient.push(`INSUFFICIENT_DIMENSION_${dimension}`); continue; }
+    if (included.length < 2 || dimensions[dimension].some((path) => !optional.has(path) && !variables[path].included)) { insufficient.push(`INSUFFICIENT_DIMENSION_${dimension}`); continue; }
     const score = included.reduce((sum, path) => sum + (variables[path].score as number), 0) / included.length;
     assertUnit(score);
     componentScores[dimension] = score;
@@ -73,10 +73,10 @@ export function evaluateIHFR(manifest: VerifiedManifest, input: IHFREvaluationIn
 }
 
 function scoreVariable(path: string, value: unknown): VariableDecomposition {
-  if (value === undefined || value === null) { if (optional.has(path) || value === undefined || path === "supplement.landUseType") return { included: false, raw: null, normalizedInput: null, transformation: null, score: null, clamped: false }; invalid(); }
+  if (value === undefined || value === null) { if (value === undefined || optional.has(path) || path === "supplement.landUseType" || path === "terrain.slopePercent") return { included: false, raw: null, normalizedInput: null, transformation: null, score: null, clamped: false }; invalid(); }
   if (path in enumScores) {
     const key = typeof value === "boolean" ? String(value) : value;
-    if (typeof key !== "string" || !(key in enumScores[path])) invalid();
+    if (typeof key !== "string" || !Object.hasOwn(enumScores[path], key)) invalid();
     return { included: true, raw: value as string | boolean, normalizedInput: value as string | boolean, transformation: `enumMappings.${path}`, score: enumScores[path][key], clamped: false };
   }
   if (typeof value !== "number" || !Number.isFinite(value)) invalid();

@@ -1,6 +1,7 @@
 import { hashIHFRDiagnosisRequest, isActiveIHFRVersionSelection, parseIHFRDiagnosisRequest, projectPublicDiagnosis, type IHFRDiagnosisRequest, type IHFRSupplementInput } from "@/app/api/server/ihfr-diagnosis/ihfr-diagnosis.contracts";
 import { IHFR_CONTRACT } from "@/app/api/server/ihfr-diagnosis/ihfr-diagnosis.constants";
 import { evaluateIHFR } from "@/app/api/server/ihfr-diagnosis/evaluator";
+import { matchesImp006Schema } from "@/app/api/server/ihfr-diagnosis/schema-guard";
 import { hashCanonicalIHFRValue, loadActiveIHFRManifest } from "@/app/api/server/ihfr-diagnosis/manifest-loader";
 import type { IHFRLandUseType, IHFRRouteContext, PublicDiagnosis } from "@/types/ihfr-diagnosis.type";
 import { Prisma, type PrismaClient } from "@/generated/prisma";
@@ -166,8 +167,8 @@ export class IHFRDiagnosisService {
           const collection = await tx.collectionData.findFirst({ where: { id: context.collectionId, collectionAreaId: context.areaId, laboratoryRoomId: context.laboratoryId }, select: writeCollectionSelect });
           if (!collection) throw new IHFRDiagnosisServiceError("NOT_FOUND");
           if (process.env.IMP006_TEST_SCHEMA) {
-            const selected = await tx.$queryRaw<Array<{ schema: string }>>`SELECT current_schema() AS schema`;
-            if (selected[0]?.schema !== process.env.IMP006_TEST_SCHEMA) throw new IHFRDiagnosisServiceError("INTERNAL_ERROR");
+            const selected = await tx.$queryRaw<Array<{ schema: string }>>`SELECT current_schema()::text AS schema`;
+            if (!matchesImp006Schema(selected, process.env.IMP006_TEST_SCHEMA)) throw new IHFRDiagnosisServiceError("INTERNAL_ERROR");
           }
           await this.checkpoint?.("BEFORE_LOCK");
           await tx.$queryRaw`SELECT id FROM "CollectionData" WHERE id = ${context.collectionId} FOR UPDATE`;
