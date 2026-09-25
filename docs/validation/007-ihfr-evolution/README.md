@@ -88,6 +88,8 @@ cientificamente validado. Os detalhes, limitações e soluções propostas estã
 
 ## Índice
 
+- [`continuity-checkpoint.md`](continuity-checkpoint.md): estado recuperável do
+  banco E2E e instruções seguras para retomar o fluxo integral pela interface.
 - [`validation-report.md`](validation-report.md): escopo, fluxo, comandos,
   resultados e liberação condicionada dos testes com banco.
 - [`end-to-end-checklist.md`](end-to-end-checklist.md): roteiro reproduzível de
