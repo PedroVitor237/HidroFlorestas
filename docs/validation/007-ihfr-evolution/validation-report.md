@@ -274,3 +274,172 @@ login pode ser pré-condição externa identificada.
 4. **Prontidão:** **não pronta**. O typecheck local está resolvido, mas o E2E
    permanece bloqueado pelo gate Neon e dois defeitos contratuais reproduzidos
    continuam sem correção, conforme o escopo de apenas validar.
+
+## 8. Continuidade posterior autorizada com PostgreSQL e navegador
+
+Esta seção registra uma execução posterior no mesmo chat. Ela complementa o
+estado histórico das seções 1–7; não reescreve como executado aquilo que estava
+pendente na rodada documental inicial.
+
+### 8.1 Baseline, autorização e separação de destinos
+
+- código efetivamente testado: `3e6a97bdcaa8b598ee94b3e74c728b9cc104a41a`;
+- os commits posteriores `498b26f` e `c8003bf` adicionaram somente estes
+  documentos, sem mudar código, testes, schema Prisma ou migrations;
+- o usuário forneceu e identificou explicitamente um segundo endpoint Neon como
+  branch de teste e autorizou migrations, fixtures e fluxo E2E;
+- a validação do projeto confirmou alvos normalizados distintos para
+  `DATABASE_URL` e `TEST_DATABASE_URL`;
+- URLs, senhas e segredos não foram registrados nos comandos reproduzidos nem
+  nesta documentação;
+- a associação endpoint → `branch_id` continuou sem prova independente pela
+  Neon Console/API. A execução baseou-se na identificação e autorização
+  explícitas do usuário.
+
+O `prisma migrate status` pelo endpoint direto, depois da liberação de rede,
+encontrou sete migrations e informou `Database schema is up to date`. Nenhuma
+migration nova precisou ser aplicada.
+
+### 8.2 Verificações automatizadas
+
+| Verificação | Resultado | Observação |
+|---|---:|---|
+| `npm run typecheck` | **PASS** | Prisma Client regenerado na rodada anterior. |
+| `npm run lint` | **PASS com 4 avisos** | Avisos preexistentes de símbolos não usados; zero erros. |
+| `npm run test:unit` | **59/59 PASS** | Incluiu fallback e caminho normal de UUID. |
+| `npm run test:contract` | **2/2 PASS** | Executado com destino PostgreSQL autorizado. |
+| `npm run test:e2e:ihfr -- --lan` | **6/6 PASS** | Playwright em HTTP sem contexto seguro e fallback de UUID. |
+| Concorrência ambiental focal | **1/1 PASS** | Banco físico de teste separado. |
+| `npm run test:integration` | **106/106 PASS** | Exigiu cast temporário descrito em `F-007`. |
+
+O teste focal de concorrência comprovou:
+
+- uma única criação efetiva para requisições idênticas concorrentes;
+- replay idempotente para a mesma chave e mesmo conteúdo;
+- `CONFLICT` para chaves ou payloads divergentes disputando a mesma coleta;
+- cardinalidade final de um conjunto ambiental por coleta;
+- autorização contextual para `OWNER`, `ADMIN` e `MEMBER` e indistinguibilidade
+  do usuário externo;
+- bloqueio de escrita em laboratório inativo com leitura `readOnly`;
+- preservação do registro pai imutável;
+- limpeza das fixtures mesmo após a corrida.
+
+### 8.3 Fluxo Playwright e cenário persistente
+
+O servidor Next.js foi executado em `0.0.0.0:3001`. A suíte Playwright isolada
+passou nos seis cenários:
+
+1. coleta, confirmação ambiental e criação IHFR sem
+   `crypto.randomUUID` disponível;
+2. criação, substituição, revogação e recuperação pelo `OWNER`/`ADMIN`;
+3. permissões de `MEMBER` e laboratório inativo;
+4. versão incompatível com recuperação controlada;
+5. DTO público, acessibilidade e layout responsivo;
+6. ausência honesta e modo somente leitura.
+
+No cenário persistente, um usuário sintético `ACTIVE` com papel contextual
+`OWNER` acessou o mesmo laboratório, área e coleta durante a rodada. Foram
+reabertas e verificadas as telas de workspace, dashboard, áreas, detalhe da área,
+dados ambientais, mapa territorial e membros.
+
+O conjunto persistido continha os quatro grupos do contrato:
+
+- água;
+- solo;
+- vegetação;
+- terreno, incluindo densidade de drenagem, elevação e declividade.
+
+A elegibilidade com `AGROFORESTRY` retornou `ELIGIBLE`. O primeiro diagnóstico
+foi criado com resposta HTTP `201`, score apresentado `0.26`, classe `MODERATE`
+e qualidade `HIGH`. A substituição com `URBAN` também respondeu `201` e passou a
+apresentar score `0.32`, classe `MODERATE`. A revogação respondeu `200` e deixou
+o estado esperado “Nenhum diagnóstico IHFR vigente”.
+
+O histórico do servidor registrou `200` para elegibilidade, leitura corrente,
+dashboard, áreas, mapa e membros. Não houve erro no console do navegador durante
+essas operações. Esses scores pertencem ao conjunto persistente usado na rodada
+e não substituem o vetor independente `0.29` do checklist.
+
+### 8.4 Falhas encontradas durante a execução
+
+#### Seleção explícita do banco IMP-006
+
+A primeira execução integral terminou em `81/106` porque
+`IMP006_DATABASE_VARIABLE` não estava definido. As 25 falhas tinham a mesma
+origem de guarda, antes da regra de negócio:
+
+```text
+Set IMP006_DATABASE_VARIABLE explicitly for the IMP-006 test process
+```
+
+Depois de fixar `IMP006_DATABASE_VARIABLE=TEST_DATABASE_URL`, essa classe de
+falha desapareceu. `RECOMENDACAO`: o script npm remoto deve definir ou exigir
+essa escolha antes de iniciar a descoberta dos testes, com mensagem de preflight
+única em vez de repetir a falha em cada cenário.
+
+#### Tipo PostgreSQL `name` no Prisma/Neon
+
+Com o seletor correto, o lifecycle falhou em `current_schema()` porque o Prisma
+não desserializou o tipo PostgreSQL `name`. O cast temporário abaixo foi aplicado
+nas duas consultas do caminho de teste:
+
+```sql
+SELECT current_schema()::text AS schema
+```
+
+Com o cast, `106/106` passaram em aproximadamente 200 segundos. O cast foi
+revertido antes do encerramento; o defeito e a solução proposta estão em
+`F-007`.
+
+#### Pooler, endpoint direto e sandbox
+
+O URL pooled devolveu `Schema engine error` ao Prisma CLI na tentativa inicial.
+O endpoint direto ainda falhou enquanto sujeito à restrição de rede do sandbox,
+mas funcionou depois que o acesso de rede foi autorizado. Isso impede atribuir
+o erro genérico somente ao pooler. Separadamente, o lifecycle já havia observado
+incompatibilidade do pooler com a seleção de `search_path` por opção de startup.
+
+Para esta rodada, endpoint direto foi usado em migrations e testes que criam
+schemas. O adapter `PrismaNeon` funcionou no teste de concorrência ambiental com
+esse endpoint. A política recomendada está em `F-008`.
+
+#### Aviso TLS do driver `pg`
+
+O driver informou que `sslmode=require`, `prefer` e `verify-ca` são tratados
+atualmente como aliases de `verify-full`, mas que essa semântica mudará na
+próxima versão maior. A rodada não alterou a conexão. Antes de atualizar `pg`, a
+equipe deve decidir entre preservar a validação estrita com
+`sslmode=verify-full` ou adotar semântica libpq explicitamente.
+
+### 8.5 Teardown e estado final
+
+Após os testes, uma auditoria independente encontrou:
+
+- zero usuários de fixture ambiental;
+- zero laboratórios de fixture ambiental;
+- um schema `imp006_test_<uuid>` residual, com 11 tabelas e marcador oficial do
+  harness.
+
+O schema residual foi removido somente após validação do nome allowlisted e do
+marcador `hidroflorestas:imp006-test-harness`. A consulta posterior confirmou
+zero schemas temporários. Não foi possível atribuir o resíduo a uma execução
+específica; as execuções falhas anteriores são uma hipótese, não uma conclusão.
+
+Todas as modificações temporárias de código foram revertidas. Ao fim da
+validação, a branch continuava sem diferenças rastreadas e o arquivo local
+preexistente `specs/005-environmental-collection-data/coverage-review.md`
+permaneceu não rastreado e fora do escopo.
+
+### 8.6 Conclusão atualizada
+
+1. **Fluxo técnico integrado:** demonstrado para os cenários executados, com
+   persistência, reload, permissões, concorrência e ciclo IHFR.
+2. **Pendência de concorrência ambiental:** fechada em banco físico de teste
+   separado.
+3. **Repetibilidade Neon sem alteração local:** ainda bloqueada por `F-007` até
+   que o cast `::text` seja incorporado.
+4. **Conformidade integral do contrato:** ainda bloqueada por `F-001` e `F-002`.
+5. **Identidade Neon independente:** `F-005` permanece como lacuna de
+   proveniência, embora a execução tenha sido autorizada pelo usuário.
+6. **Validação científica:** continua pendente; nenhum teste técnico aprova a
+   v0.1 como contrato científico definitivo.

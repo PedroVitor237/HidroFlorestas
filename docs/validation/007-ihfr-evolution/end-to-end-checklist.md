@@ -6,7 +6,11 @@ Este roteiro foi preparado em 2026-09-25, mas nenhuma etapa abaixo foi executada
 em navegador. Na continuidade da mesma data, o preflight somente leitura foi
 executado, mas a liberação de escrita ficou bloqueada pela ausência de evidência
 Neon endpoint → `branch_id`. Marcas vazias das etapas de navegador são
-intencionais.
+intencionais e preservam o estado daquela rodada.
+
+Uma execução posterior, autorizada explicitamente pelo usuário, está registrada
+na seção 6. Ela usou dados persistentes diferentes do vetor `0.29`; por isso as
+marcas históricas das seções 1–5 não foram reescritas retroativamente.
 
 ## 1. Pré-condições externas à interface
 
@@ -198,3 +202,66 @@ Executar somente depois do cenário feliz e com isolamento confirmado.
 - [ ] Resultado do teardown e comprovação de ausência do schema isolado.
 - [ ] Falhas preservadas como falhas; nenhuma expectativa deve ser alterada para
   produzir aprovação.
+
+## 6. Execução posterior registrada
+
+### Ambiente e segurança
+
+- [x] Usuário identificou explicitamente um segundo endpoint como branch Neon
+  de teste e autorizou migrations, fixtures e navegador.
+- [x] Guarda local confirmou que os alvos normalizados de desenvolvimento e
+  teste eram diferentes.
+- [ ] Associação endpoint → `branch_id` confirmada independentemente pela Neon
+  Console/API.
+- [x] Endpoint direto da branch de teste confirmou sete migrations aplicadas e
+  schema atualizado.
+- [x] URLs, senhas, tokens e valores integrais de ambiente foram omitidos das
+  evidências documentais.
+
+### Automação
+
+- [x] `npm run typecheck` passou.
+- [x] `npm run lint` passou com quatro avisos preexistentes e zero erros.
+- [x] `npm run test:unit` passou em `59/59`.
+- [x] `npm run test:contract` passou em `2/2` depois da autorização de banco.
+- [x] Concorrência ambiental focal passou em `1/1` no banco físico separado.
+- [x] Playwright IHFR em LAN passou em `6/6`.
+- [x] Integração passou em `106/106` com cast temporário
+  `current_schema()::text`.
+- [ ] Integração Neon passa sem alteração temporária; bloqueada por `F-007`.
+
+### Navegador e persistência
+
+- [x] Sessão autenticada com usuário sintético `ACTIVE` e papel `OWNER`.
+- [x] Workspace e contexto do laboratório carregados.
+- [x] Dashboard, histórico, áreas e detalhe da área reabertos.
+- [x] Coleta persistente reaberta.
+- [x] Dados de água, solo, vegetação e terreno reabertos, incluindo drenagem,
+  elevação e declividade.
+- [x] Mapa territorial e membros carregados sem erro de console.
+- [x] Elegibilidade `AGROFORESTRY` retornou `ELIGIBLE`.
+- [x] `CREATE` retornou `201` e apresentou `0.26`, `MODERATE`, qualidade `HIGH`.
+- [x] `REPLACE` com `URBAN` retornou `201` e apresentou `0.32`, `MODERATE`.
+- [x] `REVOKE` retornou `200` e removeu o diagnóstico vigente.
+- [x] Estado final “Nenhum diagnóstico IHFR vigente” confirmado.
+- [x] Nenhum erro de console observado no fluxo persistente.
+
+### Teardown
+
+- [x] Zero usuários e laboratórios das fixtures ambientais após a suíte.
+- [x] Schema residual identificado somente pelo prefixo allowlisted e marcador
+  oficial do harness.
+- [x] Schema residual removido após validação de propriedade.
+- [x] Zero schemas `imp006_test_*` após a limpeza.
+- [x] Ajustes temporários de código revertidos.
+
+### Pendências mantidas abertas
+
+- [ ] Corrigir ausência obrigatória aceita pelo avaliador (`F-001`).
+- [ ] Renderizar proveniência, versões, vigência e datas (`F-002`).
+- [ ] Incorporar o cast Prisma/Neon e sua regressão (`F-007`).
+- [ ] Formalizar política de endpoint direto versus pooler (`F-008`).
+- [ ] Obter prova independente de `branch_id`, se exigida pela governança
+  operacional (`F-005`).
+- [ ] Obter validação científica humana; a execução técnica não altera o estado
+  experimental da v0.1.

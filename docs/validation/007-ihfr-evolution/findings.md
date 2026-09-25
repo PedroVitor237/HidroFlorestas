@@ -142,6 +142,16 @@ diferente. A menor intervenção é a equipe informar os dois `branch_id` ou
 confirmar explicitamente essas associações na Console; nenhuma credencial do
 provedor é necessária.
 
+### Atualização posterior
+
+O usuário declarou explicitamente um segundo endpoint como branch Neon de teste
+e autorizou escrita para migrations, fixtures e E2E. A proteção local confirmou
+que `DATABASE_URL` e `TEST_DATABASE_URL` apontavam para alvos normalizados
+distintos. Isso forneceu autoridade operacional suficiente para a execução
+solicitada, mas não produziu evidência independente de `branch_id`. Portanto,
+`F-005` deixou de bloquear aquela execução autorizada e permanece como lacuna de
+proveniência do provedor caso a equipe exija prova independente da associação.
+
 ## F-006 — Fluxo completo ainda não foi executado pela interface
 
 - **Categoria:** Lacuna de validação.
@@ -160,3 +170,106 @@ recursos pela UI, recarregar e reabrir a coleta pelo histórico.
 Na continuidade de 2026-09-25 havia ferramenta de navegador disponível, mas o
 fluxo não foi iniciado porque depende de setup com escrita. O bloqueio é o gate
 de identidade da branch Neon, não ausência de automação de navegador.
+
+### Atualização posterior
+
+Após a autorização explícita do destino de teste, a lacuna de runtime foi
+reduzida por duas evidências complementares:
+
+- Playwright isolado: `6/6`, incluindo criação de coleta, confirmação do payload
+  ambiental completo, fallback de UUID em HTTP sem contexto seguro,
+  elegibilidade e criação IHFR;
+- cenário persistente no navegador: autenticação como `OWNER`, navegação por
+  workspace, laboratório, área, coleta, dados ambientais, mapa e membros, além
+  de `CREATE`, `CURRENT`, `REPLACE` e `REVOKE` do diagnóstico.
+
+O cenário persistente terminou deliberadamente sem diagnóstico vigente após a
+revogação. Nenhum erro de console foi observado. A reexecução não fecha
+`F-001` ou `F-002`, que são defeitos contratuais independentes do happy path.
+
+## F-007 — `current_schema()` é incompatível com o adapter Prisma/Neon sem cast
+
+- **Categoria:** Defeito reproduzido no harness PostgreSQL remoto.
+- **Gravidade:** Média para produção; alta para repetibilidade da validação Neon.
+- **Alcance:** caminho de isolamento `IMP006_TEST_SCHEMA`, não o fluxo normal
+  sem essa variável de teste.
+
+Com `IMP006_DATABASE_VARIABLE=TEST_DATABASE_URL`, os testes IHFR falharam antes
+da regra de negócio com:
+
+```text
+Failed to deserialize column of type 'name'
+```
+
+O PostgreSQL retorna `current_schema()` com o tipo interno `name`, que o Prisma
+Client usado com o adapter Neon não desserializou. Há duas ocorrências:
+
+- `tests/fixtures/postgresql-schema-lifecycle.ts`;
+- `src/app/api/server/services/ihfr-diagnosis.service.ts`, dentro da proteção
+  `IMP006_TEST_SCHEMA`.
+
+Um ajuste temporário para `SELECT current_schema()::text AS schema` nas duas
+consultas permitiu a execução integral em `106/106`. O ajuste foi revertido ao
+final para que a rodada de validação não modificasse código de produção ou
+teste.
+
+`RECOMENDACAO`: incorporar o cast explícito para `text`, adicionar regressão
+que execute o lifecycle com o adapter Neon e manter a comparação do schema
+allowlisted. O cast não muda a identidade validada; somente converte o valor
+para um tipo suportado pelo Prisma.
+
+## F-008 — Pooler, endpoint direto e configuração do runner não são intercambiáveis
+
+- **Categoria:** Risco de infraestrutura e configuração.
+- **Gravidade:** Média.
+
+O `prisma migrate status` contra o URL pooled retornou somente `Schema engine
+error` na primeira tentativa. Uma tentativa direta ainda dentro do sandbox
+também falhou sem diagnóstico útil; após liberar acesso de rede, o endpoint
+direto da mesma branch respondeu e confirmou as sete migrations aplicadas.
+Assim, a rodada não atribui causalidade exclusiva ao pooler para esse erro
+genérico.
+
+Em execuções anteriores do lifecycle, o pooler também recusou a opção de
+startup usada para selecionar `search_path`. O endpoint direto funcionou para
+migrations, criação de schemas isolados e testes transacionais. O
+`PrismaNeon`, por sua vez, funcionou no teste de concorrência ambiental quando
+recebeu o endpoint direto.
+
+`RECOMENDACAO`:
+
+1. manter uma variável direta, separada e explícita para migrations e testes
+   que criam schemas;
+2. reservar o URL pooled para runtime que não dependa de opções de startup não
+   suportadas pelo pooler;
+3. fazer o preflight registrar apenas fingerprints sanitizados do endpoint e
+   qual adapter foi selecionado;
+4. falhar cedo quando um runner de schema isolado receber URL pooled;
+5. testar separadamente falha de DNS/sandbox, falha do pooler e falha do Prisma
+   CLI, evitando classificá-las pelo mesmo `Schema engine error` genérico.
+
+O driver `pg` também avisou que a semântica futura de `sslmode=require` mudará.
+`RECOMENDACAO`: decidir conscientemente entre `sslmode=verify-full` para manter
+o comportamento estrito atual ou `uselibpqcompat=true&sslmode=require` para
+semântica libpq, validando a decisão antes de uma atualização maior de `pg`.
+
+## F-009 — Execuções interrompidas podem deixar schema temporário marcado
+
+- **Categoria:** Risco operacional de teardown.
+- **Gravidade:** Baixa no destino exclusivo de teste; alta se o mesmo mecanismo
+  for usado em destino compartilhado sem auditoria.
+
+Após as execuções foi encontrado um schema `imp006_test_<uuid>` com 11 tabelas
+e o marcador exato `hidroflorestas:imp006-test-harness`. As fixtures ambientais
+já estavam em zero. O schema foi removido somente depois de confirmar prefixo,
+nome exato e marcador; a verificação posterior confirmou zero schemas
+temporários e zero usuários/laboratórios das fixtures ambientais.
+
+Não foi estabelecida causalidade entre esse resíduo e um processo específico.
+Houve execuções deliberadamente falhas antes da rodada verde, o que reforça a
+necessidade de auditoria independente do teardown.
+
+`RECOMENDACAO`: manter a recusa de remoção sem marcador, registrar o schema
+criado por execução, verificar ausência após cada cenário e disponibilizar um
+comando de auditoria que apenas liste resíduos. Qualquer limpeza posterior deve
+continuar exigindo alvo de teste explícito e validação do marcador.

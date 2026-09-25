@@ -24,6 +24,8 @@ ou evidência histórica não é tratada como prova de funcionamento integrado.
 - Pacote Spec Kit aplicável: [`specs/006-ihfr-diagnosis`](../../../specs/006-ihfr-diagnosis/).
 - Checkpoint documental inicial desta continuidade:
   `498b26fd3355999ede1be1b528c1f186f109631e`.
+- Continuidade com runtime executada sobre o código de `3e6a97b`; os commits
+  documentais `498b26f` e `c8003bf` não alteraram código, testes ou migrations.
 
 ## Limites da inspeção anterior
 
@@ -55,6 +57,34 @@ confirmou conexão ao alvo de teste e separação técnica do alvo de desenvolvi
 mas não foi possível obter da Neon Console/API a associação endpoint →
 `branch_id`. Como esse gate cumulativo permaneceu aberto, nenhuma escrita, setup,
 fixture, aplicação ou etapa de navegador foi executada.
+
+### Continuidade posterior com runtime autorizado
+
+Depois do fechamento documental acima, o usuário identificou explicitamente um
+segundo destino Neon como branch de teste e autorizou migrations, fixtures e
+execução ponta a ponta. Essa autorização permitiu prosseguir, mas não substitui
+uma comprovação independente de `branch_id` pela Neon Console/API.
+
+`EVIDENCIA_EXECUCAO`:
+
+- o destino de teste tinha sete migrations e estava atualizado;
+- o teste de concorrência ambiental pendente passou isoladamente;
+- a suíte de integração passou em `106/106` depois de um cast temporário de
+  `current_schema()` para `text`, necessário somente para compatibilidade do
+  Prisma/adapter com o tipo PostgreSQL `name`;
+- os testes unitários passaram em `59/59`, os contratos em `2/2` e o E2E IHFR
+  por Playwright em `6/6`;
+- o fluxo persistente foi exercitado com usuário `OWNER`, laboratório, área,
+  coleta, dados de água, solo, vegetação e terreno, elegibilidade, criação,
+  substituição e revogação do diagnóstico;
+- não foram observados erros no console do navegador; as rotas de criação e
+  substituição responderam `201` e a revogação respondeu `200`;
+- fixtures e schemas temporários foram auditados e removidos ao final.
+
+Os achados `F-001` e `F-002` continuam abertos. A execução prova o caminho
+técnico integrado, mas não transforma o contrato experimental em contrato
+cientificamente validado. Os detalhes, limitações e soluções propostas estão em
+[`validation-report.md`](validation-report.md) e [`findings.md`](findings.md).
 
 ## Índice
 
