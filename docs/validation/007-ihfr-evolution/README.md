@@ -22,8 +22,10 @@ ou evidência histórica não é tratada como prova de funcionamento integrado.
 - Estado inicial: worktree limpo e branch sincronizada com
   `origin/007-ihfr-evolution`.
 - Pacote Spec Kit aplicável: [`specs/006-ihfr-diagnosis`](../../../specs/006-ihfr-diagnosis/).
+- Checkpoint documental inicial desta continuidade:
+  `498b26fd3355999ede1be1b528c1f186f109631e`.
 
-## Limites desta rodada
+## Limites da inspeção anterior
 
 - Nenhum teste com PostgreSQL, migration, fixture, seed ou aplicação conectada
   foi executado.
@@ -46,6 +48,13 @@ Há dois defeitos funcionais reproduzidos sem banco: o avaliador aceita ausênci
 de campo obrigatório quando chamado diretamente, e a consulta normal omite
 parte da proveniência, versões, vigência e datas exigidas por FR-005/SC-001. A
 prontidão da branch está bloqueada mesmo que as demais etapas venham a funcionar.
+
+Na continuidade, o typecheck foi normalizado pela regeneração local e segura
+do Prisma Client ignorado pelo Git. O preflight PostgreSQL somente leitura
+confirmou conexão ao alvo de teste e separação técnica do alvo de desenvolvimento,
+mas não foi possível obter da Neon Console/API a associação endpoint →
+`branch_id`. Como esse gate cumulativo permaneceu aberto, nenhuma escrita, setup,
+fixture, aplicação ou etapa de navegador foi executada.
 
 ## Índice
 

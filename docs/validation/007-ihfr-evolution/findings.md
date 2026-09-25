@@ -74,13 +74,14 @@ A renderização de `ExperimentalDiagnosisSummary` com o fixture público confir
 omissão independe de banco ou navegador; comportamento visual/responsivo final
 ainda depende de navegador.
 
-## F-003 — Gate global de TypeScript falha no HEAD
+## F-003 — Prisma Client local estava desatualizado
 
-- **Categoria:** Defeito comprovado por execução sem banco.
-- **Gravidade:** Alta para integração da branch; não é um defeito específico do
-  IHFR.
+- **Categoria:** Condição local reproduzida e resolvida sem banco.
+- **Gravidade atual:** Resolvida no ambiente local; não foi demonstrada
+  incompatibilidade efetiva do código.
 - **Origem histórica:** o serviço de administração foi introduzido em `599bd41`,
-  ancestral da `006`; os arquivos principais não foram introduzidos pela `007`.
+  mas essa ancestralidade, isoladamente, não classifica a falha como
+  preexistente. A evidência causal é a divergência entre schema e client gerado.
 
 ### Reprodução
 
@@ -88,14 +89,22 @@ Comando: `npm run typecheck`.
 
 **Esperado:** saída zero.
 
-**Observado:** saída 2 e 11 erros. O schema contém `User.revision` e o model
-`AdministrativeAuditEvent`, enquanto o Prisma Client presente em
-`src/generated/prisma` não expõe esses elementos. Os erros atingem o serviço,
-fixtures e teste de concorrência de administração.
+**Observado antes da geração:** saída 2 e 11 erros. O schema contém
+`User.revision` e o model `AdministrativeAuditEvent`, enquanto o Prisma Client
+presente em `src/generated/prisma` não expunha esses elementos. Os erros atingiam
+o serviço, fixtures e teste de concorrência de administração.
 
-**Impacto:** a branch não passa o gate estático global. Não foi executado
-`prisma generate`, pois ele alteraria artefatos versionados e esta rodada deve
-preservar a implementação existente.
+**Diagnóstico:** `prisma`, `@prisma/client` e lockfile usam `7.4.2`; TypeScript
+usa `5.9.3`. O diretório `src/generated/prisma` é ignorado pelo Git, e seu
+`schema.prisma` embutido não continha as declarações atuais. `prisma generate`
+foi executado localmente com valor de datasource não sensível, sem conexão,
+migration ou alteração versionada.
+
+**Observado depois da geração:** `npm run typecheck` terminou com saída zero.
+
+**Conclusão:** os 11 erros decorriam exclusivamente do Prisma Client local
+desatualizado. O client regenerado permanece artefato ignorado e não integra os
+commits documentais.
 
 ## F-004 — `test:contract` não é uma verificação sem banco
 
@@ -121,8 +130,17 @@ arquivo E2E estruturalmente completo. Isso não demonstra que o endpoint de test
 pertence à branch Neon esperada. O lifecycle cria o schema antes de qualquer
 verificação de identidade de branch.
 
-**Falta verificar:** associação endpoint → `branch_id` pela Neon Console/API e
-uma conexão SQL somente leitura, imediatamente antes da liberação do runner.
+O preflight PostgreSQL read-only conectou com sucesso ao alvo de teste, confirmou
+o database por fingerprint, transação somente leitura, endpoint pooled distinto
+do desenvolvimento e zero schemas `imp006_test_*` preexistentes. Essas são
+evidências PostgreSQL/configuração; não substituem evidência da Neon. Não há
+API key, CLI/configuração Neon ou `branch_id` disponível no ambiente.
+
+**Falta verificar:** associação endpoint → `branch_id` pela Neon Console/API,
+incluindo confirmação de que o endpoint de desenvolvimento pertence a branch
+diferente. A menor intervenção é a equipe informar os dois `branch_id` ou
+confirmar explicitamente essas associações na Console; nenhuma credencial do
+provedor é necessária.
 
 ## F-006 — Fluxo completo ainda não foi executado pela interface
 
@@ -138,3 +156,7 @@ eles não comprovam criação desses recursos pela interface.
 **Falta verificar:** executar
 [`end-to-end-checklist.md`](end-to-end-checklist.md) em destino isolado, criar os
 recursos pela UI, recarregar e reabrir a coleta pelo histórico.
+
+Na continuidade de 2026-09-25 havia ferramenta de navegador disponível, mas o
+fluxo não foi iniciado porque depende de setup com escrita. O bloqueio é o gate
+de identidade da branch Neon, não ausência de automação de navegador.

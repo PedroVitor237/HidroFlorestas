@@ -7,6 +7,11 @@ O HEAD observado em 2026-09-25 foi
 anterior. O worktree estava limpo antes das verificações. Nenhuma alteração
 preexistente precisou ser preservada.
 
+Antes da continuidade, os quatro relatórios foram revisados quanto a segredos,
+URLs de conexão e dados pessoais e receberam o checkpoint local
+`498b26fd3355999ede1be1b528c1f186f109631e`. O commit contém somente este
+diretório; não houve push.
+
 A análise cruzou o código com FR-001–FR-020, SC-001–SC-008, ADR-0001, TD-015,
 TD-016, PD-002 e o pacote Spec Kit em
 [`specs/006-ihfr-diagnosis`](../../../specs/006-ihfr-diagnosis/). As 134 tarefas
@@ -69,7 +74,9 @@ foram iniciados com `DATABASE_URL`, `TEST_DATABASE_URL`, confirmação e variáv
 | Verificação | Resultado | Observação |
 |---|---|---|
 | `git diff --check` | **PASS** | Nenhum erro de whitespace no estado inicial. |
-| `npm run typecheck` | **FAIL** | 11 erros relacionados à administração de usuários e Prisma Client: `revision` e `administrativeAuditEvent` existem no schema/serviço, mas não no client gerado presente no checkout. Não é um erro IHFR, mas bloqueia o gate global. |
+| `npm run typecheck`, antes de gerar | **FAIL** | 11 erros relacionados à administração de usuários e ao Prisma Client local: `revision` e `administrativeAuditEvent` existem no schema/serviço, mas não existiam no client gerado. |
+| `prisma generate`, local | **PASS** | Prisma `7.4.2`; gerou somente `src/generated/prisma`, diretório ignorado pelo Git, sem conexão PostgreSQL ou alteração versionada. |
+| `npm run typecheck`, depois de gerar | **PASS** | Saída zero; os 11 erros eram causados pelo client local desatualizado. |
 | `npm run lint` | **PASS com avisos** | 0 erros e 4 avisos preexistentes de variáveis não usadas. |
 | Oito testes unitários IHFR focais | **PASS** | 8 arquivos, 8 processos/subtests, 0 falhas. O teste de política de entrada passa com uma expectativa contrária a FR-012; o verde não aprova essa regra. |
 | Vinte testes unitários do fluxo anterior ao IHFR | **PASS** | Autenticação, laboratório, área, coleta, histórico, dados ambientais e UUID; 20 arquivos/subtests, 0 falhas. Dependências persistentes foram simuladas. |
@@ -91,6 +98,21 @@ aplicação porque o CLI tentou abrir um socket IPC bloqueado pelo sandbox
   `npm run test:e2e:https`: iniciam aplicação e/ou escrevem fixtures.
 - `npm run build`: começa por `prisma generate`, altera artefatos gerados e pode
   avaliar módulos server-side; não foi necessário para esta etapa segura.
+
+### 3.1 Diagnóstico do typecheck
+
+As versões instaladas e resolvidas no lockfile coincidem: `prisma` e
+`@prisma/client` `7.4.2`, TypeScript `5.9.3`. O schema atual inclui
+`User.revision`, `AdministrativeAuditAction` e `AdministrativeAuditEvent`; o
+schema copiado dentro do client gerado localmente antes desta rodada não os
+incluía. O diretório inteiro é ignorado por `.gitignore`.
+
+Uma primeira invocação de `env` falhou por ordem incorreta de argumentos antes
+de carregar o Prisma. A invocação corrigida usou um valor de datasource não
+sensível apenas para satisfazer a configuração, e `prisma generate` concluiu sem
+acesso ao banco. O typecheck posterior passou. Assim, `EVIDENCIA_IMPLEMENTACAO`:
+os 11 erros não demonstram incompatibilidade efetiva do código nem versões
+divergentes; demonstram artefato local stale.
 
 ## 4. Reprodução do avaliador
 
@@ -143,41 +165,112 @@ eliminada por ambiente controlado, sem alteração versionada. Porém, o runner 
 `CREATE SCHEMA` como primeira operação após conectar; ele não comprova antes da
 escrita que o endpoint pertence à branch Neon de teste.
 
-### Preflight obrigatório para a próxima rodada
+### Preflight somente leitura executado
+
+O processo removeu explicitamente variáveis herdadas de banco, autenticação,
+servidor e `IMP006_*`, carregou apenas `.env.e2e.local` e forçou
+`NODE_ENV=test` e `IMP006_DATABASE_VARIABLE=TEST_DATABASE_URL`. A primeira
+tentativa foi impedida pelo DNS do sandbox antes da autenticação; a repetição
+com acesso de rede autorizado concluiu.
+
+Evidências sanitizadas de configuração e PostgreSQL:
+
+- teste e desenvolvimento são PostgreSQL/Neon pooled e têm fingerprints de
+  host, endpoint e alvo normalizado distintos;
+- o sufixo pooled foi normalizado apenas para identificar o endpoint; a
+  documentação Neon informa que `-pooler` é acrescentado ao ID do endpoint;
+- a conexão ao teste ocorreu em `BEGIN TRANSACTION READ ONLY` e o servidor
+  confirmou `transaction_read_only=on`;
+- o fingerprint do database conectado coincide com o database do URL de teste;
+- o schema inicial foi `public`, corretamente antes da criação do schema
+  aleatório; não se exigiu que um schema ainda inexistente estivesse presente;
+- havia zero schemas com prefixo `imp006_test_`; nenhuma criação ou remoção
+  foi feita.
+
+| Identidade sanitizada | Teste | Desenvolvimento/servidor |
+|---|---|---|
+| Endpoint normalizado, SHA-256/12 | `f3223a9f35cc` | `f0a8dcbe5d74` |
+| Alvo host/porta/database, SHA-256/12 | `ad2ba58e9d1b` | `703409499f24` |
+| Database configurado/conectado, SHA-256/12 | `693fe5919fc2` | `693fe5919fc2` |
+| Endereço efetivo do servidor, SHA-256/12 | `aaf075b7b4bf` | não aplicável |
+
+O mesmo nome de database nos dois URLs não implica o mesmo destino: os
+endpoints e os alvos normalizados são distintos. A igualdade entre database de
+teste configurado e conectado confirma a conexão SQL, não o `branch_id` Neon.
+
+Evidência Neon ainda ausente: não há API key, CLI/configuração Neon,
+`project_id` ou `branch_id` disponível. A documentação oficial estabelece que
+o endpoint pertence a uma branch e que a Console/API expõe `endpoint.id`, `host`
+e `branch_id`: [Manage computes](https://neon.com/docs/manage/endpoints/),
+[List branch endpoints](https://api-docs.neon.tech/reference/listprojectbranchendpoints)
+e [connection pooling](https://neon.com/blog/postgres-support-case-recap).
+Uma conexão SQL, mesmo bem-sucedida, não comprova por si só esse `branch_id`.
+
+### Auditoria antes de migrations e fixtures
+
+Foram inspecionados o baseline, as seis migrations aplicadas pelo setup IHFR,
+o harness, as fixtures, o lifecycle, o runner, a configuração Playwright e o
+adaptador Prisma. Os SQLs do caminho remoto não contêm referência a `public`,
+outro schema, criação/remoção de database ou role, extensão, `dblink`, FDW ou
+`COPY PROGRAM`; os objetos são não qualificados e dependem do `search_path`
+temporário. O setup local de regressão que usa `public` é um caminho separado e
+não seria invocado.
+
+Por inspeção, o lifecycle seleciona o URL escolhido sem reescrita, cria nome
+aleatório allowlisted, seleciona esse schema antes do baseline e passa a mesma
+conexão/schema a fixtures e Prisma. O runner cria servidor próprio em loopback,
+substitui `DATABASE_URL` pelo alvo de teste e transmite seletor, schema e
+`baseURL`; o Prisma exige o schema allowlisted e aplica qualificação/opção de
+startup. Os probes E2E usam `TEST_DATABASE_URL` e selecionam o mesmo schema. A
+limpeza exige marcador de propriedade antes de `DROP SCHEMA`.
+
+Essa coerência é evidência estática; a seleção efetiva após setup só pode ser
+confirmada depois que a escrita estiver liberada.
+
+### Gate restante e menor intervenção
 
 `RECOMENDACAO`:
 
-1. Em processo limpo, remover todas as variáveis de banco, autenticação,
-   `PLAYWRIGHT_BASE_URL` e `IMP006_*` herdadas.
-2. Carregar exclusivamente `.env.e2e.local` e forçar, fora do arquivo,
-   `NODE_ENV=test` e `IMP006_DATABASE_VARIABLE=TEST_DATABASE_URL`.
-3. Derivar de forma local o endpoint ID de cada hostname, sem imprimir URL ou
-   credencial.
-4. Consultar por operação GET a Neon Console/API e confirmar que o endpoint de
+1. Consultar por operação GET a Neon Console/API e confirmar que o endpoint de
    teste está associado ao `branch_id` de teste esperado e que o endpoint de
-   desenvolvimento possui outro `branch_id`. A Neon documenta que cada compute
-   pertence a uma branch e que a listagem de endpoints fornece `host`, `id` e
-   `branch_id`: [Manage computes](https://neon.com/docs/manage/endpoints/) e
-   [List branch endpoints](https://api-docs.neon.tech/reference/listprojectbranchendpoints).
-5. Fazer uma conexão SQL explicitamente read-only ao URL de teste para confirmar
-   autenticação, database e schema inicial; registrar somente fingerprints e
-   igualdades, nunca valores.
-6. Comparar o fingerprint usado no preflight com o que será passado ao lifecycle,
-   servidor, Prisma, probe e cleanup.
-7. Somente depois liberar o runner, sem `--lan`, sem servidor externo e sem
-   outra execução concorrente sobre o mesmo destino.
+   desenvolvimento possui outro `branch_id`.
+2. A equipe pode fornecer somente os dois `branch_id`/associações observados na
+   Console; não é necessário compartilhar credencial do provedor.
+3. Somente depois repetir o preflight read-only imediatamente antes da execução
+   e liberar o runner, sem `--lan`, servidor externo ou concorrência.
 
 **Decisão desta rodada:** testes com banco ainda não estão liberados. Há um
 caminho sem alteração versionada, mas falta a evidência externa endpoint →
-`branch_id` e o preflight SQL read-only imediatamente anterior à escrita.
+`branch_id`. Como o gate é cumulativo, nenhuma migration, fixture, setup, servidor
+Next.js ou escrita foi iniciada.
 
-## 6. Estado de prontidão
+## 6. Cobertura real de navegador
 
-- Fluxo completo: **implementado por inspeção, não executado em navegador**.
-- Cobertura de validação: **parcial**, com 28 arquivos unitários executados.
-- Gate estático global: **bloqueado pelo typecheck**.
-- Banco/E2E: **não executado e ainda não liberado**.
-- Prontidão da branch: **bloqueada** pelos defeitos `F-001` e `F-002`, sem
-  afirmar que as demais etapas funcionam em runtime.
-- Validação científica definitiva: **pendente**, fora do alcance destes testes
-  técnicos.
+Há Playwright/Chromium disponível e o roteiro está documentado, mas a aplicação
+isolada depende da criação do schema e de uma conta de teste. Como a escrita não
+foi liberada, nenhuma etapa do fluxo foi executada em navegador. Não houve
+screenshot, recurso criado, teardown ou resíduo desta rodada.
+
+O E2E IHFR existente não seria suficiente para aprovar o objetivo completo: ele
+usa fixture para laboratório, área e parte do contexto e cobre principalmente a
+continuidade coleta → ambiental → IHFR. A validação solicitada deve criar
+laboratório, área, coleta e dados ambientais pela interface; somente a conta de
+login pode ser pré-condição externa identificada.
+
+## 7. Respostas finais e prontidão
+
+1. **O fluxo completo funciona?** Não demonstrado. Está implementado por
+   inspeção, mas não foi executado no navegador.
+2. **O resultado observado atende ao contrato experimental?** Não houve
+   resultado E2E nesta rodada. As reproduções sem banco mantêm `F-001` e `F-002`:
+   o avaliador interno aceita uma ausência obrigatória direta e a consulta omite
+   campos exigidos. O contrato permanece `CONTRATO_EXPERIMENTAL`,
+   `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e
+   `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+3. **Critérios ainda descumpridos:** execução integral por navegador, geração e
+   persistência observadas, reload/reabertura, apresentação integral de
+   FR-005/SC-001, tratamento de ausência obrigatória de FR-012/SC-007 e prova
+   Neon endpoint → `branch_id` antes da escrita.
+4. **Prontidão:** **não pronta**. O typecheck local está resolvido, mas o E2E
+   permanece bloqueado pelo gate Neon e dois defeitos contratuais reproduzidos
+   continuam sem correção, conforme o escopo de apenas validar.

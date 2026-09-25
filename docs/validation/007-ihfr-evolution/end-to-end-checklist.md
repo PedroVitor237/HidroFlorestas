@@ -3,7 +3,10 @@
 ## Estado do roteiro
 
 Este roteiro foi preparado em 2026-09-25, mas nenhuma etapa abaixo foi executada
-em navegador nesta rodada. Marcas vazias são intencionais.
+em navegador. Na continuidade da mesma data, o preflight somente leitura foi
+executado, mas a liberação de escrita ficou bloqueada pela ausência de evidência
+Neon endpoint → `branch_id`. Marcas vazias das etapas de navegador são
+intencionais.
 
 ## 1. Pré-condições externas à interface
 
@@ -12,12 +15,14 @@ em navegador nesta rodada. Marcas vazias são intencionais.
 - [ ] O endpoint de `TEST_DATABASE_URL` foi associado, pela Neon Console/API,
   ao `branch_id` de teste esperado.
 - [ ] O endpoint de desenvolvimento foi associado a outro `branch_id`.
-- [ ] O processo foi iniciado sem variáveis herdadas de banco, servidor externo
+- [x] O processo de preflight foi iniciado sem variáveis herdadas de banco, servidor externo
   ou `IMP006_*`.
-- [ ] `NODE_ENV=test`, confirmação e
+- [x] `NODE_ENV=test`, confirmação e
   `IMP006_DATABASE_VARIABLE=TEST_DATABASE_URL` foram verificados sem imprimir
   valores sensíveis.
-- [ ] Nenhuma outra execução concorrente usa o mesmo destino.
+- [x] Nenhum servidor externo/reutilizado foi configurado para o preflight.
+- [ ] Nenhuma outra execução concorrente usa o mesmo destino no momento de uma
+  futura escrita.
 - [ ] Existe uma conta de teste `ACTIVE` conhecida. Essa conta é a única
   pré-condição de domínio preparada fora da interface.
 - [ ] Nenhum laboratório, área, coleta, conjunto ambiental ou diagnóstico do
@@ -26,6 +31,23 @@ em navegador nesta rodada. Marcas vazias são intencionais.
 Se for necessário criar a conta, registrar separadamente se ela veio de uma
 fixture isolada ou do fluxo `/register`; não apresentar esse preparo como parte
 do fluxo iniciado em login.
+
+### Resultado do preflight de 2026-09-25
+
+- [x] Conexão PostgreSQL ao alvo selecionado em transação explicitamente
+  somente leitura.
+- [x] Banco configurado e banco conectado com o mesmo fingerprint sanitizado.
+- [x] Alvos normalizados de teste e desenvolvimento distintos, inclusive por
+  endpoint normalizado.
+- [x] Alvo de teste identificado como Neon pooled; o sufixo `-pooler` foi
+  removido somente para calcular a identidade sanitizada do endpoint.
+- [x] Schema inicial observado como `public`, comportamento esperado antes da
+  criação do schema temporário; isso não foi tratado como falha.
+- [x] Zero schemas preexistentes com prefixo `imp006_test_` foram observados.
+- [ ] Associação endpoint → `branch_id` confirmada pela Neon Console/API.
+- [ ] Setup autorizado e schema aleatório efetivamente selecionado por lifecycle,
+  fixtures, Next.js/Prisma, probes e limpeza. Esta verificação é posterior à
+  liberação de escrita e não foi executada.
 
 ## 2. Vetor técnico do cenário feliz
 
