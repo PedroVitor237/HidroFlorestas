@@ -289,3 +289,15 @@ continuar exigindo alvo de teste explícito e validação do marcador.
 | F-009 | `MITIGADO_VERIFICADO_LOCALMENTE`: teardown exige marcador e propriedade desta execução; regressão injeta falha e confirma descarte do schema; auditoria somente leitura encontrou zero candidatos após falhas e sucesso do E2E. | Resíduos remotos não auditados; `public` persistente do checkpoint não foi tratado como resíduo. |
 
 `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO`, `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO` permanecem vigentes.
+
+## Revisão focal posterior — 2026-09-25
+
+`EVIDENCIA_IMPLEMENTACAO`: as três lacunas detalhadas no anexo da rodada foram conferidas contra o HEAD inicial `85ce3c7a`. O arquivo separado `revisao-independente-hidroflorestas-007.md` e o JSON opcional de sondas não estavam disponíveis; por isso a avaliação abaixo se limita aos achados descritos no anexo e às reproduções locais.
+
+| Lacuna | Verificação e resolução | Estado |
+|---|---|---|
+| Strings em `water.hasSpring` e `vegetation.hasRiparianApp` | O parser ambiental exige booleanos. O RED focal confirmou aceitação de `"true"` pelo avaliador. Guarda de tipo mínima e GREEN 9/9 cobriram true/false, strings e tipos não booleanos, mantendo null/undefined do campo opcional. | `CORRIGIDO_VERIFICADO_LOCALMENTE` |
+| `observedAt` após reload/histórico | O estado React reinicia vazio e a aplicação exige data para diagnosticar. O E2E agora repõe a data antes de REPLACE; a validação da aplicação foi preservada. | `CORRIGIDO_NO_TESTE_PENDENTE_E2E_INTEGRAL` |
+| Oráculo e identidade no full UI | O teste passou a verificar o vetor literal completo e o mesmo ID após reload/histórico, novo ID/CURRENT após REPLACE e ausência de CURRENT após REVOKE. | `PREPARADO_NAO_EXECUTADO`: descoberta Playwright passou; destino/conta E2E ausentes |
+
+`RECOMENDACAO`: quando houver configuração e conta sintética do destino dedicado, executar o roteiro integral, auditar o destino remoto e anexar os resultados reais à matriz de validação. Isso não substitui a prova Neon de `branch_id` nem a validação científica humana.

@@ -494,3 +494,35 @@ O wrapper local histórico continua aceito somente com `IMP006_LOCAL_POSTGRESQL=
 | `git -c core.safecrlf=false diff --check` | Escopo local, sem banco. | PASS; nenhum erro de whitespace. |
 
 Somente o PostgreSQL local próprio recebeu schemas/fixtures descartáveis; o harness os removeu e a auditoria encontrou zero candidatos. O servidor Next.js local usado pelo E2E foi encerrado, assim como o cluster local após os gates. Nenhuma migration foi aplicada em Neon nesta rodada e o checkpoint histórico em `public` não foi consultado nem tocado. O aviso TLS e a prova independente de `branch_id` permanecem assuntos distintos. O contrato segue `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
+## 10. Revisão focal posterior no HEAD `85ce3c7a` (2026-09-25)
+
+`EVIDENCIA_IMPLEMENTACAO`: branch inicial `007-ihfr-evolution`, HEAD `85ce3c7aec055d6574db52f52de473c4dfa14e84`, sem diff rastreado ou staged. Os três arquivos locais `imp006-final-stat.txt`, `imp006-final-status.txt` e `imp006-final.diff` já estavam não rastreados e permaneceram fora do escopo. O arquivo `revisao-independente-hidroflorestas-007.md` e o JSON opcional de sondas não foram localizados no workspace nem nos anexos acessíveis. Os achados descritos no anexo desta rodada foram confirmados por inspeção e, para o booleano, por RED no HEAD.
+
+### 10.1 Correções e evidência
+
+| Ponto | Evidência no HEAD inicial | Alteração e limite da comprovação |
+|---|---|---|
+| Tipos booleanos | `scoreVariable` convertia booleanos em chaves de enum, mas também aceitava strings `"true"`/`"false"`; o parser ambiental exige `boolean`. RED: `water.hasSpring="true"` não lançou `INVALID_INPUT`. | Guarda de tipo para `water.hasSpring` e `vegetation.hasRiparianApp`; teste focal 9/9 GREEN cobre true/false, strings, números, arrays, objetos e ausência opcional null/undefined. Nenhuma alteração matemática ou de manifesto. |
+| Data de REPLACE | `observedAt` iniciava vazio no componente após reload/reabertura, e `prepare` exigia data válida; o E2E selecionava URBAN e tentava REPLACE sem preencher novamente. | O teste preenche de novo `Data e hora da observação` antes do REPLACE. O percurso completo ainda requer execução no destino dedicado. |
+| Vetor e persistência | O full UI verificava 0.29/MODERATE/HIGH visualmente, sem vetor completo nem ID pós navegação. | Oráculo literal verifica W=.20, S=.20, V=.15, T=.60, raw=.2875, display=.29, MODERATE, HIGH e drivers=[T,W] via DTO público, sem chamar o avaliador. GET current compara ID do CREATE após reload e histórico; REPLACE exige ID novo e CURRENT; REVOKE exige ausência de CURRENT. A descoberta compilou o teste; a execução integral permanece pendente. |
+
+### 10.2 Gates desta rodada
+
+| Comando | Resultado | Estado |
+|---|---|---|
+| `node --import=tsx --test tests/unit/ihfr-diagnosis-input-policy.test.ts` antes da correção | 8/9; falha esperada por aceitar `water.hasSpring="true"`. | RED esperado |
+| Mesmo comando após a correção | 9/9. | PASS |
+| `npm run test:unit` | 218/218. | PASS |
+| `npm run typecheck` | Sem erros. | PASS |
+| `npm run lint` | Zero erros, quatro avisos preexistentes fora do patch. | PASS |
+| `npm run build` | Prisma Client 7.4.2 e Next.js compilados com datasource fictício somente de build. | PASS |
+| `playwright test --config=playwright.imp006-full-ui.config.ts --list` | Um teste descoberto com variáveis sintéticas; nenhum navegador/servidor/banco executado. | PASS somente descoberta |
+| `npm run test:integration` | 107/107 no PostgreSQL local próprio, modo Regression. | PASS |
+| `npm run test:contract` | 2/2 no PostgreSQL local próprio, modo Schema. | PASS |
+| `npm run test:migration` | 23/23 no PostgreSQL local próprio, modo Schema. | PASS |
+| `npm run test:e2e:ihfr` | 6/6 no PostgreSQL local próprio; esta suíte não inclui `full-ui-flow.spec.ts`. | PASS |
+| `npm run test:ihfr:audit` | Zero schemas candidatos; cluster próprio parado após a auditoria. | PASS |
+| `npm run test:e2e:ihfr:full-ui` e gates/auditoria Neon | `.env.e2e.local`, `TEST_DATABASE_URL`, conta e run ID sintéticos ausentes. | NAO_EXECUTADO |
+
+`PENDENCIA_DE_DECISAO`: a validação científica definitiva permanece PD-002. `EVIDENCIA_IMPLEMENTACAO`: a prova independente Neon endpoint → `branch_id`, o adapter Prisma/Neon neste diff, a auditoria remota e o percurso full UI seguem sem execução; a autorização histórica não foi convertida em resultado desta rodada. `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO` continuam obrigatórios.

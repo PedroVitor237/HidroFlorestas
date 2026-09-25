@@ -239,8 +239,9 @@ T134 registra o encerramento histórico de 2026-09-24; esta solicitação reabre
 - [ ] T139 [F-005/F-009] Reconferir identidade autorizada; fortalecer auditoria/teardown e recusa de limpeza insegura.
 - [ ] T140 [F-006] Executar ou preparar E2E reproduzível desde login e criação pela UI, incluindo reload e reabertura pelo histórico.
 - [ ] T141 [F-001–F-009] Repetir gates no diff final, auditar resíduos/processos, atualizar cinco documentos de validação e evidência Spec Kit com matriz de fechamento.
+- [X] T142 [revisão focal 007] Exigir booleanos reais no avaliador com RED/GREEN; refazer `observedAt` antes de REPLACE no E2E integral e proteger vetor técnico, ID persistido, novo CURRENT e ausência após REVOKE.
 
-Estado das tarefas abertas nesta rodada: T137 tem cast e regressão PostgreSQL/Prisma locais verdes, mas falta execução no adapter Neon; T139 tem guardas e auditoria locais verdes, mas falta reconfirmar o destino e auditar resíduos remotos; T140 tem E2E integral preparado, porém não executado no destino dedicado; T141 tem gates e documentação locais concluídos, mas aguarda essas três evidências remotas para o fechamento. A ausência da configuração E2E neste workspace não altera os checks históricos.
+Estado das tarefas abertas nesta rodada: T137 tem cast e regressão PostgreSQL/Prisma locais verdes, mas falta execução no adapter Neon; T139 tem guardas e auditoria locais verdes, mas falta reconfirmar o destino e auditar resíduos remotos; T140 tem E2E integral preparado, porém não executado no destino dedicado; T141 tem gates e documentação locais concluídos, mas aguarda essas três evidências remotas para o fechamento. T142 conclui apenas a correção e a preparação verificadas localmente; não marca T140 como executada. A ausência da configuração E2E neste workspace não altera os checks históricos.
 
 
 - Phase 1 bloqueia todas as demais.

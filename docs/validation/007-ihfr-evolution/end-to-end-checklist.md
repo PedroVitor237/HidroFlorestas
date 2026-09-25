@@ -284,3 +284,15 @@ Esta seção nova não altera as marcas históricas das seções 1–6.
 - [ ] Prova independente Neon endpoint → `branch_id`: ausente; autorização operacional histórica não foi convertida em prova do provedor.
 
 O novo E2E integral usa o vetor técnico 0.29 desta lista. Ele está preparado para criar laboratório, área, coleta, medição e IHFR pela UI; não injeta sessão nem recursos de domínio. Sua execução ainda depende do destino dedicado e da conta E2E. Nenhuma identidade ou ID do percurso persistente foi produzida nesta rodada. O E2E local 6/6 usou fixtures em schema descartável e servidor próprio, encerrado ao final.
+
+## 8. Revisão focal posterior — 2026-09-25
+
+`EVIDENCIA_IMPLEMENTACAO`: o roteiro automatizado `full-ui-flow.spec.ts` agora exige:
+
+- [x] Preencher novamente `Data e hora da observação` após reload/reabertura, antes de REPLACE.
+- [x] Declarar oráculo independente W=0.20, S=0.20, V=0.15, T=0.60, raw=0.2875, display=0.29, MODERATE, HIGH e drivers=[T,W].
+- [x] Comparar o ID do diagnóstico criado com o CURRENT após CREATE, reload e retorno pelo histórico.
+- [x] Exigir ID diferente e CURRENT após REPLACE; exigir `diagnosis: null` após REVOKE.
+- [ ] Executar esse roteiro no destino E2E dedicado e registrar os IDs/resultados reais: `NAO_EXECUTADO` sem `.env.e2e.local` e conta sintética.
+
+As quatro marcas concluídas acima descrevem asserções versionadas e descoberta Playwright, não um percurso executado. O E2E local 6/6 pertence à outra suíte. As pendências Neon, prova independente de `branch_id` e validação científica mantêm seus estados anteriores.
