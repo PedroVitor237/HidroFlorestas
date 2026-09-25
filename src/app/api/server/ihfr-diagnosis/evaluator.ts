@@ -75,6 +75,7 @@ export function evaluateIHFR(manifest: VerifiedManifest, input: IHFREvaluationIn
 function scoreVariable(path: string, value: unknown): VariableDecomposition {
   if (value === undefined || value === null) { if (value === undefined || optional.has(path) || path === "supplement.landUseType" || path === "terrain.slopePercent") return { included: false, raw: null, normalizedInput: null, transformation: null, score: null, clamped: false }; invalid(); }
   if (path in enumScores) {
+    if ((path === "water.hasSpring" || path === "vegetation.hasRiparianApp") && typeof value !== "boolean") invalid();
     const key = typeof value === "boolean" ? String(value) : value;
     if (typeof key !== "string" || !Object.hasOwn(enumScores[path], key)) invalid();
     return { included: true, raw: value as string | boolean, normalizedInput: value as string | boolean, transformation: `enumMappings.${path}`, score: enumScores[path][key], clamped: false };
