@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import type { PublicDiagnosis } from "../../src/types/ihfr-diagnosis.type";
 
 const email = process.env.IMP006_UI_EMAIL!;
 const password = process.env.IMP006_UI_PASSWORD!;
@@ -43,6 +44,12 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   const collectionUrl = page.url();
   const collectionId = collectionUrl.match(/collections\/([0-9a-f-]{36})/i)?.[1];
   expect(collectionId).toBeTruthy();
+  const diagnosisBase = `/api/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}/ihfr-diagnosis`;
+  async function currentDiagnosis(): Promise<PublicDiagnosis | null> {
+    const response = await page.request.get(`${diagnosisBase}/current`);
+    expect(response.status()).toBe(200);
+    return (await response.json() as { diagnosis: PublicDiagnosis | null }).diagnosis;
+  }
 
   await page.getByRole("link", { name: "Ver dados ambientais" }).click();
   await expect(page.getByText("Nenhum dado ambiental registrado")).toBeVisible();
@@ -72,8 +79,22 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar" }).click();
   const created = await createdResponse;
   expect(created.status()).toBe(201);
-  const firstDiagnosisId = (await created.json()).diagnosis?.id as string | undefined;
+  const firstDiagnosisId = (await created.json() as { diagnosis: PublicDiagnosis | null }).diagnosis?.id;
   expect(firstDiagnosisId).toMatch(/^[0-9a-f-]{36}$/i);
+  function expectInitialVector(diagnosis: PublicDiagnosis | null) {
+    expect(diagnosis?.id).toBe(firstDiagnosisId);
+    expect(diagnosis?.lifecycleState).toBe("CURRENT");
+    expect(diagnosis?.componentScores.W).toBeCloseTo(0.20, 10);
+    expect(diagnosis?.componentScores.S).toBeCloseTo(0.20, 10);
+    expect(diagnosis?.componentScores.V).toBeCloseTo(0.15, 10);
+    expect(diagnosis?.componentScores.T).toBeCloseTo(0.60, 10);
+    expect(diagnosis?.rawScore).toBeCloseTo(0.2875, 10);
+    expect(diagnosis?.displayScore).toBe(0.29);
+    expect(diagnosis?.ihfrClass).toBe("MODERATE");
+    expect(diagnosis?.dataQuality).toBe("HIGH");
+    expect(diagnosis?.drivers).toEqual(["T", "W"]);
+  }
+  expectInitialVector(await currentDiagnosis());
   const summary = page.getByRole("region", { name: "Diagnóstico IHFR experimental" });
   await expect(summary).toContainText("0.29 · MODERATE");
   await expect(summary).toContainText("HIGH");
@@ -82,12 +103,15 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.reload();
   await expect(summary).toContainText("0.29 · MODERATE");
+  expectInitialVector(await currentDiagnosis());
 
   await page.getByRole("link", { name: "Resumo" }).click();
   await page.getByRole("region", { name: "Histórico" }).getByRole("link", { name: /Coleta confirmada/ }).first().click();
   await expect(page).toHaveURL(collectionUrl);
   await expect(summary).toContainText("0.29 · MODERATE");
+  expectInitialVector(await currentDiagnosis());
   await page.getByLabel("Uso predominante da terra").selectOption("URBAN");
+  await page.getByLabel("Data e hora da observação").fill("2026-09-20T12:00");
   await page.getByRole("button", { name: "Substituir diagnóstico" }).click();
   const replacedResponse = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/ihfr-diagnosis/diagnoses"));
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar" }).click();
@@ -95,9 +119,10 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   expect(replaced.status()).toBe(201);
   const secondDiagnosisId = (await replaced.json()).diagnosis?.id as string | undefined;
   expect(secondDiagnosisId).toMatch(/^[0-9a-f-]{36}$/i);
+  expect(secondDiagnosisId).not.toBe(firstDiagnosisId);
   await expect(summary).toContainText("0.35 · MODERATE");
-  const diagnosisBase = `/api/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}/ihfr-diagnosis/diagnoses`;
-  const prior = await page.request.get(`${diagnosisBase}/${firstDiagnosisId}`);
+  expect(await currentDiagnosis()).toMatchObject({ id: secondDiagnosisId, lifecycleState: "CURRENT" });
+  const prior = await page.request.get(`${diagnosisBase}/diagnoses/${firstDiagnosisId}`);
   expect(prior.status()).toBe(200);
   expect((await prior.json()).diagnosis.lifecycleState).toBe("SUPERSEDED");
 
@@ -107,7 +132,8 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar" }).click();
   expect((await revokedResponse).status()).toBe(200);
   await expect(page.getByText("Nenhum diagnóstico IHFR vigente para esta coleta.")).toBeVisible();
-  const priorCurrent = await page.request.get(`${diagnosisBase}/${secondDiagnosisId}`);
+  expect(await currentDiagnosis()).toBeNull();
+  const priorCurrent = await page.request.get(`${diagnosisBase}/diagnoses/${secondDiagnosisId}`);
   expect(priorCurrent.status()).toBe(200);
   expect((await priorCurrent.json()).diagnosis.lifecycleState).toBe("REVOKED");
   expect(errors).toEqual([]);

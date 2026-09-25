@@ -56,6 +56,27 @@ test("required null is invalid except diagnosis-only slope and land use absence"
   assert.equal(evaluateIHFR(loadActiveIHFRManifest(), { environmental, landUseType: "FOREST" }).outcome, "SUFFICIENT");
 });
 
+test("boolean inputs accept only real booleans and preserve optional absence", () => {
+  const manifest = loadActiveIHFRManifest();
+  for (const [section, field] of [["water", "hasSpring"], ["vegetation", "hasRiparianApp"]] as const) {
+    for (const value of [true, false]) {
+      const environmental = structuredClone(IHFR_MEASUREMENT_PAYLOAD) as unknown as Record<string, Record<string, unknown>>;
+      environmental[section][field] = value;
+      assert.equal(evaluateIHFR(manifest, { environmental, landUseType: "FOREST" }).outcome, "SUFFICIENT", `${section}.${field}=${value}`);
+    }
+    for (const value of ["true", "false", 1, 0, [], {}]) {
+      const environmental = structuredClone(IHFR_MEASUREMENT_PAYLOAD) as unknown as Record<string, Record<string, unknown>>;
+      environmental[section][field] = value;
+      assert.throws(() => evaluateIHFR(manifest, { environmental, landUseType: "FOREST" }), /INVALID_INPUT/, `${section}.${field}=${JSON.stringify(value)}`);
+    }
+  }
+  for (const absent of [undefined, null]) {
+    const environmental = structuredClone(IHFR_MEASUREMENT_PAYLOAD) as unknown as Record<string, Record<string, unknown>>;
+    environmental.vegetation.hasRiparianApp = absent;
+    assert.equal(evaluateIHFR(manifest, { environmental, landUseType: "FOREST" }).outcome, "SUFFICIENT", `vegetation.hasRiparianApp=${absent}`);
+  }
+});
+
 test("each scored optional absence is excluded while zero and false remain values", () => {
   const optional = ["water.wellDepthMeters", "water.salinityIndicator", "soil.soilExposedPercent", "vegetation.hasRiparianApp"];
   for (const path of optional) {
