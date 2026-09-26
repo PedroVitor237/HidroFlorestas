@@ -1,5 +1,7 @@
 # Achados da validação da `007-ihfr-evolution`
 
+**Registro histórico:** os estados e reproduções abaixo pertencem à inspeção em que foram escritos. Consulte a seção 12 do [relatório de validação](validation-report.md) para a reconciliação R-001–R-011 e os gates de 2026-09-26.
+
 ## F-001 — Ausência obrigatória é excluída pelo avaliador
 
 - **Categoria:** Defeito comprovado por inspeção e reprodução sem banco.

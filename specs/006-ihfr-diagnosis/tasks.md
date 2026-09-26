@@ -2,7 +2,7 @@
 
 **Input**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md), [data-model.md](data-model.md), [quickstart.md](quickstart.md) e [contracts/](contracts/).
 
-**Status**: as rodadas de 2026-09-23 permanecem como histórico. T116 e T134 foram reabertas em 2026-09-24 para corrigir os dois defeitos relatados no teste persistente: UUID client-side em HTTP de rede local e incompatibilidade entre payload ambiental válido e evaluator IHFR. Ambas foram encerradas após gates e auditoria desta rodada, registrados em `implementation-evidence.md`. O PostgreSQL local permanece disponível; `PD-002`, `G2-SCI` e validações humanas seguem `NAO_VERIFICADO_VALIDACAO_POSTERIOR`.
+**Status atual (2026-09-26)**: T001–T134 registram o fechamento técnico histórico da IMP-006; T135–T143 compõem a continuidade da `007-ihfr-evolution`. As 143 tarefas estão marcadas `[X]` após gates Neon, auditoria `list=0`/`assert-zero=PASS` e revisão do diff/segredos/commits de código e testes. T141 encerra tecnicamente a continuidade, sem promover a validação científica. A prova independente endpoint → `branch_id` é `EXTERNAL_VALIDATION` separada do fechamento de engenharia; `PD-002`, `G2-SCI` e validações humanas seguem `NAO_VERIFICADO_VALIDACAO_POSTERIOR`. As reaberturas e conclusões de T116/T134 em 2026-09-24 permanecem documentadas em [implementation-evidence.md](implementation-evidence.md).
 
 **Formato**: `- [ ] TNNN [P?] [US?] ação com caminho`. `[P]` aparece somente quando as tarefas podem ser executadas simultaneamente sem escrever o mesmo arquivo nem depender de resultado ainda não produzido.
 
@@ -234,15 +234,23 @@ T134 registra o encerramento histórico de 2026-09-24; esta solicitação reabre
 
 - [X] T135 [F-001] Reproduzir em RED ausências obrigatórias, opcionais e entradas inválidas no avaliador; corrigir política e proteger elegibilidade/escrita contra diagnóstico indevido.
 - [X] T136 [F-002] Completar resumo público com origem, versões, vigência e datas; testar renderização e navegação responsiva.
-- [X] T137 [F-007] Aplicar cast `current_schema()::text` mantendo comparação de schema e regressões de isolamento.
+- [X] T137 [F-007] Aplicar cast `current_schema()::text`, preservar comparação exata de schema e verificar isolamento também pelo adapter PrismaNeon, sem patch temporário.
 - [X] T138 [F-003/F-004/F-008] Regenerar client local se necessário, classificar scripts e implementar seleção/preflight explícitos de banco direto.
-- [ ] T139 [F-005/F-009] Reconferir identidade autorizada; fortalecer auditoria/teardown e recusa de limpeza insegura.
-- [X] T140 [F-006] Executar ou preparar E2E reproduzível desde login e criação pela UI, incluindo reload e reabertura pelo histórico.
-- [X] T141 [F-001–F-009] Repetir gates no diff final, auditar resíduos/processos, atualizar cinco documentos de validação e evidência Spec Kit com matriz de fechamento.
+- [X] T139 [F-005/F-009] Confirmar identidade operacional E2E por preflight, preservar a prova independente de `branch_id` como validação externa, auditar e remover somente resíduo explicitamente autorizado sob guardas exatas e obter `assert-zero` sem limpeza implícita.
+- [X] T140 [F-006] Executar E2E reproduzível desde login e criação pela UI no Neon E2E dedicado, incluindo reload, reabertura pelo histórico, REPLACE, REVOKE e verificação de IDs/CURRENT.
+- [X] T141 [F-001–F-009/R-006; FR-011/FR-017] Repetir gates no diff final, incluindo a migration aditiva de integridade cruzada operação/CURRENT/eventos, obter auditoria `assert-zero`, revisar documentação/evidência Spec Kit e conferir diff/segredos antes do fechamento técnico da continuidade.
 - [X] T142 [revisão focal 007] Exigir booleanos reais no avaliador com RED/GREEN; refazer `observedAt` antes de REPLACE no E2E integral e proteger vetor técnico, ID persistido, novo CURRENT e ausência após REVOKE.
 - [X] T143 [setup Neon 007] Auditar sem segredos os dois endpoints recebidos; configurar `.env.e2e.local` ignorado conforme identificação/autorização posterior do responsável; repetir preflight, gates e full UI no E2E dedicado.
 
-Estado das tarefas após a execução Neon de 2026-09-25: T137 passou no adapter Prisma/Neon com 107 integrações e seis E2E IHFR; T140 passou 1/1 no fluxo UI integral, com CREATE/reload/histórico/REPLACE/REVOKE e IDs persistidos no relatório. T141 concluiu gates, auditoria e matriz com pendências explícitas. T139 permanece aberta: a identidade DEV/E2E foi informada pelo responsável e o preflight confirmou separação técnica, mas falta prova independente endpoint → `branch_id`; a auditoria encontrou um schema marcado sem autoria desta rodada comprovada. T142 preserva a correção focal anterior.
+Estado observado após a execução Neon de 2026-09-25: T137 passou no adapter PrismaNeon com 107 integrações e seis E2E IHFR; T140 passou 1/1 no fluxo UI integral, com CREATE/reload/histórico/REPLACE/REVOKE e IDs persistidos no relatório. Naquela rodada, os gates de código passaram e a auditoria read-only listou um schema candidato; isso não satisfazia `assert-zero`. Por isso T139 e T141 permanecem abertas nesta reconciliação. A identidade DEV/E2E foi informada pelo responsável e o preflight confirmou separação técnica; a prova independente endpoint → `branch_id` continua externa. T142 preserva a correção focal anterior.
+
+Checkpoint de saneamento de 2026-09-26: o único schema candidato foi removido com autorização e guardas exatas; auditoria read-only posterior `list=0`, `assert-zero=PASS`. R-006 foi reproduzido e corrigido por migration aditiva, com migration 26/26 e integração 107/107 em PostgreSQL local. Prisma 7.4.2 e Node 24.19.0 foram fixados; `npm ci`, `prisma generate` e `npm ls` passaram. Inspeção pré-deploy E2E e gates funcionais integrados ainda estão pendentes, portanto o aceite T139/T141 não foi antecipado.
+
+Checkpoint Neon posterior: quatro contagens read-only pré-deploy zero, migration aditiva aplicada em `public` E2E e status atualizado; contrato 2/2, migration 26/26 e integração 107/107 no Neon, além de unitários 220/220, validate/generate, typecheck, lint sem erros e build. E2E IHFR, full UI e auditoria pós-gates seguem em execução; T139/T141 permanecem `[ ]`.
+
+Checkpoint final dos gates Neon: E2E IHFR 6/6, novo full UI 1/1 (`HF007-UI-c7c839d4168f4188`) e auditoria pós-gates `list=0`/`assert-zero=PASS` com exit 0. O full UI confirmou CREATE, reload/histórico, REPLACE, REVOKE, CURRENT vazio, duas pontuações exibidas 0.29/0.35, três operações e quatro eventos. Um reuso do run ID foi recusado no preflight antes do servidor. T139 foi fechada; T141 aguarda somente revisão final do diff/segredos/commits.
+
+Fechamento T141: a revisão dos quatro commits técnicos locais (`6e45be8`, `4438a91`, `2feff47`, `d2c71df`) inspecionou o diff staged antes de cada commit, `git diff --check` e padrões de segredos sem achados. O diff documental final passou em `git diff --check`, links relativos e varredura de segredos; `.env.e2e.local` segue ignorado. T141 foi fechada após registrar os gates e limites em [implementation-evidence.md](implementation-evidence.md). O commit documental ainda será criado após inspeção de staging; não há push, merge ou rebase nesta rodada.
 
 Checkpoint de T143 (2026-09-25): o primeiro setup conservador bloqueou escrita remota. A instrução posterior do responsável identificou DEV e E2E, autorizou derivação do hostname direto E2E e permitiu prosseguir. Preflight read-only, migrations atualizadas, fixture de quatro contas, contrato 2/2, integração 107/107, migrations 23/23, E2E IHFR 6/6 e full UI 1/1 passaram. Unitários 218/218, typecheck, lint sem erros e build passaram no diff final. O `.env.e2e.local` segue ignorado; os recursos de UI ficaram em `public` para revisão. O schema candidato sem autoria comprovada foi preservado e está registrado no relatório.
 
@@ -254,7 +262,8 @@ Checkpoint de T143 (2026-09-25): o primeiro setup conservador bloqueou escrita r
 - US2 depende da infraestrutura compartilhada e não pode regredir US1.
 - Phase 6 depende das duas histórias verdes.
 - Phase 7 ocorre integralmente antes do teardown.
-- Phase 8 é serial; T134 é a última tarefa real e nenhuma tarefa pode ser acrescentada depois dela sem renumerar/reabrir o encerramento.
+- Phase 8 é serial dentro do escopo histórico T001–T134; T134 encerra aquele recorte. A continuidade autorizada T135–T143 tem fechamento próprio em T141, condicionado à evidência final, sem renumerar nem reabrir automaticamente as tarefas históricas.
+- Na continuidade, executar o aceite T141 por último, depois de verificar a evidência de T142/T143, T139, gates do HEAD final, auditoria `assert-zero` e diff. A ordem de aceite não depende da posição numérica de T141.
 
 ## Parallel execution examples
 
@@ -268,15 +277,16 @@ Checkpoint de T143 (2026-09-25): o primeiro setup conservador bloqueou escrita r
 
 | Requisito/critério | Tarefas principais |
 |---|---|
-| FR-001–FR-002, SC-002/SC-005 | T007, T043–T054, T083, T112 |
-| FR-003–FR-006, SC-001/SC-004 | T004, T031–T037, T041, T065–T082, T104–T106 |
-| FR-007–FR-010, SC-003 | T042, T044–T057, T107 |
-| FR-011–FR-012, SC-007 | T014–T029, T068, T073, T080–T086, T108–T110 |
-| FR-013–FR-014, SC-006 | T071–T074, T087–T090, T093–T101 |
-| FR-015–FR-017 | T034–T038, T077–T090, T109, T113 |
+| FR-001–FR-002, SC-002/SC-005 | T007, T043–T054, T083, T112, T140 |
+| FR-003–FR-006, SC-001/SC-004 | T004, T031–T037, T041, T065–T082, T104–T106, T136, T140 |
+| FR-007–FR-010, SC-003 | T042, T044–T057, T107, T136, T140 |
+| FR-011–FR-012, SC-007 | T014–T029, T068, T073, T080–T086, T108–T110, T135, T140–T142; T141 inclui verificação da migration R-006 de integridade cruzada |
+| FR-013–FR-014, SC-006 | T071–T074, T087–T090, T093–T101, T140 |
+| FR-015–FR-017 | T034–T038, T077–T090, T109, T113, T135, T141–T142; T141 inclui R-006/FR-017 |
 | FR-018 | T008–T009, T117–T123 |
-| FR-019 | T066, T069, T079, T091–T095, T104 |
-| FR-020, SC-008 | T019–T030, T107–T115, T125–T127 |
+| FR-019 | T066, T069, T079, T091–T095, T104, T140 |
+| FR-020, SC-008 | T019–T030, T107–T115, T125–T127, T137–T141, T143 |
+| Continuidade 007, F-001–F-009 e revisão focal | T135–T143; estados e evidências por ID em [implementation-evidence.md](implementation-evidence.md) e [validation-report.md](../../docs/validation/007-ihfr-evolution/validation-report.md) |
 
 ## Task distribution
 
@@ -290,9 +300,10 @@ Checkpoint de T143 (2026-09-25): o primeiro setup conservador bloqueou escrita r
 | Phase 6 — contratos/segurança/migration | 12 |
 | Phase 7 — E2E/regressões/qualidade | 9 |
 | Phase 8 — teardown/evidências/fechamento | 10 |
-| **Total** | **134** |
+| Continuidade 007 — T135–T143 | 9 |
+| **Total atual** | **143** |
 
-Há **41** marcações `[P]`, todas em arquivos distintos e condicionadas às dependências descritas. Por história, US1 possui 24 tarefas e US2 possui 39; as 71 restantes são setup, fundação ou validação transversal.
+O subtotal histórico T001–T134 é **134**; T135–T143 acrescentam **9** tarefas, sem alterar a distribuição das oito fases originais. Há **41** marcações `[P]`, todas no subtotal histórico e condicionadas às dependências descritas. Nele, US1 possui 24 tarefas, US2 possui 39 e as 71 restantes são setup, fundação ou validação transversal. No fechamento técnico desta rodada, **143/143** tarefas estão marcadas `[X]`. Isso não encerra `G2-SCI` nem a validação independente de `branch_id`.
 
 ## Mapping of finding-cited legacy tasks
 

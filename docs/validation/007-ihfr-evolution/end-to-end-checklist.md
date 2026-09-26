@@ -1,5 +1,7 @@
 # Checklist ponta a ponta da `007-ihfr-evolution`
 
+**Registro histórico de 2026-09-25:** as caixas e os estados originais abaixo não foram marcados retroativamente. Consulte a seção 12 do [relatório de validação](validation-report.md) para a execução final de 2026-09-26.
+
 ## Estado do roteiro
 
 Este roteiro foi preparado em 2026-09-25, mas nenhuma etapa abaixo foi executada

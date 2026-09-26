@@ -1,5 +1,7 @@
 # Relatório de validação da `007-ihfr-evolution`
 
+**Estado mais recente (2026-09-26):** a seção 12 reconcilia R-001–R-011 e registra os gates da rodada atual. As seções 1–11 mantêm os resultados e limites de suas respectivas execuções históricas.
+
 ## 1. Baseline e método
 
 O HEAD observado em 2026-09-25 foi
@@ -564,3 +566,58 @@ A consulta read-only não encontrou no destino atual o laboratório do checkpoin
 | F-009 | Os runners concluíram seus teardowns, mas a auditoria encontrou um candidato marcado sem autoria comprovada. | Aberto: gate de auditoria limpa FAIL; autoria `NAO_ESPECIFICADO` |
 
 `PENDENCIA_DE_DECISAO`: a validação científica definitiva permanece PD-002. O resultado técnico mantém `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
+## 12. Reconciliação R-001–R-011 e gates Neon de 2026-09-26
+
+Esta seção é um novo checkpoint, sem alterar o alcance das execuções históricas acima. O HEAD inicial da rodada foi `007-ihfr-evolution@e491cb2278d3d098928abc2fb4c08276ff43ccda`. A reanálise R-001–R-011 foi produzida antes da execução Neon da seção 11; cada estado abaixo combina aquela evidência, o worktree atual e os gates repetidos após as correções. `FIXED_AND_VERIFIED` descreve somente a propriedade indicada na linha. O Spec Kit atual registra T139/T141 `[X]` e 143/143 tarefas concluídas, sem encerrar validações externas.
+
+### 12.1 Destino, resíduos e integridade persistida
+
+`EVIDENCIA_IMPLEMENTACAO`: o preflight identificou DEV por `ea797c501213` e o endpoint E2E direto por `6903ad2ff1ef`, sem registrar URLs. A associação operacional foi autorizada pelo responsável; a prova independente endpoint → `branch_id` pela Neon Console/API permanece `EXTERNAL_VALIDATION`.
+
+O único schema residual listado antes da limpeza era `imp006_test_bce92440f0134780b9fcee23facfbeda`. Sua exclusão foi autorizada especificamente para esta rodada e ocorreu somente após confirmar cumulativamente o E2E autorizado, nome exato, prefixo allowlisted, marcador `hidroflorestas:imp006-test-harness`, 11 tabelas, zero registros e exclusão de `public`. Nenhum outro schema foi removido. A auditoria read-only `list` retornou zero candidatos e `assert-zero` passou com zero candidatos; ambos os modos não executam limpeza.
+
+Para R-006, os testes negativos em PostgreSQL isolado demonstraram o defeito: 12/12 inconsistências foram aceitas antes da correção. A migration aditiva `20260926000100_ihfr_lifecycle_reference_integrity` passou a rejeitar 15/15 casos negativos sem editar a migration histórica. Antes do deploy no E2E, quatro contagens de integridade foram zero. A migration nova foi aplicada somente no E2E autorizado e `prisma migrate status` ficou atualizado. A suíte de migrations passou 26/26 no banco local e 26/26 no Neon E2E; a integração passou 107/107 no banco local e 107/107 no Neon E2E.
+
+### 12.2 Gates observados neste checkpoint
+
+Os comandos Neon na tabela mostram a invocação canônica equivalente para reprodução. Nesta execução, um wrapper temporário fora do repositório, `imp006-run-gate.mjs`, foi iniciado com `node --env-file=.env.e2e.local`, transmitiu o ambiente aos scripts oficiais `node --import=tsx ...` e sanitizou a saída. O wrapper não foi versionado; nenhum valor de ambiente aparece no relatório.
+
+| Comando ou gate | Ambiente e resultado observado | Estado |
+|---|---|---|
+| `npm ci`, `prisma generate`, `npm ls` | Node `24.19.0`; CLI, Client, três adapters e único `@prisma/driver-adapter-utils` em `7.4.2`; `@types/node` direto em `24.19.0`. | PASS |
+| `prisma validate` e `prisma generate` | Schema atual e Client `7.4.2`, sem alterar schema/migration histórica. | PASS |
+| `npm run test:unit` | 220/220. | PASS |
+| `npm run typecheck`; `npm run lint`; `npm run build` | Typecheck e build passaram; lint com zero erros e quatro avisos preexistentes. | PASS |
+| Testes R-006 RED/GREEN | 12/12 inconsistências aceitas antes; 15/15 rejeitadas depois da migration aditiva, em PostgreSQL isolado. | PASS como prova de reprodução e correção |
+| `npm run test:integration`; `npm run test:migration` | PostgreSQL local próprio: 107/107 e 26/26. | PASS |
+| `node --env-file=.env.e2e.local --import=tsx scripts/imp006-test-runner.ts contract` | Neon E2E, schema isolado, 2/2 após deploy. | PASS |
+| `node --env-file=.env.e2e.local --import=tsx scripts/imp006-test-runner.ts migration` | Neon E2E, schema isolado, 26/26 após deploy. | PASS |
+| `node --env-file=.env.e2e.local --import=tsx scripts/imp006-test-runner.ts integration` | Neon E2E, schema isolado, 107/107 no adapter alinhado e migration nova. | PASS |
+| `node --env-file=.env.e2e.local --import=tsx scripts/imp006-local-e2e.ts` | Neon E2E, schema isolado, 6/6. | PASS |
+| `node --env-file=.env.e2e.local --import=tsx scripts/imp006-full-ui-e2e.ts` | Neon E2E dedicado, `public`, novo run `HF007-UI-c7c839d4168f4188`, 1/1. | PASS |
+| `node --env-file=.env.e2e.local --import=tsx scripts/imp006-audit-schemas.ts list` | Neon E2E, read-only, zero schemas `imp006_test_*` após os gates. | PASS |
+| `node --env-file=.env.e2e.local --import=tsx scripts/imp006-audit-schemas.ts assert-zero` | Neon E2E, read-only, zero candidatos, código de saída 0. | PASS |
+| Revisão de diff/segredos dos commits de código e testes; `git diff --check` | Quatro commits locais de código/testes foram revisados antes de criados; `git diff --check` do worktree documental passou e a varredura do diff não encontrou padrões de segredo. | PASS; commit documental separado |
+
+O `npm ci` terminou com código zero, mas o npm 12 informou que bloqueou scripts de instalação de sete pacotes. `prisma generate`, build e os gates de runtime acima passaram no ambiente observado. O resultado histórico 1/1 do full UI da seção 11 foi repetido por um novo run ID neste diff.
+
+O preflight recusou a tentativa de reutilizar um run ID full UI antes de iniciar o servidor. No run novo `HF007-UI-c7c839d4168f4188`, a consulta read-only em `public` confirmou laboratório `74a120b4-6930-41ff-a5e7-4f1e3ec58618`, área `5199e490-22cb-49c5-a455-bd3e1689c808` e coleta `bd730d47-2175-47f3-adbf-4a9e7c74a33b`. CREATE gerou diagnóstico `600ab0ee-4781-428f-8178-f658b50c1da3` com exibição `0.29`; REPLACE gerou `63caa69e-7524-4ec9-9baf-b465d1bd604c` com exibição `0.35`. Após REVOKE, havia zero ponteiros `CURRENT`, três operações e quatro eventos. O teste completo percorreu login, laboratório, área, coleta, dados ambientais, elegibilidade, CREATE, reload, histórico, REPLACE e REVOKE. Os recursos desse cenário permanecem no `public` do E2E autorizado para revisão.
+
+### 12.3 Matriz R-001–R-011 no estado observado
+
+| Item | Estado neste checkpoint | Evidência e mudança | Pendência ou limite |
+|---|---|---|---|
+| R-001 PrismaNeon | `FIXED_AND_VERIFIED` | Integração Neon 107/107 e E2E IHFR 6/6 no diff atual exercitaram `PrismaNeon` e `current_schema()::text`, sem patch temporário. | Nenhuma pendência técnica deste achado. |
+| R-002 versões Prisma | `FIXED_AND_VERIFIED` | Manifesto, lockfile e árvore instalada alinham CLI, Client e três adapters em `7.4.2`; único utilitário Prisma `7.4.2`; Client regenerado, contrato Neon 2/2, migrations Neon 26/26, integração 107/107 e E2E 6/6. | Nenhuma pendência técnica deste achado. |
+| R-003 `branch_id` | `EXTERNAL_VALIDATION` | Alvos autorizados e fingerprints DEV/E2E distintos, com preflight E2E direto. | Falta consulta independente à Neon Console/API que vincule endpoint e `branch_id`. |
+| R-004 full UI em `public` | `FIXED_AND_VERIFIED` | Novo full UI 1/1 após adapter/migration usou apenas `public` do E2E dedicado, com conta sintética e recursos preservados para revisão. | Revisão ou descarte futuro dos dados do E2E permanece operação separada. |
+| R-005 ambiente E2E | `FIXED_AND_VERIFIED` | O comando explícito `node --env-file=.env.e2e.local` está documentado como estratégia; `git check-ignore` confirmou o arquivo ignorado. | Cada execução remota deve carregar o arquivo explicitamente, sem expor valores. |
+| R-006 integridade cruzada | `FIXED_AND_VERIFIED` | RED 12/12 aceitos, GREEN 15/15 rejeitados; migration aditiva aplicada após quatro contagens E2E zero; status atualizado, migrations Neon 26/26, integração 107/107 e E2E 6/6. | Nenhuma pendência técnica deste achado. |
+| R-007 auditoria e resíduo | `FIXED_AND_VERIFIED` | Modos read-only `list`/`assert-zero`; único schema autorizado removido sob guardas exatas; auditoria final zero candidatos, `assert-zero` código 0. | Nenhum schema temporário residual no instante final auditado. |
+| R-008 Spec Kit | `FIXED_AND_VERIFIED` | Inventário atual: T001–T143, total 143, com fechamento histórico T001–T134 e continuidade T135–T143; traceability atual inclui a continuidade. | T139/T141 estão `[X]`; 143/143 tarefas concluídas. |
+| R-009 Node | `FIXED_AND_VERIFIED` | `.node-version` fixa `24.19.0`; `engines` admite patches 24 a partir dessa versão; `npm ci`, unitários 220/220, typecheck, lint e build passaram nessa versão. | CI não existe neste repositório para fixação adicional. |
+| R-010 Google Fonts | `TECHNICAL_DEBT_ACCEPTED` | Poppins usa `next/font/google`; não há fonte local rastreada e o build passou com rede. | Build offline requer entrega própria com asset/licença verificados; não bloqueia o IHFR. |
+| R-011 validação científica | `EXTERNAL_VALIDATION` | O contrato v0.1 permanece experimental e os gates técnicos não equivalem a calibração ou aprovação científica. | Especialistas, vetores científicos, campo e validação humana permanecem externos. |
+
+T139 foi encerrada após preflight, limpeza autorizada, gates Neon e auditoria final limpa. T141 foi marcada `[X]` no Spec Kit após a revisão dos gates, diff, segredos e quatro commits locais de código/testes (`6e45be8`, `4438a91`, `2feff47`, `d2c71df`). A documentação desta seção é mantida separada dos commits de código e testes. Permanecem `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.

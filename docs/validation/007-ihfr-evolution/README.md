@@ -1,5 +1,7 @@
 # Validação da `007-ihfr-evolution`
 
+**Estado mais recente (2026-09-26):** consulte a seção 12 do [relatório de validação](validation-report.md) e o checkpoint ao final deste índice. As seções anteriores preservam o estado observado em cada rodada histórica.
+
 ## Objetivo
 
 Este diretório registra a validação da continuidade da IMP-006 na branch
@@ -40,7 +42,7 @@ ou evidência histórica não é tratada como prova de funcionamento integrado.
   `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e
   `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
 
-## Estado resumido
+## Estado resumido da inspeção inicial de 2026-09-25
 
 `EVIDENCIA_IMPLEMENTACAO`: todas as etapas do fluxo possuem rotas, formulários,
 serviços e persistência conectados por inspeção. O fluxo completo não foi
@@ -108,3 +110,11 @@ cientificamente validado. Os detalhes, limitações e soluções propostas estã
 ## Fechamento focal posterior — 2026-09-25
 
 `EVIDENCIA_IMPLEMENTACAO`: a revisão focal sobre o HEAD inicial `85ce3c7a` fechou a aceitação indevida de strings em dois campos booleanos e completou o teste full UI com nova data de observação antes de REPLACE, vetor técnico literal e identidade do diagnóstico em CREATE/reload/histórico/REPLACE/REVOKE. Os gates locais e a auditoria passaram, como detalhado em [`validation-report.md`](validation-report.md). O percurso full UI e os gates Neon permanecem `NAO_EXECUTADO` por falta de configuração e conta sintética; nenhuma validação científica foi concluída.
+
+## Saneamento de 2026-09-26 — gates Neon concluídos
+
+`EVIDENCIA_IMPLEMENTACAO`: esta rodada começou em `007-ihfr-evolution@e491cb2278d3d098928abc2fb4c08276ff43ccda`. A execução Neon de 2026-09-25, registrada acima e no relatório, permanece evidência histórica de contrato 2/2, integração 107/107, migrations 23/23, E2E IHFR 6/6 e full UI 1/1 no código então testado. O novo diff alinha a família Prisma em `7.4.2`, fixa Node `24.19.0`, acrescenta uma migration aditiva de integridade do ciclo IHFR e separa auditoria read-only em `list` e `assert-zero`.
+
+No E2E autorizado, o alvo DEV tem fingerprint sanitizado `ea797c501213` e o E2E direto `6903ad2ff1ef`. O schema residual exato `imp006_test_bce92440f0134780b9fcee23facfbeda` foi removido após conferir alvo, nome, prefixo, marcador, 11 tabelas vazias e exclusão de `public`; a auditoria final `list` e `assert-zero` encontrou zero candidatos. A migration nova foi aplicada no E2E após quatro contagens prévias iguais a zero, e o status de migrations ficou atualizado. No código atual, Prisma validate/generate, unitários 220/220, typecheck, lint sem erros, build, contrato Neon 2/2, migrations Neon 26/26, integração Neon 107/107, E2E IHFR Neon 6/6 e novo full UI 1/1 passaram. Localmente, integração 107/107 e migrations 26/26 passaram. Os comandos, o cenário novo e a matriz R-001–R-011 constam em [`validation-report.md`](validation-report.md).
+
+**Fechamento técnico registrado:** T139 e T141 estão `[X]`; o Spec Kit registra 143/143 tarefas concluídas após os gates Neon, a auditoria limpa e a revisão de diff, segredos e commits de código/testes. A identidade independente endpoint → `branch_id` e a validação científica permanecem externas. A v0.1 conserva `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.

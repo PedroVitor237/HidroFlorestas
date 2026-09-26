@@ -14,12 +14,12 @@ Siga a ordem abaixo para garantir que o projeto e o banco de dados estejam sincr
 
 ### 1. Instalação de Dependências
 
-Após clonar o repositório, navegue até a pasta raiz e instale os pacotes necessários:
+Use Node.js `24.19.0`, conforme `.node-version`, e npm. Após clonar o repositório, navegue até a pasta raiz e instale os pacotes necessários conforme o lockfile:
 
 **Bash**
 
 ```
-npm install
+npm ci
 ```
 
 ### 2. Configuração do Banco de Dados (Prisma)

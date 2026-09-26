@@ -1,5 +1,7 @@
 # Reanálise das pendências e do uso de Prisma na `007-ihfr-evolution`
 
+**Registro histórico:** os achados R-001–R-011 refletem o HEAD de 2026-09-25 indicado abaixo. Consulte a seção 12 do [relatório de validação](validation-report.md) para a reconciliação com o worktree e os gates de 2026-09-26.
+
 **Data da análise:** 2026-09-25
 
 **Branch analisada:** `007-ihfr-evolution`

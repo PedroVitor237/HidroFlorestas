@@ -1,12 +1,14 @@
 # Feature Specification: Diagnóstico IHFR
 
-**Feature Branch**: `006-ihfr-diagnosis`
+**Feature Branch**: `006-ihfr-diagnosis` (origem)
+
+**Continuidade atual**: `007-ihfr-evolution`
 
 **Created**: 2026-09-16
 
-**Status**: Remediação documental focal concluída em 2026-09-20. A implementação técnica experimental T001–T134 foi encerrada em 2026-09-23 após a resolução explícita de `PD-018` e a repetição dos gates afetados. `G2-SCI` e a validação humana permanecem `VALIDACAO_POSTERIOR`.
+**Status atual (2026-09-26)**: a implementação técnica experimental T001–T134 tem fechamento histórico, iniciado em 2026-09-23 após resolução explícita de `PD-018` e revalidado na correção de 2026-09-24. A continuidade `007-ihfr-evolution` acrescentou T135–T143 e está tecnicamente encerrada após gates Neon, auditoria zero e revisão final; seus aceites estão em [tasks.md](tasks.md) e [implementation-evidence.md](implementation-evidence.md). A remediação documental focal de 2026-09-20 permanece histórica. `G2-SCI` e a validação humana seguem `VALIDACAO_POSTERIOR`; a prova independente de `branch_id` segue `EXTERNAL_VALIDATION`.
 
-**Input**: IMP-006 — calcular, tornar vigente e consultar um diagnóstico IHFR experimental ligado à coleta e à área de origem, com contrato versionado, proveniência e ciclo imutável. Esta consolidação prepara nova análise independente e não implementa a feature.
+**Input**: IMP-006 — calcular, tornar vigente e consultar um diagnóstico IHFR experimental ligado à coleta e à área de origem, com contrato versionado, proveniência e ciclo imutável. Na data da especificação inicial (2026-09-16), esta consolidação preparava análise independente e ainda não implementava a feature.
 
 ## Authority and Scope
 
@@ -191,7 +193,7 @@ Esses critérios são metas verificáveis, não resultados já alcançados. Veto
 
 O conjunto ambiental não implementa `mathContractVersion`, `algorithmVersion` nem `contractHash`. O model legado `IHFRDiagnosis`, seu default `algorithmVersion = "1.0.0"`, classes, scores, qualidade e `explanationAI` não podem ser promovidos ao contrato experimental por inferência.
 
-### Dependências e gates materiais
+### Dependências e gates materiais — snapshot do planejamento de 2026-09-20
 
 | Gate | Classificação e fonte | Evidência exigida para liberação | Impacto atual |
 |---|---|---|---|
@@ -201,7 +203,9 @@ O conjunto ambiental não implementa `mathContractVersion`, `algorithmVersion` n
 | G2-SCI — Validação definitiva | `PENDENCIA_DE_DECISAO`: revisão especializada e campo | Pareceres, calibração, comparação, vetores científicos, amostra, método, métricas e limitações | `NAO_VERIFICADO_VALIDACAO_POSTERIOR`; não bloqueia construção experimental rotulada, mas proíbe alegação definitiva |
 | G3-ENG — Produção, responsabilidade e ciclo | `DECISAO_CONFIRMADA`: ADR-0001 §10 | Avaliador interno determinístico, OWNER/ADMIN, imutabilidade, estados, chave própria, concorrência, recuperação e auditoria definidos | `RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`; implementação pendente |
 
-O escopo documental, o plano e as tarefas `T001–T134` remediados estão prontos para nova execução independente de `$speckit-analyze`. A ordem executável começa por setup e caracterização da baseline, segue por preflight de banco, design Prisma, migration, validação/aplicação isolada, geração do client, fixtures, shells compiláveis, RED comportamental, implementação, verdes e regressões; teardown, evidências e encerramento vêm por último. Implementação permanece posterior e condicionada ao resultado dessa análise.
+Os estados de implementação pendente na coluna histórica acima se referem à data do planejamento. A implementação experimental foi executada depois; os gates técnicos mais recentes e seus limites estão em [implementation-evidence.md](implementation-evidence.md). `G2-SCI` segue externo e sem aprovação definitiva.
+
+Na remediação documental de 2026-09-20, o escopo, o plano e as tarefas T001–T134 ficaram preparados para análise independente de `$speckit-analyze`. A ordem então prevista começava por setup e caracterização da baseline, seguia por preflight de banco, design Prisma, migration, validação/aplicação isolada, geração do client, fixtures, shells compiláveis, RED comportamental, implementação, verdes e regressões; teardown, evidências e encerramento vinham por último. Esse era um plano histórico anterior à implementação. O estado observado da continuidade T135–T143 está em [tasks.md](tasks.md) e [implementation-evidence.md](implementation-evidence.md).
 
 As invariantes de G3 vigentes são as do ADR-0001 §10: OWNER/ADMIN calculam e transitam; MEMBER consulta; processo autônomo fica adiado; há no máximo um `CURRENT`; registros e entradas são imutáveis; transições são auditáveis; consulta expõe proveniência mínima e estado experimental sem identidades restritas.
 

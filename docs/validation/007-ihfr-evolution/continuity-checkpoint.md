@@ -1,5 +1,7 @@
 # Checkpoint de continuidade — fluxo integral pela interface
 
+**Registro histórico de 2026-09-25:** os estados abaixo pertencem ao checkpoint original. Consulte a seção 12 do [relatório de validação](validation-report.md) para o estado e os gates de 2026-09-26.
+
 ## Estado protegido
 
 - Data: 2026-09-25.

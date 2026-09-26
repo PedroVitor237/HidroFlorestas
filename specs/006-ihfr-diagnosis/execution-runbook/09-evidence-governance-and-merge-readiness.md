@@ -1,5 +1,7 @@
 # 09 — Evidência, governança e prontidão para merge
 
+> **Escopo histórico:** os critérios abaixo pertencem à execução original T001–T134. A continuidade autorizada acrescentou T135–T143 sem renumerar as tarefas anteriores; T141 fechou tecnicamente essa continuidade após gates, auditoria `assert-zero` e revisão final em 2026-09-26. Consultar [tasks.md](../tasks.md) e [plan.md](../plan.md) para o estado atual.
+
 ## Status inicial
 
 PENDENTE. [implementation-evidence.md](../implementation-evidence.md) registra apenas execução até T082 e limites E2E; [pr-description.md](../pr-description.md) é texto preparado historicamente, não descrição de implementação final. evidence/human-validation.md ainda não existe. TD-015/TD-016 estão PARCIALMENTE_IMPLEMENTADO após reconciliação documental; só a entrega integral poderá mudar o estado para IMPLEMENTADO_VERIFICADO.
@@ -37,7 +39,7 @@ Uma suíte verde em commit antigo, uma revisão humana presumida ou uma branch a
 5. Executar git fetch origin, git status --short --branch, git merge-base origin/development HEAD, git rev-list --left-right --count origin/development...HEAD, git diff --name-status origin/development...HEAD e git diff --check. Se development avançou, comparar alterações sobrepostas, planejar integração normal da base na feature preservando ambos os lados, resolver conflitos por conteúdo e repetir toda validação afetada; não usar reset/rebase destrutivo nem forçar push. A branch development não é alterada pelo preparo de PR.
 6. Inspecionar diff completo, arquivos não rastreados e staged, buscando segredo, token, cookie, URL de banco, PII, payload ambiental sensível, docs/raw/** e alterações fora do recorte. Confirmar que o arquivo não rastreado da IMP-005 continua fora do PR. Revisar também migrations, generated files e evidências de teardown.
 7. Preparar comparação do PR com base development e head exato validado. Depois de eventual commit/push autorizado no fluxo da equipe, revalidar SHA remoto, checks e evidências; se HEAD mudou, executar novamente os gates afetados antes de dizer pronto. Abertura/merge do PR seguem o fluxo autorizado da equipe; este runbook apenas define critérios, não os executa.
-8. Atualizar tarefas em tasks.md só com resultado real: nenhuma de T001–T133 fica marcada concluída por existência de arquivo, SKIP ou teste anterior ao HEAD. T134 é a última e somente fecha quando T001–T133 estiverem concluídas ou justificadas conforme contrato, zero estado residual e evidencia final/PR coerentes. Não acrescentar tarefas depois de T134 sem renumerar/reabrir encerramento.
+8. Atualizar tarefas em tasks.md só com resultado real: nenhuma de T001–T133 fica marcada concluída por existência de arquivo, SKIP ou teste anterior ao HEAD. Neste recorte histórico, T134 encerrava T001–T133 após evidência final coerente e zero estado residual. A continuidade posterior T135–T143 tem aceite próprio em T141 e não reabre automaticamente T134.
 9. Se a implementação integral foi verificada, acrescentar linhas históricas em TECH_DECISIONS.md para TD-015/TD-016 com origem técnica, comandos/artefatos e data; então atualizar estado corrente para IMPLEMENTADO_VERIFICADO. Se qualquer gate funcional obrigatório ficar aberto, manter PARCIALMENTE_IMPLEMENTADO. G2-SCI e PD-002 continuam abertos independentemente dos gates técnicos.
 
 ## Regras e invariantes
@@ -58,7 +60,7 @@ PR baseado em SHA não validado, development com drift material não reconciliad
 
 ## Critérios de conclusão
 
-T001–T134 fechadas/justificadas de modo auditável; evidências e PR correspondem ao mesmo HEAD; branch reconciliada e sem arquivos fora do escopo; todos os gates técnicos executados GREEN e ambiente limpo; PD-002 explicitamente pendente. Prontidão para merge significa aptidão objetiva para revisão, não autorização automática para publicar/mesclar.
+Para o escopo original, T001–T134 fechadas/justificadas de modo auditável; evidências e PR correspondem ao mesmo HEAD; branch reconciliada e sem arquivos fora do escopo; todos os gates técnicos executados GREEN e ambiente limpo; PD-002 explicitamente pendente. Para a continuidade atual, aplicam-se também T135–T143 e seus gates em [tasks.md](../tasks.md). Prontidão para merge significa aptidão objetiva para revisão, não autorização automática para publicar/mesclar.
 
 ## Estado de saída esperado
 

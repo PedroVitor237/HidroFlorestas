@@ -4,7 +4,7 @@
 
 **Input**: `specs/006-ihfr-diagnosis/spec.md`
 
-**Status**: planejamento técnico remediado para a v0.1 experimental e reconciliado com a IMP-008 integrada pelo PR #27. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos; `G2-SCI` permanece `VALIDACAO_POSTERIOR`. O encerramento técnico de 2026-09-23 permanece como histórico. T116 e T134 foram reabertas e encerradas na correção dos dois defeitos observados em teste persistente em 2026-09-24, após os gates e a auditoria registrados em `implementation-evidence.md`.
+**Status atual**: `CONCLUIDO` para o fechamento técnico da continuidade `007-ihfr-evolution` T135–T143, após gates Neon, auditoria `assert-zero` e revisão final T141 em 2026-09-26. O fechamento T001–T134, inclusive a reabertura e nova conclusão de T116/T134 em 2026-09-24, permanece histórico. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos; `G2-SCI` permanece `VALIDACAO_POSTERIOR` e a prova independente de `branch_id` permanece `EXTERNAL_VALIDATION`.
 
 ## Correção de integração observada em teste persistente — 2026-09-24
 
@@ -36,9 +36,9 @@ Produzir, tornar vigente, consultar, substituir e revogar um diagnóstico IHFR e
 
 ## Technical Context
 
-**Language/Version**: TypeScript `^5`, React `19.2.4`, Node compatível com Next.js `^16.1.6`; cálculo server-side em IEEE-754 binary64.
+**Language/Version**: TypeScript `^5`, React `19.2.4`, Node compatível com Next.js `^16.1.6`; cálculo server-side em IEEE-754 binary64. Na rodada final, Node `24.19.0` foi fixado e exercitado com `npm ci`, unitários 220/220, typecheck, lint sem erros, build e suítes Neon verdes.
 
-**Primary Dependencies**: Next.js `^16.1.6`, Prisma/client `^7.4.2`, adapter Neon `^7.7.0`, `node:crypto`; nenhuma dependência, Python, FastAPI, IA ou serviço externo novo.
+**Primary Dependencies (baseline histórico)**: Next.js `^16.1.6`, Prisma/client `^7.4.2`, adapter Neon `^7.7.0`, `node:crypto`; nenhuma dependência, Python, FastAPI, IA ou serviço externo novo. O saneamento atual alinhou a família Prisma em `7.4.2` exata, inclusive `@prisma/adapter-neon`; Client regenerado e gates Prisma/PostgreSQL/Neon passaram.
 
 **Storage**: PostgreSQL via Prisma; novas relações aditivas para suplemento, resultado experimental, ponteiro vigente, operação idempotente e eventos de ciclo/auditoria. O manifesto continua versionado no repositório, não editável pelo banco.
 
@@ -91,7 +91,7 @@ specs/006-ihfr-diagnosis/
     └── ihfr-diagnosis-api.openapi.yaml
 ```
 
-`.specify/feature.json` aponta localmente para esta feature e é ignorado pelo Git. `tasks.md` contém a sequência executável `T001–T134`; `pr-description.md` prepara somente o texto de um PR futuro.
+`.specify/feature.json` aponta localmente para esta feature e é ignorado pelo Git. O recorte original de `tasks.md` era T001–T134; a continuidade autorizada T135–T143 elevou o inventário atual a 143 tarefas, sem renumeração. `pr-description.md` prepara somente o texto de um PR futuro.
 
 ### Source Code (repository root)
 
@@ -277,3 +277,37 @@ Checkpoint de 2026-09-25: T135/T136/T138 concluídas com RED/GREEN, Client regen
 `EVIDENCIA_IMPLEMENTACAO`: em T142, o avaliador passou a exigir `boolean` real para `water.hasSpring` e `vegetation.hasRiparianApp`, sem alterar manifesto ou cálculo. O teste E2E integral fornece novamente `observedAt` após reload e reabertura e usa um oráculo literal para W/S/V/T, score bruto e exibido, classe, qualidade, drivers e identidade do diagnóstico em CREATE, reload, histórico, REPLACE e REVOKE. O teste não chama o avaliador para gerar expectativas.
 
 `EVIDENCIA_IMPLEMENTACAO`: RED/GREEN focal, unitários completos, typecheck, lint, build, contrato, integração, migration e E2E IHFR local passaram. A descoberta Playwright do percurso full UI passou, mas esse percurso e os gates Neon seguem `NAO_EXECUTADO` por ausência da configuração e da conta sintética. T137/T139/T140/T141 e G2-SCI conservam seus estados anteriores; o resultado técnico local não aprova a v0.1 cientificamente.
+
+## Rodada final de saneamento da continuidade 007 — 2026-09-26
+
+**Identificador e estado**: R-001–R-011 da [reanálise histórica](../../docs/validation/007-ihfr-evolution/2026-09-25-reanalise-pendencias-prisma.md), reconciliados com HEAD e com a [execução Neon posterior](../../docs/validation/007-ihfr-evolution/validation-report.md). Estado `EM_ANDAMENTO` até T139/T141 cumprirem seus critérios; a reanálise não reabre automaticamente achados já superados por evidência posterior.
+
+**Objetivo e resultado esperado**: deixar a continuidade 007 tecnicamente coerente e auditável: defeitos reproduzidos corrigidos, gates no diff final, zero schemas `imp006_test_*` residuais comprovado por auditoria somente leitura, tarefas e matriz R-001–R-011 reconciliadas. `G2-SCI`, `PD-002` e validações humanas ficam explicitamente externas, sem promoção científica do contrato.
+
+**Escopo e limites**: investigar integridade cruzada operação/CURRENT/eventos (R-006) em PostgreSQL descartável e só criar migration aditiva se o banco aceitar estado que viole FR-011/FR-017; implementar auditoria `list`/`assert-zero` (R-007); remover exclusivamente o schema residual nomeado na autorização atual, condicionado a destino E2E, nome, marcador, onze tabelas vazias e proteção de `public`; reconciliar Spec Kit (R-008), runtime Node (R-009) e dívidas de dependências/fontes (R-002/R-010). Não alterar manifestos científicos, hashes, fórmula, `docs/raw/**`, a migration publicada `20260920000100_ihfr_experimental_diagnosis` ou a branch base. A migration aditiva foi aplicada somente no E2E autorizado; não executar deploy da aplicação, nem migration em DEV/produção, push, merge ou rebase.
+
+**Fontes e autoridade**: solicitação atual da equipe e `AGENTS.md` governam o recorte; [spec.md](spec.md), [ADR-0001](../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) e políticas de fonte governam intenção experimental; código, schema, migration, testes e execução Neon demonstram apenas implementação. A reanálise de 2026-09-25 é evidência de HEAD anterior, não status atual. Toda inferência/recomendação mantém rótulo próprio, e prova independente endpoint → `branch_id` continua validação externa se a Console/API não estiver autenticada.
+
+**Baseline preservado**: branch `007-ihfr-evolution`, HEAD inicial `e491cb2278d3d098928abc2fb4c08276ff43ccda`, diff rastreado vazio. Os não rastreados preexistentes `imp006-final-stat.txt`, `imp006-final-status.txt` e `imp006-final.diff`, além de `.env.e2e.local` ignorado, ficam fora dos commits. O cenário full UI já comprovado permanece em `public` da branch Neon E2E para revisão; nenhuma limpeza de `public` é autorizada.
+
+**Dependências e ordem**:
+
+1. Reconciliar R-001–R-011 com HEAD e evidência Neon posterior; registrar condições realmente abertas. T137 e T140 já têm prova Neon, e T143 registra o setup executado.
+2. Exercitar casos negativos R-006 em schema descartável; se reproduzidos, corrigir com migration nova mínima e repetir testes afetados, inclusive full UI quando o fluxo puder ter mudado.
+3. Separar auditoria read-only em `list` e `assert-zero`, testar saída/código e executar limpeza somente do schema autorizado após verificar todas as guardas. Repetir ambas as auditorias e exigir zero candidatos antes de fechar T139.
+4. Resolver estratégia de runtime Node e classificar R-002/R-010 por risco real; atualizar documentação executável sem inferir validação científica ou prova de `branch_id`.
+5. Repetir `prisma validate`, `prisma generate`, `npm run test:unit`, `npm run typecheck`, `npm run lint`, `npm run build`, contrato, migration, integração, E2E IHFR e, se afetado, full UI no destino E2E autorizado. Fazer auditoria `assert-zero`, revisar diff, links, segredos, escopo e processos; fechar T141 só após resultados observados.
+
+**Estratégia técnica executada e verificada**: `prisma`, `@prisma/client`, `@prisma/adapter-pg` e `@prisma/adapter-neon` foram alinhados em `7.4.2` exata; Node foi fixado em `24.19.0`, `engines >=24.19.0 <25` e `@types/node 24.19.0`. `npm ci`, Client regenerado e suítes Prisma/PostgreSQL/Neon passaram, sem migração para Prisma 8. R-002/R-009 estão `FIXED_AND_VERIFIED`. R-010 fica classificado `TECHNICAL_DEBT_ACCEPTED`: Poppins via `next/font/google` requer rede para build, e não há asset local aprovado para substituição; esse limite operacional não altera a ciência nem bloqueia a 007.
+
+**Responsáveis e pontos de revisão**: engenharia da rodada executa e registra os gates; responsável por prova independente da Neon Console/API e autoridade científica: não especificado. Uma guarda de banco divergente impede apenas a remoção afetada. Mudança científica, fonte conflitante sem autoridade ou alteração material de escopo exige revisão competente antes da parte dependente; etapas independentes prosseguem. O schema residual não será removido se qualquer guarda falhar.
+
+**Evidência e histórico de estado**: em 2026-09-25, Neon passou contrato 2/2, integração 107/107, migrations 23/23, E2E IHFR 6/6 e full UI 1/1; unitários 218/218, typecheck, lint sem erros e build passaram. Naquela rodada a auditoria listou um candidato, de modo que `assert-zero` ainda não tinha prova. Em 2026-09-26, a reconciliação mantém T139/T141 abertas até auditoria e gates finais, preservando o fechamento histórico T001–T134. Resultados novos, desvios e decisão de encerramento serão registrados em [implementation-evidence.md](implementation-evidence.md), [tasks.md](tasks.md) e no relatório de validação da 007.
+
+**Checkpoint de 2026-09-26**: a remoção do único schema residual passou após guardas exatas e a auditoria read-only posterior retornou `list=0` e `assert-zero=PASS` no E2E autorizado. `npm ci`, `prisma generate` e `npm ls` passaram em Node `24.19.0` com Prisma `7.4.2` alinhado. R-006 foi reproduzido por RED 12/12 inconsistências aceitas; a migration aditiva `20260926000100_ihfr_lifecycle_reference_integrity` rejeitou 15/15 casos negativos, com migration local 26/26 e integração local 107/107. Inspeção read-only dos dados E2E, deploy versionado e gates Neon após essa migration continuam pendentes neste checkpoint. T139/T141 seguem abertas até a revisão final integrada; a prova independente de `branch_id` e a validação científica permanecem externas.
+
+**Checkpoint Neon pós-migration**: quatro consultas somente leitura pré-deploy retornaram zero inconsistências; a migration nova foi aplicada em `public` do E2E autorizado e `prisma migrate status` confirmou banco atualizado. Contrato 2/2, migration 26/26 e integração 107/107 passaram no Neon; unitários 220/220, `prisma validate`, `prisma generate`, typecheck, lint zero erros/quatro avisos e build passaram. E2E IHFR, full UI e auditoria final após todos os gates ainda estão em andamento. A marcação de T139/T141 e o estado `CONCLUIDO` continuam condicionados a esses resultados e à revisão final do diff.
+
+**Checkpoint dos gates finais Neon**: E2E IHFR 6/6, full UI 1/1 em novo run ID `HF007-UI-c7c839d4168f4188`, auditoria pós-gates `list=0` e `assert-zero=PASS` com exit 0. Consulta read-only confirmou dois diagnósticos, três operações, quatro eventos e nenhum CURRENT após REVOKE; o preflight recusou reuso do run ID antes de iniciar servidor. T139 foi concluída, com prova independente de `branch_id` classificada como `EXTERNAL_VALIDATION`. T141 e o estado `CONCLUIDO` aguardam somente inspeção final do diff/segredos/commits e registro de fechamento; ciência permanece pendente.
+
+**Encerramento técnico da rodada**: quatro commits locais de runtime, integridade, auditoria e testes (`6e45be8`, `4438a91`, `2feff47`, `d2c71df`) tiveram diff staged inspecionado antes de cada commit, `git diff --check` e varredura de segredos limpos. A documentação da feature passou em contagem mecânica de 143 IDs únicos, links relativos, diff check e revisão de segredos; o arquivo `.env.e2e.local` permanece ignorado. T139/T141 estão `[X]`, a matriz R-001–R-011 e os gates constam no [relatório de validação](../../docs/validation/007-ihfr-evolution/validation-report.md), e a engenharia da continuidade está `CONCLUIDO`. O commit documental será realizado somente depois de inspecionar seu staging; não houve push, merge ou rebase. `G2-SCI`, `PD-002`, revisão humana e prova independente endpoint → `branch_id` seguem externos, sem impedir o encerramento técnico experimental.

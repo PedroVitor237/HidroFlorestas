@@ -1,5 +1,7 @@
 # Runbook de execução da IMP-006 — Diagnóstico IHFR
 
+> **Escopo histórico (2026-09-21):** este runbook descreve a execução original T001–T134 a partir de um checkout parcial. Seus estados de stubs, SKIP, tarefas pendentes e prontidão são snapshots daquela data. A continuidade T135–T143 foi tecnicamente encerrada em 2026-09-26; seus aceites estão em [tasks.md](../tasks.md), [plan.md](../plan.md) e [implementation-evidence.md](../implementation-evidence.md). Este runbook não define o estado presente da branch.
+
 ## Objetivo e público
 
 Este runbook orienta o próximo agente de implementação e a revisão técnica desde o estado parcial atual até uma branch verificável e pronta para avaliação de merge. Ele complementa [spec.md](../spec.md), [plan.md](../plan.md), [tasks.md](../tasks.md), [data-model.md](../data-model.md), [quickstart.md](../quickstart.md), [ADR-0001](../../../docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md) e os [contratos](../contracts/); não os substitui. Cada etapa tem entradas, saídas, verificações e parada próprias. A presente execução é exclusivamente documental: nenhuma tarefa funcional pendente foi implementada.

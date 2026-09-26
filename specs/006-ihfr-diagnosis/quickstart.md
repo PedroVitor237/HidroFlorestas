@@ -1,11 +1,11 @@
 # Quickstart: validação do diagnóstico IHFR experimental
 
-**Purpose**: guia executável para provar a implementação futura da IMP-006 sem confundir conformidade técnica com validação científica.
+**Purpose**: guia executável para validar a IMP-006 e sua continuidade 007 sem confundir conformidade técnica com validação científica. As seções 1–10 preservam o roteiro original; o estado e os comandos remotos atuais estão na seção de continuidade ao final.
 
 ## 1. Prerequisites
 
-- branch `006-ihfr-diagnosis` reconciliada com a baseline registrada em [plan.md](plan.md);
-- Node/dependências do projeto instalados;
+- branch original `006-ihfr-diagnosis` reconciliada com a baseline histórica em [plan.md](plan.md); a continuidade atual é executada em `007-ihfr-evolution`, conforme o plano vigente ao final daquele arquivo;
+- Node `24.19.0` e dependências do projeto instalados para a rodada final (verificar `node --version` e `npm ci` antes dos gates);
 - PostgreSQL isolado autorizado para testes de migration/concorrência;
 - banco de teste sem dados reais, credenciais ou PII;
 - manifesto e contratos presentes em [contracts/](contracts/).
@@ -239,7 +239,7 @@ Testes verdes não removem `CONTRATO_EXPERIMENTAL`, `SUJEITO_A_RECALIBRACAO` ou 
 
 ## Continuidade corretiva 007 — comandos no diff de 2026-09-25
 
-`test:contract`, `test:integration` e `test:migration` escrevem em schemas PostgreSQL descartáveis e agora fazem um preflight único, somente leitura, antes da descoberta. `test:unit`, `typecheck`, `lint` e `build` não exigem banco real; o build pode usar datasource local fictício somente para geração do Client, sem iniciar aplicação conectada. `test:e2e:ihfr` escreve em schema descartável e encerra servidor próprio. `test:e2e:ihfr:full-ui` usa `public` apenas na branch E2E dedicada, cria domínio somente pela interface e preserva o cenário para revisão. `test:ihfr:audit` lista schemas temporários em leitura, sem apagá-los.
+`test:contract`, `test:integration` e `test:migration` escrevem em schemas PostgreSQL descartáveis e fazem um preflight único, somente leitura, antes da descoberta. `test:unit`, `typecheck`, `lint` e `build` não exigem banco real; o build pode usar datasource local fictício somente para geração do Client, sem iniciar aplicação conectada. `test:e2e:ihfr` escreve em schema descartável e encerra servidor próprio. `test:e2e:ihfr:full-ui` usa `public` apenas na branch E2E dedicada, cria domínio somente pela interface e preserva o cenário para revisão. `test:ihfr:audit` lista schemas temporários em leitura; `test:ihfr:audit:assert-zero` falha quando houver candidato. Ambos são somente leitura e não executam cleanup.
 
 | Comando | Banco/escrita | Pré-condição | Cleanup |
 |---|---|---|---|
@@ -248,9 +248,32 @@ Testes verdes não removem `CONTRATO_EXPERIMENTAL`, `SUJEITO_A_RECALIBRACAO` ou 
 | `npm run test:e2e:ihfr` | PostgreSQL/Next.js, sim | mesma seleção e preflight; servidor externo herdado recusado | servidor próprio encerrado; schema exclusivo descartado |
 | `npm run test:e2e:ihfr:full-ui` | PostgreSQL/Next.js, sim | mesmos guards; schema inicial `public` E2E; `IMP006_UI_EMAIL`, `IMP006_UI_PASSWORD`, `IMP006_UI_RUN_ID=HF007-UI-*`; conta ativa já preparada e migrations versionadas aplicadas | servidor próprio encerrado; domínio preservado por run ID exato |
 | `npm run test:ihfr:audit` | PostgreSQL, somente leitura | mesma seleção de destino | nenhuma remoção |
+| `npm run test:ihfr:audit:assert-zero` | PostgreSQL, somente leitura | mesma seleção de destino; exige zero schemas `imp006_test_*` | nenhuma remoção |
 
-Para a jornada completa, a conta de login é a única pré-condição de domínio fora da interface. Confira antes por leitura que o run ID não corresponde a recurso preexistente; use um ID novo para a execução automatizada. O checkpoint `HF007-UI-20260925-2295502` deve ser consultado antes de retomar, pois esta rodada não teve configuração E2E disponível. Não adaptar um URL pooled removendo `-pooler`: a forma direta precisa ser fornecida explicitamente em `TEST_DATABASE_URL`. A comparação de identidade normaliza esse sufixo apenas para evitar alvo de desenvolvimento igual. Não desative validação TLS.
+Para a jornada completa, a conta de login é a única pré-condição de domínio fora da interface. Confira antes por leitura que o run ID não corresponde a recurso preexistente; use um ID novo para a execução automatizada. O checkpoint `HF007-UI-20260925-2295502` pertence ao preflight histórico, antes da configuração E2E. Naquele momento a orientação conservadora exigia URL direto fornecido explicitamente. A instrução posterior do responsável identificou DEV/E2E e autorizou, para este destino E2E específico, derivar o hostname direto removendo `-pooler` somente do hostname. Isso não constitui regra geral para outros alvos nem prova independente de `branch_id`. Não desative validação TLS.
 
 O wrapper histórico `scripts/imp006-local-postgresql.ps1` continua admitido para as suítes descartáveis quando define `IMP006_LOCAL_POSTGRESQL=1` e aponta ambos os URLs exclusivamente ao cluster próprio `127.0.0.1:55426`; nesse modo local, a igualdade entre eles é esperada. O modo remoto exige identidades distintas. O E2E de `public` da branch dedicada recusa o modo local, exige `prisma migrate status` verde com URL direto e recusa um run ID cujo nome exato de laboratório já exista. Migrations pendentes devem ser avaliadas e aplicadas somente pelo fluxo versionado autorizado, antes de repetir o E2E.
 
-Na validação local de 2026-09-25, `test:contract` passou em 2/2, `test:migration` em 23/23, `test:integration` em 107/107 e `test:e2e:ihfr` em 6/6. O `PrismaPg` local seleciona `TimeZone=UTC` na conexão: uma comparação com `pg` reproduziu deslocamento de três horas em `timestamptz` quando a sessão do adapter usava `America/Sao_Paulo`; o E2E confirma o instante UTC original após reload. O teste de falha injetada descartou o schema e `test:ihfr:audit` retornou zero candidatos. O percurso `full-ui` e os mesmos gates no Neon ainda exigem a configuração E2E do destino autorizado, indisponível neste workspace.
+Na validação local de 2026-09-25, `test:contract` passou em 2/2, `test:migration` em 23/23, `test:integration` em 107/107 e `test:e2e:ihfr` em 6/6. O `PrismaPg` local seleciona `TimeZone=UTC` na conexão: uma comparação com `pg` reproduziu deslocamento de três horas em `timestamptz` quando a sessão do adapter usava `America/Sao_Paulo`; o E2E confirma o instante UTC original após reload. O teste de falha injetada descartou o schema e `test:ihfr:audit` retornou zero candidatos. A ausência de configuração Neon e full UI descrita naquele checkpoint foi superada pela execução posterior, registrada abaixo.
+
+### Estratégia canônica de ambiente e evidência Neon posterior
+
+O arquivo `.env.e2e.local` é local e ignorado pelo Git. O runner não carrega esse arquivo por conta própria: o operador deve iniciar cada comando remoto com `node --env-file=.env.e2e.local`, por exemplo:
+
+```bash
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-test-runner.ts contract
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-local-e2e.ts
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-full-ui-e2e.ts
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-audit-schemas.ts list
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-audit-schemas.ts assert-zero
+```
+
+Usar a variante correspondente ao script oficial para integração, migration e auditoria; não copiar variáveis ou connection strings para comandos, logs ou documentação. O preflight oficial deve confirmar destino direto E2E, seleção, identidade diferente de DEV, banco esperado e schema permitido antes de qualquer escrita. Em 2026-09-25, preflight e migrations atualizadas passaram; contrato Neon 2/2, integração 107/107, migration 23/23, E2E IHFR 6/6 e full UI 1/1 passaram. A jornada full UI comprovou login, criação de laboratório/área/coleta/medição, CREATE, reload, histórico com mesmo ID, REPLACE, SUPERSEDED, REVOKE e CURRENT vazio. A auditoria daquela rodada listou um schema candidato; após remoção autorizada em 2026-09-26, `list=0` e `assert-zero=PASS`. Naquele checkpoint, o fechamento ainda dependia dos gates após as alterações; o resultado final consta abaixo. Ver [validation-report.md](../../docs/validation/007-ihfr-evolution/validation-report.md) e [implementation-evidence.md](implementation-evidence.md).
+
+O alinhamento aplicado nesta rodada fixa Prisma `7.4.2` em CLI, Client e adapters pg/Neon, executado em Node `24.19.0`; `npm ci`, `prisma generate`, `npm ls` e os gates funcionais completos passaram no banco local e no Neon E2E conforme o checkpoint final abaixo. `next/font/google` para Poppins depende de rede no build enquanto não existir asset local aprovado; esse item é dívida técnica operacional, não falha do IHFR.
+
+A migration aditiva `20260926000100_ihfr_lifecycle_reference_integrity` cobre o defeito R-006: antes de aplicar em `public` E2E, consultar somente em leitura se operação, CURRENT e eventos já possuem referências cruzadas inválidas. Se qualquer consulta encontrar linha, interromper o deploy e investigar sem backfill inferido. Em schema descartável, o RED aceitou 12 inconsistências e o GREEN rejeitou 15 casos negativos com SQLSTATE `23514`; a suíte migration local passou 26/26. Após deploy versionado autorizado, repetir migration, integração, contrato, E2E e auditoria `assert-zero` no destino E2E. A migration publicada original permanece intacta.
+
+No deploy E2E desta rodada, as quatro consultas pré-deploy retornaram zero, a migration nova foi aplicada apenas em `public` autorizado e o status ficou atualizado. Contrato 2/2, migration 26/26 e integração 107/107 passaram no Neon; E2E IHFR, full UI e auditoria pós-gates ainda estavam em execução neste checkpoint. Esses resultados não dispensam o preflight nas próximas rodadas.
+
+Na sequência, E2E IHFR 6/6, full UI 1/1 em novo run ID e auditoria final `list=0`/`assert-zero=PASS` também passaram no Neon E2E. O preflight recusou reuso do run ID antes de iniciar servidor. Diff, padrões de segredos e os quatro commits técnicos locais foram revisados; T141 foi encerrada com 143/143 tarefas marcadas. O commit documental será inspecionado no staging antes de ser criado. A prova independente de `branch_id` permanece validação externa documentada, e a ciência continua pendente.
