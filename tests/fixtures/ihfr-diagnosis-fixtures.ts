@@ -2,7 +2,7 @@ import type { PoolClient } from "pg";
 import { insertIHFRActorFixtures } from "./ihfr-diagnosis-actors";
 import { insertIHFRContextFixtures } from "./ihfr-diagnosis-contexts";
 import { insertIHFRDomainFixtures } from "./ihfr-diagnosis-domain";
-import { applyAreaMigration, applyCollectionMigration, applyEnvironmentalMigration, applyIHFRDiagnosisMigration, applyRemoveLegacyIsAdminMigration, applyUserAdministrationMigration } from "../migration/migration-test-harness";
+import { applyAreaMigration, applyCollectionMigration, applyEnvironmentalMigration, applyIHFRDiagnosisMigration, applyIHFRLifecycleReferenceMigration, applyRemoveLegacyIsAdminMigration, applyUserAdministrationMigration } from "../migration/migration-test-harness";
 
 export async function setupIHFRDiagnosisFixtures(client: PoolClient) {
   await applyAreaMigration(client);
@@ -11,6 +11,7 @@ export async function setupIHFRDiagnosisFixtures(client: PoolClient) {
   await applyUserAdministrationMigration(client);
   await applyIHFRDiagnosisMigration(client);
   await applyRemoveLegacyIsAdminMigration(client);
+  await applyIHFRLifecycleReferenceMigration(client);
   await client.query("BEGIN");
   try {
     await insertIHFRActorFixtures(client);

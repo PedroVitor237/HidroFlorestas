@@ -8,7 +8,7 @@ test("IHFR fixtures cover actors, contexts and lifecycle states", async () => {
     await setupIHFRDiagnosisFixtures(client);
     assert.deepEqual(await countIHFRDiagnosisFixtures(client), {
       users: 6, laboratories: 2, supplements: 1, diagnoses: 3,
-      current: 1, operations: 4, events: 6,
+      current: 1, operations: 5, events: 6,
     });
   });
 });

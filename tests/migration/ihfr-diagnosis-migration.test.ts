@@ -11,6 +11,7 @@ import {
   applyCollectionMigration,
   applyEnvironmentalMigration,
   applyIHFRDiagnosisMigration,
+  applyIHFRLifecycleReferenceMigration,
   applyRemoveLegacyIsAdminMigration,
   applyUserAdministrationMigration,
 } from "./migration-test-harness";
@@ -25,6 +26,7 @@ async function applyIntegratedChain(client: Parameters<typeof insertIHFRLegacyBa
 async function applyIHFRAndLegacyRemoval(client: Parameters<typeof insertIHFRLegacyBaseline>[0]) {
   await applyIHFRDiagnosisMigration(client);
   await applyRemoveLegacyIsAdminMigration(client);
+  await applyIHFRLifecycleReferenceMigration(client);
 }
 
 async function insertExperimentalDependencies(client: Parameters<typeof insertIHFRLegacyBaseline>[0]) {

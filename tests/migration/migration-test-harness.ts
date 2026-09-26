@@ -9,6 +9,7 @@ export const environmentalMigrationPath = "prisma/migrations/20260917000100_envi
 export const userAdministrationMigrationPath = "prisma/migrations/20260919000100_user_administration/migration.sql";
 export const ihfrDiagnosisMigrationPath = "prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql";
 export const removeLegacyIsAdminMigrationPath = "prisma/migrations/20260920000100_remove_legacy_is_admin/migration.sql";
+export const ihfrLifecycleReferenceMigrationPath = "prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity/migration.sql";
 
 export function normalizePostgresqlTextArray(value: unknown): string[] {
   if (Array.isArray(value) && value.every((item) => typeof item === "string")) {
@@ -115,4 +116,8 @@ export async function applyIHFRDiagnosisMigration(client: PoolClient) {
 
 export async function applyRemoveLegacyIsAdminMigration(client: PoolClient) {
   await client.query(await readFile(removeLegacyIsAdminMigrationPath, "utf8"));
+}
+
+export async function applyIHFRLifecycleReferenceMigration(client: PoolClient) {
+  await client.query(await readFile(ihfrLifecycleReferenceMigrationPath, "utf8"));
 }

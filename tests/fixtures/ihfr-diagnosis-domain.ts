@@ -9,7 +9,7 @@ const hash = (character: string) => `sha256:${character.repeat(64)}`;
 
 export const IHFR_DOMAIN = {
   supplement: id(61), currentDiagnosis: id(62), supersededDiagnosis: id(63), revokedDiagnosis: id(64),
-  currentOperation: id(71), supersededOperation: id(72), revokedOperation: id(73),
+  currentOperation: id(71), supersededOperation: id(72), revokedOperation: id(73), replacementOperation: id(75),
   insufficientOperation: id(74),
   candidates: {
     valid: { inputContractVersion: "ihfr-diagnosis-input-experimental-v0.1.0", landUseType: "FOREST" },
@@ -44,17 +44,18 @@ export async function insertIHFRDomainFixtures(client: PoolClient) {
     );
   }
   const operations = [
-    [IHFR_DOMAIN.supersededOperation, id(81), IHFR_DOMAIN.supersededDiagnosis, "SUCCEEDED"],
-    [IHFR_DOMAIN.revokedOperation, id(82), IHFR_DOMAIN.revokedDiagnosis, "SUCCEEDED"],
-    [IHFR_DOMAIN.currentOperation, id(83), IHFR_DOMAIN.currentDiagnosis, "SUCCEEDED"],
-    [IHFR_DOMAIN.insufficientOperation, id(84), null, "INSUFFICIENT_DATA"],
+    [IHFR_DOMAIN.supersededOperation, id(81), IHFR_DOMAIN.supersededDiagnosis, "CREATE_OR_REPLACE", "SUCCEEDED"],
+    [IHFR_DOMAIN.revokedOperation, id(82), IHFR_DOMAIN.revokedDiagnosis, "REVOKE", "SUCCEEDED"],
+    [IHFR_DOMAIN.currentOperation, id(83), IHFR_DOMAIN.currentDiagnosis, "CREATE_OR_REPLACE", "SUCCEEDED"],
+    [IHFR_DOMAIN.insufficientOperation, id(84), null, "CREATE_OR_REPLACE", "INSUFFICIENT_DATA"],
+    [IHFR_DOMAIN.replacementOperation, id(85), IHFR_DOMAIN.revokedDiagnosis, "CREATE_OR_REPLACE", "SUCCEEDED"],
   ] as const;
-  for (const [operationId, key, diagnosisId, outcome] of operations) {
+  for (const [operationId, key, diagnosisId, operationType, outcome] of operations) {
     await client.query(
-      `INSERT INTO "IHFRDiagnosisOperation" (id,"laboratoryRoomId","collectionAreaId","collectionDataId","actorUserId","idempotencyKey","requestHash","operationType",outcome,"diagnosisId","responseSnapshot","completedAt") VALUES ($1,$2,$3,$4,$5,$6,$7,'CREATE_OR_REPLACE',$8,$9,$10::jsonb,now())`,
+      `INSERT INTO "IHFRDiagnosisOperation" (id,"laboratoryRoomId","collectionAreaId","collectionDataId","actorUserId","idempotencyKey","requestHash","operationType",outcome,"diagnosisId","responseSnapshot","completedAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb,now())`,
       [operationId, IHFR_LABORATORIES.active, IHFR_CONTEXTS.activeArea, collection,
         IHFR_ACTORS.owner, key, hash(operationId === IHFR_DOMAIN.insufficientOperation ? "d" : "b"),
-        outcome, diagnosisId, JSON.stringify({ outcome, diagnosisId })],
+        operationType, outcome, diagnosisId, JSON.stringify({ outcome, diagnosisId })],
     );
   }
   await client.query(
@@ -67,7 +68,7 @@ export async function insertIHFRDomainFixtures(client: PoolClient) {
       ($2,$4,$6,'REVOKED',NULL,$7,$10,'fixture revocation',now(),$9::jsonb),
       ($3,$4,$11,'CREATED_CURRENT',NULL,$7,$12,NULL,now(),$9::jsonb)`,
     [id(91), id(92), id(93), collection, IHFR_DOMAIN.supersededDiagnosis,
-      IHFR_DOMAIN.revokedDiagnosis, IHFR_ACTORS.owner, IHFR_DOMAIN.supersededOperation,
+      IHFR_DOMAIN.revokedDiagnosis, IHFR_ACTORS.owner, IHFR_DOMAIN.replacementOperation,
       JSON.stringify({ restricted: true }), IHFR_DOMAIN.revokedOperation,
       IHFR_DOMAIN.currentDiagnosis, IHFR_DOMAIN.currentOperation],
   );
@@ -78,6 +79,6 @@ export async function insertIHFRDomainFixtures(client: PoolClient) {
       ($3,$4,$7,'CREATED_CURRENT',NULL,$8,$12,NULL,'2026-09-20T12:03:00.000Z',$10::jsonb)`,
     [id(94), id(95), id(96), collection, IHFR_DOMAIN.supersededDiagnosis, IHFR_DOMAIN.revokedDiagnosis,
       IHFR_DOMAIN.currentDiagnosis, IHFR_ACTORS.owner, IHFR_DOMAIN.supersededOperation,
-      JSON.stringify({ restricted: true }), IHFR_DOMAIN.revokedOperation, IHFR_DOMAIN.currentOperation],
+      JSON.stringify({ restricted: true }), IHFR_DOMAIN.replacementOperation, IHFR_DOMAIN.currentOperation],
   );
 }

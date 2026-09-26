@@ -47,7 +47,7 @@ test("real PostgreSQL lifecycle persists replacement, revocation, creation and r
       (SELECT count(*)::int FROM "CurrentExperimentalIHFRDiagnosis") current,
       (SELECT count(*)::int FROM "IHFRDiagnosisOperation") operations,
       (SELECT count(*)::int FROM "IHFRDiagnosisLifecycleEvent") events`)).rows[0];
-    assert.deepEqual(counts, { supplements: 2, diagnoses: 5, current: 1, operations: 7, events: 10 });
+    assert.deepEqual(counts, { supplements: 2, diagnoses: 5, current: 1, operations: 8, events: 10 });
   });
 });
 

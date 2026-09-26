@@ -11,6 +11,7 @@ import {
   applyCollectionMigration,
   applyEnvironmentalMigration,
   applyIHFRDiagnosisMigration,
+  applyIHFRLifecycleReferenceMigration,
   applyRemoveLegacyIsAdminMigration,
   applyUserAdministrationMigration,
   normalizePostgresqlTextArray,
@@ -18,6 +19,8 @@ import {
 
 const migrationDirectory =
   "prisma/migrations/20260920000100_ihfr_experimental_diagnosis";
+const lifecycleReferenceMigrationDirectory =
+  "prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity";
 
 test("IMP-006 migration keeps its published slot in the integrated IMP-009 chain", () => {
   const migrations = readdirSync("prisma/migrations", { withFileTypes: true })
@@ -27,11 +30,14 @@ test("IMP-006 migration keeps its published slot in the integrated IMP-009 chain
   const administrationMigration = "20260919000100_user_administration";
   const ihfrMigration = "20260920000100_ihfr_experimental_diagnosis";
   const legacyRemovalMigration = "20260920000100_remove_legacy_is_admin";
+  const lifecycleReferenceMigration = "20260926000100_ihfr_lifecycle_reference_integrity";
 
   assert.equal(existsSync(`${migrationDirectory}/migration.sql`), true);
+  assert.equal(existsSync(`${lifecycleReferenceMigrationDirectory}/migration.sql`), true);
   assert.ok(migrations.indexOf(administrationMigration) < migrations.indexOf(ihfrMigration));
   assert.ok(migrations.indexOf(ihfrMigration) < migrations.indexOf(legacyRemovalMigration));
-  assert.equal(migrations.at(-1), legacyRemovalMigration);
+  assert.ok(migrations.indexOf(legacyRemovalMigration) < migrations.indexOf(lifecycleReferenceMigration));
+  assert.equal(migrations.at(-1), lifecycleReferenceMigration);
 });
 
 test("legacy, IMP-005 and additive IMP-006 models coexist", () => {
@@ -58,7 +64,9 @@ test("migration is additive, immutable and contains no backfill", () => {
 });
 
 test("all explicit IMP-006 database identifiers are ASCII, unique and PostgreSQL-safe", () => {
-  const sql = readFileSync(`${migrationDirectory}/migration.sql`, "utf8");
+  const sql = [migrationDirectory, lifecycleReferenceMigrationDirectory]
+    .map((directory) => readFileSync(`${directory}/migration.sql`, "utf8"))
+    .join("\n");
   const patterns = [
     /CREATE TYPE "([^"]+)"/g,
     /CREATE TABLE "([^"]+)"/g,
@@ -100,6 +108,7 @@ test(
       await applyUserAdministrationMigration(client);
       await applyIHFRDiagnosisMigration(client);
       await applyRemoveLegacyIsAdminMigration(client);
+      await applyIHFRLifecycleReferenceMigration(client);
 
       const expectedTables = [
         "CurrentExperimentalIHFRDiagnosis",
@@ -123,6 +132,7 @@ test(
         "ExperimentalIHFRInputSupplement_payload_hash_check",
         "IHFRDiagnosisLifecycleEvent_shape_check",
         "IHFRDiagnosisOperation_key_check",
+        "IHFRDiagnosisOperation_outcome_diagnosis_check",
         "IHFRDiagnosisOperation_request_hash_check",
       ];
       const constraints = await client.query(
@@ -225,12 +235,15 @@ test(
 
       const expectedTriggers = [
         "imp006_current_context",
+        "imp006_current_operation",
         "imp006_diagnosis_context",
         "imp006_diagnosis_immutable",
         "imp006_event_context",
         "imp006_event_immutable",
+        "imp006_event_operation",
         "imp006_operation_context",
         "imp006_operation_immutable",
+        "imp006_operation_reference",
         "imp006_supplement_context",
         "imp006_supplement_immutable",
       ];
