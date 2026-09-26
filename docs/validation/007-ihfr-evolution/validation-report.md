@@ -526,3 +526,41 @@ Somente o PostgreSQL local próprio recebeu schemas/fixtures descartáveis; o ha
 | `npm run test:e2e:ihfr:full-ui` e gates/auditoria Neon | `.env.e2e.local`, `TEST_DATABASE_URL`, conta e run ID sintéticos ausentes. | NAO_EXECUTADO |
 
 `PENDENCIA_DE_DECISAO`: a validação científica definitiva permanece PD-002. `EVIDENCIA_IMPLEMENTACAO`: a prova independente Neon endpoint → `branch_id`, o adapter Prisma/Neon neste diff, a auditoria remota e o percurso full UI seguem sem execução; a autorização histórica não foi convertida em resultado desta rodada. `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO` continuam obrigatórios.
+
+## 11. Execução final no Neon E2E (2026-09-25)
+
+`EVIDENCIA_IMPLEMENTACAO`: a rodada começou em `007-ihfr-evolution@a7cf4e24f1b34891caeb8ac224e134b5b7e40854`, sem diff rastreado. Os três arquivos `imp006-final-*` não rastreados eram preexistentes e foram preservados. Nenhum pull ou conflito apareceu durante esta execução.
+
+O primeiro checkpoint desta seção havia parado antes do acesso remoto: as duas URLs recebidas eram pooled, com fingerprints sanitizados `ea797c501213` e `6903ad2ff1ef`, diferentes dos fingerprints históricos. `FATO_DOCUMENTADO` — em instrução posterior nesta conversa, o responsável identificou explicitamente a primeira como DEV e a segunda como E2E e autorizou derivar a URL direta E2E removendo `-pooler` somente do hostname. Essa associação não é prova independente endpoint → `branch_id` pela Neon Console/API. O `.env.e2e.local` local e ignorado recebeu essas configurações, senha sintética exclusiva, confirmação e seletor oficiais; nenhum valor de conexão ou senha foi versionado.
+
+O preflight oficial em transação somente leitura passou no destino direto `6903ad2ff1ef`, distinto de DEV `ea797c501213`, com banco esperado e `current_schema() = public`. `prisma migrate status` informou migrations atualizadas; não foi necessário `migrate deploy`. A fixture de autenticação confirmou quatro contas sintéticas permitidas. As suítes de contrato, integração, migrations e E2E IHFR usaram schemas isolados; o full UI usou `public` no destino E2E dedicado e preservou seus recursos para revisão.
+
+| Gate desta rodada | Resultado | Estado |
+|---|---|---|
+| Preflight Neon direto e `prisma migrate status` | Alvos distintos, E2E `public`, migrations atualizadas. | PASS |
+| Fixture sintética de autenticação | Quatro contas permitidas preparadas no E2E. | PASS |
+| Contrato no Neon | 2/2. | PASS |
+| Integração no Neon, inclusive adapter Prisma/Neon e `current_schema()::text` | 107/107. | PASS |
+| Migrations em schemas isolados no Neon | 23/23. | PASS |
+| E2E IHFR em schema isolado no Neon | 6/6. | PASS |
+| Full UI real no Neon | 1/1 após corrigir três seletores ambíguos do teste. | PASS |
+| `npm run test:unit`; `npm run typecheck`; `npm run lint`; `npm run build` | 218/218; sem erros; zero erros e quatro avisos preexistentes; build Next/Prisma com datasource fictício somente de build. | PASS |
+| Auditoria remota read-only e processos do workspace | Comando PASS; um schema candidato com marcador esperado, sem autoria desta rodada comprovada; nenhum processo Next/Playwright do workspace em execução. | FAIL no critério de zero resíduos; autoria `NAO_ESPECIFICADO` |
+
+As tentativas do full UI ficaram rastreáveis: `HF007-UI-7f49429ecccc4959` parou antes do login por ambiguidade em “Senha” e, após correção, criou apenas o laboratório `82a940f9-6d79-4efa-9e5b-d7547551c4cc` antes da ambiguidade em “Áreas”. `HF007-UI-8debba7646d2421e` criou laboratório `713cdccc-c820-4182-9b17-1ff2c70b5028`, área `23db89b9-499e-4132-bdd7-126c7d7c26c4`, coleta `4ffcf1ea-d801-405b-8082-7576602bf87e` e diagnóstico `4e625bb0-9605-40a2-9361-0a6e2ec0156b` (`CURRENT`, 0.29); parou ao localizar o resumo por nome parcial. Os registros parciais foram preservados, sem exclusão ou reutilização de run ID.
+
+O cenário completo `HF007-UI-a7f1d3d01e434ab0` criou laboratório `b46c2813-7e5b-4e99-b6f8-1cdbd849dffd`, área `3fac45bc-9188-4fc9-97f6-584bdb7ced1c` e coleta `2a740c81-f19d-46f6-98a6-76903e156a0e` pela interface. CREATE produziu `08d23144-e1d0-4b81-9ac6-8e37f7197d37`, `CURRENT`, componentes W=0.20/S=0.20/V=0.15/T=0.60, bruto 0.2875, exibição 0.29, `MODERATE`, `HIGH` e drivers `[T,W]`. O teste confirmou o mesmo ID após reload e reabertura pelo histórico, inclusive em viewport 390 × 844 sem overflow. REPLACE criou `998829b1-b989-41f3-b795-9a9ccdd28b3c`, exibição 0.35, e tornou o anterior `SUPERSEDED`. REVOKE tornou o segundo `REVOKED`; consulta read-only posterior confirmou quatro eventos de ciclo de vida e nenhum ponteiro `CURRENT`.
+
+A consulta read-only não encontrou no destino atual o laboratório do checkpoint histórico `HF007-UI-20260925-2295502`; isso não altera o registro histórico nem prova sua inexistência em outro destino. A auditoria listou `imp006_test_bce92440f0134780b9fcee23facfbeda` com marcador esperado, mas sua criação nesta rodada não foi comprovada. A regra de limpeza exige essa prova, portanto o schema foi preservado. Todos os runners desta rodada concluíram com código 0 após a correção dos seletores; nenhum processo próprio ficou ativo.
+
+### 11.1 Fechamento dos achados no diff atual
+
+| Achado | Evidência desta rodada | Estado |
+|---|---|---|
+| F-001/F-002 | Integração 107/107, E2E IHFR 6/6 e full UI 1/1, inclusive vetor, resumo público e ciclo de vida. | CORRIGIDO_VERIFICADO_NO_NEON_E2E |
+| F-003/F-004 | Client gerado, typecheck, preflight antes de escrita e contrato/migrations remotos verdes. | VERIFICADO |
+| F-005 | Destinos DEV/E2E identificados pelo responsável; conexão direta e isolamento técnico confirmados pelo preflight. | Aberto: falta prova independente de `branch_id` |
+| F-006/F-007/F-008 | Jornada integral UI, cast `current_schema()::text` pelo adapter Neon e política de URL direta exercitados. | VERIFICADO_NO_NEON_E2E |
+| F-009 | Os runners concluíram seus teardowns, mas a auditoria encontrou um candidato marcado sem autoria comprovada. | Aberto: gate de auditoria limpa FAIL; autoria `NAO_ESPECIFICADO` |
+
+`PENDENCIA_DE_DECISAO`: a validação científica definitiva permanece PD-002. O resultado técnico mantém `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.

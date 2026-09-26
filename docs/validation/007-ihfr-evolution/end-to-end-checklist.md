@@ -296,3 +296,19 @@ O novo E2E integral usa o vetor técnico 0.29 desta lista. Ele está preparado p
 - [ ] Executar esse roteiro no destino E2E dedicado e registrar os IDs/resultados reais: `NAO_EXECUTADO` sem `.env.e2e.local` e conta sintética.
 
 As quatro marcas concluídas acima descrevem asserções versionadas e descoberta Playwright, não um percurso executado. O E2E local 6/6 pertence à outra suíte. As pendências Neon, prova independente de `branch_id` e validação científica mantêm seus estados anteriores.
+
+## 9. Execução no Neon E2E — 2026-09-25
+
+- [x] Conferir branch, HEAD, commits anteriores e arquivos locais preexistentes.
+- [x] Configurar `.env.e2e.local` ignorado: primeiro endpoint DEV, segundo E2E conforme identificação explícita do responsável; derivar somente o hostname direto E2E e usar senha sintética exclusiva. Nenhum segredo foi versionado.
+- [x] Confirmar por preflight read-only os alvos distintos, o endpoint E2E direto, banco e schema `public`; confirmar migrations atualizadas e quatro contas sintéticas.
+- [x] Executar no Neon: contrato 2/2, integração 107/107, migrations 23/23 e E2E IHFR 6/6 em schemas isolados.
+- [x] Corrigir no teste full UI seletores ambíguos de senha, navegação e resumo; repetir com novo run ID após cada criação parcial.
+- [x] Executar `HF007-UI-a7f1d3d01e434ab0` pela interface: login → laboratório `b46c2813-7e5b-4e99-b6f8-1cdbd849dffd` → área `3fac45bc-9188-4fc9-97f6-584bdb7ced1c` → coleta `2a740c81-f19d-46f6-98a6-76903e156a0e` → medição → IHFR.
+- [x] Confirmar CREATE `08d23144-e1d0-4b81-9ac6-8e37f7197d37` e vetor W=0.20/S=0.20/V=0.15/T=0.60, bruto 0.2875, exibição 0.29, `MODERATE`, `HIGH`, `[T,W]`; manter a identidade após reload e histórico em 390 × 844.
+- [x] Confirmar REPLACE `998829b1-b989-41f3-b795-9a9ccdd28b3c` distinto, 0.35 e `CURRENT`, e REVOKE seguido de consulta `diagnosis: null`. A inspeção read-only posterior encontrou o anterior `SUPERSEDED`, o segundo `REVOKED` e nenhum ponteiro CURRENT.
+- [x] Repetir unitários 218/218, typecheck, lint sem erros e build; auditar processos próprios encerrados.
+- [x] Auditar schemas remotamente: um candidato marcado (`imp006_test_bce92440f0134780b9fcee23facfbeda`) sem autoria desta rodada comprovada. Preservar até atribuição; o auditor não executa limpeza.
+- [ ] Obter prova independente endpoint → `branch_id` na Neon Console/API e atribuir o schema candidato antes de eventual limpeza.
+
+As tentativas parciais `HF007-UI-7f49429ecccc4959` (laboratório somente) e `HF007-UI-8debba7646d2421e` (laboratório, área, coleta e um diagnóstico CURRENT 0.29) permanecem em `public` para revisão. O checkpoint histórico `HF007-UI-20260925-2295502` não apareceu na consulta read-only ao destino atual. A execução comprova o fluxo técnico experimental, sem aprovação científica definitiva.

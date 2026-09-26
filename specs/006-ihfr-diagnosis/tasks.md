@@ -234,14 +234,17 @@ T134 registra o encerramento histórico de 2026-09-24; esta solicitação reabre
 
 - [X] T135 [F-001] Reproduzir em RED ausências obrigatórias, opcionais e entradas inválidas no avaliador; corrigir política e proteger elegibilidade/escrita contra diagnóstico indevido.
 - [X] T136 [F-002] Completar resumo público com origem, versões, vigência e datas; testar renderização e navegação responsiva.
-- [ ] T137 [F-007] Aplicar cast `current_schema()::text` mantendo comparação de schema e regressões de isolamento.
+- [X] T137 [F-007] Aplicar cast `current_schema()::text` mantendo comparação de schema e regressões de isolamento.
 - [X] T138 [F-003/F-004/F-008] Regenerar client local se necessário, classificar scripts e implementar seleção/preflight explícitos de banco direto.
 - [ ] T139 [F-005/F-009] Reconferir identidade autorizada; fortalecer auditoria/teardown e recusa de limpeza insegura.
-- [ ] T140 [F-006] Executar ou preparar E2E reproduzível desde login e criação pela UI, incluindo reload e reabertura pelo histórico.
-- [ ] T141 [F-001–F-009] Repetir gates no diff final, auditar resíduos/processos, atualizar cinco documentos de validação e evidência Spec Kit com matriz de fechamento.
+- [X] T140 [F-006] Executar ou preparar E2E reproduzível desde login e criação pela UI, incluindo reload e reabertura pelo histórico.
+- [X] T141 [F-001–F-009] Repetir gates no diff final, auditar resíduos/processos, atualizar cinco documentos de validação e evidência Spec Kit com matriz de fechamento.
 - [X] T142 [revisão focal 007] Exigir booleanos reais no avaliador com RED/GREEN; refazer `observedAt` antes de REPLACE no E2E integral e proteger vetor técnico, ID persistido, novo CURRENT e ausência após REVOKE.
+- [X] T143 [setup Neon 007] Auditar sem segredos os dois endpoints recebidos; configurar `.env.e2e.local` ignorado conforme identificação/autorização posterior do responsável; repetir preflight, gates e full UI no E2E dedicado.
 
-Estado das tarefas abertas nesta rodada: T137 tem cast e regressão PostgreSQL/Prisma locais verdes, mas falta execução no adapter Neon; T139 tem guardas e auditoria locais verdes, mas falta reconfirmar o destino e auditar resíduos remotos; T140 tem E2E integral preparado, porém não executado no destino dedicado; T141 tem gates e documentação locais concluídos, mas aguarda essas três evidências remotas para o fechamento. T142 conclui apenas a correção e a preparação verificadas localmente; não marca T140 como executada. A ausência da configuração E2E neste workspace não altera os checks históricos.
+Estado das tarefas após a execução Neon de 2026-09-25: T137 passou no adapter Prisma/Neon com 107 integrações e seis E2E IHFR; T140 passou 1/1 no fluxo UI integral, com CREATE/reload/histórico/REPLACE/REVOKE e IDs persistidos no relatório. T141 concluiu gates, auditoria e matriz com pendências explícitas. T139 permanece aberta: a identidade DEV/E2E foi informada pelo responsável e o preflight confirmou separação técnica, mas falta prova independente endpoint → `branch_id`; a auditoria encontrou um schema marcado sem autoria desta rodada comprovada. T142 preserva a correção focal anterior.
+
+Checkpoint de T143 (2026-09-25): o primeiro setup conservador bloqueou escrita remota. A instrução posterior do responsável identificou DEV e E2E, autorizou derivação do hostname direto E2E e permitiu prosseguir. Preflight read-only, migrations atualizadas, fixture de quatro contas, contrato 2/2, integração 107/107, migrations 23/23, E2E IHFR 6/6 e full UI 1/1 passaram. Unitários 218/218, typecheck, lint sem erros e build passaram no diff final. O `.env.e2e.local` segue ignorado; os recursos de UI ficaram em `public` para revisão. O schema candidato sem autoria comprovada foi preservado e está registrado no relatório.
 
 
 - Phase 1 bloqueia todas as demais.
