@@ -303,3 +303,30 @@ continuar exigindo alvo de teste explícito e validação do marcador.
 | Oráculo e identidade no full UI | O teste passou a verificar o vetor literal completo e o mesmo ID após reload/histórico, novo ID/CURRENT após REPLACE e ausência de CURRENT após REVOKE. | `PREPARADO_NAO_EXECUTADO`: descoberta Playwright passou; destino/conta E2E ausentes |
 
 `RECOMENDACAO`: quando houver configuração e conta sintética do destino dedicado, executar o roteiro integral, auditar o destino remoto e anexar os resultados reais à matriz de validação. Isso não substitui a prova Neon de `branch_id` nem a validação científica humana.
+
+## Reclassificação no código `c6e4302` — 2026-09-26
+
+| Achado | Estado reproduzido nesta rodada | Limite |
+|---|---|---|
+| F-001 | `CORRIGIDO_VERIFICADO`: o avaliador rejeita ausência obrigatória; teste `ihfr-insufficiency` em schema isolado passou 1/1 e confirmou operação terminal sem diagnóstico. | Não equivale a validação científica. |
+| F-002 | `CORRIGIDO_VERIFICADO`: resumos históricos e novos exibiram, no navegador após reload/reabertura, IDs de origem, versões, hash, estado e datas UTC. | Evidência do destino E2E direto `d116d14859be`; não transferir automaticamente a outro destino. |
+| F-005 | `PENDENCIA_EXTERNA`: DEV/E2E foram distintos no preflight e o destino E2E foi identificado pelo responsável. | Ainda não há prova independente endpoint → `branch_id` da Neon Console/API. |
+| F-009 | `SEM_RESIDUO_OBSERVADO`: auditoria final encontrou zero schemas `imp006_test_*` neste destino. | Resultado pontual; recursos intencionais em `public` foram preservados. |
+
+### F-010 — Timeout do runner full UI após persistir dados ambientais
+
+- **Categoria:** Confiabilidade de teste/automação.
+- **Gravidade:** Média para o gate de merge; defeito de produto não demonstrado.
+
+`EVIDENCIA_EXECUCAO`: o runner versionado criou laboratório, área, coleta e medição por UI com respostas `201`, mas sua asserção `getByText(/Conjunto confirmado e imutável/).toBeVisible()` expirou após cinco segundos. A leitura SQL confirmou a medição persistida e nenhum diagnóstico naquele instante. Em sessão nova, a página de detalhe carregou sete valores ambientais, a elegibilidade foi `ELIGIBLE`, o CREATE retornou `201`, e o diagnóstico persistiu/reabriu. Não se repetiu o runner com o mesmo run ID. Uma sonda temporária de comparação de floats falhou por exigir igualdade exata de `0.2` contra `0.20000000000000004`; isso foi erro da sonda, não segunda falha do produto nem do teste versionado, que usa proximidade.
+
+`INFERENCIA`: a evidência aponta para sincronização ou seletor/tempo de espera insuficiente na automação. A causa exata do timeout não foi demonstrada. `RECOMENDACAO`: instrumentar a transição após o POST ambiental, usar condição de espera ligada ao estado persistido e repetir o runner completo com run ID novo antes do merge, sem alterar dados já criados nesta rodada.
+
+### F-011 — Alertas de segurança em dependência de produção não triados
+
+- **Categoria:** Segurança de dependências.
+- **Gravidade:** Alta até triagem de aplicabilidade.
+
+`EVIDENCIA_EXECUCAO`: `npm audit --omit=dev --json` retornou código 1 e 22 achados no grafo analisado (6 moderados, 15 altos, 1 crítico); entre eles, `next@16.1.6` é dependência direta de produção com advisories altos/crítico e correção indicada pelo auditor. A contagem global não é apresentada como 22 vulnerabilidades exploráveis em produção: o npm usado também listou entradas de desenvolvimento. Não houve prova de exploração nem avaliação da aplicabilidade das condições de cada advisory à implantação deste projeto.
+
+`RECOMENDACAO`: triagem de cada advisory relevante, atualização controlada da dependência e repetição dos gates; registrar aceitação de risco explícita se alguma atualização não for feita. Não tratar o resultado de testes funcionais como autorização de implantação.

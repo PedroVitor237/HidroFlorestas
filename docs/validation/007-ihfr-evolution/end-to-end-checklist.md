@@ -314,3 +314,22 @@ As quatro marcas concluídas acima descrevem asserções versionadas e descobert
 - [ ] Obter prova independente endpoint → `branch_id` na Neon Console/API e atribuir o schema candidato antes de eventual limpeza.
 
 As tentativas parciais `HF007-UI-7f49429ecccc4959` (laboratório somente) e `HF007-UI-8debba7646d2421e` (laboratório, área, coleta e um diagnóstico CURRENT 0.29) permanecem em `public` para revisão. O checkpoint histórico `HF007-UI-20260925-2295502` não apareceu na consulta read-only ao destino atual. A execução comprova o fluxo técnico experimental, sem aprovação científica definitiva.
+
+## 10. Revalidação visual no HEAD `c6e4302` — 2026-09-26
+
+Esta lista é nova e não modifica as marcas históricas. O destino E2E direto desta rodada tem fingerprint `d116d14859be`, distinto do usado na seção 9.
+
+- [x] Reconciliar por fast-forward, preservar `2295502`/`2c63c67` e criar checkpoint vazio `1158a0d` antes dos testes.
+- [x] Alinhar Node 24.19.0/Prisma 7.4.2, regenerar Client; unitários 62 testes reportados sem falhas, typecheck e lint sem erros.
+- [x] Auditar read-only oito migrations, `public`, quatro usuários sintéticos e IDs históricos; confirmar quatro contagens de integridade iguais a zero.
+- [x] Aplicar somente `20260926000100_ihfr_lifecycle_reference_integrity` no E2E direto; conferir nove migrations e três triggers habilitados.
+- [x] Reabrir pela UI a coleta histórica `f6e56569-a4c2-47e4-bc8d-c31311e0f344` e o diagnóstico `f98c2b71-cdc8-4992-b949-07681c54055c` após reload/histórico, com ID, CURRENT, 0.29, proveniência, versões, hash, datas UTC e qualificadores.
+- [x] Criar no run novo `HF007-UI-20260926-c6e4302` laboratório, área, coleta e medição pela UI; quatro POSTs 201.
+- [ ] Runner full UI versionado concluir ininterruptamente: expirou na asserção “Conjunto confirmado e imutável” após persistência ambiental (F-010).
+- [x] Continuar com sessão nova no mesmo cenário, reabrir medição, confirmar elegibilidade, criar IHFR, recarregar e reabrir pelo histórico; mesmo diagnóstico `ad6ad25c-a48d-4708-9d8c-aebfe4541474` CURRENT.
+- [x] Comparar oráculo independente W=.20/S=.20/V=.15/T=.60, bruto=.2875, exibido=.29, MODERATE/HIGH, drivers=[T,W]; diferenças de float comparadas por tolerância.
+- [x] Conferir 390 px sem overflow, zero erros de página/console/HTTP, nove migrations, ambos os diagnósticos CURRENT e zero schemas `imp006_test_*` ao fim.
+- [ ] Repetir o runner full UI completo com run ID novo após tratar F-010; triar F-011 antes do merge.
+- [ ] Obter prova independente Neon endpoint → `branch_id` e validação científica humana; não inferir tais aprovações dos testes.
+
+REPLACE/REVOKE não foram repetidos nesta rodada. Nenhum recurso persistente foi limpo; todos os servidores próprios foram encerrados.
