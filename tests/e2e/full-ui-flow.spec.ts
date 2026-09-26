@@ -14,7 +14,7 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
 
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill(password);
+  await page.getByLabel("Senha", { exact: true }).fill(password);
   await page.getByRole("button", { name: "ENTRAR" }).click();
   await expect(page).toHaveURL(/\/workspace/);
   await page.getByLabel("Nome do laboratório").fill(labName);
@@ -26,7 +26,7 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   const laboratoryId = page.url().match(/laboratories\/([0-9a-f-]{36})/i)?.[1];
   expect(laboratoryId).toBeTruthy();
 
-  await page.getByRole("link", { name: "Áreas" }).click();
+  await page.getByLabel("Navegação principal").getByRole("link", { name: "Áreas" }).click();
   await page.getByRole("link", { name: "Nova área" }).click();
   await page.getByLabel("Nome da área").fill(areaName);
   await page.getByLabel("Latitude").fill("-3");
@@ -95,7 +95,7 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
     expect(diagnosis?.drivers).toEqual(["T", "W"]);
   }
   expectInitialVector(await currentDiagnosis());
-  const summary = page.getByRole("region", { name: "Diagnóstico IHFR experimental" });
+  const summary = page.getByRole("region", { name: "Diagnóstico IHFR experimental", exact: true });
   await expect(summary).toContainText("0.29 · MODERATE");
   await expect(summary).toContainText("HIGH");
   for (const value of ["ihfr-measurement-v1", "ihfr-diagnosis-input-experimental-v0.1.0", "CURRENT", "CONTRATO_EXPERIMENTAL", "VALIDACAO_CIENTIFICA_PENDENTE", "SUJEITO_A_RECALIBRACAO", "NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO"]) await expect(summary).toContainText(value);
