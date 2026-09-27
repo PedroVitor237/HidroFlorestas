@@ -8,13 +8,29 @@ Object.assign(process.env, { NODE_ENV: "test" });
 validateAuthFixtureEnvironment(process.env);
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
+const localRegression = process.env.IMP006_LOCAL_POSTGRESQL === "1";
+if (localRegression) {
+  const target = new URL(process.env.TEST_DATABASE_URL ?? "");
+  if (process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST" ||
+      target.hostname !== "127.0.0.1" || target.port !== "55426" || target.pathname !== "/imp006_regression_test") {
+    throw new Error("Owned local regression database guard failed for the Playwright server");
+  }
+}
+const serverEnvironment: Record<string, string> = Object.fromEntries(
+  Object.entries(process.env).filter((entry): entry is [string, string] => typeof entry[1] === "string"),
+);
+serverEnvironment.NODE_ENV = "development";
+if (!process.env.PLAYWRIGHT_BASE_URL) serverEnvironment.DATABASE_URL = withPublicSchema(process.env.TEST_DATABASE_URL ?? "");
+delete serverEnvironment.IMP006_LOCAL_REGRESSION_PUBLIC;
+if (localRegression) serverEnvironment.IMP006_LOCAL_REGRESSION_PUBLIC = "1";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  // These specs have dedicated runners that provision their required fixtures.
   testIgnore:
     process.env.AUTH_HTTPS_E2E === "1"
-      ? "**/full-ui-flow.spec.ts"
-      : ["**/authenticated-access-https.spec.ts", "**/full-ui-flow.spec.ts"],
+      ? ["**/full-ui-flow.spec.ts", "**/ihfr-diagnosis-*.spec.ts"]
+      : ["**/authenticated-access-https.spec.ts", "**/full-ui-flow.spec.ts", "**/ihfr-diagnosis-*.spec.ts"],
   fullyParallel: false,
   workers: 1,
   retries: 0,
@@ -31,12 +47,8 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: "npm run dev",
-        env: {
-          ...process.env,
-          DATABASE_URL: withPublicSchema(process.env.TEST_DATABASE_URL ?? ""),
-          NODE_ENV: "development",
-        },
+        command: "npm run dev -- --hostname 127.0.0.1",
+        env: serverEnvironment,
         url: baseURL,
         reuseExistingServer: false,
         timeout: 120_000,

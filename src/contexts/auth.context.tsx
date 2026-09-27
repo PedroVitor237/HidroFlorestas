@@ -18,6 +18,7 @@ import {
 
 type FetchOptions = {
     force?: boolean;
+    redirectOnUnauthenticated?: boolean;
 };
 
 type SignInData = {
@@ -102,6 +103,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             ) {
                 setUser(null);
                 toast.warning(result.message);
+                if (options?.redirectOnUnauthenticated) {
+                    router.replace("/login");
+                    router.refresh();
+                }
                 return;
             }
 
@@ -112,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch {
             toast.error(CONNECTION_FAILURE_MESSAGE);
         }
-    }, [user]);
+    }, [user, router]);
 
     const signIn = useCallback(async (
         data: SignInData,
@@ -236,7 +241,19 @@ export function AuthSessionRestorer() {
     const { fetchUserData } = useAuth();
 
     useEffect(() => {
-        void fetchUserData();
+        void fetchUserData({ redirectOnUnauthenticated: true });
+        const onPageHide = (event: PageTransitionEvent) => {
+            if (event.persisted) document.documentElement.style.visibility = "hidden";
+        };
+        const onPageShow = (event: PageTransitionEvent) => {
+            if (event.persisted) window.location.reload();
+        };
+        window.addEventListener("pagehide", onPageHide);
+        window.addEventListener("pageshow", onPageShow);
+        return () => {
+            window.removeEventListener("pagehide", onPageHide);
+            window.removeEventListener("pageshow", onPageShow);
+        };
     }, [fetchUserData]);
 
     return null;

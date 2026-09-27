@@ -16,7 +16,7 @@ test('independent read shows provenance, null/zero/false, mobile and desktop wit
   await page.goto(base);await expect(page.getByRole('region',{name:'Origem da coleta'})).toContainText(F.collectionIds[0]);
  }
  await expect(page.getByRole('region',{name:'Água',exact:true})).toContainText('Não');await expect(page.getByRole('region',{name:'Terreno',exact:true})).toContainText('Não informado');
- await expect(page.getByText(/Contrato de captura: ihfr-measurement-v1/)).toBeVisible();
+ await expect(page.getByRole('article',{name:'Dados ambientais da coleta'}).getByText(/Contrato de captura: ihfr-measurement-v1/).first()).toBeVisible();
  for(const [name,width,height] of [['desktop',1366,900],['mobile',390,844]] as const){
   await page.setViewportSize({width,height});await page.screenshot({path:info.outputPath(`read-${name}.png`),fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
  }

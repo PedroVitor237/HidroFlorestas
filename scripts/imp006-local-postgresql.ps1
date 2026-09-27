@@ -91,7 +91,7 @@ switch ($Action) {
   'Run' {
     Start-Cluster
     if (-not $Executable) { throw 'Run requires -Executable.' }
-    $names = @('TEST_DATABASE_URL', 'DATABASE_URL', 'TEST_DATABASE_CONFIRMATION', 'IMP006_DATABASE_VARIABLE', 'IMP006_LOCAL_POSTGRESQL', 'E2E_USER_PASSWORD', 'NODE_ENV')
+    $names = @('TEST_DATABASE_URL', 'DATABASE_URL', 'TEST_DATABASE_CONFIRMATION', 'IMP006_DATABASE_VARIABLE', 'IMP006_LOCAL_POSTGRESQL', 'E2E_USER_PASSWORD', 'JWT_SECRET', 'DASHBOARD_FIXTURE_CONFIRMATION', 'NODE_ENV')
     $originalEnvironment = @{}
     foreach ($name in $names) {
       $item = Get-Item -LiteralPath "Env:$name" -ErrorAction SilentlyContinue
@@ -112,6 +112,11 @@ switch ($Action) {
         $digest = [Security.Cryptography.SHA256]::Create()
         try { $env:E2E_USER_PASSWORD = [Convert]::ToBase64String($digest.ComputeHash([Text.Encoding]::UTF8.GetBytes([guid]::NewGuid().ToString()))) }
         finally { $digest.Dispose() }
+        $sessionBytes = New-Object byte[] 48
+        $sessionRandom = [Security.Cryptography.RandomNumberGenerator]::Create()
+        try { $sessionRandom.GetBytes($sessionBytes); $env:JWT_SECRET = [Convert]::ToBase64String($sessionBytes) }
+        finally { $sessionRandom.Dispose(); $sessionBytes = $null }
+        $env:DASHBOARD_FIXTURE_CONFIRMATION = 'HIDROFLORESTAS_IMP007_TEST'
       } else {
         $env:TEST_DATABASE_URL = $connection
         $env:DATABASE_URL = $connection

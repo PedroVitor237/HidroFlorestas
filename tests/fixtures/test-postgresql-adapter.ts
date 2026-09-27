@@ -10,7 +10,11 @@ export function testPostgresqlAdapter(connectionString: string) {
     if (process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST" || url.hostname !== "127.0.0.1" || url.port !== "55426" || url.pathname !== "/imp006_regression_test") {
       throw new Error("Owned local regression database guard failed");
     }
-    return new PrismaPg({ connectionString }, { schema: "public" });
+    if (url.searchParams.has("options")) {
+      throw new Error("Owned local regression database startup options must be selected by the fixture");
+    }
+    url.searchParams.set("options", "-cTimeZone=UTC");
+    return new PrismaPg({ connectionString: url.toString() }, { schema: "public" });
   }
   neonConfig.webSocketConstructor = ws;
   return new PrismaNeon({ connectionString });

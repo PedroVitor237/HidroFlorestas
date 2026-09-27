@@ -18,9 +18,12 @@ function sortedKeys(value: unknown): string[] {
     : [];
 }
 
-async function expectSafePublicUserEnvelope(response: Response) {
+async function expectSafePublicUserEnvelope(response: Response, signIn = false) {
   const body: unknown = await response.json();
-  expect(sortedKeys(body)).toEqual(["success", "user"]);
+  expect(sortedKeys(body)).toEqual(signIn ? ["destination", "success", "user"] : ["success", "user"]);
+  if (signIn) {
+    expect((body as { destination?: unknown }).destination).toBe("/workspace");
+  }
 
   const user =
     body !== null && typeof body === "object" && "user" in body
@@ -138,7 +141,7 @@ test("validates the production HTTPS session lifecycle without exposing secrets"
   const signInResponse = await signInPromise;
 
   expect(signInResponse.status()).toBe(200);
-  await expectSafePublicUserEnvelope(signInResponse);
+  await expectSafePublicUserEnvelope(signInResponse, true);
   await expect(page).toHaveURL(/\/workspace$/);
 
   const authCookie = (await context.cookies()).find(
@@ -171,7 +174,7 @@ test("validates the production HTTPS session lifecycle without exposing secrets"
   await expect(page).toHaveURL(/\/workspace$/);
 
   await page.goto("/dashboard");
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page).toHaveURL(/\/workspace$/);
 
   const logoutPromise = page.waitForResponse((response) =>
     response.url().endsWith("/api/auth/logout"),

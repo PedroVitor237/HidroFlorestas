@@ -7,15 +7,20 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
+import * as authFixtureNamespace from "../fixtures/auth-users.ts";
+
+// The TypeScript loader exposes this fixture as CommonJS on supported Node builds.
+const authFixtures = authFixtureNamespace.default ?? authFixtureNamespace;
+const {
   countAuthFixtureUsers,
   runAuthFixtureCommand,
   validateAuthFixtureEnvironment,
-} from "../fixtures/auth-users.ts";
+} = authFixtures;
 
 const cwd = fileURLToPath(new URL("../..", import.meta.url));
 const runnerPath = fileURLToPath(import.meta.url);
 const bootstrapMarker = "HIDROFLORESTAS_HTTPS_E2E_BOOTSTRAPPED";
+const localRegression = process.env.IMP006_LOCAL_POSTGRESQL === "1";
 const inheritedE2eVariables = [
   "DATABASE_URL",
   "TEST_DATABASE_URL",
@@ -28,12 +33,23 @@ const inheritedE2eVariables = [
 ];
 
 if (process.env[bootstrapMarker] !== "1") {
-  const cleanEnvironment = { ...process.env, [bootstrapMarker]: "1" };
-  for (const name of inheritedE2eVariables) delete cleanEnvironment[name];
+  if (localRegression) assertOwnedLocalRegressionEnvironment(process.env);
+  const cleanEnvironment = {
+    ...process.env,
+    [bootstrapMarker]: "1",
+    ...(localRegression ? { IMP006_LOCAL_REGRESSION_PUBLIC: "1" } : {}),
+  };
+  if (!localRegression) {
+    for (const name of inheritedE2eVariables) delete cleanEnvironment[name];
+  }
 
   const bootstrap = spawn(
     process.execPath,
-    ["--env-file=.env.e2e.local", "--import=tsx", runnerPath],
+    [
+      ...(localRegression ? [] : ["--env-file=.env.e2e.local"]),
+      "--import=tsx",
+      runnerPath,
+    ],
     { cwd, env: cleanEnvironment, stdio: "inherit" },
   );
   bootstrap.on("close", (code, signal) => {
@@ -42,6 +58,22 @@ if (process.env[bootstrapMarker] !== "1") {
   });
 } else {
   await runHttpsValidation();
+}
+
+function assertOwnedLocalRegressionEnvironment(environment) {
+  const safe = validateAuthFixtureEnvironment(environment);
+  const test = new URL(safe.testDatabaseUrl);
+  const reference = new URL(safe.developmentDatabaseUrl);
+  if (
+    test.hostname !== "127.0.0.1" ||
+    test.port !== "55426" ||
+    test.pathname !== "/imp006_regression_test" ||
+    reference.hostname !== "127.0.0.1" ||
+    reference.port !== "55426" ||
+    reference.pathname !== "/imp006_regression_reference"
+  ) {
+    throw new Error("HTTPS E2E requires the owned local regression databases");
+  }
 }
 
 async function runHttpsValidation() {
@@ -92,6 +124,7 @@ async function runHttpsValidation() {
         cwd,
         env: options.env ?? process.env,
         stdio: options.silent ? "ignore" : ["ignore", "pipe", "pipe"],
+        shell: command === "npm.cmd",
       });
       activeCommand = child;
 
@@ -104,7 +137,10 @@ async function runHttpsValidation() {
         }
       }
 
-      child.on("error", () => resolve(1));
+      child.on("error", (error) => {
+        process.stderr.write(`HTTPS E2E command failed: ${sanitize(error.message)}\n`);
+        resolve(1);
+      });
       child.on("close", (code, signal) => {
         activeCommand = undefined;
         resolve(
@@ -131,6 +167,7 @@ async function runHttpsValidation() {
 
   try {
     const safeEnvironment = validateAuthFixtureEnvironment(process.env);
+    if (localRegression) assertOwnedLocalRegressionEnvironment(process.env);
     if (!process.env.JWT_SECRET?.trim() || !process.env.E2E_USER_PASSWORD) {
       throw new Error("Required HTTPS E2E environment is incomplete");
     }
@@ -148,12 +185,17 @@ async function runHttpsValidation() {
       NODE_ENV: "production",
     };
     delete productionEnvironment.E2E_USER_PASSWORD;
-    delete productionEnvironment.TEST_DATABASE_CONFIRMATION;
+    if (!localRegression) delete productionEnvironment.TEST_DATABASE_CONFIRMATION;
     delete productionEnvironment[bootstrapMarker];
 
-    const buildExit = await runCommand("npm", ["run", "build"], {
+    const npmCli = process.env.npm_execpath;
+    const buildExit = await runCommand(
+      npmCli ? process.execPath : process.platform === "win32" ? "npm.cmd" : "npm",
+      npmCli ? [npmCli, "run", "build"] : ["run", "build"],
+      {
       env: productionEnvironment,
-    });
+      },
+    );
     process.stdout.write(`productionBuild: ${buildExit === 0 ? "PASS" : "FAIL"}\n`);
     if (buildExit !== 0 || interruptedSignal) {
       primaryExit = buildExit || signalExit(interruptedSignal);
@@ -161,29 +203,54 @@ async function runHttpsValidation() {
     }
 
     temporaryDirectory = await mkdtemp(join(tmpdir(), "hidroflorestas-auth-https-"));
-    const certificatePath = join(temporaryDirectory, "localhost-cert.pem");
-    const keyPath = join(temporaryDirectory, "localhost-key.pem");
-    const certificateExit = await runCommand(
-      "openssl",
-      [
-        "req",
-        "-x509",
-        "-newkey",
-        "rsa:2048",
-        "-nodes",
-        "-days",
-        "1",
-        "-subj",
-        "/CN=localhost",
-        "-addext",
-        "subjectAltName=DNS:localhost,IP:127.0.0.1",
-        "-keyout",
-        keyPath,
-        "-out",
-        certificatePath,
-      ],
-      { silent: true },
-    );
+    let certificateExit;
+    let certificateOptions;
+    if (process.platform === "win32") {
+      const pfxPath = join(temporaryDirectory, "localhost.pfx");
+      certificateExit = await runCommand(
+        "powershell.exe",
+        [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          join(cwd, "tests", "e2e", "create-https-certificate.ps1"),
+          "-OutputPath",
+          pfxPath,
+        ],
+      );
+      if (certificateExit === 0) certificateOptions = { pfx: await readFile(pfxPath) };
+    } else {
+      const certificatePath = join(temporaryDirectory, "localhost-cert.pem");
+      const keyPath = join(temporaryDirectory, "localhost-key.pem");
+      certificateExit = await runCommand(
+        "openssl",
+        [
+          "req",
+          "-x509",
+          "-newkey",
+          "rsa:2048",
+          "-nodes",
+          "-days",
+          "1",
+          "-subj",
+          "/CN=localhost",
+          "-addext",
+          "subjectAltName=DNS:localhost,IP:127.0.0.1",
+          "-keyout",
+          keyPath,
+          "-out",
+          certificatePath,
+        ],
+        { silent: true },
+      );
+      if (certificateExit === 0) {
+        certificateOptions = {
+          cert: await readFile(certificatePath),
+          key: await readFile(keyPath),
+        };
+      }
+    }
     process.stdout.write(
       `temporaryCertificate: ${certificateExit === 0 ? "PASS" : "FAIL"}\n`,
     );
@@ -209,8 +276,8 @@ async function runHttpsValidation() {
     }
 
     nextServer = startCommand(
-      "./node_modules/.bin/next",
-      ["start", "-H", "127.0.0.1", "-p", String(applicationPort)],
+      process.execPath,
+      [join(cwd, "node_modules", "next", "dist", "bin", "next"), "start", "-H", "127.0.0.1", "-p", String(applicationPort)],
       productionEnvironment,
     );
     await waitForHttp(applicationPort, () => Boolean(interruptedSignal));
@@ -220,10 +287,7 @@ async function runHttpsValidation() {
     }
 
     httpsProxy = createHttpsServer(
-      {
-        cert: await readFile(certificatePath),
-        key: await readFile(keyPath),
-      },
+      certificateOptions,
       (request, response) => {
         const upstream = httpRequest(
           {
@@ -270,8 +334,9 @@ async function runHttpsValidation() {
       PLAYWRIGHT_BASE_URL: `https://127.0.0.1:${httpsPort}`,
     };
     const e2eExit = await runCommand(
-      "./node_modules/.bin/playwright",
+      process.execPath,
       [
+        join(cwd, "node_modules", "@playwright", "test", "cli.js"),
         "test",
         "tests/e2e/authenticated-access-https.spec.ts",
         "--output",

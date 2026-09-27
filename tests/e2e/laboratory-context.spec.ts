@@ -28,6 +28,9 @@ test("requires explicit selection and keeps laboratory context in links and relo
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/workspace$/);
   await page.getByRole("listitem").filter({ hasText: "IMP-003 E2E 0" }).getByRole("link", { name: "ACESSAR LABORATÓRIO" }).click();
+  await expect(page).toHaveURL(new RegExp(`/dashboard/laboratories/${laboratoryId}$`));
+  await expect(page.getByRole("heading", { name: "IMP-003 E2E 0", exact: true })).toBeVisible();
+  await page.getByRole("navigation", { name: "Laboratório" }).getByRole("link", { name: "Áreas", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/dashboard/laboratories/${laboratoryId}/areas$`));
   await expect(page.getByRole("link", { name: "Nova área", exact: true })).toHaveAttribute("href", `${areasUrl}/new`);
   await page.reload();
