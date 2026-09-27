@@ -7,15 +7,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import * as authFixtureNamespace from "../fixtures/auth-users.ts";
-
-// The TypeScript loader exposes this fixture as CommonJS on supported Node builds.
-const authFixtures = authFixtureNamespace.default ?? authFixtureNamespace;
-const {
-  countAuthFixtureUsers,
-  runAuthFixtureCommand,
-  validateAuthFixtureEnvironment,
-} = authFixtures;
+let countAuthFixtureUsers;
+let runAuthFixtureCommand;
+let validateAuthFixtureEnvironment;
 
 const cwd = fileURLToPath(new URL("../..", import.meta.url));
 const runnerPath = fileURLToPath(import.meta.url);
@@ -57,13 +51,22 @@ if (process.env[bootstrapMarker] !== "1") {
       code ?? (signal === "SIGINT" ? 130 : signal === "SIGTERM" ? 143 : 1);
   });
 } else {
+  const fixtureNamespace = await import("../fixtures/auth-users.ts");
+  const fixtures = fixtureNamespace.default ?? fixtureNamespace;
+  ({
+    countAuthFixtureUsers,
+    runAuthFixtureCommand,
+    validateAuthFixtureEnvironment,
+  } = fixtures);
   await runHttpsValidation();
 }
 
 function assertOwnedLocalRegressionEnvironment(environment) {
-  const safe = validateAuthFixtureEnvironment(environment);
-  const test = new URL(safe.testDatabaseUrl);
-  const reference = new URL(safe.developmentDatabaseUrl);
+  if (!environment.TEST_DATABASE_URL || !environment.DATABASE_URL) {
+    throw new Error("HTTPS E2E requires both local regression database URLs");
+  }
+  const test = new URL(environment.TEST_DATABASE_URL);
+  const reference = new URL(environment.DATABASE_URL);
   if (
     test.hostname !== "127.0.0.1" ||
     test.port !== "55426" ||

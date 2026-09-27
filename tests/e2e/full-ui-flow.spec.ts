@@ -63,8 +63,11 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   for (const [id, value] of Object.entries(choices)) await page.locator(`[id="${id}"]`).selectOption(value);
   for (const [id, value] of Object.entries({ "soil.infiltrationRateMmPerHour": "60", "vegetation.vegetationCoverPercent": "100", "terrain.drainageDensityKmPerKm2": "1.5", "terrain.elevationMeters": "180", "terrain.slopePercent": "45" })) await page.locator(`[id="${id}"]`).fill(value);
   await page.getByRole("button", { name: "Revisar dados" }).click();
+  const environmentalPost = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/environmental-data"));
   await page.getByRole("button", { name: "Confirmar dados ambientais" }).click();
-  await expect(page.getByText(/Conjunto confirmado e imutável/)).toBeVisible();
+  expect((await environmentalPost).status()).toBe(201);
+  await expect(page).toHaveURL(/\/environmental-data$/, { timeout: 20_000 });
+  await expect(page.getByText(/Conjunto confirmado e imutável/)).toBeVisible({ timeout: 20_000 });
   await page.reload();
   await expect(page.getByText(/Conjunto confirmado e imutável/)).toBeVisible();
   await page.getByRole("link", { name: "Voltar à coleta" }).click();

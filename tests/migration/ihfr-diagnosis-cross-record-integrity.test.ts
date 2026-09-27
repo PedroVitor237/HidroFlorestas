@@ -9,6 +9,7 @@ import { IHFR_CONTEXTS, insertIHFRContextFixtures } from "../fixtures/ihfr-diagn
 import { IHFR_DOMAIN, insertIHFRDomainFixtures } from "../fixtures/ihfr-diagnosis-domain";
 import { setupIHFRDiagnosisFixtures } from "../fixtures/ihfr-diagnosis-fixtures";
 import { selectedImp006DatabaseVariable, withImp006PostgresqlSchema } from "../fixtures/postgresql-schema-lifecycle";
+import { expectImp006Sqlstate } from "../fixtures/expected-sqlstate";
 import {
   applyAreaMigration,
   applyCollectionMigration,
@@ -159,15 +160,12 @@ test("IMP-006 rejects cross-record operation, CURRENT and lifecycle references",
       }, IHFR_DOMAIN.currentDiagnosis, "CREATE_OR_REPLACE", "INSUFFICIENT_DATA"); } },
     ];
 
-    const accepted: string[] = [];
     await client.query("BEGIN");
     try {
       for (const scenario of cases) {
         await client.query("SAVEPOINT negative_case");
         try {
-          await assert.rejects(scenario.action, (error: unknown) => (error as { code?: string }).code === "23514");
-        } catch {
-          accepted.push(scenario.name);
+          await expectImp006Sqlstate(scenario.name, "23514", scenario.action);
         } finally {
           await client.query("ROLLBACK TO SAVEPOINT negative_case");
           await client.query("RELEASE SAVEPOINT negative_case");
@@ -176,7 +174,6 @@ test("IMP-006 rejects cross-record operation, CURRENT and lifecycle references",
     } finally {
       await client.query("ROLLBACK");
     }
-    assert.deepEqual(accepted, [], `Cross-record inconsistencies accepted: ${accepted.join(", ")}`);
   });
 });
 

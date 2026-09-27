@@ -55,6 +55,13 @@ async function main() {
     await client.query("BEGIN READ ONLY");
     const existing = await client.query<{ count: number }>('SELECT count(*)::int AS count FROM public."LaboratoryRoom" WHERE name = $1', [`${env.IMP006_UI_RUN_ID} Laboratório`]);
     if (existing.rows[0]?.count !== 0) throw new Error("The full UI run ID already has a laboratory; refusing duplicate creation");
+    const memberships = await client.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM public."ResearchersLinked" AS link JOIN public."User" AS account ON account.id = link."userId" WHERE account.email = $1',
+      [env.IMP006_UI_EMAIL],
+    );
+    if ((memberships.rows[0]?.count ?? 0) >= 5) {
+      throw new Error("The full UI account has reached the five-laboratory limit; use an approved account with capacity. Existing domain records were preserved.");
+    }
   } finally {
     if (client) { try { await client.query("ROLLBACK"); } finally { client.release(); } }
     await pool.end();
