@@ -6,6 +6,15 @@
 
 **Status atual**: `CONCLUIDO` para o fechamento técnico da continuidade `007-ihfr-evolution` T135–T143, após gates Neon, auditoria `assert-zero` e revisão final T141 em 2026-09-26. O fechamento T001–T134, inclusive a reabertura e nova conclusão de T116/T134 em 2026-09-24, permanece histórico. `G1`, `G2-ENG` e `G3-ENG` estão resolvidos; `G2-SCI` permanece `VALIDACAO_POSTERIOR` e a prova independente de `branch_id` permanece `EXTERNAL_VALIDATION`.
 
+## Retomada das pendências A3–A5 em 2026-09-27
+
+- **Baseline:** `007-ihfr-evolution@38d26026ca50ca07b03a837800e9e5097d1331b4`, sem alterações rastreadas; os quatro arquivos não rastreados anteriores permanecem fora do escopo e serão preservados. Esta retomada responde à solicitação de tentar resolver as pendências e determinar a causa de A5.
+- **A5:** reconstruir os dois eventos históricos separadamente. O POST ambiental `201` seguido do timeout visual de cinco segundos será confrontado com navegação e renderização; o 25/26 de migration será confrontado com o oráculo de SQLSTATE e a cadeia de erro. Reproduzir falhas controladas quando possível, corrigir a causa verificável e registrar como `NAO_ESPECIFICADO` qualquer detalhe histórico que a saída perdida não permita recuperar.
+- **A3:** consultar advisories e metadados atuais, experimentar a remediação em lockfile isolado antes de alterar o projeto, validar audit e regressões proporcionais. Não suprimir alertas nem atribuir aceitação de risco à equipe.
+- **A4 e ciência:** verificar somente por leitura a evidência disponível. Não escrever no Neon `568d60469278`, em DEV ou produção; não inferir `branch_id` nem aprovar PD-002 sem fonte competente.
+- **Fechamento:** atualizar tarefas e relatório A1–A7 com causa, evidência, comandos, destinos, resultados e limites; revisar diff, segredos, resíduos e preservar o histórico de 2026-09-26. Sem push, merge, rebase ou deploy.
+- **Resultado da retomada:** A3 foi remediada no lockfile SHA-256 `85C8A18B77565D3EE0A6E95B47332DAE81D806FAD5FEA12D1FEF95919A09925D`, com audit de produção e completo sem nós sinalizados; build, unitários 226/226, Playwright geral 55/55, HTTPS 2/2 e gates locais/E2E passaram. A5 teve a fragilidade de prazo visual reproduzida por GET de 6,5 segundos e corrigida com esperas por fase; o teste migration agora preserva SQLSTATE e causa inesperados. A exceção histórica do 25/26 não foi retida e continua `NAO_ESPECIFICADO`. O novo full UI foi impedido por conta E2E com cinco de cinco vínculos; uma guarda read-only faz o runner falhar cedo sem excluir dados. A4, ciência e a repetição do full UI com conta aprovada e capacidade permanecem pendentes. Evidência detalhada em [retomada A3–A5](../../docs/validation/007-ihfr-evolution/2026-09-27-retomada-a3-a5.md); prontidão de merge `NAO_PRONTA`.
+
 ## Saneamento corretivo A1–A7 iniciado em 2026-09-26
 
 - **Identificador e estado:** `007-saneamento-a1-a7-2026-09-26`, `CONCLUIDO_COM_PENDENCIAS`. Esta rodada sucede o fechamento técnico histórico acima; não o apaga nem presume prontidão para merge.
