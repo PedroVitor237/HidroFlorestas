@@ -65,8 +65,14 @@ function assertOwnedLocalRegressionEnvironment(environment) {
   if (!environment.TEST_DATABASE_URL || !environment.DATABASE_URL) {
     throw new Error("HTTPS E2E requires both local regression database URLs");
   }
-  const test = new URL(environment.TEST_DATABASE_URL);
-  const reference = new URL(environment.DATABASE_URL);
+  let test;
+  let reference;
+  try {
+    test = new URL(environment.TEST_DATABASE_URL);
+    reference = new URL(environment.DATABASE_URL);
+  } catch {
+    throw new Error("HTTPS E2E requires valid local regression database URLs");
+  }
   if (
     test.hostname !== "127.0.0.1" ||
     test.port !== "55426" ||
