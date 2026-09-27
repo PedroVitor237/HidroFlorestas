@@ -1,6 +1,8 @@
 # Validação da `007-ihfr-evolution`
 
-**Estado mais recente (2026-09-26):** consulte a seção 12 do [relatório de validação](validation-report.md) e o checkpoint ao final deste índice. As seções anteriores preservam o estado observado em cada rodada histórica.
+**Atualização de 2026-09-27:** o [inventário e saneamento A1–A7](2026-09-26-saneamento-a1-a7.md) registra a errata de migrations, o estado técnico do ADR e os gates desta rodada. A [revalidação conjunta](2026-09-26-revalidacao-conjunta-e-prontidao.md) conserva seus resultados históricos com errata datada no início; não transferir suas contagens de banco entre endpoints.
+
+**Estado mais recente (2026-09-27):** consulte o [saneamento A1–A7](2026-09-26-saneamento-a1-a7.md): gates geral, HTTPS e full UI passaram, enquanto A3 e a identificação do outro Neon continuam pendentes; merge `NAO_PRONTA`. A seção 12 do [relatório de validação](validation-report.md) e os checkpoints abaixo preservam estados históricos.
 
 ## Objetivo
 

@@ -2,13 +2,13 @@
 
 **Estado decisório**: `CONFIRMADO`
 
-**Estado de implementação**: `NAO_IMPLEMENTADO`
+**Estado de implementação atual**: `IMPLEMENTADO_VERIFICADO` para o contrato técnico experimental; `NAO_IMPLEMENTADO` descrevia o planejamento em 2026-09-20.
 
-**Versão do ADR**: `1.2`
+**Versão do ADR**: `1.3`
 
 **Data**: 2026-09-18
 
-**Última revisão**: 2026-09-20
+**Última revisão**: 2026-09-26
 
 **Responsável pela decisão provisória**: equipe HidroFlorestas
 
@@ -303,3 +303,11 @@ O perfil `0,35H + 0,30S + 0,25V + 0,10T`, presente em `R06`, `R10` e `R11`, perm
 | 2026-09-18 | Este ADR resolveu os conflitos para v0.1 experimental, preservou o perfil regional e separou G2-ENG de G2-SCI. |
 | 2026-09-19 | A equipe autorizou a auditoria focal de `landUseType`; a classificação de sete categorias foi confirmada como `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`, as alternativas e casos extremos foram preservados e o subgate ficou `RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`, sem mudança normativa do manifesto/hash. |
 | 2026-09-20 | A remediação focal preservou a v0.1.0 como histórica, criou a v0.1.1 para clarificar validação de entrada sem alterar matemática e alinhou cardinalidade, API, migration planejada, lifecycle de testes e tarefas para nova análise independente. |
+| 2026-09-23 | `TECH_DECISIONS.md` registrou `TD-015` e `TD-016` como `IMPLEMENTADO_VERIFICADO` com base em código e testes do contrato experimental. A validação científica continuou pendente. |
+| 2026-09-26 | Esta revisão reconciliou o cabeçalho técnico com `TD-015`/`TD-016` e com o código atual, preservando como históricos os enunciados de planejamento das seções anteriores. Nenhuma decisão científica foi acrescentada. |
+
+## 15. Estado técnico observado em 2026-09-26
+
+`EVIDENCIA_IMPLEMENTACAO`: o [carregador de manifesto](../../src/app/api/server/ihfr-diagnosis/manifest-loader.ts) verifica versão e hash; o [avaliador](../../src/app/api/server/ihfr-diagnosis/evaluator.ts) implementa fórmula, classes, entradas e os sete scores de `landUseType`; o [serviço](../../src/app/api/server/services/ihfr-diagnosis.service.ts) conecta elegibilidade, suplemento, escrita, consulta e ciclo de vida. As migrations versionadas e os testes de unidade, contrato, integração, migration e E2E sustentam o estado técnico `IMPLEMENTADO_VERIFICADO` registrado em `TD-015` e `TD-016`. As execuções pertencem aos destinos e datas descritos em [evidência de implementação](../../specs/006-ihfr-diagnosis/implementation-evidence.md) e [validação da 007](../validation/007-ihfr-evolution/README.md); não aprovam automaticamente gates de uma nova instalação ou de outro banco.
+
+As frases anteriores sobre implementação futura, migration reservada e testes a criar descrevem o **estado de planejamento de 2026-09-18 a 2026-09-20**. Não devem ser lidas como estado atual. O estado decisório permanece `CONFIRMADO` somente para o contrato de engenharia `CONTRATO_EXPERIMENTAL`. `PD-002` e `G2-SCI` permanecem `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`; revisão especializada, vetores científicos, calibração e campo continuam externos à verificação técnica.
