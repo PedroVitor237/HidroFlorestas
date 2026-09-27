@@ -50,7 +50,11 @@ npx prisma migrate dev
 
 Em um ambiente de implantação, a aplicação não deve gerar migrations interativamente. Após confirmar o destino, a cadeia existente é aplicada com `npx prisma migrate deploy`. A política de provisionamento e aprovação de cada ambiente ainda não está definida neste README; confirme-a antes de executar qualquer migration fora do banco de desenvolvimento autorizado.
 
+Para um banco **totalmente vazio**, execute antes o [procedimento formal de baseline para instalação inicial](prisma/bootstrap/initial-database-bootstrap.md). A primeira migration pressupõe a tabela legada `LaboratoryRoom`; `migrate deploy` direto em um banco vazio falha. O baseline é exclusivo de bancos novos, com pré-condição vazia verificada.
+
 `npx prisma generate` gera o Client a partir do schema local; não aplica SQL ao banco. Confira o estado real do banco antes de iniciar a aplicação, especialmente se houver migrations pendentes ou histórico divergente.
+
+O build atual usa Poppins por `next/font/google` em `src/app/layout.tsx` e requer acesso de saída aos endpoints de Google Fonts durante `npm run build`. Um build sem essa rede não é suportado por este checkout; a alternativa de fonte local depende de asset e licença aprovados.
 
 ---
 

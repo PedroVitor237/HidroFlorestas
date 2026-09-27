@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { createServer } from "node:net";
 import { setTimeout as delay } from "node:timers/promises";
 import { Pool } from "pg";
+import { describeImp006Error, redactImp006Diagnostics, runImp006Gate } from "./imp006-gate-diagnostics";
 import { imp006Target, readOnlyImp006Preflight } from "./imp006-test-preflight";
 
 async function availablePort() {
@@ -19,6 +20,21 @@ function stopped(child: ChildProcess) {
   return new Promise<number>((resolve, reject) => { child.once("error", reject); child.once("exit", (code, signal) => resolve(code ?? (signal ? 1 : 0))); });
 }
 
+function forwardSanitized(stream: NodeJS.ReadableStream | null, destination: NodeJS.WriteStream, env: NodeJS.ProcessEnv) {
+  if (!stream) return;
+  let pending = "";
+  stream.setEncoding("utf8");
+  stream.on("data", (chunk: string) => {
+    pending += chunk;
+    const lines = pending.split("\n");
+    pending = lines.pop() ?? "";
+    for (const line of lines) destination.write(`${redactImp006Diagnostics(line, env)}\n`);
+  });
+  stream.on("end", () => {
+    if (pending) destination.write(redactImp006Diagnostics(pending, env));
+  });
+}
+
 async function main() {
   const env: NodeJS.ProcessEnv = { ...process.env, NODE_ENV: "test" };
   if (!env.IMP006_UI_EMAIL || !env.IMP006_UI_PASSWORD || !env.IMP006_UI_RUN_ID) throw new Error("IMP006_UI_EMAIL, IMP006_UI_PASSWORD and IMP006_UI_RUN_ID are required");
@@ -28,8 +44,9 @@ async function main() {
   if (verified.schema !== "public") throw new Error("Full UI checkpoint requires the dedicated E2E public schema");
   const migrationEnv: NodeJS.ProcessEnv = { ...env, DATABASE_URL: env.TEST_DATABASE_URL };
   delete migrationEnv.IMP006_UI_PASSWORD;
-  const status = spawn(process.execPath, ["node_modules/prisma/build/index.js", "migrate", "status"], { env: migrationEnv, stdio: "ignore", windowsHide: true });
-  if ((await stopped(status)) !== 0) throw new Error("Versioned migrations are not confirmed up to date on the E2E target");
+  const status = await runImp006Gate("migrate-status", ["node_modules/prisma/build/index.js", "migrate", "status"], migrationEnv,
+    { fingerprint: verified.fingerprint, schema: verified.schema, runId: env.IMP006_UI_RUN_ID });
+  if (status.exitCode !== 0) throw new Error(`Versioned migrations are not confirmed up to date on the E2E target; sanitized log: ${status.logPath}`);
   const target = imp006Target(env);
   const pool = new Pool({ connectionString: target.connectionString, connectionTimeoutMillis: 15_000, max: 1 });
   let client;
@@ -49,10 +66,14 @@ async function main() {
   delete serverEnv.IMP006_UI_EMAIL;
   delete serverEnv.IMP006_UI_PASSWORD;
   delete serverEnv.IMP006_UI_RUN_ID;
-  process.stdout.write(`IMP-006 full UI target ${verified.fingerprint}, schema public, run ${env.IMP006_UI_RUN_ID}. Domain records are preserved.\n`);
-  const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--hostname", "127.0.0.1", "--port", String(port)], { env: serverEnv, stdio: "inherit", windowsHide: true });
+  process.stdout.write(`[${new Date().toISOString()}] IMP-006 full UI target ${verified.fingerprint}, schema public, run ${env.IMP006_UI_RUN_ID}. Domain records are preserved.\n`);
+  const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--hostname", "127.0.0.1", "--port", String(port)], { env: serverEnv, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+  forwardSanitized(server.stdout, process.stdout, serverEnv);
+  forwardSanitized(server.stderr, process.stderr, serverEnv);
   let primaryError: unknown;
+  let cleanupError: unknown;
   try {
+    const readinessStarted = Date.now();
     let ready = false;
     for (let attempt = 0; attempt < 120; attempt++) {
       if (server.exitCode !== null) throw new Error(`Owned Next.js server exited: ${server.exitCode}`);
@@ -60,14 +81,19 @@ async function main() {
       await delay(500);
     }
     if (!ready) throw new Error("Owned Next.js server did not become ready");
-    const tests = spawn(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--config=playwright.imp006-full-ui.config.ts"], { env: browserEnv, stdio: "inherit", windowsHide: true });
-    if ((await stopped(tests)) !== 0) throw new Error("IMP-006 full UI Playwright failed");
+    process.stdout.write(`[${new Date().toISOString()}] IMP-006 owned Next.js ready after ${Date.now() - readinessStarted}ms.\n`);
+    const tests = await runImp006Gate("full-ui", ["node_modules/@playwright/test/cli.js", "test", "--config=playwright.imp006-full-ui.config.ts"], browserEnv,
+      { fingerprint: verified.fingerprint, schema: "public", runId: env.IMP006_UI_RUN_ID, attempt: 1 });
+    if (tests.exitCode !== 0) throw new Error(`IMP-006 full UI Playwright failed with exit code ${tests.exitCode}; sanitized log: ${tests.logPath}`);
   } catch (error) { primaryError = error; }
   finally {
     if (server.exitCode === null) server.kill();
-    await Promise.race([stopped(server), delay(10_000).then(() => { throw new Error("Owned Next.js server did not stop"); })]);
+    try { await Promise.race([stopped(server), delay(10_000).then(() => { throw new Error("Owned Next.js server did not stop"); })]); }
+    catch (error) { cleanupError = error; }
   }
+  if (primaryError && cleanupError) throw new AggregateError([primaryError, cleanupError], "Full UI and owned server cleanup failed");
   if (primaryError) throw primaryError;
+  if (cleanupError) throw cleanupError;
 }
 
-void main().catch((error) => { process.stderr.write(`IMP-006 full UI: ${error instanceof Error ? error.message : String(error)}\n`); process.exitCode = 1; });
+void main().catch((error) => { process.stderr.write(`IMP-006 full UI: ${describeImp006Error(error, process.env)}\n`); process.exitCode = 1; });
