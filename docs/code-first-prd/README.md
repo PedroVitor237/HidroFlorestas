@@ -13,6 +13,12 @@
 - **Estado da Fase 2:** `NAO_INICIADA`
 - **Aprovação normativa:** não concedida
 
+## Atualização funcional de 2026-09-28
+
+`EVIDENCIA_CODIGO` na branch `007-ihfr-evolution@94053df`: os [casos de uso revisados](specifications/use-cases.md) mantêm `CF-UC-001..015` e acrescentam `CF-UC-016..018`; as [histórias de usuário](specifications/user-stories.md) rastreiam as specs IMP-001 a IMP-009. O [roteiro de testes de uso](testing/roteiro-de-testes-de-uso.md) transforma essas jornadas em tarefas observáveis para o professor Fábio, participantes e equipe. A [revisão de merge](../validation/007-ihfr-evolution/2026-09-28-revisao-commits-e-merge.md) separa gates técnicos relatados do status remoto Vercel ainda não esclarecido.
+
+As demais análises, requisitos, fluxos, modelos e diagramas deste pacote preservam o recorte histórico que cada arquivo declara; não foram revalidados integralmente neste trabalho. Esta atualização de uso continua `EM_REVISAO` e não promove o PRD, o contrato científico ou requisitos candidatos a norma aprovada. Ingresso em laboratório permanece indisponível; o mapa atual cobre áreas-ponto e coletas vinculadas, sem camada IHFR. A validação científica é etapa posterior do contrato experimental.
+
 ## Objetivo e limites
 
 Esta iniciativa cria uma base verificável para compreender o produto atualmente observável no repositório, separar implementação de intenção e preparar perguntas para decisão humana. O código é a fonte inicial principal para reconstruir o produto que está sendo desenvolvido e formular hipóteses explícitas de intenção, sem presumir que essas hipóteses já representem o produto desejado. O PRD paralelo pode redigir requisitos candidatos explicitamente classificados, mas a iniciativa não aprova escolhas nem requisitos.
@@ -70,7 +76,7 @@ Assim, estado implementado e estado pretendido permanecem em eixos independentes
 | [`reviews/product-hypotheses-human-review.md`](reviews/product-hypotheses-human-review.md) | `EM_REVISAO`; `REVISAO_HUMANA_PENDENTE_DE_AUTORIDADE` | Verificação corrigida de H01–H10 em compatibilidade técnica e autoridade da intenção, sem iniciar a Fase 2. |
 | [`prd-code-first.md`](prd-code-first.md) | `EM_REVISAO` | Rascunho paralelo, não canônico e derivado do código, com requisitos candidatos e dependências abertas. |
 | [`specifications/requirements.md`](specifications/requirements.md) | `EM_REVISAO` | Catálogo detalhado dos 15 requisitos funcionais e 6 não funcionais candidatos do pacote documental do PRD. |
-| [`specifications/use-cases.md`](specifications/use-cases.md) | `EM_REVISAO` | Especificação dos atores, 15 casos de uso candidatos, relações, cobertura e visão Mermaid. |
+| [`specifications/use-cases.md`](specifications/use-cases.md) | `EM_REVISAO`; revisão funcional 2026-09-28 | 18 casos de uso rastreáveis, com estados observados e limites da interface. |\n| [`specifications/user-stories.md`](specifications/user-stories.md) | `EM_REVISAO`; revisão funcional 2026-09-28 | 23 histórias locais ligadas às specs IMP-001 a IMP-009 e aos casos de uso. |\n| [`testing/roteiro-de-testes-de-uso.md`](testing/roteiro-de-testes-de-uso.md) | `EM_REVISAO`; roteiro de uso 2026-09-28 | Sessão orientada a pessoas, com jornada, observações e registro de feedback. |
 | [`diagrams/plantuml/use-cases.puml`](diagrams/plantuml/use-cases.puml) | `EM_REVISAO` | Representação PlantUML semanticamente equivalente à visão Mermaid dos casos de uso. |
 | [`specifications/class-diagram.md`](specifications/class-diagram.md) | `EM_REVISAO` | Inventário e diagrama Mermaid do modelo implementado, com separação entre persistência, aplicação e mocks. |
 | [`diagrams/plantuml/class-diagram.puml`](diagrams/plantuml/class-diagram.puml) | `EM_REVISAO` | Representação PlantUML semanticamente equivalente ao diagrama de classes Mermaid. |
