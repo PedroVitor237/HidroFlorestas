@@ -4,6 +4,21 @@
 
 **Estado técnico mais recente (2026-09-27):** o [relatório pós-`9b2c989`](2026-09-27-execucao-codex-ultra.md) registra build padrão, Playwright geral/HTTPS, gates IHFR e full UI final verdes, com auditorias aplicáveis. O veredito é `PRONTA_PARA_REVISAO_DE_MERGE`, sujeito à revisão humana; não houve merge. A prova independente do `branch_id`, a identidade do Neon histórico e `PD-002`/`G2-SCI` seguem externas. A seção 12 do [relatório de validação](validation-report.md) e os checkpoints abaixo preservam estados históricos, inclusive a classificação anterior `NAO_PRONTA`.
 
+## Reconciliação das pendências de 25 e 26/09 — 2026-09-28
+
+`FATO_DOCUMENTADO`: esta matriz confronta os checkpoints antigos com evidências posteriores; não reexecuta gates nem muda o resultado que cada documento registrou para seu HEAD e destino. Um item técnico superado não transforma uma execução histórica vermelha em verde.
+
+| Origem | Situação demonstrada depois | Estado atual do item |
+|---|---|---|
+| [Reanálise de 25/09](2026-09-25-reanalise-pendencias-prisma.md), R-001, R-002, R-004–R-009 | A [reconciliação R-001–R-011](validation-report.md#123-matriz-r-001r-011-no-estado-observado) registrou Prisma/Node alinhados, adapter Neon exercitado, migration de integridade, auditoria `assert-zero`, Spec Kit reconciliado e full UI em E2E dedicado. | Corrigidos e verificados nos destinos e snapshots citados; a retenção de dados em `public` é intencional. |
+| [Relatório independente de 26/09](2026-09-26-revalidacao-playwright-neon-e-pendencias.md), P-QA-01–06 e P-DOC-01; [saneamento A1–A7](2026-09-26-saneamento-a1-a7.md), A1, A2, A6, A7 | Expectativas, runner HTTPS, adapter e timezone foram corrigidos; ADR reconciliado; bootstrap local com baseline verificado. No [snapshot técnico final](2026-09-27-execucao-codex-ultra.md), geral 55/55, HTTPS 2/2, IHFR 6/6 e full UI 1/1 passaram. | Corrigidos e verificados no recorte técnico; a prova do E2E atual não se transfere ao Neon histórico `568d60469278`. |
+| [Revalidação conjunta de 26/09](2026-09-26-revalidacao-conjunta-e-prontidao.md), F-010/P-QA-07/A5 | A [retomada A3–A5](2026-09-27-retomada-a3-a5.md) reproduziu e corrigiu a fragilidade do prazo visual e a perda de causa no teste migration; o full UI final passou 1/1. | Os mecanismos reproduzidos foram corrigidos e verificados. A exceção exata da primeira falha histórica 25/26 não foi preservada e continua `NAO_ESPECIFICADO`. |
+| F-011/P-SEC-01/A3 dos relatórios de 26/09 | A [retomada](2026-09-27-retomada-a3-a5.md) e o [relatório final](2026-09-27-execucao-codex-ultra.md) registram audit de produção/completo com saída zero e regressões verdes no lockfile identificado. | Alertas zerados no grafo auditado naquele instante; isso não equivale a aprovação permanente da segurança de implantação. |
+| R-010 da reanálise de 25/09 | O build padrão passou em executor com rede no snapshot final; Poppins ainda depende de busca externa no build. | O gate executado passou. Build offline ainda requer decisão e asset local apropriado. |
+| R-003/R-011, P-DB-01–04/A4 e PD-002 | O [relatório final](2026-09-27-execucao-codex-ultra.md) conserva a prova independente de `branch_id`, o papel/migration/resíduo do Neon `568d60469278` e a validação científica fora do alcance dos testes atuais. | Pendência externa; nenhuma migration ou limpeza no outro Neon foi autorizada por esta reconciliação. |
+
+Os documentos de 25/26 com resultados vermelhos, ressalvas ou pendências externas permanecem no diretório principal como registros históricos. O [plano de revalidação conjunta](finished/2026-09-26-plano-revalidacao-conjunta.md) está em `finished` porque suas cinco etapas próprias foram concluídas; essa localização não aprova merge nem resolve os itens externos.
+
 ## Objetivo
 
 Este diretório registra a validação da continuidade da IMP-006 na branch
@@ -100,6 +115,7 @@ cientificamente validado. Os detalhes, limitações e soluções propostas estã
   navegador e vetor técnico esperado.
 - [`findings.md`](findings.md): achados classificados, reprodução, impacto e
   origem histórica sustentada.
+- [`finished/2026-09-26-plano-revalidacao-conjunta.md`](finished/2026-09-26-plano-revalidacao-conjunta.md): plano com as cinco etapas próprias concluídas. As decisões externas e os bloqueios de merge registrados na rodada continuam históricos e não são marcados como resolvidos por esta organização.
 
 ## Continuidade corretiva de 2026-09-25 no HEAD `2c63c674`
 
