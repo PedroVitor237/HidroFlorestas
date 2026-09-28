@@ -1,5 +1,6 @@
 import type { EnvironmentalPayload } from "@/types/environmental-data.type";
 import { ENVIRONMENTAL_FIELDS, parseEnvironmentalInput } from "@/types/environmental-data.validation";
+import { createClientUuid } from "@/lib/client-uuid";
 export type EnvironmentalFormState=Record<string,string>;
 export type Submission={key:string;canonical:string;payload:EnvironmentalPayload};
 export function emptyEnvironmentalForm():EnvironmentalFormState {return Object.fromEntries(Object.entries(ENVIRONMENTAL_FIELDS).flatMap(([group,fields])=>Object.keys(fields).map(key=>[`${group}.${key}`,''])));}
@@ -13,7 +14,7 @@ export function formToPayload(form:EnvironmentalFormState) {
  }
  return parseEnvironmentalInput(payload);
 }
-export function prepareSubmission(payload:EnvironmentalPayload,previous:Submission|null,newKey=()=>crypto.randomUUID()):Submission {
+export function prepareSubmission(payload:EnvironmentalPayload,previous:Submission|null,newKey=createClientUuid):Submission {
  const canonical=JSON.stringify(payload);
  return previous?.canonical===canonical?previous:{key:newKey(),canonical,payload};
 }

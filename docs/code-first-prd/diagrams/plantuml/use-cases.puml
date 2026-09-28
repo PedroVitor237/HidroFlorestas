@@ -1,45 +1,59 @@
 @startuml
 top to bottom direction
 
-actor "Pessoa da equipe" as A1
-actor "Usuário autenticado" as A2
-actor "Responsável pelo laboratório" as A3
-actor "Participante do laboratório" as A4
-actor "Participante de campo" as A5
+actor "Visitante" as Visitor
+actor "Conta ACTIVE" as Account
+actor "OWNER/ADMIN do laboratório" as LabManager
+actor "Membro do laboratório" as Member
+actor "ADMIN global" as GlobalAdmin
 
-rectangle "HidroFlorestas" {
+rectangle "HidroFlorestas — estado de uso 2026-09-28" {
   usecase "CF-UC-001\nCriar conta" as U1
   usecase "CF-UC-002\nAutenticar-se" as U2
-  usecase "CF-UC-003\nGerenciar sessão" as U3
+  usecase "CF-UC-003\nRestaurar/encerrar sessão" as U3
   usecase "CF-UC-004\nCriar laboratório" as U4
-  usecase "CF-UC-005\nIngressar em laboratório" as U5
-  usecase "CF-UC-006\nSelecionar laboratório ativo" as U6
-  usecase "CF-UC-007\nCadastrar área monitorada no mapa" as U7
-  usecase "CF-UC-008\nConsultar área monitorada" as U8
+  usecase "CF-UC-005\nIngressar (indisponível)" as U5
+  usecase "CF-UC-006\nSelecionar laboratório" as U6
+  usecase "CF-UC-007\nCadastrar área-ponto" as U7
+  usecase "CF-UC-008\nConsultar área" as U8
   usecase "CF-UC-009\nRegistrar coleta" as U9
-  usecase "CF-UC-010\nAssociar coleta espacialmente" as U10
-  usecase "CF-UC-011\nRegistrar dados ambientais" as U11
-  usecase "CF-UC-012\nObter ou associar diagnóstico IHFR" as U12
-  usecase "CF-UC-013\nConsultar diagnóstico IHFR" as U13
-  usecase "CF-UC-014\nAcompanhar resumo e histórico" as U14
-  usecase "CF-UC-015\nVisualizar acompanhamento territorial" as U15
+  usecase "CF-UC-010\nRelacionar coleta à área" as U10
+  usecase "CF-UC-011\nRegistrar/consultar dados ambientais" as U11
+  usecase "CF-UC-012\nGerar e gerir IHFR experimental" as U12
+  usecase "CF-UC-013\nConsultar IHFR experimental" as U13
+  usecase "CF-UC-014\nResumo e histórico" as U14
+  usecase "CF-UC-015\nVisualizar território" as U15
+  usecase "CF-UC-016\nAdministrar vínculo contextual" as U16
+  usecase "CF-UC-017\nDesativar/excluir laboratório" as U17
+  usecase "CF-UC-018\nAdministrar contas globais" as U18
 }
 
-A1 --> U1
-A1 --> U2
-A2 --> U3
-A3 --> U4
-A4 --> U5
-A4 --> U6
-A4 --> U7
-A4 --> U8
-A4 --> U12
-A4 --> U13
-A4 --> U14
-A4 --> U15
-A5 --> U9
-A5 --> U10
-A5 --> U11
+Visitor --> U1
+Visitor --> U2
+Account --> U3
+Account --> U4
+Account --> U5
+Account --> U6
+LabManager --> U7
+LabManager --> U12
+LabManager --> U16
+LabManager --> U17
+Member --> U8
+Member --> U9
+Member --> U11
+Member --> U13
+Member --> U14
+Member --> U15
+GlobalAdmin --> U18
 U9 ..> U10 : <<include>>
 
+note right of U5
+  Interface anuncia etapa futura;
+  não há ingresso utilizável.
+end note
+
+note bottom of U12
+  CONTRATO_EXPERIMENTAL
+  VALIDAÇÃO CIENTÍFICA PENDENTE
+end note
 @enduml

@@ -1,0 +1,279 @@
+# Quickstart: validação do diagnóstico IHFR experimental
+
+**Purpose**: guia executável para validar a IMP-006 e sua continuidade 007 sem confundir conformidade técnica com validação científica. As seções 1–10 preservam o roteiro original; o estado e os comandos remotos atuais estão na seção de continuidade ao final.
+
+## 1. Prerequisites
+
+- branch original `006-ihfr-diagnosis` reconciliada com a baseline histórica em [plan.md](plan.md); a continuidade atual é executada em `007-ihfr-evolution`, conforme o plano vigente ao final daquele arquivo;
+- Node `24.19.0` e dependências do projeto instalados para a rodada final (verificar `node --version` e `npm ci` antes dos gates);
+- PostgreSQL isolado autorizado para testes de migration/concorrência;
+- banco de teste sem dados reais, credenciais ou PII;
+- manifesto e contratos presentes em [contracts/](contracts/).
+
+Nunca executar migration/fixtures contra produção, banco comum reutilizado silenciosamente ou banco não confirmado como descartável e explicitamente autorizado para teste. Não registrar valores de ambiente nos relatórios.
+
+### Ordem da execução de implementação
+
+Executar nesta ordem: guards e caracterização → preflight de banco/legado → design Prisma → criar `prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql` → `prisma format` → inspecionar → `prisma validate` → aplicar em schema PostgreSQL isolado → `prisma generate` → fixtures → shells compiláveis → testes comportamentais RED → implementação → unitários verdes → integração PostgreSQL verde → E2E → regressões → teardown → evidências e encerramento. Parar se o caminho de migration já existir ou se migration posterior tornar a ordem inválida.
+
+## 2. Static contract checks
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```
+
+Validar JSON e YAML com parsers locais e executar os testes de contrato OpenAPI. Resultado esperado:
+
+- suplemento e DTOs recusam campos extras;
+- todas as respostas, inclusive erros, declaram `Cache-Control: no-store`;
+- nenhuma rota omite laboratório, área ou coleta;
+- nenhum DTO público contém `userId`, ator, chave idempotente, request/payload hash, credencial ou payload ambiental completo;
+- o schema do suplemento expõe somente sete `landUseType`.
+- o OpenAPI expõe seis operações HTTP e sete comportamentos, com CREATE/REPLACE no mesmo POST;
+- `mode=CREATE` aceita `expectedCurrentDiagnosisId` ausente ou `null`, enquanto `mode=REPLACE` exige UUID;
+- elegibilidade malformada/categoria inválida declara `400 INVALID_INPUT`, enquanto ausência válida/predominância indeterminável retorna outcome `INSUFFICIENT_DATA`;
+- `PublicDiagnosis.areaId` é obrigatório, UUID e derivado no servidor.
+
+## 3. Reproduce the normative manifest hash
+
+Algoritmo de verificação:
+
+1. ler `ihfr-math-experimental-v0.1.1.json` como UTF-8;
+2. validar JSON;
+3. remover somente a propriedade raiz `contractHash`;
+4. ordenar lexicograficamente, de modo recursivo, as chaves de cada objeto;
+5. preservar a ordem dos arrays;
+6. serializar sem whitespace;
+7. calcular SHA-256 e prefixar `sha256:`.
+
+Resultado obrigatório:
+
+```text
+sha256:f8104143f1505aceaa68a7ffa06fac50f4906cdfc4119609875d99c9fecc6f89
+```
+
+Qualquer diferença deve falhar o teste e bloquear ativação. O teste não pode reescrever o manifesto ou “corrigir” seu hash.
+
+Repetir a verificação histórica da v0.1.0 e obter `sha256:5285d52ec70e0b0f8a951d40dd54f052e02be1556dd310e3cef0b3b4f6bc684b`; provar que o arquivo não mudou e que não é ativado para novos diagnósticos.
+
+## 4. Unit validation — supplement and evaluator
+
+Executar:
+
+```bash
+npm run test:unit
+```
+
+### Supplement matrix
+
+| Caso | Esperado |
+|---|---|
+| cada um dos sete valores | aceita e usa o score exato do manifesto |
+| valor desconhecido, alias, `OTHER`/`OTHERS` ou case divergente | `INVALID_INPUT`, sem fallback |
+| `landUseType` ausente ou null | `INSUFFICIENT_DATA`, nunca zero |
+| uso misto com categoria predominante documentada | aceita somente a categoria predominante |
+| uso misto sem predominância determinável | `INSUFFICIENT_DATA`; não calcula composição ou média |
+| campo extra | `INVALID_INPUT` |
+| `CollectionArea.landType` disponível | ignorado pelo avaliador |
+| `soilTexture`, degradação, cobertura, drenagem, elevação, declividade ou tamanho disponíveis | não substituem `landUseType` |
+
+### Evaluator matrix
+
+- reproduzir scores de cada enum;
+- testar profundidade/infiltração nos limites 0, 60 e acima de 60;
+- testar declividade 0, 45 e acima de 45;
+- confirmar que declividade acima de 45 mantém `raw`, usa `normalizedInput=45`, marca `clamped=true` e não altera a origem;
+- testar cobertura/solo exposto em 0 e 100;
+- preservar `false` e zero informados;
+- excluir da média somente opcionais conhecidos ausentes, `null` permitido ou não aplicáveis, nunca convertê-los em zero;
+- recusar campo/enum desconhecido, alias, caixa divergente e `OTHER(S)` como `INVALID_INPUT`, nunca ignorá-los;
+- exigir pelo menos dois scores em cada dimensão e as quatro dimensões válidas;
+- conferir qualidade abaixo de 0.5, em 0.5, abaixo de 0.8, em 0.8 e em 1;
+- conferir classes imediatamente abaixo, exatamente e acima de 0.25/0.50/0.75;
+- conferir tolerância `1e-12`, ausência de arredondamento intermediário e half-up somente no display;
+- confirmar desempate de drivers W, S, V, T;
+- recusar combinações de versões/hash não allowlisted.
+
+Esses são vetores técnicos derivados. Devem ser nomeados `TECHNICAL_CONTRACT_VECTOR`, nunca vetor científico aprovado.
+
+## 5. Migration validation
+
+Executar no banco PostgreSQL isolado:
+
+```bash
+npm run test:migration
+```
+
+Provar:
+
+1. migration aditiva em banco vazio;
+2. migration em banco com registros `IHFRDiagnosis` e ambientais legados;
+3. zero backfill ou alteração do legado;
+4. FK e exclusões `RESTRICT`;
+5. um único ponteiro vigente por coleta;
+6. operação única por ator/chave;
+7. triggers impedem update/delete de suplemento, snapshot e evento;
+8. rollback não deixa objetos parciais.
+9. `UNIQUE(collectionDataId,payloadHash)` deduplica suplemento, sem `UNIQUE(inputSupplementId)` no diagnóstico;
+10. um suplemento pode ser referenciado por N diagnósticos compatíveis, nova observação cria outro e nova matemática compatível pode reutilizá-lo.
+
+### Fixtures e lifecycle do banco
+
+Cada execução cria schema PostgreSQL isolado e fixtures explícitas para OWNER/ADMIN/MEMBER, vínculo atual/revogado, laboratório ativo/inativo, contexto próprio/cruzado, coleta com/sem conjunto, suplemento válido/inválido/ausente e diagnóstico `CURRENT`/`SUPERSEDED`/`REVOKED`. Triggers de imutabilidade permanecem ativos; nenhum cenário pode desabilitá-los linha a linha.
+
+Rollback transacional valida atomicidade de uma operação. Limpeza entre cenários remove dados da fixture. Rollback da migration valida reversão somente em schema descartável. Descarte do schema termina a execução. Recuperação operacional de produção é procedimento separado, explicitamente autorizado e não é substituído por nenhum dos anteriores. O harness deve registrar finalização mesmo após falha.
+
+## 6. Integration validation
+
+Executar:
+
+```bash
+npm run test:integration
+```
+
+### Context and authorization
+
+Montar pelo menos dois laboratórios, duas áreas e duas coletas:
+
+- OWNER e ADMIN consultam e escrevem em laboratório ativo;
+- MEMBER consulta, mas toda escrita retorna `403` sem efeito;
+- laboratório inativo permite current/detail e recusa cálculo/substituição/revogação;
+- ID cruzado, inexistente ou vínculo ausente retorna o mesmo `404`;
+- após revogar vínculo, inclusive replay/operação por chave deixa de ser acessível;
+- GET operation do mesmo ator continua `200` se ele passar a MEMBER ou se o laboratório ficar inativo; outro ator e contexto cruzado recebem `404`, chave malformada `400 INVALID_INPUT`;
+- para escrita, MEMBER recebe `403` e laboratório inativo `409 READ_ONLY` antes da validação de request válido ou estruturalmente inválido;
+- conta não ativa não lê nem escreve.
+
+### Creation and insufficiency
+
+- com `ihfr-measurement-v1`, suplemento válido, versões/hash exatos e quatro dimensões suficientes: `201`, um diagnóstico `CURRENT`;
+- usar também uma medição realmente produzida e persistida pelo serviço da IMP-005, com `terrain.drainageDensityKmPerKm2` e `terrain.elevationMeters` presentes; elegibilidade, CREATE, CURRENT, REPLACE e REVOKE devem concluir sem `500`. Esses dois campos conhecidos são aceitos, validados e preservados sem entrar no score ou na decomposição;
+- sem conjunto ambiental, slope ou land use: `INSUFFICIENT_DATA`, nenhum diagnóstico/pointer;
+- dimensão com menos de dois scores: `INSUFFICIENT_DATA`;
+- versão ou `contractHash` estruturalmente inválido: `400 INVALID_INPUT`, sem ledger;
+- versão ou `contractHash` bem formado, porém incompatível com a combinação ativa/suportada: `422 INCOMPATIBLE_VERSION`, terminal idempotente no ledger, sem suplemento confirmado, diagnóstico, `CURRENT` ou evento; GET operation recupera `200 OperationResponse` com `outcome = INCOMPATIBLE_VERSION`;
+- score zero válido continua resultado, distinto de ausência/insuficiência.
+
+### Idempotency and timeout
+
+- mesma chave, ator, contexto e request: replay retorna o mesmo resultado/status, sem novo snapshot/evento; POST incompatível novo e repetido retornam `422 ErrorEnvelope` e mantêm uma única linha no ledger, enquanto GET operation recupera `200 OperationResponse`;
+- mesma chave com contexto/body/`mode`/motivo diferente: `409 IDEMPOTENCY_CONFLICT`;
+- chave ambiental ou da coleta não é reutilizada internamente;
+- após simular perda da resposta, GET da operação no mesmo contexto recupera o terminal;
+- recuperação depois de perda de vínculo retorna `404`, sem vazamento.
+
+### Concurrency and transitions
+
+- duas criações concorrentes: no máximo um `CURRENT`; perdedora reavalia e conflita;
+- duas substituições com mesmo expected ID: primeira vence, segunda `STATE_CONFLICT`;
+- substituição cria novo snapshot, cria ou reutiliza suplemento compatível, torna o anterior `SUPERSEDED` e não edita snapshots/suplementos;
+- revogação do vigente registra motivo restrito, torna-o `REVOKED`, remove current e mantém detalhe;
+- revogar/substituir alvo não vigente retorna conflito;
+- falha injetada em cada ponto transacional resulta em rollback integral.
+
+## 7. API and E2E validation
+
+Executar:
+
+```bash
+npm run test:e2e
+```
+
+Jornadas mínimas:
+
+1. OWNER abre coleta elegível, informa suplemento, calcula e consulta o vigente;
+2. MEMBER vê resultado, origem, versões/hash, vigência, datas e quatro rótulos, sem controles de escrita;
+3. ausência de vigente é apresentada como ausência, não zero;
+4. OWNER substitui usando o ID esperado e o detalhe antigo aparece `SUPERSEDED`;
+5. ADMIN revoga com motivo; current retorna null e detalhe preservado aparece `REVOKED`;
+6. inativo apresenta somente leitura;
+7. timeout recupera a operação sem anunciar sucesso antes do terminal;
+8. nenhum texto chama o resultado de cientificamente “aceito”, definitivo ou universal.
+9. com `window.crypto.randomUUID` indisponível antes de carregar o aplicativo, o navegador confirma coleta, confirma medição ambiental completa, consulta elegibilidade e cria diagnóstico com chaves UUID v4; os testes de estado verificam chaves estáveis por tentativa/retry. A alternativa usa `crypto.getRandomValues` e falha explicitamente se não houver gerador criptográfico. Para repetir essa jornada em HTTP no IPv4 privado do próprio host, usar o runner isolado com `npm run test:e2e:ihfr -- --lan`; o runner vincula o servidor somente à interface privada selecionada e descarta o schema temporário ao terminar.
+
+Não exigir nesta feature dashboard, feed histórico, mapa, gráfico, recomendação, PDF ou IA.
+
+## 8. Regression suite
+
+```bash
+npm test
+npm run test:migration
+npm run typecheck
+npm run lint
+npm run build
+```
+
+Confirmar explicitamente:
+
+- autenticação, laboratórios e papéis da IMP-003;
+- confirmação/detalhe de coleta e imutabilidade da IMP-004;
+- captura/leitura ambiental, parser, idempotência e imutabilidade da IMP-005;
+- resumo/histórico, paginação e minimização da IMP-007;
+- dashboard continua contendo somente `AREA_CREATED` e `COLLECTION_CONFIRMED` nesta entrega;
+- mapa territorial, lista textual, endpoint privado e minimização da IMP-008;
+- mapa permanece sem score, classe, risco, cor, diagnóstico, `landUseType`, payload ambiental ou auditoria restrita da IMP-006;
+- nenhuma nova fonte paralela de atividade/auditoria.
+
+Executar também os testes territoriais unitários e de integração e a spec E2E `tests/e2e/territorial-map.spec.ts`, com tiles interceptados conforme o contrato da IMP-008. Essa regressão preserva o mapa existente; não autoriza adicionar camada IHFR.
+
+## 9. Teardown verificável
+
+Após todas as regressões — inclusive a territorial — executar o teardown global em bloco de finalização, também quando algum teste falhar. Verificar e registrar:
+
+- schema isolado removido;
+- zero registros órfãos da execução;
+- zero processos de servidor/test runner deixados em execução;
+- triggers nunca desabilitados;
+- nenhuma credencial ou valor de ambiente copiado à evidência.
+
+## 10. Evidence record
+
+Para cada comando registrar commit, ambiente sanitizado, resultado e falhas. Separar:
+
+- `CONFORMIDADE_TECNICA_VERIFICADA`: contrato, código, banco e API;
+- `VALIDACAO_CIENTIFICA_PENDENTE`: revisão especializada, calibração, vetores científicos e campo.
+
+Testes verdes não removem `CONTRATO_EXPERIMENTAL`, `SUJEITO_A_RECALIBRACAO` ou `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
+## Continuidade corretiva 007 — comandos no diff de 2026-09-25
+
+`test:contract`, `test:integration` e `test:migration` escrevem em schemas PostgreSQL descartáveis e fazem um preflight único, somente leitura, antes da descoberta. `test:unit`, `typecheck`, `lint` e `build` não exigem banco real; o build pode usar datasource local fictício somente para geração do Client, sem iniciar aplicação conectada. `test:e2e:ihfr` escreve em schema descartável e encerra servidor próprio. `test:e2e:ihfr:full-ui` usa `public` apenas na branch E2E dedicada, cria domínio somente pela interface e preserva o cenário para revisão. `test:ihfr:audit` lista schemas temporários em leitura; `test:ihfr:audit:assert-zero` falha quando houver candidato. Ambos são somente leitura e não executam cleanup.
+
+| Comando | Banco/escrita | Pré-condição | Cleanup |
+|---|---|---|---|
+| `npm run test:unit` | nenhum | dependências locais | nenhum |
+| `npm run test:contract`, `npm run test:integration`, `npm run test:migration` | PostgreSQL, sim | `TEST_DATABASE_URL` direto, `DATABASE_URL` distinto, `TEST_DATABASE_CONFIRMATION` literal, `IMP006_DATABASE_VARIABLE=TEST_DATABASE_URL` | schema exclusivo com marcador exato |
+| `npm run test:e2e:ihfr` | PostgreSQL/Next.js, sim | mesma seleção e preflight; servidor externo herdado recusado | servidor próprio encerrado; schema exclusivo descartado |
+| `npm run test:e2e:ihfr:full-ui` | PostgreSQL/Next.js, sim | mesmos guards; schema inicial `public` E2E; `IMP006_UI_EMAIL`, `IMP006_UI_PASSWORD`, `IMP006_UI_RUN_ID=HF007-UI-*`; conta ativa já preparada e migrations versionadas aplicadas | servidor próprio encerrado; domínio preservado por run ID exato |
+| `npm run test:ihfr:audit` | PostgreSQL, somente leitura | mesma seleção de destino | nenhuma remoção |
+| `npm run test:ihfr:audit:assert-zero` | PostgreSQL, somente leitura | mesma seleção de destino; exige zero schemas `imp006_test_*` | nenhuma remoção |
+
+Para a jornada completa, a conta de login é a única pré-condição de domínio fora da interface. Confira antes por leitura que o run ID não corresponde a recurso preexistente; use um ID novo para a execução automatizada. O checkpoint `HF007-UI-20260925-2295502` pertence ao preflight histórico, antes da configuração E2E. Naquele momento a orientação conservadora exigia URL direto fornecido explicitamente. A instrução posterior do responsável identificou DEV/E2E e autorizou, para este destino E2E específico, derivar o hostname direto removendo `-pooler` somente do hostname. Isso não constitui regra geral para outros alvos nem prova independente de `branch_id`. Não desative validação TLS.
+
+O wrapper histórico `scripts/imp006-local-postgresql.ps1` continua admitido para as suítes descartáveis quando define `IMP006_LOCAL_POSTGRESQL=1` e aponta ambos os URLs exclusivamente ao cluster próprio `127.0.0.1:55426`; nesse modo local, a igualdade entre eles é esperada. O modo remoto exige identidades distintas. O E2E de `public` da branch dedicada recusa o modo local, exige `prisma migrate status` verde com URL direto e recusa um run ID cujo nome exato de laboratório já exista. Migrations pendentes devem ser avaliadas e aplicadas somente pelo fluxo versionado autorizado, antes de repetir o E2E.
+
+Na validação local de 2026-09-25, `test:contract` passou em 2/2, `test:migration` em 23/23, `test:integration` em 107/107 e `test:e2e:ihfr` em 6/6. O `PrismaPg` local seleciona `TimeZone=UTC` na conexão: uma comparação com `pg` reproduziu deslocamento de três horas em `timestamptz` quando a sessão do adapter usava `America/Sao_Paulo`; o E2E confirma o instante UTC original após reload. O teste de falha injetada descartou o schema e `test:ihfr:audit` retornou zero candidatos. A ausência de configuração Neon e full UI descrita naquele checkpoint foi superada pela execução posterior, registrada abaixo.
+
+### Estratégia canônica de ambiente e evidência Neon posterior
+
+O arquivo `.env.e2e.local` é local e ignorado pelo Git. O runner não carrega esse arquivo por conta própria: o operador deve iniciar cada comando remoto com `node --env-file=.env.e2e.local`, por exemplo:
+
+```bash
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-test-runner.ts contract
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-local-e2e.ts
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-full-ui-e2e.ts
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-audit-schemas.ts list
+node --env-file=.env.e2e.local --import=tsx scripts/imp006-audit-schemas.ts assert-zero
+```
+
+Usar a variante correspondente ao script oficial para integração, migration e auditoria; não copiar variáveis ou connection strings para comandos, logs ou documentação. O preflight oficial deve confirmar destino direto E2E, seleção, identidade diferente de DEV, banco esperado e schema permitido antes de qualquer escrita. Em 2026-09-25, preflight e migrations atualizadas passaram; contrato Neon 2/2, integração 107/107, migration 23/23, E2E IHFR 6/6 e full UI 1/1 passaram. A jornada full UI comprovou login, criação de laboratório/área/coleta/medição, CREATE, reload, histórico com mesmo ID, REPLACE, SUPERSEDED, REVOKE e CURRENT vazio. A auditoria daquela rodada listou um schema candidato; após remoção autorizada em 2026-09-26, `list=0` e `assert-zero=PASS`. Naquele checkpoint, o fechamento ainda dependia dos gates após as alterações; o resultado final consta abaixo. Ver [validation-report.md](../../docs/validation/007-ihfr-evolution/validation-report.md) e [implementation-evidence.md](implementation-evidence.md).
+
+O alinhamento aplicado nesta rodada fixa Prisma `7.4.2` em CLI, Client e adapters pg/Neon, executado em Node `24.19.0`; `npm ci`, `prisma generate`, `npm ls` e os gates funcionais completos passaram no banco local e no Neon E2E conforme o checkpoint final abaixo. `next/font/google` para Poppins depende de rede no build enquanto não existir asset local aprovado; esse item é dívida técnica operacional, não falha do IHFR.
+
+A migration aditiva `20260926000100_ihfr_lifecycle_reference_integrity` cobre o defeito R-006: antes de aplicar em `public` E2E, consultar somente em leitura se operação, CURRENT e eventos já possuem referências cruzadas inválidas. Se qualquer consulta encontrar linha, interromper o deploy e investigar sem backfill inferido. Em schema descartável, o RED aceitou 12 inconsistências e o GREEN rejeitou 15 casos negativos com SQLSTATE `23514`; a suíte migration local passou 26/26. Após deploy versionado autorizado, repetir migration, integração, contrato, E2E e auditoria `assert-zero` no destino E2E. A migration publicada original permanece intacta.
+
+No deploy E2E desta rodada, as quatro consultas pré-deploy retornaram zero, a migration nova foi aplicada apenas em `public` autorizado e o status ficou atualizado. Contrato 2/2, migration 26/26 e integração 107/107 passaram no Neon; E2E IHFR, full UI e auditoria pós-gates ainda estavam em execução neste checkpoint. Esses resultados não dispensam o preflight nas próximas rodadas.
+
+Na sequência, E2E IHFR 6/6, full UI 1/1 em novo run ID e auditoria final `list=0`/`assert-zero=PASS` também passaram no Neon E2E. O preflight recusou reuso do run ID antes de iniciar servidor. Diff, padrões de segredos e os quatro commits técnicos locais foram revisados; T141 foi encerrada com 143/143 tarefas marcadas. O commit documental será inspecionado no staging antes de ser criado. A prova independente de `branch_id` permanece validação externa documentada, e a ciência continua pendente.

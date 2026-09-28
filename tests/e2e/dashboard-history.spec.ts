@@ -158,21 +158,16 @@ test("US3 reloads persisted sources and keeps loading, failure and retry distinc
   await expect(summary.getByText("13", { exact: true })).toBeVisible();
   await expect(page.getByText(`${DASHBOARD_FIXTURE_PREFIX} refreshed area`).first()).toBeVisible();
 
-  let summaryAttempts = 0;
-  await page.route(`**/api/laboratories/${laboratoryId}/dashboard/summary`, async (route) => {
-    summaryAttempts += 1;
-    if (summaryAttempts === 1) {
-      await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "Falha controlada." } }) });
-    } else {
-      await route.continue();
-    }
+  const summaryRoute = `**/api/laboratories/${laboratoryId}/dashboard/summary`;
+  await page.route(summaryRoute, async (route) => {
+    await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "Falha controlada." } }) });
   });
   await page.reload();
   await expect(page.getByRole("heading", { name: "Resumo indisponível" })).toBeVisible();
   await expect(page.locator("section[aria-labelledby='history-title'] ol a")).toHaveCount(20);
+  await page.unroute(summaryRoute);
   await page.getByRole("button", { name: "Tentar novamente" }).click();
   await expect(summary.getByText("14", { exact: true })).toBeVisible();
-  await page.unroute(`**/api/laboratories/${laboratoryId}/dashboard/summary`);
 
   await page.route(`**/api/laboratories/${laboratoryId}/dashboard/history`, async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 500));

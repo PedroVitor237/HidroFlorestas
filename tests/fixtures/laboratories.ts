@@ -1,8 +1,7 @@
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { neonConfig } from "@neondatabase/serverless";
-import ws from "ws";
 import { PrismaClient } from "../../src/generated/prisma/index.js";
 import { AUTH_FIXTURE_USERS, validateAuthFixtureEnvironment } from "./auth-users";
+import { withPublicSchema } from "./areas";
+import { testPostgresqlAdapter } from "./test-postgresql-adapter";
 
 export const LABORATORY_FIXTURE_PREFIX = "IMP-002 E2E";
 export const LABORATORY_SECOND_USER = {
@@ -11,8 +10,7 @@ export const LABORATORY_SECOND_USER = {
 } as const;
 
 function createClient(testDatabaseUrl: string) {
-  neonConfig.webSocketConstructor = ws;
-  return new PrismaClient({ adapter: new PrismaNeon({ connectionString: testDatabaseUrl }) });
+  return new PrismaClient({ adapter: testPostgresqlAdapter(withPublicSchema(testDatabaseUrl)) });
 }
 
 export async function setupLaboratoryFixtures(environment: Record<string, string | undefined>) {

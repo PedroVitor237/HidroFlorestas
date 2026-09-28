@@ -1,11 +1,48 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import dotenv from "dotenv";
-import { Pool, neonConfig, type PoolClient } from "@neondatabase/serverless";
-import ws from "ws";
+import { Pool, type PoolClient } from "pg";
 
 export const migrationPath = "prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql";
 export const collectionMigrationPath = "prisma/migrations/20260915000100_collection_registration_metadata/migration.sql";
+export const environmentalMigrationPath = "prisma/migrations/20260917000100_environmental_measurement_set/migration.sql";
+export const userAdministrationMigrationPath = "prisma/migrations/20260919000100_user_administration/migration.sql";
+export const ihfrDiagnosisMigrationPath = "prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql";
+export const removeLegacyIsAdminMigrationPath = "prisma/migrations/20260920000100_remove_legacy_is_admin/migration.sql";
+export const ihfrLifecycleReferenceMigrationPath = "prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity/migration.sql";
+
+export function normalizePostgresqlTextArray(value: unknown): string[] {
+  if (Array.isArray(value) && value.every((item) => typeof item === "string")) {
+    return value;
+  }
+  if (typeof value !== "string" || !value.startsWith("{") || !value.endsWith("}")) {
+    throw new TypeError("Expected a PostgreSQL text array");
+  }
+  if (value === "{}") return [];
+
+  const items: string[] = [];
+  let item = "";
+  let quoted = false;
+  let escaped = false;
+  for (const character of value.slice(1, -1)) {
+    if (escaped) {
+      item += character;
+      escaped = false;
+    } else if (character === "\\") {
+      escaped = true;
+    } else if (character === '"') {
+      quoted = !quoted;
+    } else if (character === "," && !quoted) {
+      items.push(item);
+      item = "";
+    } else {
+      item += character;
+    }
+  }
+  if (quoted || escaped) throw new TypeError("Malformed PostgreSQL text array");
+  items.push(item);
+  return items;
+}
 
 export function migrationTestEnvironment() {
   dotenv.config({ path: ".env", quiet: true });
@@ -14,7 +51,8 @@ export function migrationTestEnvironment() {
   const test = new URL(process.env.TEST_DATABASE_URL ?? "");
   const development = new URL(process.env.DATABASE_URL ?? "");
   const identity = (url: URL) => `${url.hostname.replace("-pooler.", ".")}:${url.port || "5432"}${decodeURIComponent(url.pathname)}`;
-  if (!['postgres:', 'postgresql:'].includes(test.protocol) || identity(test) === identity(development)) throw new Error("Unsafe test database");
+  const ownedLocal = process.env.IMP006_LOCAL_POSTGRESQL === '1' && test.hostname === '127.0.0.1' && test.port === '55426';
+  if (!['postgres:', 'postgresql:'].includes(test.protocol) || (identity(test) === identity(development) && !ownedLocal)) throw new Error("Unsafe test database");
   // Session settings used by the harness must never leak through Neon's shared
   // pooler into application connections after the temporary schema is dropped.
   test.hostname = test.hostname.replace("-pooler.", ".");
@@ -27,9 +65,8 @@ export async function withMigrationDatabase(
   schemaPrefix = "imp003_test",
 ) {
   const connectionString = migrationTestEnvironment();
-  neonConfig.webSocketConstructor = ws;
   const pool = new Pool({ connectionString, connectionTimeoutMillis: 15_000, max: 1 });
-  if (!/^imp00[3459]_test$/.test(schemaPrefix)) {
+  if (!/^imp00[34569]_test$/.test(schemaPrefix)) {
     throw new Error("Migration schema prefix is not allowlisted");
   }
   const schema = `${schemaPrefix}_${randomUUID().replaceAll("-", "")}`;
@@ -63,4 +100,24 @@ export async function applyAreaMigration(client: PoolClient) {
 
 export async function applyCollectionMigration(client: PoolClient) {
   await client.query(await readFile(collectionMigrationPath, "utf8"));
+}
+
+export async function applyEnvironmentalMigration(client: PoolClient) {
+  await client.query(await readFile(environmentalMigrationPath, "utf8"));
+}
+
+export async function applyUserAdministrationMigration(client: PoolClient) {
+  await client.query(await readFile(userAdministrationMigrationPath, "utf8"));
+}
+
+export async function applyIHFRDiagnosisMigration(client: PoolClient) {
+  await client.query(await readFile(ihfrDiagnosisMigrationPath, "utf8"));
+}
+
+export async function applyRemoveLegacyIsAdminMigration(client: PoolClient) {
+  await client.query(await readFile(removeLegacyIsAdminMigrationPath, "utf8"));
+}
+
+export async function applyIHFRLifecycleReferenceMigration(client: PoolClient) {
+  await client.query(await readFile(ihfrLifecycleReferenceMigrationPath, "utf8"));
 }

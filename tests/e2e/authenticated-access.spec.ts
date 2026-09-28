@@ -117,6 +117,7 @@ test.describe("authenticated access", () => {
         lastName: AUTH_FIXTURE_USERS[0].lastName,
         image: AUTH_FIXTURE_USERS[0].image,
       },
+      destination: "/workspace",
     });
     await expect(page).toHaveURL(/\/workspace$/);
 

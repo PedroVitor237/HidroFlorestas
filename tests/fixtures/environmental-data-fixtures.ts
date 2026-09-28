@@ -1,11 +1,9 @@
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { neonConfig } from "@neondatabase/serverless";
 import bcrypt from "bcrypt";
-import ws from "ws";
 
 import { PrismaClient } from "../../src/generated/prisma";
 import { withPublicSchema } from "./areas";
 import { validateAuthFixtureEnvironment } from "./auth-users";
+import { testPostgresqlAdapter } from "./test-postgresql-adapter";
 
 export const ENVIRONMENTAL_FIXTURE_PREFIX = "IMP-005 E2E";
 const uuid = (suffix: number) =>
@@ -51,12 +49,8 @@ const fixtureEmail = (index: number) =>
   `person-${index}@imp005.hidroflorestas.invalid`;
 
 export function createEnvironmentalFixtureClient(testDatabaseUrl: string) {
-  neonConfig.webSocketConstructor = ws;
   return new PrismaClient({
-    adapter: new PrismaNeon({
-      connectionString: withPublicSchema(testDatabaseUrl),
-      connectionTimeoutMillis: 15_000,
-    }),
+    adapter: testPostgresqlAdapter(withPublicSchema(testDatabaseUrl)),
   });
 }
 

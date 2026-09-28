@@ -39,12 +39,8 @@ const fixtureEmail = (index: number) =>
   `person-${index}@imp007.hidroflorestas.invalid`;
 
 export function createDashboardFixtureClient(testDatabaseUrl: string) {
-  neonConfig.webSocketConstructor = ws;
   return new PrismaClient({
-    adapter: new PrismaNeon({
-      connectionString: withPublicSchema(testDatabaseUrl),
-      connectionTimeoutMillis: 15_000,
-    }),
+    adapter: testPostgresqlAdapter(withPublicSchema(testDatabaseUrl)),
   });
 }
 
@@ -352,10 +348,8 @@ export async function countDashboardFixtures(
     await actions.disconnect();
   }
 }
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { neonConfig } from "@neondatabase/serverless";
 import bcrypt from "bcrypt";
-import ws from "ws";
 
 import { PrismaClient } from "../../src/generated/prisma";
 import { withPublicSchema } from "./areas";
+import { testPostgresqlAdapter } from "./test-postgresql-adapter";

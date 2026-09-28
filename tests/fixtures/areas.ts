@@ -1,9 +1,7 @@
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { neonConfig } from "@neondatabase/serverless";
-import ws from "ws";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "../../src/generated/prisma";
 import { validateAuthFixtureEnvironment } from "./auth-users";
+import { testPostgresqlAdapter } from "./test-postgresql-adapter";
 
 const uid = (n: number) => `00000000-0000-4000-8000-000000000${n}`;
 export function areaFixturePlan() {
@@ -28,8 +26,7 @@ export function withPublicSchema(connectionString: string) {
 
 export function createAreaFixtureClient(environment: Record<string, string | undefined>) {
   const safe = validateAuthFixtureEnvironment(environment);
-  neonConfig.webSocketConstructor = ws;
-  return new PrismaClient({ adapter: new PrismaNeon({ connectionString: withPublicSchema(safe.testDatabaseUrl), connectionTimeoutMillis: 15_000 }) });
+  return new PrismaClient({ adapter: testPostgresqlAdapter(withPublicSchema(safe.testDatabaseUrl)) });
 }
 
 export async function setupAreaFixtures(environment: Record<string, string | undefined>) {

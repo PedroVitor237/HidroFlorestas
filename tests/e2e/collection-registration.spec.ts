@@ -227,16 +227,17 @@ test("US4 reads a minimal immutable detail for current roles and inactive labora
     await login(context, info, userIndex);
     await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}`);
     await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
-    await expect(page.getByText("2026-09-15T09:00:00.000-03:00", { exact: true })).toBeVisible();
-    await expect(page.getByText("2026-09-15T12:05:00.000Z", { exact: true })).toBeVisible();
-    await expect(page.getByText(/userId|confirmationKey|observations|IHFR/i)).toHaveCount(0);
+    const detail = page.getByRole("article", { name: "Detalhe da coleta" });
+    await expect(detail.getByText("2026-09-15T09:00:00.000-03:00", { exact: true })).toBeVisible();
+    await expect(detail.getByText("2026-09-15T12:05:00.000Z", { exact: true })).toBeVisible();
+    await expect(detail).not.toContainText(/userId|confirmationKey|observations|IHFR/i);
     await page.reload();
     await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
   }
   await login(context, info, 0);
   await page.goto(`/dashboard/laboratories/${inactiveLaboratoryId}/areas/${inactiveAreaId}/collections/${inactiveCollectionId}`);
   await expect(page.getByText(/somente leitura/i).last()).toBeVisible();
-  await expect(page.getByText("2026-09-15T15:00:00.000+01:30", { exact: true })).toBeVisible();
+  await expect(page.getByRole("article", { name: "Detalhe da coleta" }).getByText("2026-09-15T15:00:00.000+01:30", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /editar|excluir/i })).toHaveCount(0);
 });
 

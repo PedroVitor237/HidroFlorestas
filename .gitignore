@@ -70,6 +70,12 @@ prisma/migrations/*
 !prisma/migrations/20260917000100_environmental_measurement_set/
 !prisma/migrations/20260917000100_environmental_measurement_set/migration.sql
 
+# IMP-006: versioned experimental IHFR diagnosis.
+!prisma/migrations/20260920000100_ihfr_experimental_diagnosis/
+!prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql
+!prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity/
+!prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity/migration.sql
+
 # IMP-009: additive account revision and functional administration audit.
 !prisma/migrations/20260919000100_user_administration/
 !prisma/migrations/20260919000100_user_administration/migration.sql

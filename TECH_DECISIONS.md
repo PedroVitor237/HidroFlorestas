@@ -12,7 +12,7 @@ Uma decisão `CONFIRMADO` não implica implementação verificada. Da mesma form
 
 ## Escolhas relatadas pela equipe
 
-Estas escolhas foram informadas como adotadas. A classificação `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` registra que a adoção foi relatada e que a implementação ainda não foi verificada.
+As escolhas `TD-001` a `TD-007` foram informadas como adotadas; sua classificação `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` registra que a adoção foi relatada e que a implementação ainda não foi verificada. `TD-015` decorre da decisão da equipe registrada em 2026-09-18 e da clarificação normativa de validação de 2026-09-20. `TD-016` registra a decisão focal autorizada em 2026-09-19 como `DECISAO_EXPERIMENTAL_DE_ENGENHARIA`. A confirmação dessas decisões, isoladamente, não provava implementação; a implementação técnica foi verificada posteriormente, conforme o histórico abaixo. Nenhuma das duas aprova validação científica definitiva.
 
 | Identificador | Assunto | Decisão ou alternativa | Classificação | Estado decisório | Estado de implementação |
 |---|---|---|---|---|---|
@@ -23,6 +23,8 @@ Estas escolhas foram informadas como adotadas. A classificação `DECISAO_RELATA
 | `TD-005` | Estilização | Adotar Tailwind CSS. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
 | `TD-006` | Ícones | Adotar Lucide React. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
 | `TD-007` | Hospedagem da aplicação | Adotar Vercel para hospedar a aplicação no contexto atualmente relatado. | `DECISAO_RELATADA_PENDENTE_DE_VERIFICACAO` | `CONFIRMADO` | `IMPLEMENTACAO_RELATADA_PENDENTE_DE_VERIFICACAO` |
+| `TD-015` | Avaliador IHFR experimental v0.1 | Adotar avaliador determinístico server-side no backend TypeScript existente, regido para novos diagnósticos pelo manifesto `ihfr-math-experimental-v0.1.1`; preservar a v0.1.0 como histórica; não usar Python, FastAPI, serviço externo ou IA generativa nesta versão. | `DECISAO_CONFIRMADA` | `CONFIRMADO` | `IMPLEMENTADO_VERIFICADO` |
+| `TD-016` | Classificação `landUseType` da v0.1 experimental | Adotar os sete valores e scores de `DOC-RAW-013`, exigir uma categoria predominante, rejeitar valor desconhecido e tratar ausência como insuficiência; preservar alternativas e perfil regional sem ativá-los. | `DECISAO_EXPERIMENTAL_DE_ENGENHARIA` | `CONFIRMADO` | `IMPLEMENTADO_VERIFICADO` |
 
 ### Origem e evidências das escolhas relatadas
 
@@ -35,6 +37,8 @@ Estas escolhas foram informadas como adotadas. A classificação `DECISAO_RELATA
 | `TD-005` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Nenhuma inspeção do código foi realizada para esta entrada. | não especificado |
 | `TD-006` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Nenhuma inspeção do código foi realizada para esta entrada. | não especificado |
 | `TD-007` | relato da equipe fornecido para a governança | não especificado | não especificado | Relato da equipe; implementação não verificada. | não especificado | Não resolve a estratégia futura de hospedagem registrada em `TD-013`. | não especificado |
+| `TD-015` | solicitação da equipe para consolidação e remediação focal da IMP-006 | 2026-09-18; clarificação 2026-09-20 | equipe HidroFlorestas | [ADR-0001](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md), manifestos, `src/app/api/server/ihfr-diagnosis/manifest-loader.ts`, `evaluator.ts`, `src/app/api/server/services/ihfr-diagnosis.service.ts` e [evidência de implementação](specs/006-ihfr-diagnosis/implementation-evidence.md). O ciclo de escrita estava ausente no registro de planejamento de 2026-09-20; foi implementado e verificado depois. | suplemento `ihfr-diagnosis-input-experimental-v0.1.0`; `ihfr-measurement-v1` | A v0.1.1 distingue ausência opcional conhecida de entrada desconhecida sem alterar fórmula, pesos ou scores; `VALIDACAO_CIENTIFICA_PENDENTE` e recalibração futura preservadas. | `ADR-0001` |
+| `TD-016` | solicitação da equipe para auditoria e consolidação focal de `landUseType` | 2026-09-19 | equipe HidroFlorestas | [ADR-0001 §7](docs/governance/ADR-0001-contrato-experimental-ihfr-v0-1.md#7-decisão-focal-de-landusetype), manifesto, `evaluator.ts`, `src/app/api/server/services/ihfr-diagnosis.service.ts`, `tests/unit/ihfr-diagnosis-input-policy.test.ts` e testes de integração de cardinalidade. O suplemento ainda não era criado no registro de planejamento; a persistência foi verificada posteriormente. | suplemento `ihfr-diagnosis-input-experimental-v0.1.0`; `TD-015` | Perfil `GENERAL_EXPERIMENTAL`; aplicabilidade territorial científica e validação de campo não comprovadas. | `ADR-0001` |
 
 ## Decisões confirmadas ainda não implementadas
 
@@ -57,9 +61,9 @@ As entradas abaixo não têm autoridade normativa e não devem ser tratadas como
 | Identificador | Assunto | Decisão ou alternativa | Classificação | Estado decisório | Estado de implementação |
 |---|---|---|---|---|---|
 | `TD-008` | Base cartográfica | Avaliar o uso de OpenStreetMap. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
-| `TD-009` | Cálculos científicos | Avaliar o uso de Python para cálculos científicos e do IHFR. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
+| `TD-009` | Cálculos científicos | Avaliar o uso futuro de Python para cálculos científicos e do IHFR; alternativa não selecionada para a v0.1 experimental. | `EM_AVALIACAO` | `ADIADO` | `NAO_IMPLEMENTADO` |
 | `TD-011` | Biblioteca de mapas | Considerar a possibilidade de uso de Leaflet. | `PROPOSTA` | `PROPOSTO` | `NAO_AVALIADO` |
-| `TD-012` | Integração de componentes | Avaliar a estratégia de integração entre componentes Python e Next.js. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
+| `TD-012` | Integração de componentes | Avaliar futuramente a integração Python–Next.js caso Python seja aprovado; não aplicável à v0.1 experimental. | `EM_AVALIACAO` | `ADIADO` | `NAO_IMPLEMENTADO` |
 | `TD-013` | Hospedagem futura | Avaliar a estratégia futura de hospedagem. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
 | `TD-014` | Mapas e visualizações | Avaliar a arquitetura definitiva para mapas e visualizações. | `EM_AVALIACAO` | `EM_AVALIACAO` | `NAO_AVALIADO` |
 
@@ -94,6 +98,17 @@ Cada mudança deve acrescentar uma linha com a origem e manter as linhas anterio
 | `TD-012` | não especificado | Registro inicial | `EM_AVALIACAO` | `NAO_AVALIADO` | Item informado pela equipe para registro de governança, sem aprovação |
 | `TD-013` | não especificado | Registro inicial | `EM_AVALIACAO` | `NAO_AVALIADO` | Item informado pela equipe para registro de governança, sem aprovação |
 | `TD-014` | não especificado | Registro inicial | `EM_AVALIACAO` | `NAO_AVALIADO` | Item informado pela equipe para registro de governança, sem aprovação |
+| `TD-009` | 2026-09-18 | Python não selecionado para a v0.1 experimental; avaliação futura preservada | `ADIADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
+| `TD-012` | 2026-09-18 | Integração Python–Next.js tornou-se inaplicável à v0.1 e permanece futura | `ADIADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
+| `TD-015` | 2026-09-18 | Registro inicial do avaliador experimental interno | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` |
+| `TD-015` | 2026-09-20 | v0.1.0 preservada como histórica; v0.1.1 ativada para clarificar validação de entrada, sem mudança matemática | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação de remediação focal e `ADR-0001` v1.2 |
+| `TD-016` | 2026-09-19 | Registro inicial da classificação focal de `landUseType` para a v0.1 experimental | `CONFIRMADO` | `NAO_IMPLEMENTADO` | solicitação da equipe e `ADR-0001` §7 |
 | `TD-010` | 2026-09-18 | Plotly confirmado somente como direção de gráficos e visualizações analíticas futuros, posteriores à IMP-009; forma de integração e gráficos concretos permanecem abertos | `CONFIRMADO` | `NAO_IMPLEMENTADO` | confirmação explícita da equipe nas solicitações aprovadas de atualização documental da IMP-008 |
+| `TD-015` | 2026-09-21 | Manifestos e hashes verificáveis, parser fechado, avaliador determinístico e testes unitários focais observados; autorização, elegibilidade, escrita, ledger e UI seguem pendentes | `CONFIRMADO` | `PARCIALMENTE_IMPLEMENTADO` | `src/app/api/server/ihfr-diagnosis/{manifest-loader,evaluator,ihfr-diagnosis.contracts}.ts`, testes unitários focais, stubs em `ihfr-diagnosis.service.ts` e `specs/006-ihfr-diagnosis/implementation-evidence.md` |
+| `TD-016` | 2026-09-21 | Sete valores/scores, rejeição de desconhecidos e insuficiência por ausência implementados no parser/avaliador; persistência do suplemento e fluxo de escrita ainda pendentes | `CONFIRMADO` | `PARCIALMENTE_IMPLEMENTADO` | `src/app/api/server/ihfr-diagnosis/{evaluator,ihfr-diagnosis.contracts}.ts`, `tests/unit/ihfr-diagnosis-input-policy.test.ts`, stub `IHFRDiagnosisService.createOrReplace` |
+| `TD-015` | 2026-09-23 | Avaliador, serviço transacional, seis operações HTTP, UI e testes PostgreSQL/E2E da v0.1.1 observados; precedência normativa 400/422 do request permanece em `PD-018`, e validação científica permanece em `PD-002` | `CONFIRMADO` | `PARCIALMENTE_IMPLEMENTADO` | `specs/006-ihfr-diagnosis/implementation-evidence.md`, testes de contrato, integração, migration e E2E; nenhum contrato científico definitivo aprovado |
+| `TD-016` | 2026-09-23 | Suplemento fechado, persistência imutável e cardinalidade 1:N observados no PostgreSQL isolado; sem alteração dos sete valores/scores do ADR | `CONFIRMADO` | `PARCIALMENTE_IMPLEMENTADO` | `tests/integration/ihfr-diagnosis-supplement-cardinality.test.ts`, `tests/migration/ihfr-diagnosis-immutability.test.ts` e `specs/006-ihfr-diagnosis/implementation-evidence.md`; fechamento global aguarda `PD-018` |
+| `TD-015` | 2026-09-23 | `PD-018` resolvida por confirmação explícita da equipe: 400 para falha estrutural/sintática, 422 terminal idempotente para seleção bem formada incompatível; avaliador e fluxo técnico experimental verificados sem alterar matemática, manifesto ou hash ativo | `CONFIRMADO` | `IMPLEMENTADO_VERIFICADO` | `specs/006-ihfr-diagnosis/implementation-evidence.md`, OpenAPI, testes unitários, contrato, integração, migration, E2E, typecheck, lint e build; `PD-002` e validação científica permanecem abertas |
+| `TD-016` | 2026-09-23 | Sete valores/scores e predominância preservados; suplemento fechado, deduplicação e cardinalidade 1:N verificados após a resolução de `PD-018` | `CONFIRMADO` | `IMPLEMENTADO_VERIFICADO` | `specs/006-ihfr-diagnosis/implementation-evidence.md`, testes de parser, escrita/idempotência/recuperação, imutabilidade e E2E; nenhuma aprovação científica definitiva |
 
-Não há ADR relacionado registrado para nenhuma entrada. Um ADR só poderá ser criado após a aprovação da decisão correspondente e quando a natureza da decisão justificar esse registro.
+`TD-015` e `TD-016` possuem `ADR-0001`. As demais entradas continuam sem ADR relacionado; novos ADRs exigem decisão aprovada e natureza compatível.

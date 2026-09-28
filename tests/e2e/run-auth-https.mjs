@@ -7,15 +7,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  countAuthFixtureUsers,
-  runAuthFixtureCommand,
-  validateAuthFixtureEnvironment,
-} from "../fixtures/auth-users.ts";
+let countAuthFixtureUsers;
+let runAuthFixtureCommand;
+let validateAuthFixtureEnvironment;
 
 const cwd = fileURLToPath(new URL("../..", import.meta.url));
 const runnerPath = fileURLToPath(import.meta.url);
 const bootstrapMarker = "HIDROFLORESTAS_HTTPS_E2E_BOOTSTRAPPED";
+const localRegression = process.env.IMP006_LOCAL_POSTGRESQL === "1";
 const inheritedE2eVariables = [
   "DATABASE_URL",
   "TEST_DATABASE_URL",
@@ -28,12 +27,23 @@ const inheritedE2eVariables = [
 ];
 
 if (process.env[bootstrapMarker] !== "1") {
-  const cleanEnvironment = { ...process.env, [bootstrapMarker]: "1" };
-  for (const name of inheritedE2eVariables) delete cleanEnvironment[name];
+  if (localRegression) assertOwnedLocalRegressionEnvironment(process.env);
+  const cleanEnvironment = {
+    ...process.env,
+    [bootstrapMarker]: "1",
+    ...(localRegression ? { IMP006_LOCAL_REGRESSION_PUBLIC: "1" } : {}),
+  };
+  if (!localRegression) {
+    for (const name of inheritedE2eVariables) delete cleanEnvironment[name];
+  }
 
   const bootstrap = spawn(
     process.execPath,
-    ["--env-file=.env.e2e.local", "--import=tsx", runnerPath],
+    [
+      ...(localRegression ? [] : ["--env-file=.env.e2e.local"]),
+      "--import=tsx",
+      runnerPath,
+    ],
     { cwd, env: cleanEnvironment, stdio: "inherit" },
   );
   bootstrap.on("close", (code, signal) => {
@@ -41,7 +51,38 @@ if (process.env[bootstrapMarker] !== "1") {
       code ?? (signal === "SIGINT" ? 130 : signal === "SIGTERM" ? 143 : 1);
   });
 } else {
+  const fixtureNamespace = await import("../fixtures/auth-users.ts");
+  const fixtures = fixtureNamespace.default ?? fixtureNamespace;
+  ({
+    countAuthFixtureUsers,
+    runAuthFixtureCommand,
+    validateAuthFixtureEnvironment,
+  } = fixtures);
   await runHttpsValidation();
+}
+
+function assertOwnedLocalRegressionEnvironment(environment) {
+  if (!environment.TEST_DATABASE_URL || !environment.DATABASE_URL) {
+    throw new Error("HTTPS E2E requires both local regression database URLs");
+  }
+  let test;
+  let reference;
+  try {
+    test = new URL(environment.TEST_DATABASE_URL);
+    reference = new URL(environment.DATABASE_URL);
+  } catch {
+    throw new Error("HTTPS E2E requires valid local regression database URLs");
+  }
+  if (
+    test.hostname !== "127.0.0.1" ||
+    test.port !== "55426" ||
+    test.pathname !== "/imp006_regression_v2_test" ||
+    reference.hostname !== "127.0.0.1" ||
+    reference.port !== "55426" ||
+    reference.pathname !== "/imp006_regression_v2_reference"
+  ) {
+    throw new Error("HTTPS E2E requires the owned local regression databases");
+  }
 }
 
 async function runHttpsValidation() {
@@ -69,6 +110,42 @@ async function runHttpsValidation() {
       );
   };
 
+  const forwardSanitized = (child) => {
+    for (const channel of ["stdout", "stderr"]) {
+      const stream = child[channel];
+      if (!stream) continue;
+      let pending = "";
+      let discardingLine = false;
+      stream.setEncoding("utf8");
+      stream.on("data", (chunk) => {
+        let offset = 0;
+        while (offset < chunk.length) {
+          const newline = chunk.indexOf("\n", offset);
+          const end = newline < 0 ? chunk.length : newline;
+          const fragment = chunk.slice(offset, end);
+          if (!discardingLine) {
+            if (pending.length + fragment.length > 1_048_576) {
+              pending = "";
+              discardingLine = true;
+              process.stderr.write("HTTPS E2E output line exceeded 1 MiB; child terminated.\n");
+              child.kill();
+            } else {
+              pending += fragment;
+            }
+          }
+          if (newline < 0) break;
+          if (!discardingLine) process[channel].write(`${sanitize(pending)}\n`);
+          pending = "";
+          discardingLine = false;
+          offset = newline + 1;
+        }
+      });
+      stream.on("end", () => {
+        if (pending && !discardingLine) process[channel].write(sanitize(pending));
+      });
+    }
+  };
+
   let activeCommand;
   let nextServer;
   let httpsProxy;
@@ -92,19 +169,16 @@ async function runHttpsValidation() {
         cwd,
         env: options.env ?? process.env,
         stdio: options.silent ? "ignore" : ["ignore", "pipe", "pipe"],
+        shell: command === "npm.cmd",
       });
       activeCommand = child;
 
-      if (!options.silent) {
-        for (const channel of ["stdout", "stderr"]) {
-          child[channel].setEncoding("utf8");
-          child[channel].on("data", (chunk) => {
-            process[channel].write(sanitize(chunk));
-          });
-        }
-      }
+      if (!options.silent) forwardSanitized(child);
 
-      child.on("error", () => resolve(1));
+      child.on("error", (error) => {
+        process.stderr.write(`HTTPS E2E command failed: ${sanitize(error.message)}\n`);
+        resolve(1);
+      });
       child.on("close", (code, signal) => {
         activeCommand = undefined;
         resolve(
@@ -120,17 +194,13 @@ async function runHttpsValidation() {
       env: environment,
       stdio: ["ignore", "pipe", "pipe"],
     });
-    for (const channel of ["stdout", "stderr"]) {
-      child[channel].setEncoding("utf8");
-      child[channel].on("data", (chunk) => {
-        process[channel].write(sanitize(chunk));
-      });
-    }
+    forwardSanitized(child);
     return child;
   };
 
   try {
     const safeEnvironment = validateAuthFixtureEnvironment(process.env);
+    if (localRegression) assertOwnedLocalRegressionEnvironment(process.env);
     if (!process.env.JWT_SECRET?.trim() || !process.env.E2E_USER_PASSWORD) {
       throw new Error("Required HTTPS E2E environment is incomplete");
     }
@@ -148,12 +218,17 @@ async function runHttpsValidation() {
       NODE_ENV: "production",
     };
     delete productionEnvironment.E2E_USER_PASSWORD;
-    delete productionEnvironment.TEST_DATABASE_CONFIRMATION;
+    if (!localRegression) delete productionEnvironment.TEST_DATABASE_CONFIRMATION;
     delete productionEnvironment[bootstrapMarker];
 
-    const buildExit = await runCommand("npm", ["run", "build"], {
+    const npmCli = process.env.npm_execpath;
+    const buildExit = await runCommand(
+      npmCli ? process.execPath : process.platform === "win32" ? "npm.cmd" : "npm",
+      npmCli ? [npmCli, "run", "build"] : ["run", "build"],
+      {
       env: productionEnvironment,
-    });
+      },
+    );
     process.stdout.write(`productionBuild: ${buildExit === 0 ? "PASS" : "FAIL"}\n`);
     if (buildExit !== 0 || interruptedSignal) {
       primaryExit = buildExit || signalExit(interruptedSignal);
@@ -161,29 +236,54 @@ async function runHttpsValidation() {
     }
 
     temporaryDirectory = await mkdtemp(join(tmpdir(), "hidroflorestas-auth-https-"));
-    const certificatePath = join(temporaryDirectory, "localhost-cert.pem");
-    const keyPath = join(temporaryDirectory, "localhost-key.pem");
-    const certificateExit = await runCommand(
-      "openssl",
-      [
-        "req",
-        "-x509",
-        "-newkey",
-        "rsa:2048",
-        "-nodes",
-        "-days",
-        "1",
-        "-subj",
-        "/CN=localhost",
-        "-addext",
-        "subjectAltName=DNS:localhost,IP:127.0.0.1",
-        "-keyout",
-        keyPath,
-        "-out",
-        certificatePath,
-      ],
-      { silent: true },
-    );
+    let certificateExit;
+    let certificateOptions;
+    if (process.platform === "win32") {
+      const pfxPath = join(temporaryDirectory, "localhost.pfx");
+      certificateExit = await runCommand(
+        "powershell.exe",
+        [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          join(cwd, "tests", "e2e", "create-https-certificate.ps1"),
+          "-OutputPath",
+          pfxPath,
+        ],
+      );
+      if (certificateExit === 0) certificateOptions = { pfx: await readFile(pfxPath) };
+    } else {
+      const certificatePath = join(temporaryDirectory, "localhost-cert.pem");
+      const keyPath = join(temporaryDirectory, "localhost-key.pem");
+      certificateExit = await runCommand(
+        "openssl",
+        [
+          "req",
+          "-x509",
+          "-newkey",
+          "rsa:2048",
+          "-nodes",
+          "-days",
+          "1",
+          "-subj",
+          "/CN=localhost",
+          "-addext",
+          "subjectAltName=DNS:localhost,IP:127.0.0.1",
+          "-keyout",
+          keyPath,
+          "-out",
+          certificatePath,
+        ],
+        { silent: true },
+      );
+      if (certificateExit === 0) {
+        certificateOptions = {
+          cert: await readFile(certificatePath),
+          key: await readFile(keyPath),
+        };
+      }
+    }
     process.stdout.write(
       `temporaryCertificate: ${certificateExit === 0 ? "PASS" : "FAIL"}\n`,
     );
@@ -209,8 +309,8 @@ async function runHttpsValidation() {
     }
 
     nextServer = startCommand(
-      "./node_modules/.bin/next",
-      ["start", "-H", "127.0.0.1", "-p", String(applicationPort)],
+      process.execPath,
+      [join(cwd, "node_modules", "next", "dist", "bin", "next"), "start", "-H", "127.0.0.1", "-p", String(applicationPort)],
       productionEnvironment,
     );
     await waitForHttp(applicationPort, () => Boolean(interruptedSignal));
@@ -220,10 +320,7 @@ async function runHttpsValidation() {
     }
 
     httpsProxy = createHttpsServer(
-      {
-        cert: await readFile(certificatePath),
-        key: await readFile(keyPath),
-      },
+      certificateOptions,
       (request, response) => {
         const upstream = httpRequest(
           {
@@ -270,8 +367,9 @@ async function runHttpsValidation() {
       PLAYWRIGHT_BASE_URL: `https://127.0.0.1:${httpsPort}`,
     };
     const e2eExit = await runCommand(
-      "./node_modules/.bin/playwright",
+      process.execPath,
       [
+        join(cwd, "node_modules", "@playwright", "test", "cli.js"),
         "test",
         "tests/e2e/authenticated-access-https.spec.ts",
         "--output",
@@ -365,11 +463,14 @@ async function waitForResponse(createRequest, shouldStop) {
     if (shouldStop?.()) throw new Error("HTTPS E2E interrupted");
     const ready = await new Promise((resolve) => {
       const request = createRequest();
+      const timer = setTimeout(() => request.destroy(new Error("Loopback readiness request timed out")),
+        Math.min(2_000, Math.max(1, deadline - Date.now())));
       request.once("response", (response) => {
+        clearTimeout(timer);
         response.resume();
         resolve((response.statusCode ?? 500) < 500);
       });
-      request.once("error", () => resolve(false));
+      request.once("error", () => { clearTimeout(timer); resolve(false); });
       request.end();
     });
     if (ready) return;

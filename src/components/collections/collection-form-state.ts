@@ -1,4 +1,5 @@
 import type { CollectionAttempt, CollectionContext } from "@/types/collection.type";
+import { createClientUuid } from "@/lib/client-uuid";
 import {
   CollectionContractError,
   parseCollectionInput,
@@ -7,7 +8,7 @@ import {
 
 export function createCollectionAttempt(
   context: CollectionContext,
-  createKey: () => string = () => crypto.randomUUID(),
+  createKey: () => string = createClientUuid,
 ): CollectionAttempt {
   return {
     context: {
@@ -68,7 +69,7 @@ export function failCollectionSubmission(
 
 export function startNewCollectionAttempt(
   attempt: CollectionAttempt,
-  createKey: () => string = () => crypto.randomUUID(),
+  createKey: () => string = createClientUuid,
 ): CollectionAttempt {
   return createCollectionAttempt(attempt.context, createKey);
 }

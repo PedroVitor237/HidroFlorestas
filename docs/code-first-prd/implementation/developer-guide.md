@@ -72,8 +72,8 @@ não integra o fluxo atual e não deve receber artefatos duplicados.
 ### 2.1 Pré-requisitos comprováveis
 
 - Git e Bash instalados. A integração versionada usa scripts Bash em `.specify/scripts/bash/`.
-- Node.js `>=20.9.0`, requisito registrado para o Next.js 16.1.6 no lockfile. O repositório não
-  fixa uma versão exata de Node.
+- Node.js `24.19.0`, fixado em `.node-version`; `package.json` aceita patches da linha 24 a partir
+  dessa versão. O Node 20 usado em verificações históricas já encerrou seu suporte.
 - npm, gerenciador indicado por `package-lock.json` com lockfile v3. Não há declaração de
   `packageManager` no `package.json`.
 - `uv`, usado para instalar o CLI do Spec Kit.
@@ -210,17 +210,23 @@ tarefa estrutural própria.
 
 ### 2.5 Validação inicial da aplicação
 
-Os scripts atualmente registrados são `dev`, `build`, `start`, `lint` e
-`create-super-admin`. Para uma checagem inicial comum:
+Para uma checagem inicial sem banco:
 
 ```bash
+npm run test:unit
 npm run lint
 npm run build
 ```
 
-`npm run build` também gera o Prisma Client. O repositório não possui script `test`; não invente
-um comando nem instale uma ferramenta para completar um gate. Rode `npm run dev` somente depois
-de configurar o ambiente aplicável. O script administrativo não é uma validação de entrada.
+`npm run build` também gera o Prisma Client. Rode `npm run dev` somente depois de configurar o
+ambiente aplicável. O script administrativo não é uma validação de entrada.
+
+`EVIDENCIA_IMPLEMENTACAO` — O layout carrega Poppins por `next/font/google`, e não há arquivo de
+fonte local rastreado no repositório. O build pode precisar de acesso à rede para buscar a fonte;
+execuções anteriores falharam sem rede e passaram com acesso liberado. `R-010 =
+TECHNICAL_DEBT_ACCEPTED` nesta rodada de saneamento da continuidade 007: o build offline
+reprodutível requer uma entrega separada com a fonte local e sua licença verificadas. Não adicione
+um arquivo de fonte arbitrário para contornar esse requisito.
 
 ## 3. Primeira leitura do projeto
 

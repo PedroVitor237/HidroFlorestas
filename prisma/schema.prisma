@@ -20,13 +20,16 @@ model User {
   updatedAt DateTime   @updatedAt
   revision  Int        @default(0)
 
-  laboratoryRooms   LaboratoryRoom[]
-  researchersLinked ResearchersLinked[]
-  collectionAreas   CollectionArea[]
-  collectionData    CollectionData[]
-  environmentalMeasurementSets EnvironmentalMeasurementSet[]
-  administrativeActions AdministrativeAuditEvent[] @relation("AdministrativeActor")
-  administrativeChanges AdministrativeAuditEvent[] @relation("AdministrativeTarget")
+  laboratoryRooms                  LaboratoryRoom[]
+  researchersLinked                ResearchersLinked[]
+  collectionAreas                  CollectionArea[]
+  collectionData                   CollectionData[]
+  environmentalMeasurementSets     EnvironmentalMeasurementSet[]
+  experimentalIHFRInputSupplements ExperimentalIHFRInputSupplement[]
+  experimentalIHFROperations       IHFRDiagnosisOperation[]          @relation("ExperimentalIHFROperationActor")
+  experimentalIHFRLifecycleEvents  IHFRDiagnosisLifecycleEvent[]     @relation("ExperimentalIHFRLifecycleActor")
+  administrativeActions            AdministrativeAuditEvent[]        @relation("AdministrativeActor")
+  administrativeChanges            AdministrativeAuditEvent[]        @relation("AdministrativeTarget")
 }
 
 enum UserRole {
@@ -77,9 +80,10 @@ model LaboratoryRoom {
   isActive    Boolean  @default(true)
   accessCode  String   @unique
 
-  researchersLinked ResearchersLinked[]
-  collectionAreas   CollectionArea[]
-  collectionData    CollectionData[]
+  researchersLinked          ResearchersLinked[]
+  collectionAreas            CollectionArea[]
+  collectionData             CollectionData[]
+  experimentalIHFROperations IHFRDiagnosisOperation[]
 }
 
 enum LaboratoryMembershipRole {
@@ -121,7 +125,8 @@ model CollectionArea {
   user           User           @relation(fields: [userId], references: [id])
   laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id])
 
-  collectionData CollectionData[]
+  collectionData             CollectionData[]
+  experimentalIHFROperations IHFRDiagnosisOperation[]
 
   @@unique([id, laboratoryRoomId])
   @@index([laboratoryRoomId, createdAt])
@@ -155,12 +160,17 @@ model CollectionData {
   laboratoryRoom LaboratoryRoom @relation(fields: [laboratoryRoomId], references: [id], onDelete: Restrict)
   collectionArea CollectionArea @relation(fields: [collectionAreaId, laboratoryRoomId], references: [id, laboratoryRoomId], onDelete: Restrict)
 
-  waterData      WaterData[]
-  soilData       SoilData[]
-  vegetationData VegetationData[]
-  terrainData    TerrainData[]
-  diagnoses      IHFRDiagnosis[]
-  environmentalMeasurementSet EnvironmentalMeasurementSet?
+  waterData                        WaterData[]
+  soilData                         SoilData[]
+  vegetationData                   VegetationData[]
+  terrainData                      TerrainData[]
+  diagnoses                        IHFRDiagnosis[]
+  environmentalMeasurementSet      EnvironmentalMeasurementSet?
+  experimentalIHFRInputSupplements ExperimentalIHFRInputSupplement[]
+  experimentalIHFRDiagnoses        ExperimentalIHFRDiagnosis[]
+  currentExperimentalIHFRDiagnosis CurrentExperimentalIHFRDiagnosis?
+  experimentalIHFROperations       IHFRDiagnosisOperation[]
+  experimentalIHFRLifecycleEvents  IHFRDiagnosisLifecycleEvent[]
 
   @@unique([userId, confirmationKey])
   @@index([collectionAreaId, laboratoryRoomId])
@@ -281,17 +291,167 @@ enum ErosionSigns {
 }
 
 model EnvironmentalMeasurementSet {
-  id String @id @default(uuid())
-  collectionDataId String @unique
-  userId String
-  measurementContractVersion String
-  payload Json
-  payloadHash String
-  confirmationKey String
-  confirmedAt DateTime @db.Timestamptz(3)
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  collectionData CollectionData @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  id                               String                            @id @default(uuid())
+  collectionDataId                 String                            @unique
+  userId                           String
+  measurementContractVersion       String
+  payload                          Json
+  payloadHash                      String
+  confirmationKey                  String
+  confirmedAt                      DateTime                          @db.Timestamptz(3)
+  createdAt                        DateTime                          @default(now()) @db.Timestamptz(3)
+  collectionData                   CollectionData                    @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user                             User                              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  experimentalIHFRInputSupplements ExperimentalIHFRInputSupplement[]
+  experimentalIHFRDiagnoses        ExperimentalIHFRDiagnosis[]
+
   @@unique([userId, confirmationKey])
   @@index([measurementContractVersion])
+}
+
+enum ExperimentalIHFRLandUseType {
+  FOREST
+  AGROFORESTRY
+  CROPLAND
+  PASTURE
+  DEGRADED_PASTURE
+  BARE_SOIL
+  URBAN
+}
+
+enum IHFRDiagnosisOperationType {
+  CREATE_OR_REPLACE
+  REVOKE
+}
+
+enum IHFRDiagnosisOperationOutcome {
+  SUCCEEDED
+  INSUFFICIENT_DATA
+  INCOMPATIBLE_VERSION
+}
+
+enum IHFRDiagnosisLifecycleEventType {
+  CREATED_CURRENT
+  SUPERSEDED
+  REVOKED
+}
+
+model ExperimentalIHFRInputSupplement {
+  id                            String                      @id @default(uuid())
+  collectionDataId              String
+  environmentalMeasurementSetId String
+  createdByUserId               String
+  inputContractVersion          String
+  landUseType                   ExperimentalIHFRLandUseType
+  provenance                    Json
+  payloadHash                   String
+  confirmedAt                   DateTime                    @db.Timestamptz(3)
+  createdAt                     DateTime                    @default(now()) @db.Timestamptz(3)
+
+  collectionData              CollectionData              @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  environmentalMeasurementSet EnvironmentalMeasurementSet @relation(fields: [environmentalMeasurementSetId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ExperimentalIHFRInput_measurement_fkey")
+  createdByUser               User                        @relation(fields: [createdByUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  diagnoses                   ExperimentalIHFRDiagnosis[]
+
+  @@unique([collectionDataId, payloadHash], map: "ExperimentalIHFRInput_collection_payload_key")
+  @@index([environmentalMeasurementSetId], map: "ExperimentalIHFRInput_measurement_idx")
+  @@index([createdByUserId])
+}
+
+model ExperimentalIHFRDiagnosis {
+  id                            String            @id @default(uuid())
+  collectionDataId              String
+  environmentalMeasurementSetId String
+  inputSupplementId             String
+  rawScore                      Float
+  displayScore                  Decimal           @db.Decimal(3, 2)
+  ihfrClass                     IHFRClass
+  dataQuality                   LevelBasicDefault
+  componentScores               Json
+  decomposition                 Json
+  drivers                       Json
+  explanation                   String
+  measurementContractVersion    String
+  inputContractVersion          String
+  mathContractVersion           String
+  algorithmVersion              String
+  contractHash                  String
+  calculatedAt                  DateTime          @db.Timestamptz(3)
+  scientificState               String
+  createdAt                     DateTime          @default(now()) @db.Timestamptz(3)
+
+  collectionData              CollectionData                    @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  environmentalMeasurementSet EnvironmentalMeasurementSet       @relation(fields: [environmentalMeasurementSetId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  inputSupplement             ExperimentalIHFRInputSupplement   @relation(fields: [inputSupplementId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  currentPointer              CurrentExperimentalIHFRDiagnosis? @relation("CurrentExperimentalIHFRDiagnosisPointer")
+  operations                  IHFRDiagnosisOperation[]          @relation("ExperimentalIHFROperationDiagnosis")
+  lifecycleEvents             IHFRDiagnosisLifecycleEvent[]     @relation("ExperimentalIHFRLifecycleDiagnosis")
+  replacementEvents           IHFRDiagnosisLifecycleEvent[]     @relation("ExperimentalIHFRLifecycleReplacement")
+
+  @@index([collectionDataId, calculatedAt])
+  @@index([environmentalMeasurementSetId])
+  @@index([inputSupplementId])
+  @@index([mathContractVersion, contractHash])
+}
+
+model CurrentExperimentalIHFRDiagnosis {
+  collectionDataId String   @id
+  diagnosisId      String   @unique
+  validFrom        DateTime @db.Timestamptz(3)
+  operationId      String   @unique
+
+  collectionData CollectionData            @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  diagnosis      ExperimentalIHFRDiagnosis @relation("CurrentExperimentalIHFRDiagnosisPointer", fields: [diagnosisId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  operation      IHFRDiagnosisOperation    @relation(fields: [operationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model IHFRDiagnosisOperation {
+  id               String                        @id @default(uuid())
+  laboratoryRoomId String
+  collectionAreaId String
+  collectionDataId String
+  actorUserId      String
+  idempotencyKey   String
+  requestHash      String
+  operationType    IHFRDiagnosisOperationType
+  outcome          IHFRDiagnosisOperationOutcome
+  diagnosisId      String?
+  responseSnapshot Json
+  createdAt        DateTime                      @default(now()) @db.Timestamptz(3)
+  completedAt      DateTime                      @db.Timestamptz(3)
+
+  laboratoryRoom  LaboratoryRoom                    @relation(fields: [laboratoryRoomId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  collectionArea  CollectionArea                    @relation(fields: [collectionAreaId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  collectionData  CollectionData                    @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actorUser       User                              @relation("ExperimentalIHFROperationActor", fields: [actorUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  diagnosis       ExperimentalIHFRDiagnosis?        @relation("ExperimentalIHFROperationDiagnosis", fields: [diagnosisId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  currentPointer  CurrentExperimentalIHFRDiagnosis?
+  lifecycleEvents IHFRDiagnosisLifecycleEvent[]
+
+  @@unique([actorUserId, idempotencyKey])
+  @@index([laboratoryRoomId, collectionAreaId, collectionDataId], map: "IHFRDiagnosisOperation_context_idx")
+  @@index([diagnosisId])
+}
+
+model IHFRDiagnosisLifecycleEvent {
+  id                     String                          @id @default(uuid())
+  collectionDataId       String
+  diagnosisId            String
+  eventType              IHFRDiagnosisLifecycleEventType
+  replacementDiagnosisId String?
+  actorUserId            String
+  operationId            String
+  reason                 String?
+  occurredAt             DateTime                        @db.Timestamptz(3)
+  evidence               Json
+
+  collectionData       CollectionData             @relation(fields: [collectionDataId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  diagnosis            ExperimentalIHFRDiagnosis  @relation("ExperimentalIHFRLifecycleDiagnosis", fields: [diagnosisId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  replacementDiagnosis ExperimentalIHFRDiagnosis? @relation("ExperimentalIHFRLifecycleReplacement", fields: [replacementDiagnosisId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  actorUser            User                       @relation("ExperimentalIHFRLifecycleActor", fields: [actorUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  operation            IHFRDiagnosisOperation     @relation(fields: [operationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([collectionDataId, occurredAt])
+  @@index([diagnosisId, occurredAt])
+  @@index([operationId])
 }
