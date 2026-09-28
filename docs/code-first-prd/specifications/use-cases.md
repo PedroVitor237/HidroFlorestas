@@ -17,7 +17,7 @@ O contexto de laboratório é escolhido explicitamente em `/workspace` e codific
 
 | ID e nome | Ator, início e resultado esperado | Estado e referência |
 |---|---|---|
-| `CF-UC-001` Criar conta | Visitante usa `/register` e informa nome, sobrenome, e-mail e senha; o acesso efetivo depende do estado da conta. Não pressupor ativação automática em qualquer ambiente. | `IMPLEMENTADO_CODIGO_TESTES`; `src/app/register/page.tsx`, IMP-001. |
+| `CF-UC-001` Criar conta | Visitante usa `/register` e informa nome, sobrenome, e-mail e senha. Durante os testes atuais com usuários, o cadastro público cria conta `ACTIVE` e permite login imediato sem aprovação manual; uma política futura de ativação exige nova decisão. | `IMPLEMENTADO_CODIGO_TESTES`; `TD-017`, `specs/010-active-public-signup/spec.md`, `src/app/register/page.tsx`. |
 | `CF-UC-002` Autenticar-se | Conta `ACTIVE` usa `/login`; credenciais válidas abrem sessão e levam ao workspace (ou à área administrativa para `ADMIN` global). Credenciais incorretas não liberam páginas privadas. | `IMPLEMENTADO_COM_EVIDENCIA_RUNTIME`; IMP-001, `CF-PRD-FR-001`. |
 | `CF-UC-003` Restaurar/encerrar sessão | Recarregar rota privada conserva acesso válido; logout encerra a sessão e o retorno a rota protegida requer nova autenticação. | `IMPLEMENTADO_CODIGO_TESTES`; IMP-001, `CF-PRD-FR-002`. |
 | `CF-UC-004` Criar laboratório | Em `/workspace`, conta elegível fornece nome e cria laboratório com vínculo inicial `OWNER`; a listagem passa a mostrá-lo. Em 5/5, a criação fica indisponível. | `IMPLEMENTADO_COM_EVIDENCIA_RUNTIME`; IMP-002/003, `CF-PRD-FR-003`. |

@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import {
   AuthService,
   type AuthServiceDependencies,
+  type SignUpServiceDependencies,
 } from "../../src/app/api/server/services/auth.service";
 
 const baseUser = {
@@ -28,6 +29,81 @@ function dependencies(
     ...overrides,
   };
 }
+
+describe("AuthService.signUp", () => {
+  it("creates an ACTIVE account with a hash and authenticates the same password immediately", async () => {
+    const password = "participant-password";
+    let created: {
+      id: string;
+      email: string;
+      firstName: string;
+      lastName: string;
+      image: string;
+      password: string;
+      status: string;
+      role: "USER";
+    } | null = null;
+    const signUpDependencies: SignUpServiceDependencies = {
+      getUserByEmail: async () => null,
+      hashPassword: (plainText) => bcrypt.hash(plainText, 4),
+      createUser: async (data) => {
+        assert.deepEqual(Object.keys(data).sort(), [
+          "email", "firstName", "lastName", "password", "status",
+        ]);
+        assert.equal(data.status, "ACTIVE");
+        assert.notEqual(data.password, password);
+        assert.equal(await bcrypt.compare(password, data.password), true);
+        created = {
+          id: "new-user",
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          image: "",
+          password: data.password,
+          status: data.status,
+          role: "USER",
+        };
+        return created;
+      },
+      issueToken: () => "signup-token",
+    };
+    const service = new AuthService(
+      dependencies({
+        findCredentialUser: async () => created,
+        comparePassword: bcrypt.compare,
+      }),
+      signUpDependencies,
+    );
+
+    const registration = await service.signUp({
+      email: "new@example.test",
+      firstName: "Ana",
+      lastName: "Silva",
+      password,
+      status: "BLOCKED",
+      role: "ADMIN",
+    });
+
+    assert.deepEqual(registration, {
+      success: true,
+      token: "signup-token",
+      user: { firstName: "Ana", lastName: "Silva", image: "" },
+    });
+    assert.deepEqual(await service.signIn({
+      email: "new@example.test",
+      password,
+    }), {
+      success: true,
+      token: "signed-token",
+      user: { firstName: "Ana", lastName: "Silva", image: "" },
+      destination: "/workspace",
+    });
+    assert.deepEqual(await service.signIn({
+      email: "new@example.test",
+      password: "incorrect-password",
+    }), { success: false, reason: "INVALID_CREDENTIALS" });
+  });
+});
 
 describe("AuthService.signIn", () => {
   it("uses bcrypt-compatible comparison and returns only public user fields", async () => {

@@ -21,6 +21,21 @@ export type AuthServiceDependencies = {
     issueToken: (userId: string) => string;
 };
 
+export type SignUpServiceDependencies = {
+    getUserByEmail: (email: string) => Promise<{ id: string } | null>;
+    hashPassword: (plainText: string) => Promise<string>;
+    createUser: (data: Pick<UserType, "email" | "firstName" | "lastName"> & {
+        password: string;
+        status: "ACTIVE";
+    }) => Promise<{
+        id: string;
+        firstName: string;
+        lastName: string;
+        image: string;
+    } | null>;
+    issueToken: (userId: string) => string;
+};
+
 export type SignInServiceResult =
     | { success: true; token: string; user: PublicUserDto; destination: "/admin" | "/workspace" }
     | { success: false; reason: "INVALID_CREDENTIALS" | "INTERNAL_ERROR" };
@@ -31,10 +46,18 @@ const defaultSignInDependencies: AuthServiceDependencies = {
     issueToken: signSessionToken,
 };
 
+const defaultSignUpDependencies: SignUpServiceDependencies = {
+    getUserByEmail: (email) => userService.getUserByEmail(email),
+    hashPassword: (plainText) => bcrypt.hash(plainText, SALT_ROUNDS),
+    createUser: (data) => userService.create(data),
+    issueToken: signSessionToken,
+};
+
 export class AuthService {
 
     constructor(
         private readonly signInDependencies: AuthServiceDependencies = defaultSignInDependencies,
+        private readonly signUpDependencies: SignUpServiceDependencies = defaultSignUpDependencies,
     ) {}
 
     verifyToken(token: string) {
@@ -50,29 +73,32 @@ export class AuthService {
                 return { success: false, message: "Email e senha obrigatórios" };
             }
 
-            const userExists = await userService.getUserByEmail(email);
+            const userExists = await this.signUpDependencies.getUserByEmail(email);
 
             if (userExists) {
                 return { success: false, message: "já há uma conta com este e-mail." };
             }
 
-            const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+            const hashedPassword = await this.signUpDependencies.hashPassword(password);
 
-            const user = await userService.create({
-                ...data,
+            const user = await this.signUpDependencies.createUser({
+                email,
+                firstName: data.firstName,
+                lastName: data.lastName,
                 password: hashedPassword,
+                status: "ACTIVE",
             });
 
             if (!user) {
                 return { success: false, message: "Erro ao criar usuário" };
             }
 
-            const token = signSessionToken(user.id);
+            const token = this.signUpDependencies.issueToken(user.id);
 
             return {
                 success: true,
                 token,
-                user
+                user: serializePublicUser(user)
             };
 
         } catch {

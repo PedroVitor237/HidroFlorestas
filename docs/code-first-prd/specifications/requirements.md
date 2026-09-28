@@ -30,9 +30,9 @@ A verificação de H01–H10 está em [`../reviews/product-hypotheses-human-revi
 - **Evidência:** `CF-CAP-002`, `CF-CAP-003`, `CF-CAP-015`, `CF-CAP-016`; `CF-FLOW-001`, `CF-FLOW-002`; `src/app/register/page.tsx:14-49`; `src/app/login/page.tsx:12-37`.
 - **Estado da implementação:** `IMPLEMENTADO_VERIFICADO_ESTATICAMENTE`; runtime não validado.
 - **Precondições conhecidas:** a pessoa atende à política de elegibilidade e possui os dados exigidos, ambos ainda a definir.
-- **Comportamento ou fluxo principal:** informar os dados aceitos; concluir cadastro ou autenticação; alcançar o workspace.
+- **Comportamento ou fluxo principal:** informar os dados aceitos; concluir cadastro ou autenticação; alcançar o workspace. Na fase atual de testes com usuários, o cadastro público cria conta `ACTIVE` conforme `TD-017`.
 - **Critérios de aceitação provisórios:** com dados aceitos pela política futura, a pessoa conclui um dos caminhos e acessa o workspace; falhas recebem tratamento compreensível segundo critérios ainda abertos.
-- **Dependências abertas:** elegibilidade, dados mínimos, estados de conta, validações e mensagens (`CF-Q-005`, `CF-Q-006`).
+- **Dependências abertas:** elegibilidade geral, dados mínimos, política futura de estados/ativação, validações e mensagens (`CF-Q-005`, `CF-Q-006`). A regra focal da fase atual está decidida em `TD-017`.
 - **Decisões relacionadas:** `CF-PD-001`, `CF-PD-004`.
 - **Classificação:** `REQUISITO_CANDIDATO_DERIVADO_DO_CODIGO`.
 

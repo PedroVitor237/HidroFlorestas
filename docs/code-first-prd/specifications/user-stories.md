@@ -8,7 +8,7 @@
 
 | História e origem | Desejo da pessoa | Evidência observável e caso |
 |---|---|---|
-| `CF-US-001` Cadastro — código `/register` | Como visitante, quero informar meus dados de cadastro para obter uma conta. | A resposta do cadastro é controlada; a possibilidade de login depende do estado da conta. `CF-UC-001`. |
+| `CF-US-001` Cadastro — código `/register` | Como visitante, quero informar meus dados de cadastro para obter uma conta. | Na fase atual de testes, o cadastro público cria conta `ACTIVE` e permite login imediato; `TD-017`, `CF-UC-001`. |
 | `CF-US-002` Login — IMP-001 US1 | Como pessoa com conta `ACTIVE`, quero entrar com minhas credenciais para acessar meu espaço. | Login válido abre `/workspace` ou área administrativa autorizada; inválido não cria sessão. `CF-UC-002`. |
 | `CF-US-003` Sessão — IMP-001 US2/US3 | Como pessoa autenticada, quero continuar após reload e sair com segurança. | A rota protegida é restaurada com sessão válida; após logout, o conteúdo requer nova autenticação. `CF-UC-003`. |
 | `CF-US-004` Criação — IMP-002 US1 | Como participante elegível, quero criar um laboratório com nome próprio para iniciar meu trabalho. | Laboratório e vínculo `OWNER` aparecem juntos; acima de cinco vínculos, a criação é recusada. `CF-UC-004`. |
