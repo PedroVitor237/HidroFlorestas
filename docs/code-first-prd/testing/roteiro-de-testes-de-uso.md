@@ -1,6 +1,6 @@
 # Roteiro de Teste — HidroFlorestas
 
-Este roteiro mostra como testar as principais funções do HidroFlorestas. Acesse o link enviado com este documento e siga os passos na ordem.
+Este roteiro mostra como testar as principais funções do HidroFlorestas. Acesse o [site hospedado no Vercel](https://hidro-florestas.vercel.app/) e siga os passos na ordem.
 
 ## 1. Crie sua conta
 
@@ -49,4 +49,4 @@ Na lista **Seus laboratórios**, localize o que você criou e clique em **ACESSA
 
 Veja o diagnóstico exibido na página da coleta. Atualize a página e confira se o resultado continua disponível.
 
-Após concluir os passos, responda ao formulário de avaliação enviado junto com este roteiro.
+Após concluir os passos, responda ao [formulário de avaliação](https://docs.google.com/forms/d/e/1FAIpQLSfsKoLS-fWgO4lWaW0_FhHnkajGF2O5CL3Az0VyNMRuQ3ZJ-g/viewform?usp=publish-editor) enviado junto com este roteiro.
