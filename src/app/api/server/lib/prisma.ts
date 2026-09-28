@@ -30,7 +30,7 @@ export function createPrismaClient(connectionString: string, schema?: string) {
     if (url.hostname !== '127.0.0.1' || process.env.TEST_DATABASE_CONFIRMATION !== TEST_CONFIRMATION) {
       throw new Error('IMP-006 local PostgreSQL guard failed')
     }
-    if (regressionPublic && (url.port !== '55426' || url.pathname !== '/imp006_regression_test')) {
+    if (regressionPublic && (url.port !== '55426' || url.pathname !== '/imp006_regression_v2_test')) {
       throw new Error('Owned local regression database guard failed')
     }
     if (!selectedSchema) {

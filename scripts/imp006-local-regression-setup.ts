@@ -1,13 +1,84 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Client } from "pg";
 import {
   migrationPath, collectionMigrationPath, environmentalMigrationPath,
   userAdministrationMigrationPath, ihfrDiagnosisMigrationPath, removeLegacyIsAdminMigrationPath,
+  ihfrLifecycleReferenceMigrationPath,
 } from "../tests/migration/migration-test-harness";
 
-const marker = "hidroflorestas:imp006-regression:v1";
-const names = ["imp006_regression_test", "imp006_regression_reference"] as const;
+const marker = "hidroflorestas:imp006-regression:v2";
+const names = ["imp006_regression_v2_test", "imp006_regression_v2_reference"] as const;
+const readyFile = "regression-v2-ready.json";
+
+async function verifyOwnedSchema(client: Client, name: typeof names[number], existing: boolean) {
+  if (name === "imp006_regression_v2_reference") {
+    const result = await client.query<{
+      extraSchemas: number; publicRelations: number; publicFunctions: number;
+      publicTypes: number; extraExtensions: number;
+    }>(`
+      SELECT
+        (SELECT count(*)::int FROM pg_namespace
+          WHERE nspname NOT IN ('public', 'pg_catalog', 'information_schema')
+            AND nspname NOT LIKE 'pg_toast%' AND nspname NOT LIKE 'pg_temp_%') AS "extraSchemas",
+        (SELECT count(*)::int FROM pg_class AS relation
+          JOIN pg_namespace AS namespace ON namespace.oid = relation.relnamespace
+          WHERE namespace.nspname = 'public') AS "publicRelations",
+        (SELECT count(*)::int FROM pg_proc AS routine
+          JOIN pg_namespace AS namespace ON namespace.oid = routine.pronamespace
+          WHERE namespace.nspname = 'public') AS "publicFunctions",
+        (SELECT count(*)::int FROM pg_type AS t
+          JOIN pg_namespace AS namespace ON namespace.oid = t.typnamespace
+          WHERE namespace.nspname = 'public' AND t.typtype IN ('c', 'd', 'e', 'r', 'm')) AS "publicTypes",
+        (SELECT count(*)::int FROM pg_extension WHERE extname <> 'plpgsql') AS "extraExtensions"
+    `);
+    const inventory = result.rows[0];
+    if (!inventory || Object.values(inventory).some((count) => count !== 0)) {
+      throw new Error("Owned regression reference database contains non-system schema objects");
+    }
+    return;
+  }
+
+  const result = await client.query<{
+    schemaMarker: string | null; ihfr: boolean; administration: boolean;
+    outcomeCheck: boolean; lifecycleTriggers: number;
+  }>(`
+    SELECT
+      (SELECT obj_description(oid, 'pg_namespace') FROM pg_namespace WHERE nspname = 'public') AS "schemaMarker",
+      to_regclass('public."ExperimentalIHFRDiagnosis"') IS NOT NULL AS ihfr,
+      to_regclass('public."AdministrativeAuditEvent"') IS NOT NULL AS administration,
+      EXISTS (
+        SELECT 1 FROM pg_constraint AS c
+        JOIN pg_class AS relation ON relation.oid = c.conrelid
+        JOIN pg_namespace AS namespace ON namespace.oid = relation.relnamespace
+        WHERE namespace.nspname = 'public'
+          AND relation.relname = 'IHFRDiagnosisOperation'
+          AND c.conname = 'IHFRDiagnosisOperation_outcome_diagnosis_check'
+          AND c.contype = 'c' AND c.convalidated
+      ) AS "outcomeCheck",
+      (
+        SELECT count(*)::int FROM pg_trigger AS t
+        JOIN pg_class AS relation ON relation.oid = t.tgrelid
+        JOIN pg_namespace AS namespace ON namespace.oid = relation.relnamespace
+        JOIN pg_proc AS f ON f.oid = t.tgfoid
+        JOIN pg_namespace AS function_namespace ON function_namespace.oid = f.pronamespace
+        WHERE namespace.nspname = 'public'
+          AND function_namespace.nspname = 'public'
+          AND f.proname = 'imp006_validate_lifecycle_references'
+          AND t.tgenabled = 'O' AND NOT t.tgisinternal
+          AND (relation.relname, t.tgname) IN (
+            ('IHFRDiagnosisOperation', 'imp006_operation_reference'),
+            ('CurrentExperimentalIHFRDiagnosis', 'imp006_current_operation'),
+            ('IHFRDiagnosisLifecycleEvent', 'imp006_event_operation')
+          )
+      ) AS "lifecycleTriggers"
+  `);
+  const schema = result.rows[0];
+  if ((existing && schema?.schemaMarker !== marker) || !schema?.ihfr || !schema.administration ||
+      !schema.outcomeCheck || schema.lifecycleTriggers !== 3) {
+    throw new Error("Owned regression test schema is incomplete or drifted; recreate the disposable database before running tests");
+  }
+}
 
 async function main() {
   if (process.env.IMP006_LOCAL_POSTGRESQL !== "1" || process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST") throw new Error("Owned local PostgreSQL guard required");
@@ -16,34 +87,34 @@ async function main() {
   const root = join(process.env.LOCALAPPDATA ?? "", "HidroFlorestas", "imp006-postgresql");
   const owner = JSON.parse((await readFile(join(root, "cluster-owner.json"), "utf8")).replace(/^\uFEFF/, "")) as { marker?: string; root?: string };
   if (owner.marker !== "hidroflorestas:imp006-local-postgresql:v1" || owner.root?.toLowerCase() !== root.toLowerCase()) throw new Error("Local cluster ownership marker does not match");
+  await rm(join(root, readyFile), { force: true });
   const admin = new Client({ connectionString: url.toString() });
   const created: string[] = [];
   await admin.connect();
   try {
     for (const name of names) {
       const existing = await admin.query<{ marker: string | null }>("SELECT shobj_description(oid, 'pg_database') AS marker FROM pg_database WHERE datname=$1", [name]);
-      if (existing.rowCount) {
-        if (existing.rows[0].marker !== marker) throw new Error(`Unowned regression database exists: ${name}`);
-        continue;
+      const alreadyExists = Boolean(existing.rowCount);
+      if (alreadyExists && existing.rows[0].marker !== marker) throw new Error(`Unowned regression database exists: ${name}`);
+      if (!alreadyExists) {
+        await admin.query(`CREATE DATABASE "${name}"`);
+        created.push(name);
       }
-      await admin.query(`CREATE DATABASE "${name}"`);
-      created.push(name);
-      if (name === "imp006_regression_test") {
-        const testUrl = new URL(url);
-        testUrl.pathname = `/${name}`;
-        const test = new Client({ connectionString: testUrl.toString() });
-        await test.connect();
-        try {
-          const files = ["tests/migration/area-registration-baseline.sql", migrationPath, collectionMigrationPath, environmentalMigrationPath, userAdministrationMigrationPath, ihfrDiagnosisMigrationPath, removeLegacyIsAdminMigrationPath];
-          for (const file of files) await test.query(await readFile(file, "utf8"));
-          const verified = await test.query(`SELECT to_regclass('public."ExperimentalIHFRDiagnosis"') IS NOT NULL AS ihfr, to_regclass('public."AdministrativeAuditEvent"') IS NOT NULL AS administration`);
-          if (!verified.rows[0]?.ihfr || !verified.rows[0]?.administration) throw new Error("Regression schema verification failed");
-          await test.query(`COMMENT ON SCHEMA public IS '${marker}'`);
-        } finally { await test.end(); }
-      }
-      await admin.query(`COMMENT ON DATABASE "${name}" IS '${marker}'`);
+      const databaseUrl = new URL(url);
+      databaseUrl.pathname = `/${name}`;
+      const database = new Client({ connectionString: databaseUrl.toString() });
+      await database.connect();
+      try {
+        if (!alreadyExists && name === "imp006_regression_v2_test") {
+          const files = ["tests/migration/area-registration-baseline.sql", migrationPath, collectionMigrationPath, environmentalMigrationPath, userAdministrationMigrationPath, ihfrDiagnosisMigrationPath, removeLegacyIsAdminMigrationPath, ihfrLifecycleReferenceMigrationPath];
+          for (const file of files) await database.query(await readFile(file, "utf8"));
+        }
+        await verifyOwnedSchema(database, name, alreadyExists);
+        if (!alreadyExists && name === "imp006_regression_v2_test") await database.query(`COMMENT ON SCHEMA public IS '${marker}'`);
+      } finally { await database.end(); }
+      if (!alreadyExists) await admin.query(`COMMENT ON DATABASE "${name}" IS '${marker}'`);
     }
-    await writeFile(join(root, "regression-ready.json"), JSON.stringify({ marker, root }), { encoding: "utf8" });
+    await writeFile(join(root, readyFile), JSON.stringify({ marker, root }), { encoding: "utf8" });
     process.stdout.write("Owned local regression databases provisioned and verified.\n");
   } catch (error) {
     const cleanupFailures: unknown[] = [];

@@ -7,7 +7,7 @@ import ws from "ws";
 export function testPostgresqlAdapter(connectionString: string) {
   if (process.env.IMP006_LOCAL_POSTGRESQL === "1") {
     const url = new URL(connectionString);
-    if (process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST" || url.hostname !== "127.0.0.1" || url.port !== "55426" || url.pathname !== "/imp006_regression_test") {
+    if (process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST" || url.hostname !== "127.0.0.1" || url.port !== "55426" || url.pathname !== "/imp006_regression_v2_test") {
       throw new Error("Owned local regression database guard failed");
     }
     if (url.searchParams.has("options")) {

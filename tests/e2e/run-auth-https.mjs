@@ -76,10 +76,10 @@ function assertOwnedLocalRegressionEnvironment(environment) {
   if (
     test.hostname !== "127.0.0.1" ||
     test.port !== "55426" ||
-    test.pathname !== "/imp006_regression_test" ||
+    test.pathname !== "/imp006_regression_v2_test" ||
     reference.hostname !== "127.0.0.1" ||
     reference.port !== "55426" ||
-    reference.pathname !== "/imp006_regression_reference"
+    reference.pathname !== "/imp006_regression_v2_reference"
   ) {
     throw new Error("HTTPS E2E requires the owned local regression databases");
   }
@@ -110,6 +110,42 @@ async function runHttpsValidation() {
       );
   };
 
+  const forwardSanitized = (child) => {
+    for (const channel of ["stdout", "stderr"]) {
+      const stream = child[channel];
+      if (!stream) continue;
+      let pending = "";
+      let discardingLine = false;
+      stream.setEncoding("utf8");
+      stream.on("data", (chunk) => {
+        let offset = 0;
+        while (offset < chunk.length) {
+          const newline = chunk.indexOf("\n", offset);
+          const end = newline < 0 ? chunk.length : newline;
+          const fragment = chunk.slice(offset, end);
+          if (!discardingLine) {
+            if (pending.length + fragment.length > 1_048_576) {
+              pending = "";
+              discardingLine = true;
+              process.stderr.write("HTTPS E2E output line exceeded 1 MiB; child terminated.\n");
+              child.kill();
+            } else {
+              pending += fragment;
+            }
+          }
+          if (newline < 0) break;
+          if (!discardingLine) process[channel].write(`${sanitize(pending)}\n`);
+          pending = "";
+          discardingLine = false;
+          offset = newline + 1;
+        }
+      });
+      stream.on("end", () => {
+        if (pending && !discardingLine) process[channel].write(sanitize(pending));
+      });
+    }
+  };
+
   let activeCommand;
   let nextServer;
   let httpsProxy;
@@ -137,14 +173,7 @@ async function runHttpsValidation() {
       });
       activeCommand = child;
 
-      if (!options.silent) {
-        for (const channel of ["stdout", "stderr"]) {
-          child[channel].setEncoding("utf8");
-          child[channel].on("data", (chunk) => {
-            process[channel].write(sanitize(chunk));
-          });
-        }
-      }
+      if (!options.silent) forwardSanitized(child);
 
       child.on("error", (error) => {
         process.stderr.write(`HTTPS E2E command failed: ${sanitize(error.message)}\n`);
@@ -165,12 +194,7 @@ async function runHttpsValidation() {
       env: environment,
       stdio: ["ignore", "pipe", "pipe"],
     });
-    for (const channel of ["stdout", "stderr"]) {
-      child[channel].setEncoding("utf8");
-      child[channel].on("data", (chunk) => {
-        process[channel].write(sanitize(chunk));
-      });
-    }
+    forwardSanitized(child);
     return child;
   };
 
@@ -439,11 +463,14 @@ async function waitForResponse(createRequest, shouldStop) {
     if (shouldStop?.()) throw new Error("HTTPS E2E interrupted");
     const ready = await new Promise((resolve) => {
       const request = createRequest();
+      const timer = setTimeout(() => request.destroy(new Error("Loopback readiness request timed out")),
+        Math.min(2_000, Math.max(1, deadline - Date.now())));
       request.once("response", (response) => {
+        clearTimeout(timer);
         response.resume();
         resolve((response.statusCode ?? 500) < 500);
       });
-      request.once("error", () => resolve(false));
+      request.once("error", () => { clearTimeout(timer); resolve(false); });
       request.end();
     });
     if (ready) return;

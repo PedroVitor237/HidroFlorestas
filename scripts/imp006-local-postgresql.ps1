@@ -91,7 +91,7 @@ switch ($Action) {
   'Run' {
     Start-Cluster
     if (-not $Executable) { throw 'Run requires -Executable.' }
-    $names = @('TEST_DATABASE_URL', 'DATABASE_URL', 'TEST_DATABASE_CONFIRMATION', 'IMP006_DATABASE_VARIABLE', 'IMP006_LOCAL_POSTGRESQL', 'E2E_USER_PASSWORD', 'JWT_SECRET', 'DASHBOARD_FIXTURE_CONFIRMATION', 'NODE_ENV')
+    $names = @('TEST_DATABASE_URL', 'DATABASE_URL', 'TEST_DATABASE_CONFIRMATION', 'IMP006_DATABASE_VARIABLE', 'IMP006_LOCAL_POSTGRESQL', 'E2E_USER_PASSWORD', 'JWT_SECRET', 'DASHBOARD_FIXTURE_CONFIRMATION', 'NODE_ENV', 'PLAYWRIGHT_BASE_URL', 'AUTH_HTTPS_E2E')
     $originalEnvironment = @{}
     foreach ($name in $names) {
       $item = Get-Item -LiteralPath "Env:$name" -ErrorAction SilentlyContinue
@@ -103,12 +103,12 @@ switch ($Action) {
       $escaped = [Uri]::EscapeDataString($password)
       $connection = "postgresql://$owner`:$escaped@127.0.0.1`:$port/postgres"
       if ($DatabaseMode -eq 'Regression') {
-        $readyFile = Join-Path $root 'regression-ready.json'
+        $readyFile = Join-Path $root 'regression-v2-ready.json'
         if (-not (Test-Path -LiteralPath $readyFile -PathType Leaf)) { throw 'Owned regression databases are not provisioned.' }
         $ready = Get-Content -LiteralPath $readyFile -Raw | ConvertFrom-Json
-        if ($ready.marker -ne 'hidroflorestas:imp006-regression:v1' -or $ready.root -ne $root) { throw 'Regression database ownership marker does not match.' }
-        $env:TEST_DATABASE_URL = $connection.Replace('/postgres', '/imp006_regression_test')
-        $env:DATABASE_URL = $connection.Replace('/postgres', '/imp006_regression_reference')
+        if ($ready.marker -ne 'hidroflorestas:imp006-regression:v2' -or $ready.root -ne $root) { throw 'Regression database ownership marker does not match.' }
+        $env:TEST_DATABASE_URL = $connection.Replace('/postgres', '/imp006_regression_v2_test')
+        $env:DATABASE_URL = $connection.Replace('/postgres', '/imp006_regression_v2_reference')
         $digest = [Security.Cryptography.SHA256]::Create()
         try { $env:E2E_USER_PASSWORD = [Convert]::ToBase64String($digest.ComputeHash([Text.Encoding]::UTF8.GetBytes([guid]::NewGuid().ToString()))) }
         finally { $digest.Dispose() }
@@ -125,6 +125,8 @@ switch ($Action) {
       $env:IMP006_DATABASE_VARIABLE = 'TEST_DATABASE_URL'
       $env:IMP006_LOCAL_POSTGRESQL = '1'
       $env:NODE_ENV = 'test'
+      Remove-Item -LiteralPath 'Env:PLAYWRIGHT_BASE_URL' -ErrorAction SilentlyContinue
+      Remove-Item -LiteralPath 'Env:AUTH_HTTPS_E2E' -ErrorAction SilentlyContinue
       & $Executable @CommandArguments
       if ($LASTEXITCODE -ne 0) { throw "Test command failed with exit code $LASTEXITCODE." }
     } finally {

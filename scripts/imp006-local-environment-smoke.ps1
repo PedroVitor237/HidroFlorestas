@@ -4,7 +4,7 @@ $shellExecutable = (Get-Process -Id $PID).Path
 $names = @(
   'TEST_DATABASE_URL', 'DATABASE_URL', 'TEST_DATABASE_CONFIRMATION',
   'IMP006_DATABASE_VARIABLE', 'IMP006_LOCAL_POSTGRESQL',
-  'E2E_USER_PASSWORD', 'NODE_ENV'
+  'E2E_USER_PASSWORD', 'NODE_ENV', 'PLAYWRIGHT_BASE_URL', 'AUTH_HTTPS_E2E'
 )
 
 function Save-Environment {
@@ -36,7 +36,8 @@ $initial = Save-Environment
 try {
   foreach ($name in $names) { Set-Item -LiteralPath "Env:$name" -Value "imp006-smoke-$name" }
   $sentinels = Save-Environment
-  & $runner -Action Run -DatabaseMode Schema -Executable $shellExecutable -CommandArguments @('-NoProfile', '-NonInteractive', '-Command', 'exit 0') | Out-Null
+  $childCheck = 'if (Test-Path Env:PLAYWRIGHT_BASE_URL) { exit 9 }; if (Test-Path Env:AUTH_HTTPS_E2E) { exit 9 }; exit 0'
+  & $runner -Action Run -DatabaseMode Schema -Executable $shellExecutable -CommandArguments @('-NoProfile', '-NonInteractive', '-Command', $childCheck) | Out-Null
   Assert-Environment $sentinels
 
   foreach ($name in $names) { Remove-Item -LiteralPath "Env:$name" -ErrorAction SilentlyContinue }

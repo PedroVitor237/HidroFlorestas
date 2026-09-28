@@ -11,8 +11,16 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
 const localRegression = process.env.IMP006_LOCAL_POSTGRESQL === "1";
 if (localRegression) {
   const target = new URL(process.env.TEST_DATABASE_URL ?? "");
+  const reference = new URL(process.env.DATABASE_URL ?? "");
+  const browserTarget = new URL(baseURL);
+  const https = process.env.AUTH_HTTPS_E2E === "1";
   if (process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST" ||
-      target.hostname !== "127.0.0.1" || target.port !== "55426" || target.pathname !== "/imp006_regression_test") {
+      target.hostname !== "127.0.0.1" || target.port !== "55426" || target.pathname !== "/imp006_regression_v2_test" ||
+      reference.hostname !== "127.0.0.1" || reference.port !== "55426" || reference.pathname !== "/imp006_regression_v2_reference" ||
+      (process.env.AUTH_HTTPS_E2E !== undefined && !https) ||
+      browserTarget.hostname !== "127.0.0.1" || browserTarget.protocol !== (https ? "https:" : "http:") ||
+      browserTarget.username || browserTarget.password || browserTarget.pathname !== "/" || browserTarget.search || browserTarget.hash ||
+      (!https && baseURL !== "http://127.0.0.1:3000") || (https && !process.env.PLAYWRIGHT_BASE_URL)) {
     throw new Error("Owned local regression database guard failed for the Playwright server");
   }
 }
