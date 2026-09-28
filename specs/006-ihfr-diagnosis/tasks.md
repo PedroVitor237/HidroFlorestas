@@ -2,7 +2,7 @@
 
 **Input**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md), [data-model.md](data-model.md), [quickstart.md](quickstart.md) e [contracts/](contracts/).
 
-**Status atual (2026-09-27)**: T001–T134 registram o fechamento técnico histórico da IMP-006; T135–T143 compõem o checkpoint técnico anterior da `007-ihfr-evolution`, com 143/143 então marcadas `[X]` após gates Neon, auditoria `list=0`/`assert-zero=PASS` e revisão do diff. A reabertura A1–A7 acrescentou T144–T151 e a retomada A3–A5 acrescentou T152: **151/152** estão `[X]`, somente T147 segue aberta. T146 fecha a remediação do grafo auditado; T152 corrige a fragilidade reproduzida de A5 e a perda de causa no teste migration. O novo full UI está pendente porque a conta E2E alcançou o limite de cinco laboratórios; a execução 1/1 de T145 pertence ao lockfile anterior. A prova independente endpoint → `branch_id` é `EXTERNAL_VALIDATION`; `PD-002`, `G2-SCI` e validações humanas seguem `NAO_VERIFICADO_VALIDACAO_POSTERIOR`. O veredito atual de merge é `NAO_PRONTA`, sem aprovação de merge. As reaberturas e conclusões de T116/T134 em 2026-09-24 permanecem documentadas em [implementation-evidence.md](implementation-evidence.md).
+**Status atual (2026-09-27)**: T001–T152 preservam seus estados anteriores (**151/152** `[X]`; T147 externa). A avaliação `9b2c989` reabriu a prontidão técnica e esta execução acrescentou T153–T160: **159/160** estão `[X]` após os gates e commits locais; eram **151/160** na abertura. O full UI final, build padrão e suítes gerais/HTTPS foram repetidos sobre o patch identificado no [relatório E1–E7](../../docs/validation/007-ihfr-evolution/2026-09-27-execucao-pos-9b2c989.md). A prova independente endpoint → `branch_id` é `EXTERNAL_VALIDATION`; `PD-002`, `G2-SCI` e validações humanas seguem `NAO_VERIFICADO_VALIDACAO_POSTERIOR`. O veredito técnico é `PRONTA_PARA_REVISAO_DE_MERGE`, sem aprovação de merge. As reaberturas e conclusões de T116/T134 em 2026-09-24 permanecem documentadas em [implementation-evidence.md](implementation-evidence.md).
 
 **Formato**: `- [ ] TNNN [P?] [US?] ação com caminho`. `[P]` aparece somente quando as tarefas podem ser executadas simultaneamente sem escrever o mesmo arquivo nem depender de resultado ainda não produzido.
 
@@ -256,6 +256,17 @@ As tarefas abaixo usam IDs novos e não alteram o aceite histórico de T001–T1
 - [X] T151 [A1–A7; prontidão] Consolidar comandos, SHA/lockfile, runtime, destinos, pass/fail/skip/retry, audit, recursos preservados e diff final; encerrar somente com gates obrigatórios e decisões pendentes explicitados. Evidência: [relatório A1–A7](../../docs/validation/007-ihfr-evolution/2026-09-26-saneamento-a1-a7.md), três commits técnicos locais, auditoria final `assert-zero=PASS`; `PRONTIDAO_PARA_MERGE=NAO_PRONTA` por A3 e limites externos A4/ciência.
 - [X] T152 [A5; F-010] Reproduzir timeout visual com GET válido atrasado além do prazo padrão da asserção, separar resposta POST/navegação/renderização no Playwright, impedir `catch` de ocultar SQLSTATE inesperado na suíte migration, verificar RED/GREEN focal, repetir gates e registrar o limite da atribuição histórica. Evidência: [retomada A3–A5](../../docs/validation/007-ihfr-evolution/2026-09-27-retomada-a3-a5.md); a exceção original perdida do 25/26 permanece `NAO_ESPECIFICADO`.
 
+### Execução pós-avaliação `9b2c989` — E1–E7
+
+- [X] T153 [E1; FR-020/SC-008] Endurecer preflight full UI para alvo E2E direto, ID/e-mail allowlisted, status ACTIVE, credencial compatível, capacidade por todos os vínculos, run ID livre e lease exclusivo; testar recusas sem escrita.
+- [X] T154 [E1; FR-020/SC-008] Versionar preparo create-only de até duas contas sintéticas próprias em `public` E2E autorizado, com segredo local ignorado, propriedade, idempotência e lease; nunca usar setup/teardown das contas fixas nem alterar históricos.
+- [X] T155 [E2/E5] Exigir instalação/versões coerentes, browser real, espaço/inodes/gravação/processo/porta e margem documentada antes de consumir capacidade; distinguir falha de ambiente e preservar logs.
+- [X] T156 [E3; F-010] Instrumentar fases full UI, respostas contextuais, navegação e renderização com budgets finitos e logs sanitizados duráveis; manter vetor literal, IDs e asserções finais estritas; verificar falha HTTP/ausência de resposta.
+- [X] T157 [E3; F-010] Separar recuperação read-only após timeout de escrita do happy path, preservar chave/estado e registrar falha de UI como FAIL mesmo com persistência confirmada.
+- [X] T158 [E4] Executar Playwright geral e HTTPS oficiais em PostgreSQL próprio com fixtures em `public` seguro e teardown verificado; corrigir preparo/migrations e registrar procedimento Linux/CI quando necessário. Geral final 55/55, HTTPS 2/2; descarte guardado dos dois bancos v2 próprios e recriação com auditoria zero. Linux/CI não foi necessário para o gate executado em Windows.
+- [X] T159 [E5] Executar `npm run build` padrão no código/lockfile final em executor apto, separando rede/fontes, processo Turbopack e espaço sem trocar bundler ou contrato de produto. Build padrão passou no snapshot técnico final.
+- [X] T160 [E6/E7] Repetir gates finais sobre snapshot estável, auditar E2E e recursos preservados, reconciliar hashes/HEAD e matriz E1–E7, atualizar evidência e criar commits locais coerentes, sem push/merge. Evidência: [relatório E1–E7](../../docs/validation/007-ihfr-evolution/2026-09-27-execucao-pos-9b2c989.md), full UI final 1/1 no run `HF007-UI-POST9B2C989-20260927-02`, auditorias remota/local zero, commits técnicos `ef698a2`, `073a9eb`, `b9d481f` e fechamento documental local.
+
 Estado observado após a execução Neon de 2026-09-25: T137 passou no adapter PrismaNeon com 107 integrações e seis E2E IHFR; T140 passou 1/1 no fluxo UI integral, com CREATE/reload/histórico/REPLACE/REVOKE e IDs persistidos no relatório. Naquela rodada, os gates de código passaram e a auditoria read-only listou um schema candidato; isso não satisfazia `assert-zero`. Por isso T139 e T141 permanecem abertas nesta reconciliação. A identidade DEV/E2E foi informada pelo responsável e o preflight confirmou separação técnica; a prova independente endpoint → `branch_id` continua externa. T142 preserva a correção focal anterior.
 
 Checkpoint de saneamento de 2026-09-26: o único schema candidato foi removido com autorização e guardas exatas; auditoria read-only posterior `list=0`, `assert-zero=PASS`. R-006 foi reproduzido e corrigido por migration aditiva, com migration 26/26 e integração 107/107 em PostgreSQL local. Prisma 7.4.2 e Node 24.19.0 foram fixados; `npm ci`, `prisma generate` e `npm ls` passaram. Inspeção pré-deploy E2E e gates funcionais integrados ainda estão pendentes, portanto o aceite T139/T141 não foi antecipado.
@@ -302,6 +313,7 @@ Checkpoint de T143 (2026-09-25): o primeiro setup conservador bloqueou escrita r
 | FR-020, SC-008 | T019–T030, T107–T115, T125–T127, T137–T141, T143 |
 | Continuidade 007, F-001–F-009 e revisão focal | T135–T143; estados e evidências por ID em [implementation-evidence.md](implementation-evidence.md) e [validation-report.md](../../docs/validation/007-ihfr-evolution/validation-report.md) |
 | Saneamento A1–A7 e gates posteriores | T144–T152; inventário, errata e matriz em [saneamento](../../docs/validation/007-ihfr-evolution/2026-09-26-saneamento-a1-a7.md) e [retomada](../../docs/validation/007-ihfr-evolution/2026-09-27-retomada-a3-a5.md) |
+| Execução pós-`9b2c989` | T153–T160; guardas, runner, regressões e evidência da avaliação de merge |
 
 ## Task distribution
 
@@ -318,9 +330,10 @@ Checkpoint de T143 (2026-09-25): o primeiro setup conservador bloqueou escrita r
 | Continuidade 007 — T135–T143 | 9 |
 | Saneamento A1–A7 — T144–T151 | 8 |
 | Retomada A3–A5 — T152 | 1 |
-| **Total atual** | **152** |
+| Pós-avaliação — T153–T160 | 8 |
+| **Total atual** | **160** |
 
-O subtotal histórico T001–T134 é **134**; T135–T143 acrescentaram **9** tarefas no fechamento técnico anterior, T144–T151 acrescentaram **8** para A1–A7 e T152 cobre a retomada A5, sem alterar a distribuição das oito fases originais. Há **41** marcações `[P]`, todas no subtotal histórico e condicionadas às dependências descritas. Nele, US1 possui 24 tarefas, US2 possui 39 e as 71 restantes são setup, fundação ou validação transversal. O checkpoint anterior tinha **143/143** tarefas `[X]`; o atual tem **151/152**. Isso não encerra `G2-SCI` nem a validação independente de `branch_id`.
+O subtotal histórico T001–T134 é **134**; T135–T143 acrescentaram **9** tarefas no fechamento técnico anterior, T144–T151 acrescentaram **8** para A1–A7, T152 cobre A5 e T153–T160 cobrem esta execução, sem alterar a distribuição das oito fases originais. Há **41** marcações `[P]`, todas no subtotal histórico e condicionadas às dependências descritas. Nele, US1 possui 24 tarefas, US2 possui 39 e as 71 restantes são setup, fundação ou validação transversal. O checkpoint anterior tinha **143/143** tarefas `[X]`; esta execução abriu com **151/160** e encerrou com **159/160**. T147 permanece externa; isso não encerra `G2-SCI` nem a validação independente de `branch_id`.
 
 ## Mapping of finding-cited legacy tasks
 

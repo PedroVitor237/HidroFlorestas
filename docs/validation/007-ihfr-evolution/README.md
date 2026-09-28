@@ -1,8 +1,8 @@
 # Validação da `007-ihfr-evolution`
 
-**Atualização de 2026-09-27:** o [inventário e saneamento A1–A7](2026-09-26-saneamento-a1-a7.md) registra a errata de migrations, o estado técnico do ADR e os gates desta rodada. A [revalidação conjunta](2026-09-26-revalidacao-conjunta-e-prontidao.md) conserva seus resultados históricos com errata datada no início; não transferir suas contagens de banco entre endpoints.
+**Histórico anterior:** o [inventário e saneamento A1–A7](2026-09-26-saneamento-a1-a7.md) registra a errata de migrations, o estado técnico do ADR e os gates daquela rodada. A [revalidação conjunta](2026-09-26-revalidacao-conjunta-e-prontidao.md) conserva seus resultados históricos com errata datada no início; não transferir suas contagens de banco entre endpoints.
 
-**Estado mais recente (2026-09-27):** consulte o [saneamento A1–A7](2026-09-26-saneamento-a1-a7.md): gates geral, HTTPS e full UI passaram, enquanto A3 e a identificação do outro Neon continuam pendentes; merge `NAO_PRONTA`. A seção 12 do [relatório de validação](validation-report.md) e os checkpoints abaixo preservam estados históricos.
+**Estado técnico mais recente (2026-09-27):** o [relatório pós-`9b2c989`](2026-09-27-execucao-pos-9b2c989.md) registra build padrão, Playwright geral/HTTPS, gates IHFR e full UI final verdes, com auditorias aplicáveis. O veredito é `PRONTA_PARA_REVISAO_DE_MERGE`, sujeito à revisão humana; não houve merge. A prova independente do `branch_id`, a identidade do Neon histórico e `PD-002`/`G2-SCI` seguem externas. A seção 12 do [relatório de validação](validation-report.md) e os checkpoints abaixo preservam estados históricos, inclusive a classificação anterior `NAO_PRONTA`.
 
 ## Objetivo
 
@@ -132,3 +132,9 @@ O commit remoto `9bbece0` publicou [relatório de outro validador](2026-09-26-re
 ## Retomada A3–A5 de 2026-09-27
 
 O [relatório de retomada](2026-09-27-retomada-a3-a5.md) registra a remediação do audit de produção e completo, a reprodução e correção da fragilidade temporal de A5, e o oráculo migration que agora preserva erros SQL inesperados. Os gates geral 55/55, HTTPS 2/2, IHFR 6/6 e banco local/E2E passaram. O novo full UI foi bloqueado pela conta E2E no limite de cinco laboratórios; o runner detecta essa condição antes de iniciar o navegador e os dados históricos foram preservados. A4, ciência e o full UI com conta aprovada e capacidade seguem pendentes.
+
+## Execução pós-avaliação `9b2c989` — 2026-09-27
+
+O [relatório E1–E7](2026-09-27-execucao-pos-9b2c989.md) documenta o patch e os gates após a avaliação. Um preflight guardado preparou a conta sintética própria `reserve-01` no E2E direto `6903ad2ff1ef`; o full UI passou **1/1 na primeira tentativa** em dois run IDs novos, inclusive no snapshot técnico final `HF007-UI-POST9B2C989-20260927-02`, com CREATE, reload/histórico, REPLACE, REVOKE e zero CURRENT. A conta ficou em 2/5 vínculos, sem alterar as contas históricas. Migration 26/26, contrato 2/2, integração 107/107, IHFR isolado 6/6, Playwright geral local 55/55, HTTPS local 2/2, unitários 244/244, build padrão, typecheck, lint sem erros e audits de dependências sem vulnerabilidades passaram. A auditoria remota final encontrou zero schemas temporários; os bancos locais v2 próprios foram descartados sob guardas, recriados e auditados sem linhas ou schemas residuais, preservando os v1.
+
+O veredito técnico é `PRONTA_PARA_REVISAO_DE_MERGE`, que requer avaliação humana e não realiza merge, push ou deploy. A prova independente endpoint→`branch_id`, o papel do Neon histórico `568d60469278` e `PD-002`/`G2-SCI` seguem externos. A v0.1 permanece `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
