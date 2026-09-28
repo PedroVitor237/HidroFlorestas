@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdtemp, open } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { performance } from "node:perf_hooks";
@@ -48,30 +48,41 @@ export interface Imp006GateResult {
   logPath: string;
 }
 
-/** Keeps the complete sanitized child output in a private temporary log. */
+/** Streams sanitized child output to an exclusive private log as each line completes. */
 export async function runImp006Gate(
   phase: string,
   args: string[],
   env: NodeJS.ProcessEnv,
-  context: { fingerprint?: string; schema?: string; runId?: string; attempt?: number } = {},
+  context: { fingerprint?: string; schema?: string; runId?: string; attempt?: number; logDirectory?: string; signal?: AbortSignal } = {},
 ): Promise<Imp006GateResult> {
   if (!/^[a-z0-9-]+$/.test(phase)) throw new Error("Invalid gate phase");
-  const directory = await mkdtemp(join(tmpdir(), "hidroflorestas-imp006-gate-"));
-  const logPath = join(directory, `${phase}.log`);
+  const attempt = context.attempt ?? 1;
+  if (!Number.isSafeInteger(attempt) || attempt < 1) throw new Error("Invalid gate attempt");
+  const directory = context.logDirectory ?? await mkdtemp(join(tmpdir(), "hidroflorestas-imp006-gate-"));
+  const logPath = join(directory, `${phase}-attempt-${attempt}.log`);
+  const log = await open(logPath, "wx", 0o600);
   const started = performance.now();
   const startedAt = new Date().toISOString();
-  const lines: string[] = [];
+  let writes = Promise.resolve();
+  let writeError: unknown;
+  let child: ReturnType<typeof spawn> | undefined;
+  const append = (line: string) => {
+    writes = writes.then(() => log.writeFile(line)).catch(error => {
+      writeError ??= error;
+      child?.kill();
+    });
+  };
   const details = [
-    `phase=${phase}`, `attempt=${context.attempt ?? 1}`,
+    `phase=${phase}`, `attempt=${attempt}`,
     context.fingerprint ? `target=${context.fingerprint}` : undefined,
     context.schema ? `schema=${context.schema}` : undefined,
     context.runId ? `run=${context.runId}` : undefined,
   ].filter(Boolean).join(" ");
   const startLine = `[${startedAt}] START ${details}\n`;
-  lines.push(startLine);
+  append(startLine);
   process.stdout.write(startLine);
-
-  const child = spawn(process.execPath, args, { env, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+  try {
+  child = spawn(process.execPath, args, { env, stdio: ["ignore", "pipe", "pipe"], windowsHide: true, signal: context.signal });
   const attach = (stream: NodeJS.ReadableStream | null, destination: NodeJS.WriteStream, label: string) => {
     if (!stream) return;
     let pending = "";
@@ -81,32 +92,48 @@ export async function runImp006Gate(
       const complete = pending.split("\n");
       pending = complete.pop() ?? "";
       for (const line of complete) {
+        if (line.length > 1_048_576) {
+          append(`${label}: OUTPUT_LINE_LIMIT_EXCEEDED\n`);
+          child?.kill();
+          continue;
+        }
         const safe = redactImp006Diagnostics(line, env);
-        lines.push(`${label}: ${safe}\n`);
+        append(`${label}: ${safe}\n`);
         destination.write(`${safe}\n`);
+      }
+      if (pending.length > 1_048_576) {
+        pending = "";
+        append(`${label}: OUTPUT_LINE_LIMIT_EXCEEDED\n`);
+        child?.kill();
       }
     });
     stream.on("end", () => {
       if (!pending) return;
       const safe = redactImp006Diagnostics(pending, env);
-      lines.push(`${label}: ${safe}\n`);
+      append(`${label}: ${safe}\n`);
       destination.write(`${safe}\n`);
     });
   };
   attach(child.stdout, process.stdout, "stdout");
   attach(child.stderr, process.stderr, "stderr");
 
+  const runningChild = child;
   const outcome = await new Promise<{ code: number; error?: unknown }>((resolve) => {
     let spawnError: unknown;
-    child.once("error", (error) => { spawnError = error; });
-    child.once("close", (code, signal) => resolve({ code: code ?? (signal ? 1 : 0), error: spawnError }));
+    runningChild.once("error", (error) => { spawnError = error; });
+    runningChild.once("close", (code, signal) => resolve({ code: code ?? (signal ? 1 : 0), error: spawnError }));
   });
   const durationMs = Math.round(performance.now() - started);
-  if (outcome.error) lines.push(`spawn-error: ${describeImp006Error(outcome.error, env)}\n`);
+  if (outcome.error) append(`spawn-error: ${describeImp006Error(outcome.error, env)}\n`);
   const endLine = `[${new Date().toISOString()}] END ${details} exit=${outcome.code} duration_ms=${durationMs}\n`;
-  lines.push(endLine);
-  await writeFile(logPath, lines.join(""), { encoding: "utf8", mode: 0o600 });
+  append(endLine);
+  await writes;
+  if (writeError) throw writeError;
   process.stdout.write(endLine);
   process.stdout.write(`IMP-006 sanitized gate log: ${logPath}\n`);
   return { exitCode: outcome.code, durationMs, logPath };
+  } finally {
+    await writes;
+    await log.close();
+  }
 }
