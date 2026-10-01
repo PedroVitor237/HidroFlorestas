@@ -2,6 +2,8 @@
 
 Data: 2026-10-01, America/Fortaleza. Referência: `development@8d78d521cadf869379d1e25388ea8fd09fce17d4`. Mandato, prioridades, etapas e estados estão no [PLAN.md](PLAN.md). Este documento reúne evidências para planejamento, sem declarar correção ou validação funcional nesta rodada.
 
+Nota de continuidade: as seções 1–6 retratam a inspeção inicial, a seção 7 preserva a investigação anterior à configuração pelo solicitante, e as seções 8–9 registram o estado atual: mapa confirmado por relato manual e dois relatórios entregues. Referências a pendências ou entregas futuras nas seções antigas pertencem àquelas rodadas.
+
 ## 1. Método, alcance e estado encontrado
 
 `EVIDENCIA_IMPLEMENTACAO` — A inspeção enumerou arquivos rastreados de aplicação, testes, Prisma, configuração, governança, auditorias e dez pacotes Spec Kit. Aprofundou leitura nos mapas, layouts autenticados, formulários de área/coleta/medições, gestão IHFR, validação temporal, serviços associados e identidade visual de login/cadastro. Os cinco JPG de Figma foram abertos e examinados visualmente. Governança e evidências históricas foram lidas em seções pertinentes; não houve revisão integral de todo o código, corpus histórico, specs, testes ou PRs.
@@ -203,3 +205,119 @@ Antes do prompt definitivo: inventário completo de telas/campos/estados, contra
 Leituras estáticas com `git ls-files`, `find`, `grep`, `sed`, Python para contagem de checkboxes; Git para status, SHA, histórico, diff focal `eee3bd8` e comparação de árvores; API GitHub somente leitura para lista/PRs/comentários/reviews; visualização local dos cinco JPG; documentação oficial de Next.js/Lovable. `rg` não estava instalado, então foram usadas ferramentas já disponíveis, sem instalar dependências.
 
 Verificação de entrega: conferir links locais e caminhos citados nos dois novos documentos, whitespace/diff, escopo de arquivos, branch/HEAD preservados e ausência de mudanças em `docs/raw/`/código/configurações. Resultados finais ficam no PLAN. Testes de aplicação, lint/typecheck/build, E2E, migrations, banco, tiles reais e deploy **não executados**, por escopo documental e para não acionar preparação/limpeza de dados. Testes históricos acima são apenas fontes lidas.
+
+## 7. Investigação do mapa — execução de 2026-10-01
+
+Esta seção acrescenta evidências à inspeção preliminar, sem substituir o histórico acima. `DECISAO_CONFIRMADA` — Mandato desta rodada: fazer commit do planejamento existente, investigar/corrigir somente o mapa e não fazer deploy de produção; relatórios e demais melhorias continuam fora do escopo. Origem: pedido explícito da equipe nesta conversa em 01/10.
+
+### Estado inicial e commit
+
+`EVIDENCIA_IMPLEMENTACAO` — Branch reconferida: `development`; HEAD inicial `8d78d521cadf869379d1e25388ea8fd09fce17d4`. A única alteração preexistente era este diretório não rastreado, contendo os dois documentos. Ambos foram preservados e registrados no commit solicitado `6832868` (`docs: registra fase de estabilizacao e analise preliminar`). Nenhum outro arquivo foi incorporado. Não houve push, troca de branch, merge ou deploy. AGENTS.md raiz é o único encontrado. Contexto, decisões, PLANS.md, constituição e políticas de fontes foram consultados.
+
+### Causa e limites da comprovação
+
+`EVIDENCIA_IMPLEMENTACAO` — O helper compartilhado lê diretamente `process.env.NEXT_PUBLIC_MAP_TILE_URL` e `process.env.NEXT_PUBLIC_MAP_ATTRIBUTION`. Aceita somente o par com strings truthy e URL iniciada por `https://`; não valida host, placeholders, whitespace da atribuição, licença, chave, cobertura ou resposta HTTP. Uma URL HTTPS sem placeholders passa pelo helper, mas isso não comprova que funcione como template de tiles. Não foi identificado defeito do componente que explique a mensagem relatada.
+
+Cadastro e detalhe usam `AreaMap` → `AreaMapClient` → alias `areaMapConfig` → `mapTileConfig`. Se retorna `null`, não há `TileLayer`; `Point`, cliques, recentralização e marcador permanecem montados. O detalhe não recebe `onSelect`, portanto não edita a posição. O territorial usa o mesmo helper e, com configuração ausente, inicia em `UNCONFIGURED`; a lista é mantida fora do componente. Com configuração presente, ele distingue eventos de carregamento, sucesso parcial e falha de tiles. No mapa de área, a frase relatada depende exclusivamente de `!config`, sem detecção de erro HTTP.
+
+`EVIDENCIA_IMPLEMENTACAO` — A reprodução isolada em navegador confirmou a causa imediata: **produção sem par de configuração aceito pelo helper não monta camada nem faz requisições de tiles**, mas preserva coordenadas e marcadores. `INFERENCIA` — A configuração ausente/inválida incorporada ao build publicado continua sendo a hipótese principal para o incidente; não foi possível comprovar quais valores estavam disponíveis naquele build. Não há evidência para atribuir o problema ao provedor.
+
+### Deployment e acessos
+
+`EVIDENCIA_IMPLEMENTACAO` — Consulta somente leitura à API GitHub (`gh api repos/PedroVitor237/HidroFlorestas/deployments` e statuses do ID abaixo):
+
+| Campo | Resultado |
+|---|---|
+| Deployment de produção mais recente na lista consultada | `6718512946`, registrado em 28/09/2026 às 16:19:40 (America/Fortaleza) |
+| SHA | `8d78d521cadf869379d1e25388ea8fd09fce17d4` |
+| Estado GitHub | `success`; não comprova funcionamento do mapa |
+| URL do deployment | `https://hidro-florestas-5kzredmm0-pedrovitor237s-projects.vercel.app` |
+| Domínio público candidato | `https://hidro-florestas.vercel.app` |
+
+A URL específica redireciona ao login da Vercel; o domínio candidato responde HTTP 200 em `/login`. Navegação em Chromium headless para `/dashboard/laboratories/00000000-0000-4000-8000-000000000001/areas/new` termina em `/login` no domínio candidato e em `/login` da Vercel na URL específica. O ID é sintético, não um laboratório real. Sem sessão autorizada, não é possível abrir as telas privadas nem interpretar ausência de tiles na página de login como falha de mapa. Nenhum erro JavaScript foi observado nessas navegações; isso não valida o console das telas privadas. A vinculação do alias público ao deployment específico e a URL usada pela equipe permanecem sem confirmação.
+
+Não há ferramenta Vercel disponível nesta sessão, CLI `vercel` no PATH, vínculo local `.vercel` ou token Vercel no processo. Não foi acessado painel, histórico de variáveis, log de build ou configuração privada. A API GitHub fornece SHA/estado/URL, não os valores de ambiente de build. Não foram solicitadas credenciais nem usado bypass de autenticação.
+
+### Documentação e configuração preparada
+
+`EVIDENCIA_IMPLEMENTACAO` — `env.exemple` não documenta as duas variáveis. Os arquivos locais `.env`, `.env.e2e.local` e o processo não as definem; a inspeção registrou apenas presença/ausência, sem imprimir outras configurações. Essa ausência local não prova ausência na Vercel. Os exemplos da IMP-003 (`quickstart.md`, seção 3) são placeholders, não valores operacionais. IMP-003 `research.md`, R-010, e IMP-008 `plan.md` exigem provedor aprovado/configurado em produção. `TECH_DECISIONS.md`, TD-008, mantém OpenStreetMap em avaliação; não foi localizada aprovação de um provedor de produção no recorte consultado.
+
+`FATO_DOCUMENTADO` externo — O [Next.js incorpora leituras diretas de NEXT_PUBLIC_* no JavaScript durante o build](https://nextjs.org/docs/app/guides/environment-variables#bundling-environment-variables-for-the-browser). Esse é o padrão usado pelo helper. Os valores ficam fixos nesse artefato; alterar somente o ambiente de runtime não reescreve o bundle. A [Vercel aplica alterações de ambiente a novos deployments](https://vercel.com/docs/environment-variables). Preview também é um build de produção do Next.js: não recebe o fallback por ser Preview.
+
+`RECOMENDACAO` — Ajuste operacional a realizar na Vercel, **depois de identificar o provedor já contratado/aprovado ou confirmar uma escolha**:
+
+1. Abrir o projeto HidroFlorestas → Settings → Environment Variables. Conferir separadamente os nomes exatos `NEXT_PUBLIC_MAP_TILE_URL` e `NEXT_PUBLIC_MAP_ATTRIBUTION`, ambiente **Production**, sem whitespace acidental. Para validar antes em uma publicação de teste, configurar também **Preview**, respeitando eventual restrição de branch; Development é independente.
+2. Em `NEXT_PUBLIC_MAP_TILE_URL`, inserir o template raster HTTPS oficial do provedor, com os placeholders Leaflet aplicáveis: em geral `{z}/{x}/{y}`, eventualmente `{s}` ou `{r}`. Não inserir uma página de mapa, estilo JSON vetorial, domínio isolado ou o placeholder `approved-provider.example`. Preservar query parameters necessários. Somente token explicitamente público/restrito para navegador pode aparecer em `NEXT_PUBLIC_*`.
+3. Em `NEXT_PUBLIC_MAP_ATTRIBUTION`, inserir a atribuição HTML oficial do serviço e das fontes de dados. Para um serviço baseado em OSM, o crédito dos dados pode ser `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`, mas isso não substitui créditos adicionais exigidos pelo provedor.
+4. Depois de salvar, fazer **novo build** do SHA pretendido no ambiente configurado. Em Deployments → Redeploy, desabilitar a opção de reutilizar o Build Cache para tornar a reconstrução explícita. Confirmar ambiente e SHA. Não basta promover um bundle de Preview construído sem essas variáveis nem alterar valores após o build. Nenhuma publicação foi feita nesta execução; o operador deve realizar essa etapa posteriormente.
+5. Entrar com conta autorizada, abrir cadastro, detalhe de área existente e mapa territorial. Em Network, filtrar o host do provedor: verificar imagens de tiles carregadas com sucesso, incluindo cache legítimo, e ausência de 401/403/404/429/5xx. Conferir atribuição visível, mapa preenchido, console sem erros relevantes, clique atualizando coordenadas no cadastro sem salvar registro, marcador correto no detalhe e pontos/lista/seleção no territorial. Recarregar as três telas e confirmar a URL final/deployment/SHA. Registrar evidências sanitizadas; não compartilhar cookies, tokens ou dados reais desnecessários.
+
+**Valores ainda pendentes:** o template e o crédito completos do provedor de produção não podem ser determinados com as evidências disponíveis. `PENDENCIA_DE_DECISAO` — confirmar o provedor ou sua aprovação antes de aplicar valores. Foi solicitada à equipe a URL afetada e o provedor, sem presumir que OSM foi escolhido. Essa lacuna impede uma configuração operacional completa; as instruções estão preparadas, mas a configuração não foi aplicada.
+
+Para referência **exclusivamente do fallback local já existente**, os valores públicos são:
+
+```dotenv
+NEXT_PUBLIC_MAP_TILE_URL=https://tile.openstreetmap.org/{z}/{x}/{y}.png
+NEXT_PUBLIC_MAP_ATTRIBUTION=&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors
+```
+
+Não copiar esse par para Production como decisão implícita. A [política oficial de tiles OSM](https://operations.osmfoundation.org/policies/tiles/) exige atribuição visível, cache respeitado, Referer identificável de navegador e proíbe download em massa/prefetch para uso offline; o serviço é best-effort, sem SLA. A política não fornece aprovação de projeto nem altera a restrição local a desenvolvimento/manual de baixo volume. Não houve mudança de provedor ou requisição automatizada a tiles públicos.
+
+### Validação realizada e o que ela não prova
+
+`EVIDENCIA_IMPLEMENTACAO` — Chromium instalado (`chromium-1234`), via Playwright disponível, executou os componentes reais em um harness temporário `/tmp/hidro-map-investigation.mjs`. Bundles isolados gerados com esbuild e valores fixados para desenvolvimento/produção; React, Leaflet, CSS de Leaflet e os componentes do repositório foram usados. Tiles foram interceptados integralmente: imagens sintéticas HTTP 200 ou falhas HTTP 503. O harness não usa servidor Next.js, autenticação, API, banco, listas persistidas nem o layout completo das páginas. Portanto, valida comportamento dos componentes, **não os fluxos completos nem um deployment Next.js**.
+
+| Cenário | Camadas / requisições | Resultado dos componentes |
+|---|---|---|
+| Desenvolvimento sem variáveis | 3 / 8 | Fallback OSM interceptado; imagens decodificadas; atribuição montada pelo componente; sem mensagens de configuração ausente |
+| Produção sem variáveis | 0 / 0 | Duas mensagens no mapa de área e uma no territorial; marcadores e seleção preservados |
+| Produção com par sintético HTTPS | 3 / 8 | Imagens sintéticas carregadas nos três mapas; sem mensagens de indisponibilidade ou erros de console |
+| Produção com tiles HTTP 503 e corpo inválido | 3 / 8 | Nenhum tile carregado; aviso de falha territorial; sem a frase de configuração ausente nas áreas; erros 503 esperados no console |
+
+Em todos os cenários: três marcadores presentes; clique no cadastro altera coordenadas; o marcador do detalhe permanece centralizado no ponto sintético fornecido; clique no marcador territorial seleciona `synthetic-a`. Nos cenários de desenvolvimento, produção sem configuração e produção configurada, zero erros JavaScript/console. O cenário 503 diferencia falha de rede de ausência de configuração; seus erros são deliberados. Contagens de requisições refletem URLs interceptadas, compartilhadas pelos mapas; não são número total de elementos de tile.
+
+Também foram conferidos seis casos do helper em execução isolada: desenvolvimento ausente → fallback; produção ausente, sem atribuição e com HTTP → `null`; par HTTPS e URL HTTPS sem placeholders → configuração aceita. Todos passaram segundo o comportamento atual; o último evidencia o limite da validação, sem provar um defeito causador do incidente.
+
+Comando focal: Node `v22.23.2` instalado, `node --import=tsx --test tests/unit/area-form-state.test.ts tests/unit/territorial-map-state.test.ts` → **2 arquivos PASS, zero falhas**. Esse runtime é inferior à engine declarada (`>=24.19.0 <25`), portanto a execução focal não equivale ao gate completo do projeto. Sem alteração de código, lint/typecheck/build completo não foram executados. Não foram executados E2E existentes, fixtures, migrations ou testes de banco, pois as suítes de telas preparam/limpam dados e não são necessárias para esta inspeção operacional.
+
+Limitações separadas: Chromium padrão esperado pelo Playwright não estava instalado; o executável já disponível foi usado. Sandbox bloqueou o lançamento do navegador e a escrita no índice Git; os comandos necessários foram executados com autorização de ferramenta. O harness exigiu loader de PNG e corpo inválido na simulação 503, ajustes somente em `/tmp`. Nenhum erro Prisma/Neon foi reproduzido, pois não houve acesso ao banco; isso não comprova disponibilidade nem defeito desses serviços.
+
+**Entrega:** diagnóstico imediato comprovado em código e reprodução local; instruções de configuração/rebuild preparadas. Nenhum componente, variável local/remota ou provedor foi alterado. **Mapa funcionando no site publicado não comprovado.** Falta confirmar URL/deployment afetado, inspecionar o par efetivo no build, determinar os valores aprovados, aplicar configuração e realizar nova publicação/verificação autenticada pelo operador. Relatórios e melhorias posteriores não foram iniciados.
+
+Verificação complementar do controle `.leaflet-control-attribution`: crédito presente nos três componentes em desenvolvimento e produção configurada, inclusive após falha simulada de tiles; ausente quando não há camada configurada. Verificação documental final: **84 referências locais válidas**, `git diff --check` sem erros, diff restrito aos dois documentos e nenhum arquivo de código/ambiente/raw alterado. A revisão do diff preservou o planejamento anterior como histórico. HEAD permanece `6832868`; atualizações desta investigação ficam no worktree para revisão, posteriores ao commit inicial solicitado.
+
+
+## 8. Atualização de 2026-10-01 — mapa confirmado pelo solicitante
+
+`DECISAO_CONFIRMADA` — OpenStreetMap escolhido para produção, conforme solicitação explícita do usuário nesta conversa em 2026-10-01.
+
+`FATO_DOCUMENTADO` — O solicitante informou ter configurado `NEXT_PUBLIC_MAP_TILE_URL` e `NEXT_PUBLIC_MAP_ATTRIBUTION` na Vercel para produção e confirmou que o mapa funciona no site publicado. **Validação manual relatada pelo solicitante**; não houve inspeção direta do painel Vercel nem verificação autenticada das três telas pelo agente nesta continuação. Valores, deployment/SHA, console/rede e cobertura individual das telas não foram fornecidos. Não se presume reconstrução específica nem correlação com o deployment da investigação anterior.
+
+Esta atualização sucede as pendências operacionais das seções 2 e 7: OSM deixou de ser somente alternativa/fallback local para este recorte; configuração e funcionamento passaram a ser relatados pelo operador. As evidências locais anteriores continuam com seus limites, e o incidente deixa de bloquear a etapa dos relatórios. O registro global `TD-008`/`PD-007` ainda precisa refletir a decisão atual em atualização canônica autorizada.
+
+A continuação parte de `development@68328682cf2990d787b596493999330602e63cd3`, preservando as modificações preexistentes deste arquivo e do plano. Os relatórios terão corte em 2026-10-01 (America/Fortaleza), com código limitado a esse SHA e o relato operacional posterior identificado separadamente. Melhorias A–E e prompt definitivo do Lovable permanecem não iniciados.
+
+
+## 9. Entrega dos relatórios — 2026-10-01
+
+A seção 4 permanece como desenho e limites da inspeção inicial. Nesta continuação, a pesquisa foi aprofundada e os dois documentos foram entregues:
+
+- [Ambiguidades documentais e decisões](../../../reports/estabilizacao-relatorios-interface/2026-10-01-ambiguidades-documentais-e-decisoes.md), para o professor Fábio: pesos, normalização, ausências/suficiência, qualidade, classes, uso da terra, APP/solo exposto, terminologia, papéis e arquitetura; decisões específicas e pendências preservadas.
+- [Relatório acadêmico do desenvolvimento](../../../reports/estabilizacao-relatorios-interface/2026-10-01-relatorio-academico-do-desenvolvimento.md): contexto, método, organização, cronologia, entregas, validações, dificuldades, contribuições e próximos passos até `6832868` e os eventos remotos/relatados de 01/10.
+
+`FATO_DOCUMENTADO` — A leitura começou por planejamento, decisões, Spec Kit e Code-First; depois foram consultados os 30 PRs existentes, seus corpos, autoria, merges, comentários e reviews, sem paginação restante. Nenhuma review formal foi retornada; comentários são do bot Vercel. O histórico Git e diffs selecionados sustentam a distinção planejado–implementado–integrado–validado e as atribuições. O corpo do PR #30 ainda dizia “não mesclado”, mas a API confirma merge em 01/10, `cf6a7bd`; sua árvore coincide com `8d78d52`. O commit `6832868` adiciona apenas o planejamento desta fase.
+
+`FATO_DOCUMENTADO` — Foram reconferidos os exemplos raw contra as decisões do ADR e as auditorias. Os hashes dos 13 arquivos coincidem com o inventário. O critério “fonte mais completa” foi mantido como justificativa focal de `landUseType`, não regra universal. A confirmação de OSM e a configuração/validação manual relatadas pelo solicitante permanecem com os limites da seção 8, também reproduzidos nos relatórios.
+
+`INFERENCIA` — Cabeçalhos e backlog antigos não bastam para determinar estado atual. Exemplos: implementação posterior às specs 004/005/007; 22 checkboxes ainda abertos na IMP-008 apesar da evidência de implementação; nomes 007 e 010 com significados diferentes conforme o diretório/backlog. Os relatórios explicitam essas diferenças sem reescrever documentos globais.
+
+Limites: pesquisa documental e amostragem de diffs; sem revisão exaustiva do código/corpus, entrevistas, nova execução de testes, painel Vercel, três telas autenticadas ou validação científica. Resultados históricos de testes mantêm datas, ambientes e ressalvas, inclusive preflights interrompidos na preparação do PR #30. Atribuição Git não equivale a autoria intelectual exclusiva nem mede esforço.
+
+Estado: etapa 2 concluída documentalmente; revisão de conteúdo e atribuições pendente. A fase mantém etapas 3–5 não iniciadas. `RECOMENDACAO`: revisão dos relatórios seguida da seleção de recortes na etapa 3. Logout, Município/UF, data/hora, uso da terra, rascunhos ambientais e prompt definitivo Lovable não foram iniciados. Verificações finais, arquivos e reconciliações canônicas necessárias constam no PLAN.
+
+
+## 10. Decisões da execução pré-Lovable — 01/10/2026
+
+`DECISAO_CONFIRMADA` — Origem: solicitação explícita anexada nesta conversa, iniciada por “Execute nesta ordem”. A equipe aprovou logout, data/hora amigável e tradução dos usos predominantes antes do Lovable. Substitui a recomendação anterior de integrar rótulos somente à reformulação. Município/UF automático e rascunhos ficam adiados para funcionalidades próprias. A proposta Lovable será recebida preferencialmente em repositório separado e avaliada pelo Codex para integração posterior. Prompt, merge, deploy e reformulação visual permanecem fora desta execução.
+
+`EVIDENCIA_IMPLEMENTACAO` — Estado inicial `development@6832868`, alterações documentais preexistentes em plano/análise e quatro relatórios novos; remoto/worktrees conferidos. Os relatórios e suas versões para leitura mantêm o corte histórico; resultados desta execução serão acrescentados somente ao planejamento/análise e aos artefatos focais. Publicação do commit documental é condição prévia para começar o código. A análise técnica e os resultados serão registrados após a implementação.
