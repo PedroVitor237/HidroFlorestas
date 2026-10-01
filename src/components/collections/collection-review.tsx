@@ -1,3 +1,4 @@
+import { formatCollectionOccurrence } from "@/lib/collection-date-time";
 import type { CollectionAttempt } from "@/types/collection.type";
 
 export function CollectionReview({
@@ -14,7 +15,7 @@ export function CollectionReview({
     <section aria-labelledby="collection-review-title" className="space-y-4 rounded-2xl border border-green-200 bg-green-50 p-5">
       <h2 id="collection-review-title" className="text-xl font-bold">Revisão</h2>
       <dl className="space-y-3">
-        <div><dt className="font-semibold">Ocorrência em campo</dt><dd>{attempt.occurredAt}</dd></div>
+        <div><dt className="font-semibold">Ocorrência em campo</dt><dd>{formatCollectionOccurrence(attempt.occurredAt)}</dd></div>
         <div><dt className="font-semibold">Laboratório</dt><dd>{attempt.context.laboratory.name}</dd></div>
         <div><dt className="font-semibold">Área</dt><dd>{attempt.context.area.name}</dd></div>
       </dl>

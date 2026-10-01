@@ -1,0 +1,7 @@
+# Pesquisa focal
+
+`EVIDENCIA_IMPLEMENTACAO`: TopBar oculto no móvel e sem saída; Sidebar/AdminShell já expõem /logout. AuthProvider limpa user e replace/refresh apenas no POST bem-sucedido; LogoutPage oferece erro/retry. Decisão técnica: reutilizar rota, adicionar saída somente ao workspace e tornar seu TopBar responsivo.
+
+`EVIDENCIA_IMPLEMENTACAO`: IMP-004 FR-015 proíbe mudança silenciosa. Parser aceita segundos, 1–3 casas e offset até ±14h, rejeita -00:00/futuro/calendário inválido. CollectionsService persiste Date e offset e reconstitui RFC. Decisão técnica: controles locais mais offset explícito, adaptação sem mudar backend; fuso do dispositivo calculado pela data escolhida, override manual para outros locais/horas ambíguas. Horas inexistentes rejeitadas em modo dispositivo; sem normalização oculta. Alternativa ISO UTC simples perde offset declarado, rejeitada. Data local obtida de componentes locais, nunca por ISO UTC truncado. Inicializar após hidratação evita fuso do servidor.
+
+`FATO_DOCUMENTADO`: ADR-0001 §7 define as sete categorias/traduções e único uso predominante, distingue BARE_SOIL de percentual. Decisão técnica: dicionário tipado e ajuda visível associada. `PENDENCIA_DE_DECISAO`: descrições/limiares ambientais por categoria não estão fechados; não inventar critérios para pastagem degradada. Enum livre da área é conceito distinto, não traduzir dados livres por inferência.

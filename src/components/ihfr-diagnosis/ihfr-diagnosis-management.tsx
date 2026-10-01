@@ -5,13 +5,14 @@ import type { IHFRLandUseType, IHFRRouteContext, PublicDiagnosis } from "@/types
 import { IHFR_CONTRACT } from "@/app/api/server/ihfr-diagnosis/ihfr-diagnosis.constants";
 import { ExperimentalDiagnosisSummary } from "./experimental-diagnosis-summary";
 import { NoCurrentDiagnosis } from "./no-current-diagnosis";
+import { LAND_USE_LABELS } from "./land-use-labels";
 import { createClientUuid } from "@/lib/client-uuid";
 
 type OperationResponse = { outcome: "SUCCEEDED" | "INSUFFICIENT_DATA" | "INCOMPATIBLE_VERSION"; diagnosis: PublicDiagnosis | null; insufficiencyReasons: string[] };
 type EligibilityResponse = { eligible: boolean; outcome: "ELIGIBLE" | "INSUFFICIENT_DATA" | "INCOMPATIBLE_VERSION"; reasons: string[]; hasCurrentDiagnosis: boolean; currentDiagnosisId: string | null };
 type Attempt = { key: string; endpoint: string; body: object; kind: "DIAGNOSE" | "REVOKE" };
 type Feedback = { text: string; kind: "status" | "alert" };
-const landUseTypes: IHFRLandUseType[] = ["FOREST", "AGROFORESTRY", "CROPLAND", "PASTURE", "DEGRADED_PASTURE", "BARE_SOIL", "URBAN"];
+const landUseTypes = Object.keys(LAND_USE_LABELS) as IHFRLandUseType[];
 
 export function IHFRDiagnosisManagement({ context, initialDiagnosis }: { context: IHFRRouteContext; initialDiagnosis: PublicDiagnosis | null }) {
   const [diagnosis, setDiagnosis] = useState(initialDiagnosis);
@@ -146,10 +147,10 @@ export function IHFRDiagnosisManagement({ context, initialDiagnosis }: { context
     {diagnosis ? <ExperimentalDiagnosisSummary diagnosis={diagnosis} /> : <NoCurrentDiagnosis />}
     <section aria-labelledby="ihfr-management-heading" className="rounded-xl border border-slate-200 bg-white p-4">
       <h2 id="ihfr-management-heading" className="text-lg font-semibold">Gerenciar diagnóstico IHFR experimental</h2>
-      <p className="mt-1 text-sm text-slate-600">CONTRATO_EXPERIMENTAL · VALIDACAO_CIENTIFICA_PENDENTE · SUJEITO_A_RECALIBRACAO · NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO</p>
+      <p className="mt-1 break-all text-sm text-slate-600">CONTRATO_EXPERIMENTAL · VALIDACAO_CIENTIFICA_PENDENTE · SUJEITO_A_RECALIBRACAO · NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-medium">Uso predominante da terra
-          <select value={landUseType} onChange={(event) => setLandUseType(event.target.value as IHFRLandUseType | "")} className="mt-1 w-full rounded border p-2"><option value="">Indeterminado ou ausente</option>{landUseTypes.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+          <select aria-describedby="land-use-help" value={landUseType} onChange={(event) => setLandUseType(event.target.value as IHFRLandUseType | "")} className="mt-1 w-full rounded border p-2"><option value="">Indeterminado ou ausente</option>{landUseTypes.map((value) => <option key={value} value={value}>{LAND_USE_LABELS[value]}</option>)}</select>
         </label>
         <label className="block text-sm font-medium">Origem da observação
           <select value={provenanceKind} onChange={(event) => setProvenanceKind(event.target.value as typeof provenanceKind)} className="mt-1 w-full rounded border p-2"><option value="FIELD_OBSERVATION">Observação em campo</option><option value="AUTHORIZED_RECORD">Registro autorizado</option></select>
@@ -158,6 +159,7 @@ export function IHFRDiagnosisManagement({ context, initialDiagnosis }: { context
           <input type="datetime-local" value={observedAt} onChange={(event) => setObservedAt(event.target.value)} className="mt-1 w-full rounded border p-2" />
         </label>
       </div>
+      <p id="land-use-help" className="mt-3 text-sm text-slate-600">Selecione um único uso predominante. Se não puder determinar, mantenha indeterminado; pode haver insuficiência de dados. Solo exposto aqui é uma categoria territorial, diferente do percentual de solo exposto nos dados ambientais.</p>
       <div className="mt-4 flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={() => void refreshEligibility()} className="rounded border px-4 py-2 disabled:opacity-50">Verificar elegibilidade</button><button type="button" disabled={busy || Boolean(attempt)} onClick={() => prepare("DIAGNOSE")} className="rounded bg-green-700 px-4 py-2 font-semibold text-white disabled:opacity-50">{diagnosis ? "Substituir diagnóstico" : "Criar diagnóstico"}</button></div>
       {eligibility && <p className="mt-3 text-sm" role="status">{eligibility.outcome}{eligibility.reasons.length ? `: ${eligibility.reasons.join(", ")}` : ""} · Vigente: {eligibility.hasCurrentDiagnosis ? "sim" : "não"}</p>}
       {diagnosis && <div className="mt-5 border-t pt-4"><label className="block text-sm font-medium">Motivo da revogação
