@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hidroflorestas:ihfr-diagnosis-input-experimental-v0.1.0",
+  "title": "IHFR diagnosis supplemental input experimental v0.1.0",
+  "description": "Closed supplemental input for the experimental IHFR evaluator. Scientific validation remains pending.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inputContractVersion",
+    "landUseType",
+    "provenance"
+  ],
+  "properties": {
+    "inputContractVersion": {
+      "const": "ihfr-diagnosis-input-experimental-v0.1.0"
+    },
+    "landUseType": {
+      "type": "string",
+      "enum": [
+        "FOREST",
+        "AGROFORESTRY",
+        "CROPLAND",
+        "PASTURE",
+        "DEGRADED_PASTURE",
+        "BARE_SOIL",
+        "URBAN"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "observedAt"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["FIELD_OBSERVATION", "AUTHORIZED_RECORD"]
+        },
+        "observedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "x-enumScores": {
+    "FOREST": 0.2,
+    "AGROFORESTRY": 0.25,
+    "CROPLAND": 0.6,
+    "PASTURE": 0.65,
+    "DEGRADED_PASTURE": 0.8,
+    "BARE_SOIL": 0.95,
+    "URBAN": 0.7
+  },
+  "x-serverDerived": [
+    "laboratoryId",
+    "areaId",
+    "collectionId",
+    "environmentalMeasurementSetId",
+    "createdByUserId",
+    "confirmedAt",
+    "payloadHash"
+  ],
+  "x-immutability": "Persisted only with a successful diagnosis and immutable thereafter",
+  "x-scientificLabels": [
+    "CONTRATO_EXPERIMENTAL",
+    "VALIDACAO_CIENTIFICA_PENDENTE",
+    "SUJEITO_A_RECALIBRACAO",
+    "NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO"
+  ]
+}

@@ -1,0 +1,2 @@
+"use client";
+export default function ErrorState({reset}:{reset:()=>void}){return <section role="alert" className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-8"><h2 className="text-xl font-bold">Não foi possível carregar os dados ambientais</h2><p className="my-4">Tente novamente para recuperar esta página.</p><button onClick={reset} className="rounded-xl bg-green-700 px-5 py-3 font-semibold text-white">Tentar novamente</button></section>;}

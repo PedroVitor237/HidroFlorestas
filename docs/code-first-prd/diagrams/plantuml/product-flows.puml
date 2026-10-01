@@ -1,0 +1,131 @@
+@startuml CF-PFLOW-001
+title CF-PFLOW-001 — Ciclo principal do MVP
+start
+:S01 Acessar o produto;
+:S02 Entrar no workspace;
+:S03 Criar ou entrar em laboratório;
+:S04 Selecionar contexto ativo;
+:S05 Cadastrar área no mapa;
+:S06 Registrar coleta e associação espacial;
+:S07 Registrar dados ambientais aplicáveis;
+:S08 Obter ou associar diagnóstico IHFR pelo mecanismo aplicável;
+:S09 Consultar resultado;
+:S10 Acompanhar em mapa, resumo ou histórico;
+stop
+@enduml
+
+@startuml CF-PFLOW-002
+title CF-PFLOW-002 — Identidade e acesso
+start
+:S01 Acessar entrada autenticada;
+if (D01 Sessão disponível?) then (Sim)
+  :S02 Restaurar sessão;
+else (Não)
+  :S03 Escolher cadastro ou login;
+  :S04 Enviar dados aplicáveis;
+  if (D02 Solicitação aceita?) then (Sim)
+    :S06 Estabelecer sessão;
+  else (Não)
+    :S05 Apresentar falha observável;
+    stop
+  endif
+endif
+:S07 Acessar workspace;
+if (D03 Logout solicitado?) then (Sim)
+  :S08 Encerrar sessão;
+else (Não)
+  :S09 Manter acesso ao workspace;
+endif
+stop
+@enduml
+
+@startuml CF-PFLOW-003
+title CF-PFLOW-003 — Entrada e seleção do laboratório
+start
+:S01 Acessar workspace autenticado;
+if (D01 Criar ou entrar?) then (Criar)
+  :S02 Informar dados aplicáveis de criação;
+else (Entrar)
+  :S03 Informar dados aplicáveis de entrada;
+endif
+:S04 Disponibilizar laboratório;
+:S05 Selecionar laboratório ativo;
+:S06 Navegar no contexto selecionado;
+stop
+@enduml
+
+@startuml CF-PFLOW-004
+title CF-PFLOW-004 — Cadastro e consulta espacial da área
+start
+:S01 Usar laboratório ativo;
+:S02 Iniciar cadastro da área;
+:S03 Informar dados sustentados;
+:S04 Estabelecer representação espacial aplicável no mapa;
+note right
+  Geometria, precisão, interação e tecnologia
+  permanecem abertas.
+end note
+:S05 Associar área, laboratório, autor e referência espacial;
+:S06 Persistir ou confirmar área candidata;
+:S07 Reencontrar e consultar área;
+stop
+@enduml
+
+@startuml CF-PFLOW-005
+title CF-PFLOW-005 — Coleta e dados ambientais
+start
+:S01 Selecionar área acessível;
+:S02 Iniciar coleta;
+:S03 Associar autoria;
+:S04 Associar área e referência espacial aplicável;
+:S05 Registrar dados do contrato científico aplicável;
+note right
+  Água, solo, vegetação e terreno são apenas
+  grupos sugeridos pelo schema.
+end note
+:S06 Persistir ou confirmar coleta candidata;
+:S07 Disponibilizar para diagnóstico;
+stop
+@enduml
+
+@startuml CF-PFLOW-006
+title CF-PFLOW-006 — Obtenção e consulta do diagnóstico IHFR
+start
+:S01 Selecionar coleta com dados aplicáveis;
+:S02 Solicitar, obter, registrar ou associar diagnóstico;
+:S03 Usar mecanismo aplicável futuro;
+note right
+  CF-PD-005 mantém a forma de produção aberta.
+end note
+:S04 Associar diagnóstico à coleta e área;
+if (D01 Versão do algoritmo disponível?) then (Sim)
+  :S05 Preservar versão do algoritmo;
+else (Não)
+  :S06 Prosseguir sem inventar versão;
+endif
+:S07 Disponibilizar resultado;
+:S08 Consultar resultado e origem;
+stop
+@enduml
+
+@startuml CF-PFLOW-007
+title CF-PFLOW-007 — Acompanhamento territorial, resumo e histórico
+start
+:S01 Usar laboratório ativo;
+switch (D01 Escolher visão de acompanhamento)
+case (Resumo)
+  :S02 Consultar resumo;
+case (Histórico)
+  :S03 Consultar histórico;
+case (Territorial)
+  :S04 Consultar mapa territorial;
+endswitch
+:S05 Visualizar áreas, coletas, gráficos e IHFR aplicáveis;
+note right
+  Tecnologia, camada, simbologia e interação
+  permanecem abertas.
+end note
+:S06 Acessar registro de origem;
+:S07 Retornar ao acompanhamento;
+stop
+@enduml

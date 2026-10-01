@@ -1,0 +1,144 @@
+@startuml LDM-01
+title LDM-01 — Modelo lógico de dados Code-First
+hide methods
+hide stereotypes
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+entity "User" as User {
+  * id : String <<PK>>
+  --
+  email : String
+  firstName : String
+  lastName : String
+  password : String
+  role : UserRole
+  image : String
+  status : UserStatus
+  createdAt : DateTime
+  updatedAt : DateTime
+  isAdmin : Boolean
+}
+
+entity "Coordinates" as Coordinates {
+  * id : String <<PK>>
+  --
+  latitude : String
+  longitude : String
+}
+
+entity "LaboratoryRoom" as LaboratoryRoom {
+  * id : String <<PK>>
+  --
+  name : String
+  createdAt : DateTime
+  updatedAt : DateTime
+  userId : String
+  imageBanner : String
+  isActive : Boolean
+  accessCode : String
+}
+
+entity "ResearchersLinked" as ResearchersLinked {
+  * userId : String <<PK>>
+  * laboratoryRoomId : String <<PK>>
+}
+
+entity "CollectionArea" as CollectionArea {
+  * id : String <<PK>>
+  --
+  name : String
+  image : String [opcional]
+  createdAt : DateTime
+  updatedAt : DateTime
+  isActive : Boolean
+  userId : String
+  laboratoryRoomId : String
+  coordinatesId : String
+  municipality : String
+  state : String
+  cep : String
+  landType : LandType
+  descriptionLandType : String [opcional]
+}
+
+entity "CollectionData" as CollectionData {
+  * id : String <<PK>>
+  --
+  createdAt : DateTime
+  updatedAt : DateTime
+  collectionAreaId : String
+  userId : String
+  observations : String [opcional]
+}
+
+entity "IHFRDiagnosis" as IHFRDiagnosis {
+  * id : String <<PK>>
+  --
+  collectionDataId : String
+  ihfrScore : Float
+  ihfrClass : IHFRClass
+  waterScore : Float
+  soilScore : Float
+  vegetationScore : Float
+  territoryScore : Float
+  dataQuality : LevelBasicDefault
+  algorithmVersion : String
+  explanationAI : String [opcional]
+}
+
+entity "WaterData" as WaterData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String
+  waterSourceType : WaterSourceType
+  hasSpring : Boolean
+  wellDepth_m : Float [opcional]
+  waterAvailability : WaterAvailability
+  salinityIndicator : SalinityIndicator [opcional]
+}
+
+entity "SoilData" as SoilData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String
+  soilTexture : SoilTexture
+  infiltrationRate_mm_h : Float
+  compactionLevel : LevelBasicDefault
+  erosionSigns : ErosionSigns
+  soilExposedPercent : Float [opcional]
+}
+
+entity "VegetationData" as VegetationData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String
+  vegetationCoverPercent : Float
+  fragmentationLevel : LevelBasicDefault
+  hasRiparian_app : Boolean [opcional]
+  landscapeDegradation : LevelBasicDefault
+}
+
+entity "TerrainData" as TerrainData {
+  * id : String <<PK>>
+  --
+  collectionDataId : String
+  drainage_density : Float [opcional]
+  elevation_m : Float [opcional]
+  slopePercent : Float [opcional]
+}
+
+User ||--o{ LaboratoryRoom : referenciado por
+User ||--o{ ResearchersLinked : participa por vínculo
+LaboratoryRoom ||--o{ ResearchersLinked : reúne vínculos
+User ||--o{ CollectionArea : referenciado por
+Coordinates ||--o{ CollectionArea : localiza
+LaboratoryRoom ||--o{ CollectionArea : contextualiza
+User ||--o{ CollectionData : referenciado por
+CollectionArea ||--o{ CollectionData : reúne
+CollectionData ||--o{ IHFRDiagnosis : possui
+CollectionData ||--o| WaterData : pode possuir
+CollectionData ||--o| SoilData : pode possuir
+CollectionData ||--o| VegetationData : pode possuir
+CollectionData ||--o| TerrainData : pode possuir
+@enduml

@@ -47,3 +47,37 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# IMP-002: migration incremental necessária para unicidade do código de laboratório.
+!prisma/migrations/
+prisma/migrations/*
+!prisma/migrations/20260907120000_unique_laboratory_access_code/
+!prisma/migrations/20260907120000_unique_laboratory_access_code/migration.sql
+
+# IMP-003: migration de roles contextuais e area-ponto.
+!prisma/migrations/20260914000100_area_registration_and_membership_roles/
+!prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql
+
+# IMP-004: migration aditiva de metadados gerais da coleta.
+!prisma/migrations/20260915000100_collection_registration_metadata/
+!prisma/migrations/20260915000100_collection_registration_metadata/migration.sql
+
+# Browser test output can contain runtime data.
+/test-results/
+/playwright-report/
+
+# IMP-005: versioned environmental measurement set.
+!prisma/migrations/20260917000100_environmental_measurement_set/
+!prisma/migrations/20260917000100_environmental_measurement_set/migration.sql
+
+# IMP-006: versioned experimental IHFR diagnosis.
+!prisma/migrations/20260920000100_ihfr_experimental_diagnosis/
+!prisma/migrations/20260920000100_ihfr_experimental_diagnosis/migration.sql
+!prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity/
+!prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity/migration.sql
+
+# IMP-009: additive account revision and functional administration audit.
+!prisma/migrations/20260919000100_user_administration/
+!prisma/migrations/20260919000100_user_administration/migration.sql
+!prisma/migrations/20260920000100_remove_legacy_is_admin/
+!prisma/migrations/20260920000100_remove_legacy_is_admin/migration.sql

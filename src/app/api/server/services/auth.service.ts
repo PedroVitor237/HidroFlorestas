@@ -1,29 +1,67 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import userService from "./users.service";
 import { UserType } from "../types/database-tables.type";
+import {
+    authenticateCredentials,
+    type CredentialUser,
+} from "../auth/auth.core";
+import {
+    authenticatedDestination,
+    serializePublicUser,
+    type SignInInput,
+} from "../auth/auth.contracts";
+import { signSessionToken, verifySessionToken } from "../auth/session";
+import type { PublicUserDto } from "@/types/auth.type";
 
 const SALT_ROUNDS = 10;
-const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 
-export type PayloadToken = {
-    userId: string;
+export type AuthServiceDependencies = {
+    findCredentialUser: (email: string) => Promise<CredentialUser | null>;
+    comparePassword: (plainText: string, hash: string) => Promise<boolean>;
+    issueToken: (userId: string) => string;
+};
+
+export type SignUpServiceDependencies = {
+    getUserByEmail: (email: string) => Promise<{ id: string } | null>;
+    hashPassword: (plainText: string) => Promise<string>;
+    createUser: (data: Pick<UserType, "email" | "firstName" | "lastName"> & {
+        password: string;
+        status: "ACTIVE";
+    }) => Promise<{
+        id: string;
+        firstName: string;
+        lastName: string;
+        image: string;
+    } | null>;
+    issueToken: (userId: string) => string;
+};
+
+export type SignInServiceResult =
+    | { success: true; token: string; user: PublicUserDto; destination: "/admin" | "/workspace" }
+    | { success: false; reason: "INVALID_CREDENTIALS" | "INTERNAL_ERROR" };
+
+const defaultSignInDependencies: AuthServiceDependencies = {
+    findCredentialUser: (email) => userService.getCredentialUserByEmail(email),
+    comparePassword: bcrypt.compare,
+    issueToken: signSessionToken,
+};
+
+const defaultSignUpDependencies: SignUpServiceDependencies = {
+    getUserByEmail: (email) => userService.getUserByEmail(email),
+    hashPassword: (plainText) => bcrypt.hash(plainText, SALT_ROUNDS),
+    createUser: (data) => userService.create(data),
+    issueToken: signSessionToken,
 };
 
 export class AuthService {
 
-    private generateToken(payload: PayloadToken) {
-        return jwt.sign(payload, JWT_SECRET, {
-            expiresIn: "7d"
-        });
-    }
+    constructor(
+        private readonly signInDependencies: AuthServiceDependencies = defaultSignInDependencies,
+        private readonly signUpDependencies: SignUpServiceDependencies = defaultSignUpDependencies,
+    ) {}
 
     verifyToken(token: string) {
-        try {
-            return jwt.verify(token, JWT_SECRET) as PayloadToken;
-        } catch {
-            return null;
-        }
+        return verifySessionToken(token);
     }
 
     async signUp(data: UserType) {
@@ -35,31 +73,32 @@ export class AuthService {
                 return { success: false, message: "Email e senha obrigatórios" };
             }
 
-            const userExists = await userService.getUserByEmail(email);
+            const userExists = await this.signUpDependencies.getUserByEmail(email);
 
             if (userExists) {
                 return { success: false, message: "já há uma conta com este e-mail." };
             }
 
-            const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+            const hashedPassword = await this.signUpDependencies.hashPassword(password);
 
-            const user = await userService.create({
-                ...data,
+            const user = await this.signUpDependencies.createUser({
+                email,
+                firstName: data.firstName,
+                lastName: data.lastName,
                 password: hashedPassword,
+                status: "ACTIVE",
             });
 
             if (!user) {
                 return { success: false, message: "Erro ao criar usuário" };
             }
 
-            const token = this.generateToken({
-                userId: user.id
-            });
+            const token = this.signUpDependencies.issueToken(user.id);
 
             return {
                 success: true,
                 token,
-                user
+                user: serializePublicUser(user)
             };
 
         } catch {
@@ -67,38 +106,19 @@ export class AuthService {
         }
     }
 
-    async signIn(email: string, password: string) {
-        try {
+    async signIn(input: SignInInput): Promise<SignInServiceResult> {
+        const result = await authenticateCredentials(input, this.signInDependencies);
 
-            const user = await userService.getUserByEmail(email);
-
-            if (!user || !user.password) {
-                return { success: false, message: "Email ou senha inválidos" };
-            }
-
-            const passwordMatch = await bcrypt.compare(password, user.password);
-
-            if (!passwordMatch) {
-                return { success: false, message: "Email ou senha inválidos" };
-            }
-
-            if (user.status === "BLOCKED" || user.status === "INACTIVE") {
-                return { success: false, message: "Usuário inativo ou bloqueado" };
-            }
-
-            const token = this.generateToken({
-                userId: user.id
-            });
-
-            return {
-                success: true,
-                token,
-                user
-            };
-
-        } catch {
-            return { success: false, message: "Erro interno no login" };
+        if (!result.success) {
+            return result;
         }
+
+        return {
+            success: true,
+            token: result.token,
+            user: serializePublicUser(result.principal),
+            destination: authenticatedDestination(result.principal.role),
+        };
     }
 
     async updatePassword(userId: string, currentPassword: string, newPassword: string) {

@@ -1,0 +1,156 @@
+# Validação da `007-ihfr-evolution`
+
+**Histórico anterior:** o [inventário e saneamento A1–A7](2026-09-26-saneamento-a1-a7.md) registra a errata de migrations, o estado técnico do ADR e os gates daquela rodada. A [revalidação conjunta](2026-09-26-revalidacao-conjunta-e-prontidao.md) conserva seus resultados históricos com errata datada no início; não transferir suas contagens de banco entre endpoints.
+
+**Estado técnico mais recente (2026-09-27):** o [relatório pós-`9b2c989`](2026-09-27-execucao-codex-ultra.md) registra build padrão, Playwright geral/HTTPS, gates IHFR e full UI final verdes, com auditorias aplicáveis. O veredito é `PRONTA_PARA_REVISAO_DE_MERGE`, sujeito à revisão humana; não houve merge. A prova independente do `branch_id`, a identidade do Neon histórico e `PD-002`/`G2-SCI` seguem externas. A seção 12 do [relatório de validação](validation-report.md) e os checkpoints abaixo preservam estados históricos, inclusive a classificação anterior `NAO_PRONTA`.
+
+## Reconciliação das pendências de 25 e 26/09 — 2026-09-28
+
+`FATO_DOCUMENTADO`: esta matriz confronta os checkpoints antigos com evidências posteriores; não reexecuta gates nem muda o resultado que cada documento registrou para seu HEAD e destino. Um item técnico superado não transforma uma execução histórica vermelha em verde.
+
+| Origem | Situação demonstrada depois | Estado atual do item |
+|---|---|---|
+| [Reanálise de 25/09](2026-09-25-reanalise-pendencias-prisma.md), R-001, R-002, R-004–R-009 | A [reconciliação R-001–R-011](validation-report.md#123-matriz-r-001r-011-no-estado-observado) registrou Prisma/Node alinhados, adapter Neon exercitado, migration de integridade, auditoria `assert-zero`, Spec Kit reconciliado e full UI em E2E dedicado. | Corrigidos e verificados nos destinos e snapshots citados; a retenção de dados em `public` é intencional. |
+| [Relatório independente de 26/09](2026-09-26-revalidacao-playwright-neon-e-pendencias.md), P-QA-01–06 e P-DOC-01; [saneamento A1–A7](2026-09-26-saneamento-a1-a7.md), A1, A2, A6, A7 | Expectativas, runner HTTPS, adapter e timezone foram corrigidos; ADR reconciliado; bootstrap local com baseline verificado. No [snapshot técnico final](2026-09-27-execucao-codex-ultra.md), geral 55/55, HTTPS 2/2, IHFR 6/6 e full UI 1/1 passaram. | Corrigidos e verificados no recorte técnico; a prova do E2E atual não se transfere ao Neon histórico `568d60469278`. |
+| [Revalidação conjunta de 26/09](2026-09-26-revalidacao-conjunta-e-prontidao.md), F-010/P-QA-07/A5 | A [retomada A3–A5](2026-09-27-retomada-a3-a5.md) reproduziu e corrigiu a fragilidade do prazo visual e a perda de causa no teste migration; o full UI final passou 1/1. | Os mecanismos reproduzidos foram corrigidos e verificados. A exceção exata da primeira falha histórica 25/26 não foi preservada e continua `NAO_ESPECIFICADO`. |
+| F-011/P-SEC-01/A3 dos relatórios de 26/09 | A [retomada](2026-09-27-retomada-a3-a5.md) e o [relatório final](2026-09-27-execucao-codex-ultra.md) registram audit de produção/completo com saída zero e regressões verdes no lockfile identificado. | Alertas zerados no grafo auditado naquele instante; isso não equivale a aprovação permanente da segurança de implantação. |
+| R-010 da reanálise de 25/09 | O build padrão passou em executor com rede no snapshot final; Poppins ainda depende de busca externa no build. | O gate executado passou. Build offline ainda requer decisão e asset local apropriado. |
+| R-003/R-011, P-DB-01–04/A4 e PD-002 | O [relatório final](2026-09-27-execucao-codex-ultra.md) conserva a prova independente de `branch_id`, o papel/migration/resíduo do Neon `568d60469278` e a validação científica fora do alcance dos testes atuais. | Pendência externa; nenhuma migration ou limpeza no outro Neon foi autorizada por esta reconciliação. |
+
+Os documentos de 25/26 com resultados vermelhos, ressalvas ou pendências externas permanecem no diretório principal como registros históricos. O [plano de revalidação conjunta](finished/2026-09-26-plano-revalidacao-conjunta.md) está em `finished` porque suas cinco etapas próprias foram concluídas; essa localização não aprova merge nem resolve os itens externos.
+
+## Objetivo
+
+Este diretório registra a validação da continuidade da IMP-006 na branch
+`007-ihfr-evolution`, com foco no fluxo real da plataforma:
+
+`login → laboratório → área → coleta → dados ambientais → IHFR experimental`.
+
+Os documentos distinguem comportamento observado no código, verificações
+executadas nesta rodada, comportamento ainda dependente de navegador ou banco e
+pendências científicas. A existência de uma rota, componente, tarefa concluída
+ou evidência histórica não é tratada como prova de funcionamento integrado.
+
+## Baseline
+
+- Data da inspeção: 2026-09-25.
+- Branch: `007-ihfr-evolution`.
+- HEAD inicial: `3e6a97bdcaa8b598ee94b3e74c728b9cc104a41a`.
+- Baseline do relatório anterior: `3e6a97bdcaa8b598ee94b3e74c728b9cc104a41a`.
+- Diferença em relação ao baseline anterior: nenhuma.
+- Estado inicial: worktree limpo e branch sincronizada com
+  `origin/007-ihfr-evolution`.
+- Pacote Spec Kit aplicável: [`specs/006-ihfr-diagnosis`](../../../specs/006-ihfr-diagnosis/).
+- Checkpoint documental inicial desta continuidade:
+  `498b26fd3355999ede1be1b528c1f186f109631e`.
+- Continuidade com runtime executada sobre o código de `3e6a97b`; os commits
+  documentais `498b26f` e `c8003bf` não alteraram código, testes ou migrations.
+
+## Limites da inspeção anterior
+
+- Nenhum teste com PostgreSQL, migration, fixture, seed ou aplicação conectada
+  foi executado.
+- Nenhuma dependência foi instalada ou atualizada.
+- Nenhum arquivo de produção, teste existente, runner, configuração, migration
+  ou documento canônico foi alterado.
+- O conteúdo dos arquivos de ambiente não é reproduzido nestes documentos.
+- Não houve commit, push, publicação ou comunicação externa.
+- A v0.1 permanece `CONTRATO_EXPERIMENTAL`,
+  `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e
+  `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
+## Estado resumido da inspeção inicial de 2026-09-25
+
+`EVIDENCIA_IMPLEMENTACAO`: todas as etapas do fluxo possuem rotas, formulários,
+serviços e persistência conectados por inspeção. O fluxo completo não foi
+executado pelo navegador e, portanto, permanece `NAO_VERIFICADO_EM_RUNTIME`.
+
+Há dois defeitos funcionais reproduzidos sem banco: o avaliador aceita ausência
+de campo obrigatório quando chamado diretamente, e a consulta normal omite
+parte da proveniência, versões, vigência e datas exigidas por FR-005/SC-001. A
+prontidão da branch está bloqueada mesmo que as demais etapas venham a funcionar.
+
+Na continuidade, o typecheck foi normalizado pela regeneração local e segura
+do Prisma Client ignorado pelo Git. O preflight PostgreSQL somente leitura
+confirmou conexão ao alvo de teste e separação técnica do alvo de desenvolvimento,
+mas não foi possível obter da Neon Console/API a associação endpoint →
+`branch_id`. Como esse gate cumulativo permaneceu aberto, nenhuma escrita, setup,
+fixture, aplicação ou etapa de navegador foi executada.
+
+### Continuidade posterior com runtime autorizado
+
+Depois do fechamento documental acima, o usuário identificou explicitamente um
+segundo destino Neon como branch de teste e autorizou migrations, fixtures e
+execução ponta a ponta. Essa autorização permitiu prosseguir, mas não substitui
+uma comprovação independente de `branch_id` pela Neon Console/API.
+
+`EVIDENCIA_EXECUCAO`:
+
+- o destino de teste tinha sete migrations e estava atualizado;
+- o teste de concorrência ambiental pendente passou isoladamente;
+- a suíte de integração passou em `106/106` depois de um cast temporário de
+  `current_schema()` para `text`, necessário somente para compatibilidade do
+  Prisma/adapter com o tipo PostgreSQL `name`;
+- os testes unitários passaram em `59/59`, os contratos em `2/2` e o E2E IHFR
+  por Playwright em `6/6`;
+- o fluxo persistente foi exercitado com usuário `OWNER`, laboratório, área,
+  coleta, dados de água, solo, vegetação e terreno, elegibilidade, criação,
+  substituição e revogação do diagnóstico;
+- não foram observados erros no console do navegador; as rotas de criação e
+  substituição responderam `201` e a revogação respondeu `200`;
+- fixtures e schemas temporários foram auditados e removidos ao final.
+
+Os achados `F-001` e `F-002` continuam abertos. A execução prova o caminho
+técnico integrado, mas não transforma o contrato experimental em contrato
+cientificamente validado. Os detalhes, limitações e soluções propostas estão em
+[`validation-report.md`](validation-report.md) e [`findings.md`](findings.md).
+
+## Índice
+
+- [`continuity-checkpoint.md`](continuity-checkpoint.md): estado recuperável do
+  banco E2E e instruções seguras para retomar o fluxo integral pela interface.
+- [`validation-report.md`](validation-report.md): escopo, fluxo, comandos,
+  resultados e liberação condicionada dos testes com banco.
+- [`end-to-end-checklist.md`](end-to-end-checklist.md): roteiro reproduzível de
+  navegador e vetor técnico esperado.
+- [`findings.md`](findings.md): achados classificados, reprodução, impacto e
+  origem histórica sustentada.
+- [`finished/2026-09-26-plano-revalidacao-conjunta.md`](finished/2026-09-26-plano-revalidacao-conjunta.md): plano com as cinco etapas próprias concluídas. As decisões externas e os bloqueios de merge registrados na rodada continuam históricos e não são marcados como resolvidos por esta organização.
+
+## Continuidade corretiva de 2026-09-25 no HEAD `2c63c674`
+
+`EVIDENCIA_IMPLEMENTACAO`: a rodada atual corrigiu no diff local a ausência obrigatória no avaliador (F-001), ampliou a consulta pública (F-002), incorporou o cast Prisma (F-007) e acrescentou preflight e auditoria restrita (F-004/F-008/F-009). O Prisma Client local foi regenerado e o typecheck passou (F-003). O ZIP local foi comparado por SHA-256 com os cinco documentos deste diretório: conteúdo idêntico antes das edições.
+
+`EVIDENCIA_IMPLEMENTACAO`: no PostgreSQL local próprio, contrato 2/2, migrations 23/23, integração 107/107 e E2E IHFR 6/6 passaram no diff, com schemas descartáveis, servidor encerrado e auditoria final de zero candidatos. O navegador confirmou os dados públicos de CURRENT e datas UTC após reload em 390 × 844. O teste também revelou um deslocamento de três horas no `PrismaPg` com sessão local não UTC; o harness agora seleciona UTC e a expectativa contratual permaneceu intacta.
+
+`EVIDENCIA_IMPLEMENTACAO`: não há `.env.e2e.local` nem variáveis de banco/conta E2E disponíveis neste workspace. As suítes Neon, a auditoria remota e o fluxo completo de UI preparado nesta rodada têm estado `NAO_EXECUTADO`. A autorização operacional histórica do destino e a lacuna de prova independente do provedor (F-005) permanecem separadas. Consulte a matriz e os comandos em [`validation-report.md`](validation-report.md#9-continuidade-corretiva-no-head-2c63c674-2026-09-25). As seções históricas acima permanecem evidência de suas próprias rodadas, sem aprovação transferida ao diff atual.
+
+## Fechamento focal posterior — 2026-09-25
+
+`EVIDENCIA_IMPLEMENTACAO`: a revisão focal sobre o HEAD inicial `85ce3c7a` fechou a aceitação indevida de strings em dois campos booleanos e completou o teste full UI com nova data de observação antes de REPLACE, vetor técnico literal e identidade do diagnóstico em CREATE/reload/histórico/REPLACE/REVOKE. Os gates locais e a auditoria passaram, como detalhado em [`validation-report.md`](validation-report.md). O percurso full UI e os gates Neon permanecem `NAO_EXECUTADO` por falta de configuração e conta sintética; nenhuma validação científica foi concluída.
+
+## Saneamento de 2026-09-26 — gates Neon concluídos
+
+`EVIDENCIA_IMPLEMENTACAO`: esta rodada começou em `007-ihfr-evolution@e491cb2278d3d098928abc2fb4c08276ff43ccda`. A execução Neon de 2026-09-25, registrada acima e no relatório, permanece evidência histórica de contrato 2/2, integração 107/107, migrations 23/23, E2E IHFR 6/6 e full UI 1/1 no código então testado. O novo diff alinha a família Prisma em `7.4.2`, fixa Node `24.19.0`, acrescenta uma migration aditiva de integridade do ciclo IHFR e separa auditoria read-only em `list` e `assert-zero`.
+
+No E2E autorizado, o alvo DEV tem fingerprint sanitizado `ea797c501213` e o E2E direto `6903ad2ff1ef`. O schema residual exato `imp006_test_bce92440f0134780b9fcee23facfbeda` foi removido após conferir alvo, nome, prefixo, marcador, 11 tabelas vazias e exclusão de `public`; a auditoria final `list` e `assert-zero` encontrou zero candidatos. A migration nova foi aplicada no E2E após quatro contagens prévias iguais a zero, e o status de migrations ficou atualizado. No código atual, Prisma validate/generate, unitários 220/220, typecheck, lint sem erros, build, contrato Neon 2/2, migrations Neon 26/26, integração Neon 107/107, E2E IHFR Neon 6/6 e novo full UI 1/1 passaram. Localmente, integração 107/107 e migrations 26/26 passaram. Os comandos, o cenário novo e a matriz R-001–R-011 constam em [`validation-report.md`](validation-report.md).
+
+**Fechamento técnico registrado:** T139 e T141 estão `[X]`; o Spec Kit registra 143/143 tarefas concluídas após os gates Neon, a auditoria limpa e a revisão de diff, segredos e commits de código/testes. A identidade independente endpoint → `branch_id` e a validação científica permanecem externas. A v0.1 conserva `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.
+
+## Revalidação do remoto em 2026-09-26
+
+`EVIDENCIA_EXECUCAO`: após fast-forward e checkpoint local `1158a0d`, o código testado foi `c6e43026f7946bb37f207402986b5df2077657c1`. Esta rodada usou outro destino E2E autorizado: DEV `ea062c117670`, E2E direto `d116d14859be`; não confundir com os fingerprints da rodada acima. A migration de integridade pendente foi aplicada após auditoria de dados existentes. A coleta histórica `f6e56569-a4c2-47e4-bc8d-c31311e0f344` e o diagnóstico `f98c2b71-cdc8-4992-b949-07681c54055c` foram reabertos no navegador, inclusive após reload, com resumo vigente completo. Um novo cenário também chegou ao diagnóstico 0.29 pela interface, persistiu e foi reaberto após reload e histórico. O runner integral versionado, porém, falhou por timeout de uma asserção visual após salvar a medição; a continuação controlada, sem recriar os recursos, comprovou as etapas restantes. Veja [`validation-report.md`](validation-report.md#13-revalidacao-do-head-remoto-c6e4302-2026-09-26), [`findings.md`](findings.md) e [`readiness-plan.md`](readiness-plan.md). O merge continua `NAO_PRONTO`: runner integral vermelho e alertas de segurança do Next ainda sem triagem. Nenhum merge ou push foi feito.
+
+## Revalidação conjunta posterior — 2026-09-26
+
+O commit remoto `9bbece0` publicou [relatório de outro validador](2026-09-26-revalidacao-playwright-neon-e-pendencias.md) sobre o mesmo runtime `c6e4302`, porém em Neon `568d60469278` e PostgreSQL local. Após examinar esse relatório, a branch foi reconciliada por fast-forward e recebeu checkpoint vazio `c79f14b`. A [revalidação conjunta](2026-09-26-revalidacao-conjunta-e-prontidao.md) repetiu os gates no E2E direto `d116d14859be`: full UI oficial 1/1, Playwright IHFR 6/6, contrato 2/2, integração 107/107, unitários 62/62, typecheck, lint e build com rede passaram. A primeira suíte de migrations foi 25/26, mas o teste focal 3/3 e a repetição completa 26/26 passaram; sua causa inicial ficou indeterminada. Dados históricos foram preservados, um novo cenário full UI ficou rastreado em `public`, e a auditoria final encontrou zero schemas temporários. O fluxo técnico funciona; a suíte geral e o runner HTTPS oficiais continuam sem gate verde, e os advisories de Next precisam de triagem. O veredito de merge continua `NAO_PRONTA`; a validação científica segue externa.
+
+## Retomada A3–A5 de 2026-09-27
+
+O [relatório de retomada](2026-09-27-retomada-a3-a5.md) registra a remediação do audit de produção e completo, a reprodução e correção da fragilidade temporal de A5, e o oráculo migration que agora preserva erros SQL inesperados. Os gates geral 55/55, HTTPS 2/2, IHFR 6/6 e banco local/E2E passaram. O novo full UI foi bloqueado pela conta E2E no limite de cinco laboratórios; o runner detecta essa condição antes de iniciar o navegador e os dados históricos foram preservados. A4, ciência e o full UI com conta aprovada e capacidade seguem pendentes.
+
+## Execução pós-avaliação `9b2c989` — 2026-09-27
+
+O [relatório E1–E7](2026-09-27-execucao-codex-ultra.md) documenta o patch e os gates após a avaliação. Um preflight guardado preparou a conta sintética própria `reserve-01` no E2E direto `6903ad2ff1ef`; o full UI passou **1/1 na primeira tentativa** em dois run IDs novos, inclusive no snapshot técnico final `HF007-UI-POST9B2C989-20260927-02`, com CREATE, reload/histórico, REPLACE, REVOKE e zero CURRENT. A conta ficou em 2/5 vínculos, sem alterar as contas históricas. Migration 26/26, contrato 2/2, integração 107/107, IHFR isolado 6/6, Playwright geral local 55/55, HTTPS local 2/2, unitários 244/244, build padrão, typecheck, lint sem erros e audits de dependências sem vulnerabilidades passaram. A auditoria remota final encontrou zero schemas temporários; os bancos locais v2 próprios foram descartados sob guardas, recriados e auditados sem linhas ou schemas residuais, preservando os v1.
+
+O veredito técnico é `PRONTA_PARA_REVISAO_DE_MERGE`, que requer avaliação humana e não realiza merge, push ou deploy. A prova independente endpoint→`branch_id`, o papel do Neon histórico `568d60469278` e `PD-002`/`G2-SCI` seguem externos. A v0.1 permanece `CONTRATO_EXPERIMENTAL`, `VALIDACAO_CIENTIFICA_PENDENTE`, `SUJEITO_A_RECALIBRACAO` e `NAO_APROVADO_COMO_CONTRATO_CIENTIFICO_DEFINITIVO`.

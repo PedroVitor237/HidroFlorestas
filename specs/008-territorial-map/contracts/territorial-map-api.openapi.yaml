@@ -1,0 +1,264 @@
+openapi: 3.1.0
+info:
+  title: HidroFlorestas Territorial Map API
+  version: 1.0.0
+  description: >-
+    Projeção territorial transitória e somente leitura das áreas e coletas
+    confirmadas do laboratório autorizado. Não cria geometria, histórico ou
+    coordenada própria de coleta.
+security:
+  - cookieAuth: []
+paths:
+  /api/laboratories/{laboratoryId}/territorial-map:
+    get:
+      operationId: getTerritorialMap
+      summary: Obter a projeção territorial mínima do laboratório
+      parameters:
+        - $ref: "#/components/parameters/LaboratoryId"
+      responses:
+        "200":
+          description: Projeção atual, inclusive vazia ou de laboratório inativo.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/PrivateNoStore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TerritorialMapResponse"
+              examples:
+                populated:
+                  $ref: "#/components/examples/PopulatedTerritorialMap"
+                empty:
+                  $ref: "#/components/examples/EmptyTerritorialMap"
+                unavailableLocation:
+                  $ref: "#/components/examples/UnavailableLocationTerritorialMap"
+        "401":
+          description: Sessão ausente/inválida ou conta inelegível.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/PrivateNoStore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: UNAUTHENTICATED
+                  message: Faça login para continuar.
+        "404":
+          description: >-
+            Laboratório ou vínculo inexistente, revogado, inválido ou
+            inacessível, sem distinção externa.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/PrivateNoStore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: NOT_FOUND
+                  message: Recurso não encontrado.
+        "500":
+          description: Falha inesperada sanitizada.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/PrivateNoStore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Não foi possível carregar a visão territorial.
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
+  parameters:
+    LaboratoryId:
+      name: laboratoryId
+      in: path
+      required: true
+      description: Referência ao laboratório; não concede acesso por si só.
+      schema:
+        type: string
+        format: uuid
+  headers:
+    PrivateNoStore:
+      required: true
+      description: Impede retenção/reuso da projeção autenticada.
+      schema:
+        type: string
+        const: no-store
+  schemas:
+    TerritorialMapResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - context
+        - areas
+      properties:
+        context:
+          $ref: "#/components/schemas/TerritorialContext"
+        areas:
+          type: array
+          items:
+            $ref: "#/components/schemas/TerritorialArea"
+    TerritorialContext:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - status
+        - membershipRole
+        - readOnly
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+        membershipRole:
+          type: string
+          enum:
+            - OWNER
+            - ADMIN
+            - MEMBER
+        readOnly:
+          type: boolean
+    TerritorialArea:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - location
+        - confirmedCollections
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        location:
+          anyOf:
+            - $ref: "#/components/schemas/TerritorialLocation"
+            - type: "null"
+        confirmedCollections:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfirmedCollection"
+    TerritorialLocation:
+      type: object
+      additionalProperties: false
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+          multipleOf: 0.000001
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+          multipleOf: 0.000001
+    ConfirmedCollection:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - occurredAt
+        - confirmedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        occurredAt:
+          type: string
+          format: date-time
+          description: Instante da ocorrência reconstruído com o offset persistido.
+        confirmedAt:
+          type: string
+          format: date-time
+          description: Instante de confirmação no sistema.
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              enum:
+                - UNAUTHENTICATED
+                - NOT_FOUND
+                - INTERNAL_ERROR
+            message:
+              type: string
+              minLength: 1
+  examples:
+    PopulatedTerritorialMap:
+      value:
+        context:
+          id: 00000000-0000-4000-8000-000000000811
+          name: Laboratório Itapecuru
+          status: ACTIVE
+          membershipRole: MEMBER
+          readOnly: false
+        areas:
+          - id: 00000000-0000-4000-8000-000000000821
+            name: Nascente Norte
+            location:
+              latitude: -3.123456
+              longitude: -44.654321
+            confirmedCollections:
+              - id: 00000000-0000-4000-8000-000000000831
+                occurredAt: 2026-09-17T08:30:00.000-03:00
+                confirmedAt: 2026-09-17T11:35:00.000Z
+    EmptyTerritorialMap:
+      value:
+        context:
+          id: 00000000-0000-4000-8000-000000000811
+          name: Laboratório Itapecuru
+          status: INACTIVE
+          membershipRole: OWNER
+          readOnly: true
+        areas: []
+    UnavailableLocationTerritorialMap:
+      value:
+        context:
+          id: 00000000-0000-4000-8000-000000000811
+          name: Laboratório Itapecuru
+          status: ACTIVE
+          membershipRole: ADMIN
+          readOnly: false
+        areas:
+          - id: 00000000-0000-4000-8000-000000000822
+            name: Área legada
+            location: null
+            confirmedCollections: []

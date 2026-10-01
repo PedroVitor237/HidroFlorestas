@@ -1,31 +1,46 @@
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import {
+    authenticateSession,
+    type SessionAuthenticationResult,
+} from "../auth/auth.core";
+import { AUTH_COOKIE_NAME, verifySessionToken } from "../auth/session";
 import userService from "../services/users.service";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+type AuthAdapters = {
+    readToken: () => Promise<string | undefined>;
+    authenticateSession: (token: string | undefined) => Promise<SessionAuthenticationResult>;
+};
+
+export class AuthBoundaryError extends Error {
+    constructor(public readonly code: "UNAUTHORIZED" | "INTERNAL_ERROR") {
+        super(code);
+        this.name = "AuthBoundaryError";
+    }
+}
+
+export async function requireAuthWithAdapters(adapters: AuthAdapters) {
+    const token = await adapters.readToken();
+    const result = await adapters.authenticateSession(token);
+
+    if (!result.success) {
+        throw new AuthBoundaryError(
+            result.reason === "UNAUTHENTICATED" ? "UNAUTHORIZED" : "INTERNAL_ERROR",
+        );
+    }
+
+    return result.principal;
+}
 
 export async function requireAuth() {
-
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-        throw new Error("UNAUTHORIZED");
-    }
-
-    try {
-
-        const payload = jwt.verify(token, JWT_SECRET) as { userId: string };
-
-        const user = await userService.getUserById(payload.userId);
-
-        if (!user) {
-            throw new Error("UNAUTHORIZED");
-        }
-
-        return user;
-
-    } catch {
-        throw new Error("UNAUTHORIZED");
-    }
+    return requireAuthWithAdapters({
+        readToken: async () => {
+            const cookieStore = await cookies();
+            return cookieStore.get(AUTH_COOKIE_NAME)?.value;
+        },
+        authenticateSession: (token) =>
+            authenticateSession(token, {
+                verifyToken: verifySessionToken,
+                findCurrentIdentity: (id) => userService.getCurrentIdentityById(id),
+            }),
+    });
 }

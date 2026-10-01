@@ -1,0 +1,119 @@
+# Decisões pendentes
+
+## Uso do registro
+
+Este registro reúne pontos que dependem de decisão, validação ou designação da equipe. Todas as entradas iniciais têm classificação `PENDENCIA_DE_DECISAO`; sua presença não aprova requisito, tecnologia, arquitetura, definição nem responsável. No campo Impacto, regras declaradas pelo mandato são `FATO_DOCUMENTADO` e efeitos derivados são `INFERENCIA`; nenhuma dessas classificações constitui decisão resultante da pendência.
+
+Estados permitidos: `ABERTA`, `EM_ANALISE`, `AGUARDANDO_DECISAO`, `RESOLVIDA` e `CANCELADA`. Ao resolver uma entrada, registre a decisão, origem, data e responsável, atualize o documento canônico de destino e preserve esta linha como histórico `RESOLVIDA`. Cancelamentos também exigem origem registrada.
+
+## Pendências abertas e histórico de resoluções
+
+| Identificador | Assunto | Descrição | Classificação | Impacto | Estado |
+|---|---|---|---|---|---|
+| `PD-001` | Autoridade sobre escopo institucional | Designar quem pode confirmar interpretação, vigência e mudanças no escopo institucional. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Conflitos de escopo não podem ser resolvidos sem autoridade identificada. | `ABERTA` |
+| `PD-002` | Validação científica definitiva do IHFR | Designar os profissionais responsáveis e executar revisão especializada, comparação, vetores científicos, calibração e testes de campo. A base experimental e a classificação focal de `landUseType` foram decididas no `ADR-0001` somente para engenharia, sem resolver esta validação. | `PENDENCIA_DE_DECISAO` | `FATO_DOCUMENTADO` — O contrato experimental não equivale a contrato científico definitivo. | `ABERTA` |
+| `PD-003` | Autoridade sobre produto e requisitos | Designar quem aprova objetivos, requisitos e regras de negócio. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Impede consolidar intenção de produto quando as fontes não bastarem. | `ABERTA` |
+| `PD-004` | Autoridade sobre dados | Designar quem aprova conceitos, modelo pretendido e governança de dados. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Impede resolver divergências sobre conceitos e modelo de dados. | `ABERTA` |
+| `PD-005` | Autoridade sobre UX | Designar quem aprova fluxos, wireframes e estados de artefatos de UX. | `PENDENCIA_DE_DECISAO` | `FATO_DOCUMENTADO` — Explorações não são requisitos aprovados. | `ABERTA` |
+| `PD-006` | Autoridade sobre arquitetura | Designar quem confirma decisões e aceita ADRs de arquitetura. | `PENDENCIA_DE_DECISAO` | `FATO_DOCUMENTADO` — Propostas técnicas não têm autoridade normativa enquanto não forem confirmadas. | `ABERTA` |
+| `PD-007` | OpenStreetMap | Definir o status definitivo do uso de OpenStreetMap. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a futura solução de mapas e suas dependências. | `ABERTA` |
+| `PD-008` | Python futuro | Definir o status de Python para versões futuras. O `ADR-0001` confirmou que Python não participa da v0.1 experimental. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta somente evolução posterior, integração e validação futura. | `ABERTA` |
+| `PD-009` | Plotly | Definir o status do uso de Plotly em visualizações relacionadas ao mapa. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a composição futura das visualizações. | `RESOLVIDA` |
+| `PD-010` | Leaflet | Definir o status da possibilidade de uso de Leaflet. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a solução futura de mapas. `FATO_DOCUMENTADO` — Plotly ter sido considerado não implica rejeição de Leaflet. | `ABERTA` |
+| `PD-011` | Integração futura entre Python e Next.js | Definir a estratégia somente se Python for aprovado em versão posterior; não se aplica à v0.1 experimental. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta interfaces, responsabilidades, implantação e operação futuras. | `ABERTA` |
+| `PD-012` | Hospedagem futura | Definir a estratégia futura de hospedagem além da escolha atualmente relatada para a aplicação. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a arquitetura e a operação futuras. | `ABERTA` |
+| `PD-013` | Arquitetura de mapas e visualizações | Definir e aprovar a arquitetura definitiva para mapas e visualizações. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta a seleção, combinação e integração dos componentes. | `ABERTA` |
+| `PD-014` | Modelo conceitual de assinantes, laboratórios e áreas monitoradas | Definir e aprovar o modelo conceitual dessas entidades e de seus relacionamentos. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta produto, dados, permissões e requisitos futuros. | `ABERTA` |
+| `PD-015` | Terminologia e papéis | Definir assinante, usuário, laboratório, proprietário, membro, área monitorada e demais papéis relacionados. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Ambiguidade terminológica compromete requisitos, dados e UX. | `ABERTA` |
+| `PD-016` | Regras de laboratórios | Definir regras de criação, visualização, participação, propriedade e acesso aos laboratórios. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Afeta requisitos, permissões, modelo de dados e fluxos de UX. | `ABERTA` |
+| `PD-017` | Estado dos artefatos do Figma | Definir critérios para classificar arquivos, páginas, frames, telas ou fluxos como `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` ou `IMPLEMENTADO_NAO_APROVADO`. | `PENDENCIA_DE_DECISAO` | `INFERENCIA` — Sem critérios, artefatos exploratórios podem ser confundidos com requisitos. | `ABERTA` |
+| `PD-018` | Precedência 400/422 da IMP-006 | `DECISAO_CONFIRMADA` em 2026-09-23 por confirmação explícita da equipe nesta conversa: input estrutural/sintaticamente inválido, inclusive formato de versão/hash, recebe `400 INVALID_INPUT`; seleção bem formada, mas incompatível com a combinação ativa/suportada, recebe `422 INCOMPATIBLE_VERSION`, assim como medição persistida incompatível. O 422 registra terminal idempotente no ledger, sem suplemento confirmado, diagnóstico, `CURRENT` ou evento; replay idêntico não escreve e GET operation recupera `200 OperationResponse` com outcome incompatível. | `DECISAO_CONFIRMADA` | `FATO_DOCUMENTADO` — A contradição anterior entre `const` na entrada do OpenAPI e resposta 422 foi identificada em 2026-09-23 e corrigida no contrato, parser, serviço e testes. | `RESOLVIDA` |
+
+## Fontes, alternativas e encaminhamento
+
+| Identificador | Fontes relacionadas | Alternativas conhecidas | Responsável pela decisão | Prazo | Decisão resultante | Destino após resolução |
+|---|---|---|---|---|---|---|
+| `PD-001` | Mandato de governança; [SOURCE_AUTHORITY.md](SOURCE_AUTHORITY.md) | Pessoa ou grupo a designar; alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `SOURCE_AUTHORITY.md` e manter esta entrada como `RESOLVIDA`. |
+| `PD-002` | Mandato de governança; [SOURCE_AUTHORITY.md](SOURCE_AUTHORITY.md) | Responsável ou grupo científico a designar; alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `SOURCE_AUTHORITY.md` e manter esta entrada como `RESOLVIDA`. |
+| `PD-003` | Mandato de governança; [SOURCE_AUTHORITY.md](SOURCE_AUTHORITY.md) | Pessoa ou grupo a designar; alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `SOURCE_AUTHORITY.md` e o registro normativo de produto aplicável; manter o histórico. |
+| `PD-004` | Mandato de governança; [SOURCE_AUTHORITY.md](SOURCE_AUTHORITY.md) | Pessoa ou grupo a designar; alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `SOURCE_AUTHORITY.md` e o registro normativo de dados aplicável; manter o histórico. |
+| `PD-005` | Mandato de governança; [SOURCE_AUTHORITY.md](SOURCE_AUTHORITY.md) | Pessoa ou grupo a designar; alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `SOURCE_AUTHORITY.md` e o registro normativo de UX aplicável; manter o histórico. |
+| `PD-006` | Mandato de governança; [SOURCE_AUTHORITY.md](SOURCE_AUTHORITY.md) | Pessoa ou grupo a designar; alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `SOURCE_AUTHORITY.md` e [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md); manter o histórico. |
+| `PD-007` | `TD-008` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Adotar OpenStreetMap; demais alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md`; criar ADR somente se posteriormente aprovado e aplicável; manter o histórico. |
+| `PD-008` | `TD-009` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Usar Python para cálculos científicos e do IHFR; demais alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md`; registrar validações científicas aplicáveis; manter o histórico. |
+| `PD-009` | `TD-010` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md); confirmação explícita da equipe nas solicitações aprovadas de atualização documental da IMP-008 | Registro histórico da alternativa: usar Plotly nas visualizações relacionadas ao mapa; demais alternativas não especificadas. | equipe solicitante | resolução em 2026-09-18 | Plotly foi escolhido como direção para gráficos e visualizações analíticas futuros relacionados ao contexto territorial. A implementação ocorrerá após a IMP-009, possivelmente em entrega própria e sem depender da IMP-010. Integração técnica, frontend versus Plotly Python, contratos e dados de entrada e gráficos concretos continuam pendentes. Plotly não integra o mapa mínimo Leaflet/React-Leaflet da IMP-008 e não foi implementado; a decisão não aprova Python, PostGIS, dependência nova ou segundo motor cartográfico. | `TECH_DECISIONS.md` atualizado em `TD-010`; manter esta entrada como histórico `RESOLVIDA` e decidir os pontos técnicos remanescentes no planejamento da entrega futura. |
+| `PD-010` | `TD-011` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Usar Leaflet; demais alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md`; criar ADR somente se posteriormente aprovado e aplicável; manter o histórico. |
+| `PD-011` | `TD-009` e `TD-012` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | Estratégias de integração não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md` e eventual ADR aceito; manter o histórico. |
+| `PD-012` | `TD-007` e `TD-013` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | A escolha atual relatada é Vercel; alternativas futuras não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md` e eventual ADR aceito; manter o histórico. |
+| `PD-013` | `TD-008`, `TD-010`, `TD-011` e `TD-014` em [../../TECH_DECISIONS.md](../../TECH_DECISIONS.md) | OpenStreetMap, Plotly e Leaflet estão registrados como itens separados; combinações e arquitetura não especificadas. | não especificado | não especificado | não especificado | Atualizar `TECH_DECISIONS.md` e eventual ADR aceito; manter o histórico. |
+| `PD-014` | Mandato de governança; autoridade de dados ainda não designada | Alternativas não especificadas. | não especificado | não especificado | não especificado | Atualizar o registro normativo de dados aplicável após aprovação e manter o histórico. |
+| `PD-015` | Mandato de governança; autoridades de produto e dados ainda não designadas | Definições não especificadas. | não especificado | não especificado | não especificado | Atualizar os registros normativos de produto e dados aplicáveis e manter o histórico. |
+| `PD-016` | Mandato de governança; autoridades de produto, dados e UX ainda não designadas | Regras não especificadas. | não especificado | não especificado | não especificado | Atualizar os registros normativos de produto, dados e UX aplicáveis e manter o histórico. |
+| `PD-017` | Mandato de governança; autoridade de UX ainda não designada | Estados a disciplinar: `APROVADO`, `EM_REVISAO`, `EXPLORACAO`, `SUBSTITUIDO` e `IMPLEMENTADO_NAO_APROVADO`; critérios não especificados. | não especificado | não especificado | não especificado | Atualizar o registro normativo de UX aplicável e manter o histórico. |
+| `PD-018` | Confirmação explícita da equipe nesta conversa em 2026-09-23; [OpenAPI da IMP-006](../../specs/006-ihfr-diagnosis/contracts/ihfr-diagnosis-api.openapi.yaml), [plano](../../specs/006-ihfr-diagnosis/plan.md) e [evidência de implementação](../../specs/006-ihfr-diagnosis/implementation-evidence.md) | Alternativas históricas: 400 `INVALID_INPUT` para versão/hash divergente no request ou 422 `INCOMPATIBLE_VERSION` com tratamento terminal. Escolhida: 400 apenas para falha estrutural/sintática; 422 para seleção bem formada incompatível. | equipe HidroFlorestas (confirmação explícita nesta conversa) | 2026-09-23 | `RESOLVIDA`: terminal idempotente, sem escritas de domínio; GET operation 200 recuperável; saída ativa com constantes exatas. | Contrato, parser, serviço, testes e documentos atualizados; gates afetados e encerramento T134 registrados na evidência. |
+
+O registro histórico de Plotly como alternativa considerada não implica rejeição de Leaflet, e sua confirmação posterior para gráficos analíticos futuros tampouco altera o mapa mínimo Leaflet/React-Leaflet. Nenhuma entrada deste registro deve ser encerrada por inferência ou pela mera existência de uma implementação; `PD-009` foi resolvida pela confirmação explícita identificada acima.
+
+## Decisões confirmadas retiradas do bloqueio da IMP-006
+
+`DECISAO_CONFIRMADA` — Em 2026-09-18, a equipe aprovou o [ADR-0001](ADR-0001-contrato-experimental-ihfr-v0-1.md). Foram decididos para a v0.1: fonte-base `DOC-RAW-013`, fórmula de pesos iguais, manifesto/hash, resolução explícita dos conflitos, suplemento versionado de `landUseType`, avaliador interno TypeScript e ciclo operacional de G3.
+
+`DECISAO_EXPERIMENTAL_DE_ENGENHARIA` — Em 2026-09-19, a equipe autorizou a consolidação focal descrita no [ADR-0001 §7](ADR-0001-contrato-experimental-ihfr-v0-1.md#7-decisão-focal-de-landusetype). Os sete valores/scores, predominância, categoria desconhecida, ausência, imutabilidade, autoria e separação regional ficaram resolvidos para engenharia. O estado focal é `G2-ENG — landUseType: RESOLVIDO_E_RASTREAVEL_PARA_V0_1_EXPERIMENTAL`; o `G2-ENG` geral está `RESOLVIDO_PARA_PLANEJAMENTO` e G3 permanece `RESOLVIDO_DOCUMENTALMENTE_PARA_PLANEJAMENTO_V0_1`.
+
+`DECISAO_CONFIRMADA` — Em 2026-09-20, a remediação focal criou a v0.1.1 somente para distinguir ausência opcional conhecida de entrada desconhecida, preservando fórmula, pesos, scores e a v0.1.0 histórica. Também fechou inconsistências documentais de cardinalidade, API, ordem de implementação e lifecycle de testes. Essa decisão de engenharia não fornece parecer especializado, calibração, vetor científico aprovado nem evidência de campo.
+
+Essas decisões não encerram `PD-002`, que agora representa somente a validação científica definitiva, nem `PD-008`/`PD-011`, que permanecem abertos apenas para versões futuras. Não existe pendência genérica adicional de `landUseType` para executar `$speckit-tasks`.
+
+## Referências da consolidação transversal
+
+`FATO_DOCUMENTADO` — A auditoria consolidada [`DOC-013`](../reports/audits/2026-08-26-auditoria-documental-consolidada.md) relacionou as 17 pendências existentes aos pacotes abaixo. Esta seção acrescenta rastreabilidade; não altera assunto, estado, responsável, prazo, alternativas ou decisão resultante.
+
+| Pendência | Pacotes relacionados | Evidência adicional da consolidação | Impacto preservado |
+|---|---|---|---|
+| `PD-001` | `DEC-PKG-001`,`003`,`014`,`015` | `GAP-010`; `CON-FND-016`,`017`,`043` | Escopo institucional continua sem autoridade/fonte aprovada identificada no corpus. |
+| `PD-002` | `DEC-PKG-002`–`004`,`008`,`014`,`015`; `ADR-0001` | `CON-FND-002`–`026`; conflitos resolvidos somente para engenharia experimental | Fórmula provisória não foi promovida a validação científica; revisão especializada e campo permanecem abertos. |
+| `PD-003` | `DEC-PKG-005`–`009`,`012`,`014`,`015` | `CON-FND-027`–`046`, conforme assunto | MVP, requisitos, regras, aceite, backlog e NFR continuam sem aprovação. |
+| `PD-004` | `DEC-PKG-004`–`006`,`008`,`009`,`011`,`012`,`014`,`015` | `CON-FND-026`,`030`,`038`,`041`,`042`,`047`–`051`,`056` | Modelo, ciclo, isolamento, geoespacial, auditabilidade e versão continuam pendentes. |
+| `PD-005` | `DEC-PKG-006`,`007`,`012`,`014`,`015` | `CON-FND-032`–`035`,`044` | Fluxos, estados, acessibilidade e aprovação de UX permanecem pendentes; Figma continua opcional. |
+| `PD-006` | `DEC-PKG-007`–`015` | `CON-FND-036`,`040`,`049`–`057` | Arquitetura, contratos, mapas, NFR e hospedagem continuam sem confirmação normativa. |
+| `PD-007` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de OpenStreetMap continua aberto. |
+| `PD-008` | `DEC-PKG-009`,`010`; `ADR-0001` | `CON-FND-052`,`056`; `CON-Q-048`,`049` | Python foi excluído da v0.1; seu uso futuro continua aberto. |
+| `PD-009` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Registro histórico da consolidação: o estado de Plotly estava aberto. Estado atual: `TD-010` confirmou Plotly para gráficos analíticos futuros após a IMP-009; integração técnica, frontend versus Plotly Python, entradas e gráficos concretos permanecem pendentes, sem dependência da IMP-010. |
+| `PD-010` | `DEC-PKG-011` | `CON-FND-055`; `CON-Q-050` | Estado de Leaflet continua aberto; Plotly não implica rejeição. |
+| `PD-011` | `DEC-PKG-009`,`010`; `ADR-0001` | `CON-FND-052`,`056`; `CON-Q-048`,`049` | Integração não se aplica à v0.1 e continua não especificada para versões futuras. |
+| `PD-012` | `DEC-PKG-013` | `CON-FND-057`; `CON-Q-051` | Relato atual e estratégia futura de hospedagem permanecem distintos. |
+| `PD-013` | `DEC-PKG-011` | `CON-FND-040`,`049`,`055`; `CON-Q-034`,`044`,`050` | Arquitetura de mapas/geoprocessamento continua não aprovada. |
+| `PD-014` | `DEC-PKG-005`,`006`,`008`,`015` | `CON-FND-030`,`038`,`041`,`042` | Modelo de assinantes, laboratórios e áreas continua ausente/incompleto no corpus. |
+| `PD-015` | `DEC-PKG-005`,`006`,`015` | `CON-FND-018`,`030`,`031`,`042`; `CON-Q-022`–`026` | Terminologia e papéis continuam não normalizados. |
+| `PD-016` | `DEC-PKG-006`,`008`,`012`,`015` | `CON-FND-031`,`032`,`038`,`041`,`042`,`048` | Participação, propriedade, acesso e isolamento continuam pendentes. |
+| `PD-017` | `DEC-PKG-007` | `CON-FND-044`; `CON-Q-038`; `GAP-008` | Critérios de estado/proveniência permanecem abertos; a ausência de Figma continua não bloqueante. |
+
+As 17 entradas originalmente levantadas cobrem todas as decisões materiais identificadas por `DOC-013`; `PD-009` foi posteriormente resolvida conforme `TD-010`, sem criação de nova pendência ou novo identificador `IMP-*`.
+
+`PD-018` foi acrescentada após a auditoria original, na execução da IMP-006 de 2026-09-23, e resolvida pela confirmação explícita da equipe nessa data. Ela não altera nem resolve as 17 entradas históricas; `PD-002` permanece `ABERTA` para validação científica definitiva.
+
+## Referências da auditoria de implementação
+
+`FATO_DOCUMENTADO` — A auditoria [`DOC-014`](../reports/audits/2026-08-28-auditoria-implementacao-infraestrutura.md), ainda `EM_REVISAO`, acrescentou as referências abaixo. `EVIDENCIA_IMPLEMENTACAO` descreve somente o baseline inspecionado e não decide intenção, correção, prioridade ou alternativa. Esta seção não altera assunto, estado, responsável, prazo, alternativas ou decisão resultante.
+
+| Pendência | Evidências e achados de implementação | Consequência preservada |
+|---|---|---|
+| `PD-001` | `IMP-FND-010`; ausência de motor e aplicabilidade implementada | Autoridade e escopo institucional continuam sem designação; código não decide aplicabilidade. |
+| `PD-002` | `IMP-FND-009`–`011`,`014`; `ADR-0001` e manifesto experimental | Contrato de engenharia foi definido; validação científica, calibração e vetores científicos continuam abertos. |
+| `PD-003` | `IMP-FND-005`–`007`,`013`,`016`,`017` | Fluxos existentes e ausentes não aprovam objetivos, requisitos, segurança ou MVP. |
+| `PD-004` | `IMP-FND-003`,`004`,`006`,`008`,`009`,`011`–`013` | Schema e integrações observadas não aprovam modelo, isolamento, ciclo ou auditabilidade. |
+| `PD-005` | `IMP-FND-002`,`016`; inspeção estática de UX e acessibilidade | Telas implementadas/mocks não aprovam fluxos, critérios ou estados de UX. |
+| `PD-006` | `IMP-FND-001`–`004`,`006`,`012`,`014`,`015`,`018` | Stack localizada não confirma arquitetura normativa, NFR, operação ou ADR. |
+| `PD-007` | `IMP-FND-012`; OpenStreetMap não localizado | Ausência no baseline não rejeita nem aprova OpenStreetMap. |
+| `PD-008` | `IMP-FND-010`; Python não localizado; `ADR-0001` | Ausência não decidiu o futuro, mas Python está fora da v0.1 experimental. |
+| `PD-009` | `IMP-FND-012`; Plotly não localizado | Registro histórico da auditoria: a ausência no baseline não rejeitava nem aprovava Plotly. A confirmação posterior em `TD-010` decidiu a direção futura sem alterar a evidência: Plotly continua não implementado e fora do mapa mínimo da IMP-008. |
+| `PD-010` | `IMP-FND-012`; Leaflet não localizado | Ausência no baseline não rejeita nem aprova Leaflet; estado segue independente de Plotly. |
+| `PD-011` | `IMP-FND-001`,`010`; `ADR-0001` | Fronteira Next.js↔Python é inaplicável à v0.1 e condicional em versões futuras. |
+| `PD-012` | `IMP-FND-003`,`015`; Neon parcial e Vercel/deploy não avaliados | Hospedagem atual relatada e estratégia futura continuam distintas e abertas. |
+| `PD-013` | `IMP-FND-012`; mapa apenas placeholder, sem pilha geoespacial | Arquitetura de mapas continua sem alternativa/composição aprovada. |
+| `PD-014` | `IMP-FND-006`,`008`; schema contém usuário, laboratório e área | Existência de models não aprova o modelo conceitual nem suas cardinalidades. |
+| `PD-015` | `IMP-FND-006`,`008`,`017`; papéis/flags e vocabulário observados | Nomes e campos implementados não normalizam terminologia ou papéis. |
+| `PD-016` | `IMP-FND-006`,`008`,`017`; ausência de enforcement de membership/ownership | Regras de criação, participação, propriedade e acesso continuam abertas. |
+| `PD-017` | `IMP-FND-016`; Figma não consultado e não necessário | A implementação observada não define estado ou aprovação dos artefatos de UX. |
+
+As 17 entradas foram revisadas naquela auditoria; posteriormente, `PD-009` foi resolvida por confirmação explícita e as outras 16 permanecem `ABERTA`. Nenhuma nova pendência foi necessária naquela auditoria e nenhuma evidência de implementação foi tratada como decisão. `PD-018` surgiu depois, na execução da IMP-006, e foi resolvida pela confirmação explícita da equipe em 2026-09-23.

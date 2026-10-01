@@ -1,0 +1,259 @@
+openapi: 3.1.0
+info:
+  title: HidroFlorestas Authenticated Access API
+  version: 0.1.0
+  description: >-
+    Contrato técnico planejado para login, restauração e logout da feature
+    001-authenticated-access. Nenhuma resposta contém token, senha, hash ou campo privilegiado.
+servers:
+  - url: /
+paths:
+  /api/auth/sign-in:
+    post:
+      operationId: signIn
+      summary: Inicia sessão para credenciais válidas de uma conta ACTIVE.
+      x-traceability:
+        - FR-001
+        - FR-002
+        - FR-003
+        - FR-004
+        - FR-005
+        - FR-012
+        - FR-013
+        - FR-014
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInInput'
+      responses:
+        '200':
+          description: Sessão criada e identidade pública devolvida.
+          headers:
+            Set-Cookie:
+              description: >-
+                Define auth_token com HttpOnly, SameSite=Lax, Path=/, Max-Age coerente com o JWT
+                e Secure em produção.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        '400':
+          description: JSON ou entrada fora da allowlist, vazia ou com email sintaticamente inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestFailure'
+        '401':
+          description: Credenciais inválidas ou conta que não está ACTIVE; nenhum cookie válido é criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentialsFailure'
+        '500':
+          description: Falha interna ou configuração de sessão ausente; acesso negado sem detalhes internos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalFailure'
+
+  /api/auth/me:
+    get:
+      operationId: restoreSession
+      summary: Restaura a identidade se a sessão e a conta atual continuarem elegíveis.
+      x-traceability:
+        - FR-002
+        - FR-003
+        - FR-006
+        - FR-007
+        - FR-008
+        - FR-009
+        - FR-012
+        - FR-013
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: JWT válido vinculado a usuário existente e atualmente ACTIVE.
+          headers:
+            Cache-Control:
+              description: A identidade autenticada não deve ser armazenada por cache compartilhado.
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        '401':
+          description: >-
+            Cookie ausente, JWT inválido ou expirado, payload inválido, usuário inexistente ou conta
+            que não está ACTIVE. Cookie obsoleto, quando presente, é expirado na resposta.
+          headers:
+            Set-Cookie:
+              description: Pode expirar auth_token usando o mesmo path da criação.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedFailure'
+        '500':
+          description: Falha interna/configuração; nenhum conteúdo protegido é concedido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalFailure'
+
+  /api/auth/logout:
+    post:
+      operationId: logout
+      summary: Encerra no navegador a sessão corrente de forma idempotente.
+      x-traceability:
+        - FR-010
+        - FR-011
+        - FR-013
+      description: >-
+        Não exige sessão válida. Sessão ausente, inválida ou expirada também resulta no estado não
+        autenticado e não cria credencial.
+      responses:
+        '200':
+          description: Cookie removido ou confirmado ausente.
+          headers:
+            Set-Cookie:
+              description: Expira auth_token com Path=/, Max-Age=0 e data no passado.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutSuccess'
+        '500':
+          description: Falha controlada; o cliente não deve declarar logout concluído.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalFailure'
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
+
+  schemas:
+    SignInInput:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          minLength: 1
+          format: email
+          pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+          description: >-
+            É aparado e então validado pela regra sintática mínima declarada antes de qualquer
+            consulta de credenciais; a regra não alega cobertura integral de todos os casos dos RFCs.
+        password:
+          type: string
+          minLength: 1
+          pattern: '.*\S.*'
+          writeOnly: true
+          description: É validado contra whitespace, mas preservado sem trim para a comparação bcrypt.
+
+    PublicUser:
+      type: object
+      additionalProperties: false
+      required:
+        - firstName
+        - lastName
+        - image
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        image:
+          type: string
+      description: >-
+        Allowlist fechada. id, email, password, hash, role, status, isAdmin, createdAt, updatedAt
+        e relações são proibidos nesta representação.
+
+    AuthSuccess:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - user
+      properties:
+        success:
+          type: boolean
+          const: true
+        user:
+          $ref: '#/components/schemas/PublicUser'
+
+    LogoutSuccess:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          const: true
+
+    InvalidRequestFailure:
+      allOf:
+        - $ref: '#/components/schemas/FailureBase'
+        - type: object
+          properties:
+            code:
+              const: INVALID_REQUEST
+
+    InvalidCredentialsFailure:
+      allOf:
+        - $ref: '#/components/schemas/FailureBase'
+        - type: object
+          properties:
+            code:
+              const: INVALID_CREDENTIALS
+
+    UnauthenticatedFailure:
+      allOf:
+        - $ref: '#/components/schemas/FailureBase'
+        - type: object
+          properties:
+            code:
+              const: UNAUTHENTICATED
+
+    InternalFailure:
+      allOf:
+        - $ref: '#/components/schemas/FailureBase'
+        - type: object
+          properties:
+            code:
+              const: INTERNAL_ERROR
+
+    FailureBase:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - code
+        - message
+      properties:
+        success:
+          type: boolean
+          const: false
+        code:
+          type: string
+        message:
+          type: string
+          description: Mensagem pública controlada, sem detalhes internos ou confirmação do estado da conta.
