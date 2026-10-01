@@ -20,6 +20,9 @@ export type CollectionAttemptError =
 export type CollectionAttempt = {
   context: CollectionContext;
   occurredAt: string;
+  localOccurredAt: string;
+  occurrenceOffset: string;
+  useDeviceTimeZone: boolean;
   phase: "editing" | "reviewing" | "submitting";
   idempotencyKey: string;
   error: string | null;

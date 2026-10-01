@@ -6,7 +6,7 @@ export default function LayoutPrivate({ children }: { children: React.ReactNode 
 
     return (
         <div className="w-full h-screen bg-[#F9FAFB]">
-            <TopBar showLinks showProfile />
+            <TopBar showLinks showProfile showLogout />
             {children}
         </div>
     )

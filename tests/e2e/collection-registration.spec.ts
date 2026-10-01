@@ -1,3 +1,4 @@
+import { fillCollectionOccurrence } from "./support/collection-occurrence";
 import { expect, test, type BrowserContext, type TestInfo } from "@playwright/test";
 
 import { signSessionToken } from "../../src/app/api/server/auth/session";
@@ -98,25 +99,27 @@ test("US2 validates an explicit temporal offset in memory without POST", async (
   await login(context, info, 0);
   await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/new`);
 
-  const occurrence = page.getByLabel("Ocorrência em campo");
+  const occurrence = page.getByLabel("Data e hora da coleta");
   const temporalError = page.locator("#occurredAt-error");
-  await occurrence.focus();
-  await page.keyboard.press("Enter");
-  await expect(temporalError).toContainText(/data.*horário.*fuso/i);
-
-  await occurrence.fill("2026-09-15 09:00");
+  await expect(occurrence).not.toHaveValue("");
+  await occurrence.fill("");
   await page.getByRole("button", { name: "Revisar coleta" }).click();
-  await expect(temporalError).toContainText(/RFC 3339|fuso/i);
-  await expect(occurrence).toHaveValue("2026-09-15 09:00");
+  expect(await occurrence.evaluate((input) => (input as HTMLInputElement).validity.valueMissing)).toBe(true);
+  await expect(page.getByRole("heading", { name: "Revisão" })).toHaveCount(0);
 
-  await occurrence.fill("2099-09-15T09:00:00-03:00");
+  await fillCollectionOccurrence(page, "2026-09-15T09:00:00-00:00");
+  await page.getByRole("button", { name: "Revisar coleta" }).click();
+  await expect(temporalError).toContainText(/fuso/i);
+  await expect(page.getByLabel("Offset UTC")).toHaveValue("-00:00");
+
+  await fillCollectionOccurrence(page, "2099-09-15T09:00:00-03:00");
   await page.getByRole("button", { name: "Revisar coleta" }).click();
   await expect(temporalError).toContainText(/futuro/i);
 
-  await occurrence.fill("2026-09-15T09:00:00.123-03:00");
+  await fillCollectionOccurrence(page, "2026-09-15T09:00:00.123-03:00");
   await page.getByRole("button", { name: "Revisar coleta" }).click();
   await expect(page.getByRole("heading", { name: "Revisão" })).toBeVisible();
-  await expect(page.getByText("2026-09-15T09:00:00.123-03:00", { exact: true })).toBeVisible();
+  await expect(page.getByText("15/09/2026 09:00:00.123 (UTC-03:00)", { exact: true })).toBeVisible();
   expect(postCount).toBe(0);
   expect((await countCollectionFixtures(process.env)).collections).toBe(2);
 });
@@ -132,7 +135,7 @@ test("US3 reviews derived authorship and confirms once after a double click", as
   });
   await login(context, info, 0);
   await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/new`);
-  await page.getByLabel("Ocorrência em campo").fill("2026-09-15T09:00:00-03:00");
+  await fillCollectionOccurrence(page, "2026-09-15T09:00:00-03:00");
   await page.getByRole("button", { name: "Revisar coleta" }).click();
   const review = page.getByRole("region", { name: "Revisão" });
   await expect(review.getByText("Será registrada por você", { exact: true })).toBeVisible();
@@ -180,7 +183,7 @@ test("US3 retries a failed confirmation with the same key and surfaces access lo
   });
   await login(context, info, 0);
   await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/new`);
-  await page.getByLabel("Ocorrência em campo").fill("2026-09-15T09:00:00-03:00");
+  await fillCollectionOccurrence(page, "2026-09-15T09:00:00-03:00");
   await page.getByRole("button", { name: "Revisar coleta" }).click();
   await page.getByRole("button", { name: "Confirmar coleta" }).click();
   const review = page.getByRole("region", { name: "Revisão" });
@@ -228,7 +231,7 @@ test("US4 reads a minimal immutable detail for current roles and inactive labora
     await page.goto(`/dashboard/laboratories/${laboratoryId}/areas/${areaId}/collections/${collectionId}`);
     await expect(page.getByRole("heading", { name: "Detalhe da coleta" })).toBeVisible();
     const detail = page.getByRole("article", { name: "Detalhe da coleta" });
-    await expect(detail.getByText("2026-09-15T09:00:00.000-03:00", { exact: true })).toBeVisible();
+    await expect(detail.getByText("15/09/2026 09:00:00 (UTC-03:00)", { exact: true })).toBeVisible();
     await expect(detail.getByText("2026-09-15T12:05:00.000Z", { exact: true })).toBeVisible();
     await expect(detail).not.toContainText(/userId|confirmationKey|observations|IHFR/i);
     await page.reload();
@@ -237,7 +240,7 @@ test("US4 reads a minimal immutable detail for current roles and inactive labora
   await login(context, info, 0);
   await page.goto(`/dashboard/laboratories/${inactiveLaboratoryId}/areas/${inactiveAreaId}/collections/${inactiveCollectionId}`);
   await expect(page.getByText(/somente leitura/i).last()).toBeVisible();
-  await expect(page.getByRole("article", { name: "Detalhe da coleta" }).getByText("2026-09-15T15:00:00.000+01:30", { exact: true })).toBeVisible();
+  await expect(page.getByRole("article", { name: "Detalhe da coleta" }).getByText("15/09/2026 15:00:00 (UTC+01:30)", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /editar|excluir/i })).toHaveCount(0);
 });
 
@@ -282,7 +285,7 @@ test("US4 completes independent form-to-detail flows in two laboratory contexts"
   for (const current of cases) {
     await login(context, info, current.userIndex);
     await page.goto(`/dashboard/laboratories/${current.laboratoryId}/areas/${current.areaId}/collections/new`);
-    await page.getByLabel("Ocorrência em campo").fill(current.occurredAt);
+    await fillCollectionOccurrence(page, current.occurredAt);
     await page.getByRole("button", { name: "Revisar coleta" }).click();
     const responsePromise = page.waitForResponse((response) =>
       response.request().method() === "POST" && response.url().endsWith(`/api/laboratories/${current.laboratoryId}/areas/${current.areaId}/collections`),

@@ -30,7 +30,7 @@ Aplicam-se [AGENTS.md](../../../../AGENTS.md), [PROJECT_CONTEXT.md](../../../../
 | 1. Diagnóstico e correção do mapa | `CONCLUIDO` no alcance do relato manual | Em 01/10, o solicitante confirmou OpenStreetMap em produção, configuração das duas variáveis na Vercel e mapa funcionando no site. Sem inspeção direta da Vercel ou comprovação individual das três telas pelo agente. Ver seção 8 da análise. |
 | 2. Dois documentos | `CONCLUIDO` documentalmente | Dois relatórios datados produzidos, conferidos e entregues para revisão de conteúdo científico e atribuições; links na seção de encerramento desta continuação. |
 | 3. Seleção das demais melhorias | `CONCLUIDO` | Etapa 2; decisão registrada sobre sequência e recortes. |
-| 4. Melhorias escolhidas e preparação do Lovable | `EM_ANDAMENTO` | Etapa 3; entregas verificadas e prompt em momento posterior. |
+| 4. Melhorias escolhidas e preparação do Lovable | Melhorias `CONCLUIDO`; prompt `NAO_INICIADO` | Três melhorias verificadas no alcance focal; inventário/prompt em execução posterior. |
 | 5. Avaliação e incorporação da proposta | `NAO_INICIADO` | Etapa 4 e frontend gerado; revisão e integração por recortes. |
 
 ## Avaliação e recomendação de sequência
@@ -251,3 +251,20 @@ FASE-03: sugestão atual e edição autorizadas pelo pedido; preservar segundos/
 | Data | Evento pré-Lovable |
 |---|---|
 | 2026-10-01 | Sequência, três melhorias, adiamentos e preferência de repositório externo confirmados pelo solicitante; publicação documental deve preceder branch e código. |
+
+
+### Resultado da execução pré-Lovable
+
+- Publicação documental inicial: `f8b2a4755aa14f1543cd0bdd656c1c30c9b89f0a` em `origin/development`, push sem força e SHA confirmado por `git ls-remote --heads` antes de código. Branch dedicada `fix/usabilidade-pre-lovable` criada somente depois; inexistência local/remota conferida.
+- `EVIDENCIA_IMPLEMENTACAO`: logout responsivo no workspace via rota existente; laboratório/AdminShell conservam saída única por viewport. Campo nativo data/hora com agora sugerido somente no browser, edição preservada, fuso visível/manual, validações temporais/instante/offset intactos e ocorrência portuguesa na revisão/consultas. Sete rótulos portugueses com enums inalterados e ajuda acessível rastreável; correção de quebra do texto científico no móvel.
+- Fluxo Spec Kit aplicado em [011-usabilidade-pre-lovable](../../../../specs/011-usabilidade-pre-lovable/plan.md): três histórias, 11 tarefas, checklist de qualidade 16/16; sem hooks/delegação. Lista completa de arquivos e evidências em [implementation-evidence.md](../../../../specs/011-usabilidade-pre-lovable/implementation-evidence.md).
+- PASS: 255/255 unitários, 7/7 testes de rotas sem banco, 12/12 cenários de navegador offline (teclado/toque, móvel, logout sucesso/falha/retry, três fusos e payloads), typecheck, lint (quatro warnings anteriores), compilação/páginas com Webpack e diff/check de referências/escopo.
+- Limitações ambientais: build padrão Turbopack falha por criação de processo/porta no processamento CSS, inclusive após escalada; Webpack PASS não substitui declarar essa falha. `npm run test:integration` interrompido antes do banco por falta de confirmação do ambiente de testes. E2E dependentes de banco foram adaptados, mas não executados. Sem banco/migrations/dependências alterados e sem dados reais escritos.
+- Limites da evidência: navegador utiliza componentes reais e CSS, mas navegação/API simuladas; cookie expirado testado no handler real; roundtrip pelo serviço com armazenamento em memória. Sem validação autenticada publicada, leitores de tela ou dispositivos físicos. Resultados não são validação científica.
+- FASE-03 resolvida no recorte de UX aprovado, com fuso explícito e instantes preservados. FASE-04 permanece somente para descrições/critério de campo por categoria; ajuda não inventa limiares. FASE-02 e FASE-05 ADIADO; FASE-06 concluída para seleção. Reconciliações canônicas globais registradas anteriormente permanecem fora desta entrega.
+- `RECOMENDACAO`: pronta para preparar prompt Lovable em próxima execução, completando inventário funcional e registrando limitações de ambiente. Nenhum prompt gerado; receber proposta preferencialmente em repositório separado, avaliar e incorporar posteriormente.
+- Relatórios históricos e raw intactos. Atualizados somente artefatos focais, código/testes pertinentes, este plano e análise. Commit/push final da branch autorizados; SHA e confirmação de publicação serão informados na entrega. Sem merge/deploy/reformulação.
+
+| Data | Evento de encerramento do recorte |
+|---|---|
+| 2026-10-01 | Três melhorias implementadas e verificadas no alcance descrito; etapa 4 mantém preparação do prompt futura. Artefatos prontos para commit/push final; fase global EM_ANDAMENTO. |

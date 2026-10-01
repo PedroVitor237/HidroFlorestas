@@ -1,3 +1,4 @@
+import { fillCollectionOccurrence } from "./support/collection-occurrence";
 import { expect, test, type Page } from "@playwright/test";
 import { Client } from "pg";
 import { signSessionToken } from "../../src/app/api/server/auth/session";
@@ -60,7 +61,7 @@ test("collection, environmental confirmation and IHFR creation work without brow
   expect(await page.evaluate(() => typeof crypto.randomUUID)).toBe("undefined");
   expect(await page.evaluate(() => typeof crypto.getRandomValues)).toBe("function");
   if (new URL(baseURL).hostname !== "127.0.0.1") expect(await page.evaluate(() => window.isSecureContext)).toBe(false);
-  await page.getByLabel("Ocorrência em campo").fill("2026-09-24T09:00:00-03:00");
+  await fillCollectionOccurrence(page, "2026-09-24T09:00:00-03:00");
   await page.getByRole("button", { name: "Revisar coleta" }).click();
   const collectionPost = page.waitForResponse((response) => response.url().endsWith("/collections") && response.request().method() === "POST");
   await page.getByRole("button", { name: "Confirmar coleta" }).click();

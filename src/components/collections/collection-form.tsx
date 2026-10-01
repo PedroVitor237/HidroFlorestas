@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -9,12 +9,22 @@ import {
   editCollectionAttempt,
   failCollectionSubmission,
   reviewCollectionAttempt,
-  updateCollectionOccurrence,
+  updateCollectionLocalOccurrence,
 } from "./collection-form-state";
 import { CollectionReview } from "./collection-review";
 import type { CollectionContext } from "@/types/collection.type";
 
+// Server rendering must not initialize device-local time with the server zone.
+const subscribeToHydration = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
+
 export function CollectionForm({ context }: { context: CollectionContext }) {
+  const hydrated = useSyncExternalStore(subscribeToHydration, clientSnapshot, serverSnapshot);
+  return hydrated ? <DeviceCollectionForm context={context} /> : <p role="status">Preparando formulário de coleta…</p>;
+}
+
+function DeviceCollectionForm({ context }: { context: CollectionContext }) {
   const router = useRouter();
   const [attempt, setAttempt] = useState(() => createCollectionAttempt(context));
   const inFlight = useRef(false);
@@ -76,18 +86,32 @@ export function CollectionForm({ context }: { context: CollectionContext }) {
             setAttempt((current) => reviewCollectionAttempt(current));
           }}
         >
-          <label className="block font-semibold" htmlFor="occurredAt">Ocorrência em campo</label>
+          <label className="block font-semibold" htmlFor="occurredAt">Data e hora da coleta</label>
           <input
             id="occurredAt"
+            type="datetime-local"
+            step="0.001"
+            required
             aria-describedby="occurredAt-help occurredAt-error"
             aria-invalid={attempt.error ? true : undefined}
             className="w-full rounded-xl border border-slate-300 p-3"
-            value={attempt.occurredAt}
-            onChange={(event) => setAttempt((current) => updateCollectionOccurrence(current, event.target.value))}
-            placeholder="2026-09-15T09:00:00-03:00"
+            value={attempt.localOccurredAt}
+            onChange={(event) => setAttempt((current) => updateCollectionLocalOccurrence(current, event.target.value))}
           />
+          <label htmlFor="collection-time-zone" className="block font-semibold">Fuso da coleta</label>
+          <select id="collection-time-zone" value={attempt.useDeviceTimeZone ? "device" : "manual"}
+            className="w-full rounded-xl border border-slate-300 p-3"
+            onChange={(event) => setAttempt(current => updateCollectionLocalOccurrence(current, current.localOccurredAt, current.occurrenceOffset, event.target.value === "device"))}>
+            <option value="device">Fuso do dispositivo</option>
+            <option value="manual">Fuso UTC manual</option>
+          </select>
+          <label htmlFor="collection-offset" className="block font-semibold">Offset UTC</label>
+          <input id="collection-offset" value={attempt.occurrenceOffset} readOnly={attempt.useDeviceTimeZone}
+            required aria-describedby="occurredAt-help" placeholder="-03:00" pattern="[+-][0-9]{2}:[0-9]{2}"
+            className="w-full rounded-xl border border-slate-300 p-3 read-only:bg-slate-50"
+            onChange={(event) => setAttempt(current => updateCollectionLocalOccurrence(current, current.localOccurredAt, event.target.value, false))} />
           <p id="occurredAt-help" className="text-sm text-slate-600">
-            Use RFC 3339 com fuso explícito, por exemplo 2026-09-15T09:00:00-03:00.
+            Sugestão inicial: agora no dispositivo. Você pode editar a data e hora. O offset UTC acompanha a data escolhida no fuso do dispositivo; para uma coleta em outro fuso ou em horário repetido, selecione Fuso UTC manual (ex.: -03:00). Confira o horário e o fuso na revisão.
           </p>
           {attempt.error && (
             <p id="occurredAt-error" role="alert" className="text-sm font-semibold text-red-700">
