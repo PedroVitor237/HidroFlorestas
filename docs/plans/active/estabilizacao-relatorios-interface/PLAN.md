@@ -1,7 +1,7 @@
 # Estabilização, relatórios e preparação da interface
 
 - Identificador: `estabilizacao-relatorios-interface`.
-- Estado da fase: `EM_ANDAMENTO`; primeira execução de inspeção e planejamento: `CONCLUIDO`; mapa resolvido conforme validação manual relatada pelo solicitante; etapa 2 concluída documentalmente, com os dois relatórios entregues para revisão.
+- Estado da fase: `EM_ANDAMENTO`; primeira execução de inspeção e planejamento: `CONCLUIDO`; mapa resolvido conforme validação manual relatada pelo solicitante; etapa 2 concluída documentalmente; etapa 4 concluída com melhorias integradas e material Lovable preparado em 02/10. Etapa 5 aguarda proposta externa e avaliação.
 - Data de corte dos relatórios: 2026-10-01, America/Fortaleza; baseline desta continuação `6832868`. O baseline preliminar anterior permanece no histórico.
 - Responsável pela execução documental: Codex; responsáveis pelas etapas futuras: não especificado.
 - Origem do mandato: solicitação da equipe anexada à conversa em 2026-10-01, intitulada “Estamos iniciando uma nova fase do HidroFlorestas após testes manuais…”.
@@ -30,7 +30,7 @@ Aplicam-se [AGENTS.md](../../../../AGENTS.md), [PROJECT_CONTEXT.md](../../../../
 | 1. Diagnóstico e correção do mapa | `CONCLUIDO` no alcance do relato manual | Em 01/10, o solicitante confirmou OpenStreetMap em produção, configuração das duas variáveis na Vercel e mapa funcionando no site. Sem inspeção direta da Vercel ou comprovação individual das três telas pelo agente. Ver seção 8 da análise. |
 | 2. Dois documentos | `CONCLUIDO` documentalmente | Dois relatórios datados produzidos, conferidos e entregues para revisão de conteúdo científico e atribuições; links na seção de encerramento desta continuação. |
 | 3. Seleção das demais melhorias | `CONCLUIDO` | Etapa 2; decisão registrada sobre sequência e recortes. |
-| 4. Melhorias escolhidas e preparação do Lovable | Melhorias `CONCLUIDO`; prompt `NAO_INICIADO` | Três melhorias verificadas no alcance focal; inventário/prompt em execução posterior. |
+| 4. Melhorias escolhidas e preparação do Lovable | `CONCLUIDO` | PR #31 presente em development; [prompt autossuficiente](lovable-prompt.md) e [fontes/notas de integração](lovable-integration-notes.md) revisados em 02/10. |
 | 5. Avaliação e incorporação da proposta | `NAO_INICIADO` | Etapa 4 e frontend gerado; revisão e integração por recortes. |
 
 ## Avaliação e recomendação de sequência
@@ -268,3 +268,27 @@ FASE-03: sugestão atual e edição autorizadas pelo pedido; preservar segundos/
 | Data | Evento de encerramento do recorte |
 |---|---|
 | 2026-10-01 | Três melhorias implementadas e verificadas no alcance descrito; etapa 4 mantém preparação do prompt futura. Artefatos prontos para commit/push final; fase global EM_ANDAMENTO. |
+
+## Continuação de 02/10/2026 — material para o Lovable
+
+`DECISAO_CONFIRMADA` — Origem: pedido do solicitante nesta conversa em 2026-10-02, que confirma o merge do PR #31 e autoriza preparar e publicar somente `lovable-prompt.md`, `lovable-integration-notes.md` e esta atualização do plano em `development`. Não criar branch/PR, alterar funcionalidades, fazer merge de trabalho, deploy nem enviar o prompt ao Lovable. A atualização local abaixo foi fast-forward para acompanhar o merge já realizado pelo solicitante.
+
+- Estado inicial: `fix/usabilidade-pre-lovable@eb7a753`, upstream correspondente, worktree limpo; nenhuma alteração preexistente a incorporar ou reverter. Somente AGENTS.md raiz aplicável.
+- `EVIDENCIA_IMPLEMENTACAO`: `git fetch origin`, troca para `development` e `git merge --ff-only origin/development` concluídos; base `b80d7b0bf4d5a94d4af80294d77ee07675bdaa1b`, igual ao remoto. Consulta somente leitura do PR #31 confirma `MERGED`, base development e merge em 01/10/2026 às 18:30:58 UTC−03; ancestralidade e arquivos das três melhorias conferidos.
+- Escopo: inventário de telas/fluxos/formulários/contratos/permissões/estados, confronto focal com decisões, paleta real login/cadastro e inspeção visual das cinco imagens. Documentação transversal, sem nova feature Spec Kit.
+- Sequência: inspeção → redação dos dois entregáveis → revisão isolada do prompt e cobertura → referências, escopo e `git diff --check` → commit/push somente dos três arquivos autorizados e confirmação do SHA remoto.
+- Próximo passo após esta entrega: solicitante copiar o prompt ao Lovable e anexar as referências recomendadas; receber preferencialmente repositório separado na própria conta; avaliar a proposta concreta e planejar integração posterior por recortes. Sem promessa de integração automática.
+- Estado desta continuação: `CONCLUIDO` documentalmente, pronta para publicação autorizada; fase global permanece `EM_ANDAMENTO`. Geração e avaliação externa não iniciadas por este agente.
+
+### Resultado e verificação do material Lovable
+
+- Entregáveis: `lovable-prompt.md` contém somente texto para o Lovable, com identidade visual real, composição das cinco imagens, 17 telas e três aliases, fluxos/permissões, 17 campos ambientais, sete rótulos e contratos necessários; `lovable-integration-notes.md` contém proveniência, limites/divergências, anexos e roteiro de recepção/adaptação. Nenhuma dependência de leitura de caminhos locais no prompt.
+- Revisão: prompt lido isoladamente e comparado às rotas/DTOs/handlers/decisões. Preservados logout, ocorrência do dispositivo editável/offset, taxonomia portuguesa, contratos fechados, imutabilidade, idempotência e IHFR experimental. Demonstração com fixtures/adapter substituível, sem autorizar backend/auth/banco/motor novos. Captura opcional não foi confundida com suficiência do cálculo; funções ilustradas sem contrato foram excluídas.
+- PASS: `python3 /tmp/hidro-lovable-doc-check.py` verifica 86 links locais/âncoras, 20/20 rotas de página (17 telas + três aliases), 27/27 caminhos HTTP, 17/17 campos ambientais, 7/7 pares de uso da terra, cinco identidades de versão/hash, quatro tokens OKLCH contra tema instalado/lockfile, whitespace e escopo de três arquivos. `git diff --check` e `git diff --cached --check` sem ocorrência; revisão textual de terminologia, referências, ausência de dados sensíveis e escopo concluída. Diff staged contém somente os três documentos autorizados.
+- Não executados: testes de aplicação, lint/typecheck/build, runtime/navegador, banco/migrations e deploy; entrega exclusivamente documental, sem alteração funcional. Evidências antigas do PR #31 não foram reexecutadas nesta rodada. Contraste/teclado/responsividade serão verificados na proposta concreta, não declarados como validados agora.
+- Pendências: avaliação humana da proposta, adaptação da estrutura realmente gerada, descrições ambientais, geocodificação/rascunhos adiados, política PENDING, ciência/campo e reconciliação canônica de mapas. Registradas nas notas, sem escolher silenciosamente política nova ou transformar defeito/limitação em requisito. Nenhum bloqueio desta entrega.
+- Escopo final: somente os três documentos autorizados; código, configs, dependências, raw, relatórios históricos e registros canônicos globais intactos. Commit/push sem força em development; SHA e confirmação remota serão informados na entrega, sem inserir referência circular ao próprio commit.
+
+| Data | Evento de preparação Lovable |
+|---|---|
+| 2026-10-02 | PR #31 confirmado em development atualizada; inspeção técnica/visual e redação concluídas; validação documental aprovada; etapa 4 encerrada. Próximo passo: solicitante gerar proposta externa e disponibilizar repositório/SHA para avaliação posterior. |
