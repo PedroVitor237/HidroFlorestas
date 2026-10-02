@@ -1,7 +1,7 @@
 # Estabilização, relatórios e preparação da interface
 
 - Identificador: `estabilizacao-relatorios-interface`.
-- Estado da fase: `EM_ANDAMENTO`; primeira execução de inspeção e planejamento: `CONCLUIDO`; mapa resolvido conforme validação manual relatada pelo solicitante; etapa 2 concluída documentalmente; etapa 4 concluída com melhorias integradas e material Lovable preparado em 02/10. Etapa 5 aguarda proposta externa e avaliação.
+- Estado da fase: `EM_ANDAMENTO`; primeira execução de inspeção e planejamento: `CONCLUIDO`; mapa resolvido conforme validação manual relatada pelo solicitante; etapa 2 concluída documentalmente; etapa 4 concluída com melhorias integradas e material Lovable preparado em 02/10. Etapa 5 iniciada com inspeção e handoff documental; geração externa parcial, sem telas prontas para revisão de integração.
 - Data de corte dos relatórios: 2026-10-01, America/Fortaleza; baseline desta continuação `6832868`. O baseline preliminar anterior permanece no histórico.
 - Responsável pela execução documental: Codex; responsáveis pelas etapas futuras: não especificado.
 - Origem do mandato: solicitação da equipe anexada à conversa em 2026-10-01, intitulada “Estamos iniciando uma nova fase do HidroFlorestas após testes manuais…”.
@@ -31,7 +31,7 @@ Aplicam-se [AGENTS.md](../../../../AGENTS.md), [PROJECT_CONTEXT.md](../../../../
 | 2. Dois documentos | `CONCLUIDO` documentalmente | Dois relatórios datados produzidos, conferidos e entregues para revisão de conteúdo científico e atribuições; links na seção de encerramento desta continuação. |
 | 3. Seleção das demais melhorias | `CONCLUIDO` | Etapa 2; decisão registrada sobre sequência e recortes. |
 | 4. Melhorias escolhidas e preparação do Lovable | `CONCLUIDO` | PR #31 presente em development; [prompt autossuficiente](lovable-prompt.md) e [fontes/notas de integração](lovable-integration-notes.md) revisados em 02/10. |
-| 5. Avaliação e incorporação da proposta | `NAO_INICIADO` | Etapa 4 e frontend gerado; revisão e integração por recortes. |
+| 5. Avaliação e incorporação da proposta | `EM_ANDAMENTO` somente na inspeção documental | [Handoff](lovable-handoff.md): main do Lovable em `d4cf1e5f28322132e094c0c0016c3ad531be7404`, estrutura inicial e home placeholder; telas ainda não prontas. Retomar geração por recortes; incorporação por outro desenvolvedor permanece futura. |
 
 ## Avaliação e recomendação de sequência
 
@@ -292,3 +292,24 @@ FASE-03: sugestão atual e edição autorizadas pelo pedido; preservar segundos/
 | Data | Evento de preparação Lovable |
 |---|---|
 | 2026-10-02 | PR #31 confirmado em development atualizada; inspeção técnica/visual e redação concluídas; validação documental aprovada; etapa 4 encerrada. Próximo passo: solicitante gerar proposta externa e disponibilizar repositório/SHA para avaliação posterior. |
+
+
+## Continuação de 02/10/2026 — checkpoint e handoff da proposta externa
+
+`DECISAO_CONFIRMADA` — Origem: solicitação atual do usuário. Inspecionar documentalmente o repositório público do Lovable, criar [lovable-handoff.md](lovable-handoff.md) e atualizar somente este plano; commit/push em development, sem branch/PR, merge, deploy ou incorporação de código. Outro desenvolvedor conduzirá a futura incorporação. Esta seção atualiza o estado corrente e preserva as continuações anteriores como histórico; corte dos relatórios enviados permanece 01/10/2026.
+
+- Estado inicial: `development@1cbd2e9beab607fce8c4197ad7820267aa633fd8`, worktree limpo e origin/development local coincidente; `git ls-remote --heads origin development` confirmou o mesmo SHA remoto antes da publicação. Nenhuma alteração preexistente a incorporar/reverter. AGENTS.md raiz aplicável.
+- Sequência deste recorte: leitura de instruções/plano/prompt/notas → consulta Git remota e clone separado em /tmp → inspeção estática de rotas/estilos/adapter/fixtures/testes/docs → comparação de cobertura e redação → revisão do diff/referências/whitespace → commit apenas dos dois documentos e push sem força para development com confirmação remota.
+- `EVIDENCIA_IMPLEMENTACAO`: branch padrão do [Lovable](https://github.com/PedroVitor237/HidroFlorestas-FrontEnd) é main; HEAD `d4cf1e5f28322132e094c0c0016c3ad531be7404`, confirmado por ls-remote, clone e reconferência antes da conclusão. Não houve avanço nessa referência em relação ao SHA anterior informado. Plano, TanStack Start/Vite, UI genérica, tipos/rótulos/utilitários, adapter mock e store de cenários existem; somente a rota `/` está registrada, com placeholder “Your app will live here!”. Telas de domínio, painel de demonstração e mapa conectado não localizados.
+- `FATO_DOCUMENTADO`: usuário relatou pausa por falta de créditos e chegada posterior de créditos gratuitos. Clique em “Finish up”, retomada, conclusão e alterações não sincronizadas ao GitHub não têm evidência; não são afirmados. Não houve acesso ao editor Lovable.
+- `INFERENCIA`: geração parcial, ainda em estrutura inicial; não pronta para avaliar integração das telas. Inspeção documental deste checkpoint `CONCLUIDO`; etapa 5 global permanece `EM_ANDAMENTO`, sem incorporação iniciada.
+- Entregáveis: handoff com SHAs/referências, inventário de artefatos, matriz das 17 telas/três aliases e fluxos, lacunas, diferenças arquiteturais, critérios de revisão, regras de incorporação e etapas menores de geração. Mocks/adapters e testes de montagem não comprovam fluxos funcionais. Divergência de sessionStorage e simplificações de validação/idempotência/elegibilidade registradas para revisão, sem corrigir o clone.
+- `RECOMENDACAO` — Próximo passo: quando houver créditos e o solicitante retomar, reconferir main/SHA e pedir primeiro landing/acesso/logout, identidade e shell de demonstração; avançar por recortes demonstráveis descritos no handoff. Depois das telas/estados navegáveis, outro desenvolvedor compara a proposta ao baseline atualizado do HidroFlorestas e planeja adaptação revisável ao App Router/API/guards reais. Sem migração automática de stack ou lógica de mock.
+- Município/UF automáticos (FASE-02) e rascunhos de registros ambientais (FASE-05) continuam `ADIADO`, em funcionalidades separadas; responsáveis/prazos não especificados. Contratos reais, persistência/autorização e IHFR experimental preservados; validação científica continua pendente.
+- Validação documental: revisão textual e diff completo dos dois arquivos, links locais conferidos e `git diff --check` sem ocorrência; antes do commit, `git diff --cached --check` e escopo staged conferidos. Referência pública do Lovable reconferida e idêntica. Raw, relatórios enviados, código/config/dependências e registros canônicos globais intactos.
+- Não executados: instalação de dependências, testes/lint/typecheck/build/preview/navegador dos dois projetos, banco/migrations ou deploy. Escopo exclusivamente documental; inspeção estática não comprova runtime, responsividade, acessibilidade ou integração. Não há PASS funcional atribuído ao Lovable.
+- Limitação de rede: consultas iniciais no sandbox falharam por DNS; repetidas com autorização fora dele, tiveram sucesso. Nenhum bloqueio documental remanescente. Publicação autorizada dos dois documentos em development; commit e confirmação do push serão informados na entrega, sem inserir SHA circular no próprio documento.
+
+| Data | Evento de handoff |
+|---|---|
+| 2026-10-02 | SHA público reconferido; geração parcial documentada, telas não prontas para integração; handoff concluído e próximo recorte recomendado, sem alterar corte histórico ou incorporar código. |
