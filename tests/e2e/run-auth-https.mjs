@@ -24,6 +24,7 @@ const inheritedE2eVariables = [
   "E2E_USER_PASSWORD",
   "PLAYWRIGHT_BASE_URL",
   "AUTH_HTTPS_E2E",
+  "ACCOUNT_LOCAL_APP_ORIGIN",
 ];
 
 if (process.env[bootstrapMarker] !== "1") {
@@ -62,6 +63,10 @@ if (process.env[bootstrapMarker] !== "1") {
 }
 
 function assertOwnedLocalRegressionEnvironment(environment) {
+  const accounts = environment.ACCOUNTS_LOCAL_POSTGRESQL === "1";
+  const localPort = accounts ? "55427" : "55426";
+  const testDatabase = accounts ? "/accounts_regression_test" : "/imp006_regression_v2_test";
+  const referenceDatabase = accounts ? "/accounts_regression_reference" : "/imp006_regression_v2_reference";
   if (!environment.TEST_DATABASE_URL || !environment.DATABASE_URL) {
     throw new Error("HTTPS E2E requires both local regression database URLs");
   }
@@ -75,11 +80,11 @@ function assertOwnedLocalRegressionEnvironment(environment) {
   }
   if (
     test.hostname !== "127.0.0.1" ||
-    test.port !== "55426" ||
-    test.pathname !== "/imp006_regression_v2_test" ||
+    test.port !== localPort ||
+    test.pathname !== testDatabase ||
     reference.hostname !== "127.0.0.1" ||
-    reference.port !== "55426" ||
-    reference.pathname !== "/imp006_regression_v2_reference"
+    reference.port !== localPort ||
+    reference.pathname !== referenceDatabase
   ) {
     throw new Error("HTTPS E2E requires the owned local regression databases");
   }
@@ -294,6 +299,14 @@ async function runHttpsValidation() {
 
     const applicationPort = await availableLoopbackPort();
     const httpsPort = await availableLoopbackPort();
+    if (localRegression && process.env.ACCOUNTS_LOCAL_POSTGRESQL === "1") {
+      // Explicit server-side authority for this owned TLS proxy. Do not derive
+      // CSRF authority from client-supplied Forwarded/Host headers or mutate
+      // APP_PUBLIC_URL, the private dotenv file, or the parent environment.
+      assertOwnedLocalRegressionEnvironment(process.env);
+      productionEnvironment.AUTH_HTTPS_E2E = "1";
+      productionEnvironment.ACCOUNT_LOCAL_APP_ORIGIN = `https://127.0.0.1:${httpsPort}`;
+    }
 
     setupStarted = true;
     await runAuthFixtureCommand("setup", process.env);

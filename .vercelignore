@@ -1,0 +1,17 @@
+# Private local inputs and test outputs never belong in a deployment upload.
+.env*
+.mail-validation/**
+.accounts-validation/**
+.vercel/**
+.next/**
+node_modules/**
+test-results/**
+playwright-report/**
+coverage/**
+*.zip
+*.log
+*.clixml
+*.tsbuildinfo
+imp006-final-*
+execucao-*.md
+docs/raw/**

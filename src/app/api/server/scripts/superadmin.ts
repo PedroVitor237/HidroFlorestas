@@ -2,6 +2,7 @@ import 'dotenv/config'
 import bcrypt from 'bcrypt';
 import { prisma } from "../lib/prisma";
 import readline from 'readline';
+import { normalizeEmail, validateNewPassword } from '../accounts/contracts';
 
 function input(question: string): Promise<string> {
     const rl = readline.createInterface({
@@ -34,16 +35,11 @@ async function createSuperAdmin(): Promise<void> {
         const lastName: string = await input('> Informe seu sobrenome: ');
 
         terminalHeader();
-        const email: string = await input('> Informe seu email: ');
+        const address = normalizeEmail(await input('> Informe seu email: '));
 
         terminalHeader();
-        const password: string = await input('> Crie uma senha de 8 dígitos: ');
-
-        if (password.length < 8) {
-            console.clear();
-            console.log('Sua senha não teve 8 dígitos!\nRegistro Encerrado.');
-            return;
-        }
+        const password: string = await input('> Crie uma senha de pelo menos 15 caracteres (máximo 72 bytes UTF-8): ');
+        validateNewPassword(password);
 
         terminalHeader();
         const rootPass = await input('> Para finalizar, informe a chave root: ')
@@ -59,7 +55,8 @@ async function createSuperAdmin(): Promise<void> {
             data: {
                 firstName,
                 lastName,
-                email,
+                email: address.factual,
+                emailCanonical: address.canonical,
                 password: hashedPassword,
                 role: 'ADMIN',
                 status: 'ACTIVE',
@@ -67,9 +64,8 @@ async function createSuperAdmin(): Promise<void> {
         });
 
         console.log('Super-admin criado com sucesso!');
-    } catch (error) {
+    } catch {
         console.log('Ocorreu um erro inesperado ao tentar criar o super-admin.');
-        console.error(error);
     }
 }
 

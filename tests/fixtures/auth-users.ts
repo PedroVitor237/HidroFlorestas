@@ -211,7 +211,7 @@ function createPrismaFixtureActions(
             ...user,
             password: passwordHash,
             role: "USER",
-
+            verificationRequired: false,
           },
           update: {
             email: user.email,
@@ -221,7 +221,7 @@ function createPrismaFixtureActions(
             password: passwordHash,
             status: user.status,
             role: "USER",
-
+            verificationRequired: false,
           },
         });
       }

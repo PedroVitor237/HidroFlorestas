@@ -27,9 +27,9 @@ export async function setupLaboratoryFixtures(environment: Record<string, string
         image: "",
         status: "ACTIVE",
         role: "USER",
-
+        verificationRequired: false,
       },
-      update: { email: LABORATORY_SECOND_USER.email, status: "ACTIVE" },
+      update: { email: LABORATORY_SECOND_USER.email, status: "ACTIVE", verificationRequired: false },
     });
   } finally {
     await prisma.$disconnect();

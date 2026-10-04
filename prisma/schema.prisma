@@ -21,6 +21,8 @@ model User {
   revision  Int        @default(0)
   emailVerifiedAt DateTime? @db.Timestamptz(3)
   credentialVersion Int @default(0)
+  emailCanonical String? @unique
+  verificationRequired Boolean @default(true)
 
   laboratoryRooms                  LaboratoryRoom[]
   researchersLinked                ResearchersLinked[]
@@ -33,6 +35,7 @@ model User {
   administrativeActions            AdministrativeAuditEvent[]        @relation("AdministrativeActor")
   administrativeChanges            AdministrativeAuditEvent[]        @relation("AdministrativeTarget")
   accountEmailChallenges           AccountEmailChallenge[]
+  accountRequests                  AccountRequest[]
 }
 
 enum AccountEmailPurpose {
@@ -43,6 +46,7 @@ enum AccountEmailPurpose {
 enum MailTemplate {
   EMAIL_VERIFICATION_V1
   PASSWORD_RESET_V1
+  PASSWORD_CHANGED_V1
 }
 
 enum MailOutboxStatus {
@@ -81,6 +85,21 @@ model AccountEmailChallenge {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
   messages MailOutbox[]
+  @@index([expiresAt])
+  @@index([purpose, proofDigest])
+}
+
+model AccountRequest {
+  action String @db.VarChar(32)
+  keyMac String @db.VarChar(64)
+  requestMac String @db.VarChar(64)
+  userId String?
+  challengeId String?
+  credentialVersion Int?
+  createdAt DateTime @db.Timestamptz(3)
+  expiresAt DateTime @db.Timestamptz(3)
+  user User? @relation(fields: [userId], references: [id], onDelete: Restrict)
+  @@id([action, keyMac])
   @@index([expiresAt])
 }
 

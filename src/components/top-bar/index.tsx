@@ -47,6 +47,9 @@ export default function TopBar(props: Props) {
           </div>
         )}
         {showLogout && (
+          <Link href="/change-password" className="inline-flex min-h-11 shrink-0 items-center rounded-xl px-2 text-sm font-semibold text-gray-700 underline focus-visible:outline-2 focus-visible:outline-green-700">Alterar senha</Link>
+        )}
+        {showLogout && (
           <Link href="/logout" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-gray-300 px-4 text-sm font-semibold text-gray-700 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-green-700">
             <LogOut size={18} aria-hidden="true" /> Sair
           </Link>

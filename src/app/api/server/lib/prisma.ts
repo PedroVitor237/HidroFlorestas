@@ -3,6 +3,7 @@ import { PrismaNeon } from '@prisma/adapter-neon'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { neonConfig } from '@neondatabase/serverless'
 import ws from 'ws'
+import { localPostgresqlContext } from './local-postgresql-context'
 
 neonConfig.webSocketConstructor = ws
 
@@ -11,6 +12,14 @@ const TEST_CONFIRMATION = 'HIDROFLORESTAS_AUTH_TEST'
 
 /** Uses PostgreSQL startup options and Prisma's schema qualifier for every pool connection. */
 export function createPrismaClient(connectionString: string, schema?: string) {
+  if (process.env.ACCOUNTS_LOCAL_APP === '1') {
+    const url = new URL(connectionString)
+    if (schema || process.env.IMP006_LOCAL_POSTGRESQL || url.hostname !== '127.0.0.1' || url.port !== '55427' || url.pathname !== '/accounts_development' || url.searchParams.has('options')) {
+      throw new Error('Accounts application PostgreSQL guard failed')
+    }
+    url.searchParams.set('options', '-cTimeZone=UTC')
+    return new PrismaClient({ adapter: new PrismaPg({ connectionString: url.toString() }, { schema: 'public' }) })
+  }
   const local = process.env.IMP006_LOCAL_POSTGRESQL === '1'
   const regressionPublic = local && process.env.IMP006_LOCAL_REGRESSION_PUBLIC === '1'
   const selectedSchema = schema ?? (local && !regressionPublic ? 'imp006_unbound' : undefined)
@@ -27,10 +36,11 @@ export function createPrismaClient(connectionString: string, schema?: string) {
   }
   if (local) {
     const url = new URL(connectionString)
-    if (url.hostname !== '127.0.0.1' || process.env.TEST_DATABASE_CONFIRMATION !== TEST_CONFIRMATION) {
+    const context = localPostgresqlContext()
+    if (url.hostname !== '127.0.0.1' || url.port !== context.port || process.env.TEST_DATABASE_CONFIRMATION !== TEST_CONFIRMATION) {
       throw new Error('IMP-006 local PostgreSQL guard failed')
     }
-    if (regressionPublic && (url.port !== '55426' || url.pathname !== '/imp006_regression_v2_test')) {
+    if (regressionPublic && url.pathname !== `/${context.testDatabase}`) {
       throw new Error('Owned local regression database guard failed')
     }
     if (!selectedSchema) {

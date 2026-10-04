@@ -1,11 +1,17 @@
 import { prisma } from "../lib/prisma";
 import { UserType } from "../types/database-tables.type";
+import { Prisma } from "@/generated/prisma";
+import type { CredentialUser } from "../auth/auth.core";
+import { normalizeEmail } from "../accounts/contracts";
 
 export class UserService {
 
     async getCredentialUserByEmail(email: string) {
+        const canonical = normalizeEmail(email).canonical;
+        const matches = await prisma.$queryRaw<Array<{ id: string }>>(Prisma.sql`SELECT "id" FROM "User" WHERE lower(btrim("email"))=${canonical} LIMIT 2`);
+        if (matches.length !== 1) return null;
         return prisma.user.findUnique({
-            where: { email },
+            where: { id: matches[0].id },
             select: {
                 id: true,
                 firstName: true,
@@ -14,7 +20,20 @@ export class UserService {
                 password: true,
                 status: true,
                 role: true,
+                credentialVersion: true,
+                emailVerifiedAt: true,
+                verificationRequired: true,
             },
+        });
+    }
+
+    async revalidateCredentialUser(user: CredentialUser) {
+        return prisma.$transaction(async (tx) => {
+            await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "User" WHERE "id"=${user.id} FOR UPDATE`);
+            return tx.user.findFirst({ where: { id: user.id, password: user.password, credentialVersion: user.credentialVersion ?? 0 }, select: {
+                id: true, firstName: true, lastName: true, image: true, status: true, role: true,
+                credentialVersion: true, emailVerifiedAt: true, verificationRequired: true,
+            } });
         });
     }
 
@@ -28,15 +47,21 @@ export class UserService {
                 image: true,
                 status: true,
                 role: true,
+                credentialVersion: true,
+                emailVerifiedAt: true,
+                verificationRequired: true,
             },
         });
     }
 
     async create(data: UserType) {
         try {
+            const address = normalizeEmail(data.email);
             const user = await prisma.user.create({
                 data: {
                     ...data,
+                    email: address.factual,
+                    emailCanonical: address.canonical,
                     password: data.password as string
                 }
             });
@@ -59,19 +84,11 @@ export class UserService {
 
     async getUserByEmail(email: string) {
         try {
+            const canonical = normalizeEmail(email).canonical;
+            const matches = await prisma.$queryRaw<Array<{ id: string }>>(Prisma.sql`SELECT "id" FROM "User" WHERE lower(btrim("email"))=${canonical} LIMIT 2`);
+            if (matches.length !== 1) return null;
             return await prisma.user.findUnique({
-                where: { email }
-            });
-        } catch {
-            return null;
-        }
-    }
-
-    async updatePassword(userId: string, password: string) {
-        try {
-            return await prisma.user.update({
-                where: { id: userId },
-                data: { password }
+                where: { id: matches[0].id }
             });
         } catch {
             return null;
@@ -82,7 +99,11 @@ export class UserService {
         try {
             return await prisma.user.update({
                 where: { id: userId },
-                data
+                data: {
+                    ...(data.firstName !== undefined ? { firstName: data.firstName } : {}),
+                    ...(data.lastName !== undefined ? { lastName: data.lastName } : {}),
+                    ...(data.image !== undefined ? { image: data.image } : {}),
+                }
             });
         } catch {
             return null;

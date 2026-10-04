@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { Pool } from "pg";
+import { localPostgresqlContext } from "../src/app/api/server/lib/local-postgresql-context";
 
 const confirmation = "HIDROFLORESTAS_AUTH_TEST";
 
@@ -25,7 +26,8 @@ export function imp006Target(env: Record<string, string | undefined> = process.e
   if (target.hostname.split(".")[0].endsWith("-pooler")) throw new Error("IMP-006 schema tests require an explicit direct TEST_DATABASE_URL, not a pooled endpoint");
   const development = databaseUrl(env.DATABASE_URL, "DATABASE_URL");
   if (env.IMP006_LOCAL_POSTGRESQL === "1") {
-    if (target.hostname !== "127.0.0.1" || target.port !== "55426" || development.hostname !== "127.0.0.1" || development.port !== "55426") throw new Error("IMP-006 local mode requires the owned loopback cluster");
+    const context = localPostgresqlContext(env);
+    if (target.hostname !== "127.0.0.1" || target.port !== context.port || development.hostname !== "127.0.0.1" || development.port !== context.port) throw new Error("IMP-006 local mode requires the owned loopback cluster");
   } else if (identity(development) === identity(target)) throw new Error("IMP-006 test target matches the development database identity");
   return { connectionString: target.toString(), database: decodeURIComponent(target.pathname.slice(1)), fingerprint: createHash("sha256").update(identity(target)).digest("hex").slice(0, 12) };
 }

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import dotenv from "dotenv";
 import { Pool, type PoolClient } from "pg";
+import { localPostgresqlContext } from "../../src/app/api/server/lib/local-postgresql-context";
 
 export const migrationPath = "prisma/migrations/20260914000100_area_registration_and_membership_roles/migration.sql";
 export const collectionMigrationPath = "prisma/migrations/20260915000100_collection_registration_metadata/migration.sql";
@@ -51,7 +52,7 @@ export function migrationTestEnvironment() {
   const test = new URL(process.env.TEST_DATABASE_URL ?? "");
   const development = new URL(process.env.DATABASE_URL ?? "");
   const identity = (url: URL) => `${url.hostname.replace("-pooler.", ".")}:${url.port || "5432"}${decodeURIComponent(url.pathname)}`;
-  const ownedLocal = process.env.IMP006_LOCAL_POSTGRESQL === '1' && test.hostname === '127.0.0.1' && test.port === '55426';
+  const ownedLocal = process.env.IMP006_LOCAL_POSTGRESQL === '1' && test.hostname === '127.0.0.1' && test.port === localPostgresqlContext().port;
   if (!['postgres:', 'postgresql:'].includes(test.protocol) || (identity(test) === identity(development) && !ownedLocal)) throw new Error("Unsafe test database");
   // Session settings used by the harness must never leak through Neon's shared
   // pooler into application connections after the temporary schema is dropped.

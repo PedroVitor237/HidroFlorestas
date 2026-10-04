@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import userService from "./users.service";
 import { UserType } from "../types/database-tables.type";
 import {
@@ -10,15 +9,13 @@ import {
     serializePublicUser,
     type SignInInput,
 } from "../auth/auth.contracts";
-import { signSessionToken, verifySessionToken } from "../auth/session";
+import { verifySessionToken, type SessionPurpose } from "../auth/session";
 import type { PublicUserDto } from "@/types/auth.type";
-
-const SALT_ROUNDS = 10;
 
 export type AuthServiceDependencies = {
     findCredentialUser: (email: string) => Promise<CredentialUser | null>;
     comparePassword: (plainText: string, hash: string) => Promise<boolean>;
-    issueToken: (userId: string) => string;
+    issueToken: (userId: string, credentialVersion?: number, purpose?: SessionPurpose) => string;
 };
 
 export type SignUpServiceDependencies = {
@@ -37,34 +34,25 @@ export type SignUpServiceDependencies = {
 };
 
 export type SignInServiceResult =
-    | { success: true; token: string; user: PublicUserDto; destination: "/admin" | "/workspace" }
+    | { success: true; token: string; user: PublicUserDto; destination: "/admin" | "/workspace" | "/verify-email"; purpose?: SessionPurpose }
     | { success: false; reason: "INVALID_CREDENTIALS" | "INTERNAL_ERROR" };
-
-const defaultSignInDependencies: AuthServiceDependencies = {
-    findCredentialUser: (email) => userService.getCredentialUserByEmail(email),
-    comparePassword: bcrypt.compare,
-    issueToken: signSessionToken,
-};
-
-const defaultSignUpDependencies: SignUpServiceDependencies = {
-    getUserByEmail: (email) => userService.getUserByEmail(email),
-    hashPassword: (plainText) => bcrypt.hash(plainText, SALT_ROUNDS),
-    createUser: (data) => userService.create(data),
-    issueToken: signSessionToken,
-};
 
 export class AuthService {
 
     constructor(
-        private readonly signInDependencies: AuthServiceDependencies = defaultSignInDependencies,
-        private readonly signUpDependencies: SignUpServiceDependencies = defaultSignUpDependencies,
+        private readonly signInDependencies?: AuthServiceDependencies,
+        private readonly signUpDependencies?: SignUpServiceDependencies,
     ) {}
 
     verifyToken(token: string) {
         return verifySessionToken(token);
     }
 
-    async signUp(data: UserType) {
+    async signUp(data: UserType, idempotencyKey?: string) {
+        if (!this.signUpDependencies) {
+            const { accounts } = await import("../accounts/service");
+            return accounts.signup(data, idempotencyKey ?? "", "internal-unknown");
+        }
         try {
 
             const { email, password } = data;
@@ -107,6 +95,10 @@ export class AuthService {
     }
 
     async signIn(input: SignInInput): Promise<SignInServiceResult> {
+        if (!this.signInDependencies) {
+            const { accounts } = await import("../accounts/service");
+            return accounts.login(input, "internal-unknown");
+        }
         const result = await authenticateCredentials(input, this.signInDependencies);
 
         if (!result.success) {
@@ -117,28 +109,16 @@ export class AuthService {
             success: true,
             token: result.token,
             user: serializePublicUser(result.principal),
-            destination: authenticatedDestination(result.principal.role),
+            destination: result.purpose === "email-verification" ? "/verify-email" : authenticatedDestination(result.principal.role),
+            ...(result.purpose ? { purpose: result.purpose } : {}),
         };
     }
 
     async updatePassword(userId: string, currentPassword: string, newPassword: string) {
         try {
 
-            const user = await userService.getUserById(userId);
-
-            if (!user || !user.password) {
-                return { success: false, message: "Usuário não encontrado" };
-            }
-
-            const passwordMatch = await bcrypt.compare(currentPassword, user.password);
-
-            if (!passwordMatch) {
-                return { success: false, message: "Senha atual inválida" };
-            }
-
-            const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
-
-            await userService.updatePassword(userId, hashedPassword);
+            const { accounts } = await import("../accounts/service");
+            await accounts.changePassword(userId, { currentPassword, newPassword, confirmPassword: newPassword }, "internal-unknown");
 
             return {
                 success: true,
@@ -165,7 +145,7 @@ export class AuthService {
 
             return {
                 success: true,
-                user
+                user: serializePublicUser(user)
             };
 
         } catch {
