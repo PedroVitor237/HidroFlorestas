@@ -1,0 +1,3765 @@
+{
+  "schemaVersion": 1,
+  "generatedUtc": "2026-10-04T16:38:56.397Z",
+  "classification": "EVIDENCIA_IMPLEMENTACAO",
+  "base": "3102b07a0a3f0f15e10d6d0646036a6ba7c8beb3",
+  "head": "3102b07a0a3f0f15e10d6d0646036a6ba7c8beb3",
+  "branch": "feat/mail-foundation",
+  "functionalSnapshotSha256": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+  "versions": {
+    "node": "24.19.0",
+    "npm": "12.0.2",
+    "next": "16.3.6",
+    "prisma": "7.4.2",
+    "postgresqlMajor": 17,
+    "nodemailer": "10.0.14",
+    "smtpServer": "3.19.17"
+  },
+  "gate": "BLOQUEIO_DE_SETUP",
+  "commits": [],
+  "finalGates": [
+    {
+      "gate": "RegressionSetup",
+      "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:28:55.600Z",
+      "endedUtc": "2026-10-04T16:28:56.219Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/regressionsetup-1791131335599.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+      "testGroups": []
+    },
+    {
+      "gate": "Unit",
+      "command": "npm run test:unit",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:28:56.498Z",
+      "endedUtc": "2026-10-04T16:29:04.472Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/unit-1791131336497.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+      "testGroups": [
+        255,
+        10
+      ]
+    },
+    {
+      "gate": "Integration",
+      "command": "npm run test:integration",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:04.772Z",
+      "endedUtc": "2026-10-04T16:29:39.526Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/integration-1791131344771.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+      "testGroups": [
+        118
+      ]
+    },
+    {
+      "gate": "Migration",
+      "command": "npm run test:migration",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:39.801Z",
+      "endedUtc": "2026-10-04T16:29:48.643Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/migration-1791131379800.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+      "testGroups": [
+        27
+      ]
+    },
+    {
+      "gate": "Contract",
+      "command": "npm run test:contract",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:48.967Z",
+      "endedUtc": "2026-10-04T16:29:51.099Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/contract-1791131388967.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+      "testGroups": [
+        2
+      ]
+    },
+    {
+      "gate": "Typecheck",
+      "command": "npm run typecheck",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:51.352Z",
+      "endedUtc": "2026-10-04T16:29:53.425Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/typecheck-1791131391351.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+      "testGroups": []
+    },
+    {
+      "gate": "Lint",
+      "command": "npm run lint",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:53.670Z",
+      "endedUtc": "2026-10-04T16:30:01.475Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/lint-1791131393669.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+      "testGroups": []
+    },
+    {
+      "gate": "Build",
+      "command": "npm run build",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:30:01.739Z",
+      "endedUtc": "2026-10-04T16:30:11.823Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/build-1791131401738.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+      "testGroups": []
+    },
+    {
+      "gate": "E2E",
+      "command": "npm run test:e2e",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:30:33.217Z",
+      "endedUtc": "2026-10-04T16:32:18.573Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/e2e-1791131433216.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+      "testGroups": [],
+      "browserPassed": 55
+    },
+    {
+      "gate": "Https",
+      "command": "npm run test:e2e:https",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:33:09.765Z",
+      "endedUtc": "2026-10-04T16:33:37.465Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/https-1791131589765.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate Https",
+      "testGroups": [],
+      "browserPassed": 2
+    },
+    {
+      "gate": "CleanInstall",
+      "command": "node --import=tsx scripts/mail-clean-install.ts",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:34:36.440Z",
+      "endedUtc": "2026-10-04T16:36:24.567Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/cleaninstall-1791131676440.log",
+      "invocation": "./scripts/mail-validation.ps1 -Gate CleanInstall",
+      "testGroups": [
+        10
+      ]
+    },
+    {
+      "gate": "Smoke",
+      "command": "npm run mail:smoke",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:37:22.399Z",
+      "endedUtc": "2026-10-04T16:37:22.983Z",
+      "exitCode": 1,
+      "result": "BLOQUEIO_DE_SETUP",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/smoke-1791131842398.log",
+      "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','Smoke','.mail-validation','mail:smoke')",
+      "testGroups": []
+    }
+  ],
+  "collectorHistory": [
+    {
+      "gate": "E2E",
+      "command": "npm run test:e2e",
+      "snapshot": "a6c8ab2daf2da79d2c0c264515964b5f2128eb1aa4a5731a1aef4c21f9383acb",
+      "startedUtc": "2026-10-04T16:09:40.686Z",
+      "endedUtc": "2026-10-04T16:11:13.327Z",
+      "exitCode": 1,
+      "result": "FAIL",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/e2e-1791130180686.log"
+    },
+    {
+      "gate": "Https",
+      "command": "npm run test:e2e:https",
+      "snapshot": "a6c8ab2daf2da79d2c0c264515964b5f2128eb1aa4a5731a1aef4c21f9383acb",
+      "startedUtc": "2026-10-04T16:11:29.688Z",
+      "endedUtc": "2026-10-04T16:13:14.127Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/https-1791130289688.log"
+    },
+    {
+      "gate": "E2E",
+      "command": "npm run test:e2e",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:14:00.484Z",
+      "endedUtc": "2026-10-04T16:15:45.635Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/e2e-1791130440483.log"
+    },
+    {
+      "gate": "Unit",
+      "command": "npm run test:unit",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:20:43.907Z",
+      "endedUtc": "2026-10-04T16:20:53.472Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/unit-1791130843907.log"
+    },
+    {
+      "gate": "Integration",
+      "command": "npm run test:integration",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:21:37.789Z",
+      "endedUtc": "2026-10-04T16:22:14.027Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/integration-1791130897788.log"
+    },
+    {
+      "gate": "Migration",
+      "command": "npm run test:migration",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:22:50.180Z",
+      "endedUtc": "2026-10-04T16:23:00.353Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/migration-1791130970179.log"
+    },
+    {
+      "gate": "Contract",
+      "command": "npm run test:contract",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:23:00.619Z",
+      "endedUtc": "2026-10-04T16:23:03.129Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/contract-1791130980619.log"
+    },
+    {
+      "gate": "Typecheck",
+      "command": "npm run typecheck",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:23:03.370Z",
+      "endedUtc": "2026-10-04T16:23:09.922Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/typecheck-1791130983370.log"
+    },
+    {
+      "gate": "Lint",
+      "command": "npm run lint",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:23:44.244Z",
+      "endedUtc": "2026-10-04T16:23:53.139Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/lint-1791131024244.log"
+    },
+    {
+      "gate": "Build",
+      "command": "npm run build",
+      "snapshot": "5e0f3a963839339e358d8cf75694377441e30d6fcbd471a6530d52b8217c95f0",
+      "startedUtc": "2026-10-04T16:25:06.182Z",
+      "endedUtc": "2026-10-04T16:25:16.470Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/build-1791131106182.log"
+    },
+    {
+      "gate": "RegressionSetup",
+      "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:28:55.600Z",
+      "endedUtc": "2026-10-04T16:28:56.219Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/regressionsetup-1791131335599.log"
+    },
+    {
+      "gate": "Unit",
+      "command": "npm run test:unit",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:28:56.498Z",
+      "endedUtc": "2026-10-04T16:29:04.472Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/unit-1791131336497.log"
+    },
+    {
+      "gate": "Integration",
+      "command": "npm run test:integration",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:04.772Z",
+      "endedUtc": "2026-10-04T16:29:39.526Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/integration-1791131344771.log"
+    },
+    {
+      "gate": "Migration",
+      "command": "npm run test:migration",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:39.801Z",
+      "endedUtc": "2026-10-04T16:29:48.643Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/migration-1791131379800.log"
+    },
+    {
+      "gate": "Contract",
+      "command": "npm run test:contract",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:48.967Z",
+      "endedUtc": "2026-10-04T16:29:51.099Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/contract-1791131388967.log"
+    },
+    {
+      "gate": "Typecheck",
+      "command": "npm run typecheck",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:51.352Z",
+      "endedUtc": "2026-10-04T16:29:53.425Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/typecheck-1791131391351.log"
+    },
+    {
+      "gate": "Lint",
+      "command": "npm run lint",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:29:53.670Z",
+      "endedUtc": "2026-10-04T16:30:01.475Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/lint-1791131393669.log"
+    },
+    {
+      "gate": "Build",
+      "command": "npm run build",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:30:01.739Z",
+      "endedUtc": "2026-10-04T16:30:11.823Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/build-1791131401738.log"
+    },
+    {
+      "gate": "E2E",
+      "command": "npm run test:e2e",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:30:33.217Z",
+      "endedUtc": "2026-10-04T16:32:18.573Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/e2e-1791131433216.log"
+    },
+    {
+      "gate": "Https",
+      "command": "npm run test:e2e:https",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:33:09.765Z",
+      "endedUtc": "2026-10-04T16:33:37.465Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/https-1791131589765.log"
+    },
+    {
+      "gate": "Smoke",
+      "command": "npm run mail:smoke",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:36:11.869Z",
+      "endedUtc": "2026-10-04T16:36:12.673Z",
+      "exitCode": 1,
+      "result": "BLOQUEIO_DE_SETUP",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/smoke-1791131771869.log"
+    },
+    {
+      "gate": "CleanInstall",
+      "command": "node --import=tsx scripts/mail-clean-install.ts",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:34:36.440Z",
+      "endedUtc": "2026-10-04T16:36:24.567Z",
+      "exitCode": 0,
+      "result": "PASS",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/cleaninstall-1791131676440.log"
+    },
+    {
+      "gate": "Smoke",
+      "command": "npm run mail:smoke",
+      "snapshot": "69a5c64824fa1d4354d5ffb4eed5dee442d53d79812b808d44acdace9bf1c818",
+      "startedUtc": "2026-10-04T16:37:22.399Z",
+      "endedUtc": "2026-10-04T16:37:22.983Z",
+      "exitCode": 1,
+      "result": "BLOQUEIO_DE_SETUP",
+      "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+      "log": ".mail-validation/smoke-1791131842398.log"
+    }
+  ],
+  "finalManualChecks": {
+    "startedUtc": "2026-10-04T16:44:15.432Z",
+    "endedUtc": "2026-10-04T16:44:15.682Z",
+    "result": "PASS",
+    "snapshotUnchanged": true,
+    "diff": {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    "clientBundle": {
+      "command": "rg -l 'SMTP_APP_PASSWORD|MAIL_PAYLOAD_ENCRYPTION_KEYS|MAIL_IDEMPOTENCY_KEY|MAIL_WORKER_SECRET|smtp\\.gmail\\.com' .next/static",
+      "nativeExitCode": 1,
+      "matchingFiles": 0
+    },
+    "scope": {
+      "unexpectedTrackedPaths": [],
+      "trackedPaths": [
+        ".gitignore",
+        "package-lock.json",
+        "package.json",
+        "prisma/schema.prisma",
+        "scripts/imp006-local-postgresql.ps1",
+        "scripts/imp006-local-regression-setup.ts",
+        "scripts/imp006-test-runner.ts",
+        "tests/e2e/support/collection-occurrence.ts",
+        "tests/fixtures/ihfr-diagnosis-fixtures.ts",
+        "tests/migration/ihfr-diagnosis-preflight.test.ts"
+      ],
+      "stagedPaths": []
+    },
+    "markdownReferences": {
+      "checked": 13,
+      "broken": []
+    },
+    "documentSha256": {
+      ".env.mail.example": "287f5e340403036bad3337f167471e18ffb20f647a3b559f806951fd68e37f97",
+      "docs/operations/mail-runbook.md": "4b943e6e0f5bfbbd03257ef2d2d139717b95e04a4d5c6fc167690823b4c176a7",
+      "specs/mail-foundation/data-model.md": "e3dcea230a40671e8eba58c73a23b1a987b30e1e51a613fc2ca0f1c5732ebc1f",
+      "specs/mail-foundation/implementation-evidence.md": "0ff087d18ea9cbbfac3a0cee68c7cc208ac4dd7b18d32798e88d4c3db5d35843",
+      "specs/mail-foundation/plan.md": "90efa88a4b724d35fb17f99824250a8310a116c03d0a661c866f43f80ddad9a3",
+      "specs/mail-foundation/quickstart.md": "ed2e9b7c61e92194c2447a2f7c91678ea3b27155daf449095e296671d4e4022f",
+      "specs/mail-foundation/research.md": "dc2f49e3aff98e17e23ea22b0fc5dcb5f3efaf5125e0e136cbc5b96b4201e232",
+      "specs/mail-foundation/spec.md": "87976456443e65b29bbcbab8684fc5b314221bb2a68a104afadc0d275c20485f",
+      "specs/mail-foundation/tasks.md": "1b11ad9b570636f20f5002c431a7900902db9962f82a77ef4568cb21d5987e2d",
+      "specs/mail-foundation/checklists/requirements.md": "caf7f96cbec44fcd078d5011388de4d539ea3d01537dd5ae2e70d6af3745f9b2",
+      "specs/mail-foundation/contracts/mail.md": "31f80a2d05db2360c995337306df05c66c2bb1e85e1e01ca472edce94dbedbac"
+    }
+  },
+  "auditReview": {
+    "utc": "2026-10-04T16:23:50Z",
+    "production": {
+      "command": "npm audit --omit=dev --json",
+      "exitCode": 0,
+      "result": "PASS",
+      "vulnerabilities": 0
+    },
+    "allDependencies": {
+      "command": "npm audit --json",
+      "exitCode": 1,
+      "result": "FAIL",
+      "high": 10,
+      "classification": "PREEXISTING",
+      "unchangedLockRecords": 18,
+      "newMailChainFindings": 0
+    }
+  },
+  "continuations": [
+    {
+      "classification": "EVIDENCIA_IMPLEMENTACAO",
+      "date": "2026-10-04",
+      "branch": "feat/mail-foundation",
+      "base": "3102b07a0a3f0f15e10d6d0646036a6ba7c8beb3",
+      "initialSnapshotSha256": "dfa6ca2bf2194cadedd64421d8a850a773ec1a65a76ef5107051e1531080fa0f",
+      "review": {
+        "zipPath": "C:/projetos/consolidados/HidroFlorestas/revisao-execucao-01-emails.zip",
+        "zipSha256": "94b61029c8035a4d8b1d78b19e7af370c759015fde0132fd0284b0b17250c0af",
+        "initialSourceHashesMatched": 9,
+        "totalComparedModules": 9,
+        "externalHarnessExecuted": false,
+        "externalResultsAreNotApproval": true
+      },
+      "reproduction": [
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "f29a0b3ceb3f435479db12f1c1b4a54991ffbcddb98bbfd7ae4b2e40d7e50af1",
+          "startedUtc": "2026-10-04T17:51:55.068Z",
+          "endedUtc": "2026-10-04T17:51:57.494Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136315068.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            4
+          ]
+        }
+      ],
+      "functionalSnapshotSha256": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+      "gate": "BLOQUEIO_DE_SETUP",
+      "finalGates": [
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:00:44.278Z",
+          "endedUtc": "2026-10-04T18:00:52.237Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136844278.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            17
+          ]
+        },
+        {
+          "gate": "RegressionSetup",
+          "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:01:33.673Z",
+          "endedUtc": "2026-10-04T18:01:34.152Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/regressionsetup-1791136893673.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+          "testGroups": []
+        },
+        {
+          "gate": "Unit",
+          "command": "npm run test:unit",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:01:37.040Z",
+          "endedUtc": "2026-10-04T18:01:44.943Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/unit-1791136897040.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+          "testGroups": [
+            255,
+            12
+          ]
+        },
+        {
+          "gate": "Integration",
+          "command": "npm run test:integration",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:01:48.187Z",
+          "endedUtc": "2026-10-04T18:02:28.611Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/integration-1791136908186.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+          "testGroups": [
+            132
+          ]
+        },
+        {
+          "gate": "Migration",
+          "command": "npm run test:migration",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:32.064Z",
+          "endedUtc": "2026-10-04T18:02:40.706Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/migration-1791136952064.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+          "testGroups": [
+            27
+          ]
+        },
+        {
+          "gate": "Contract",
+          "command": "npm run test:contract",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:43.917Z",
+          "endedUtc": "2026-10-04T18:02:46.062Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/contract-1791136963916.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:49.167Z",
+          "endedUtc": "2026-10-04T18:02:52.430Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791136969167.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:55.432Z",
+          "endedUtc": "2026-10-04T18:03:03.488Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791136975432.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Build",
+          "command": "npm run build",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:03:06.780Z",
+          "endedUtc": "2026-10-04T18:03:18.511Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/build-1791136986779.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+          "testGroups": []
+        },
+        {
+          "gate": "E2E",
+          "command": "npm run test:e2e",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:03:57.844Z",
+          "endedUtc": "2026-10-04T18:05:45.112Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/e2e-1791137037844.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+          "testGroups": [
+            55
+          ]
+        },
+        {
+          "gate": "Https",
+          "command": "npm run test:e2e:https",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:07:01.606Z",
+          "endedUtc": "2026-10-04T18:07:29.757Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/https-1791137221605.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Https",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "SchemaAudit",
+          "command": "npm run test:ihfr:audit:assert-zero",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:08:23.638Z",
+          "endedUtc": "2026-10-04T18:08:24.587Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/schemaaudit-1791137303637.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -DatabaseMode Regression -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SchemaAudit','.mail-validation','test:ihfr:audit:assert-zero')",
+          "testGroups": []
+        },
+        {
+          "gate": "Smoke",
+          "command": "npm run mail:smoke",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:08:28.561Z",
+          "endedUtc": "2026-10-04T18:08:29.436Z",
+          "exitCode": 1,
+          "result": "BLOQUEIO_DE_SETUP",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smoke-1791137308560.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','Smoke','.mail-validation','mail:smoke')",
+          "testGroups": []
+        },
+        {
+          "gate": "CleanInstall",
+          "command": "node --import=tsx scripts/mail-clean-install.ts",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:08:11.041Z",
+          "endedUtc": "2026-10-04T18:09:45.316Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/cleaninstall-1791137291041.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate CleanInstall",
+          "testGroups": [
+            12
+          ]
+        }
+      ],
+      "collectorHistory": [
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "f29a0b3ceb3f435479db12f1c1b4a54991ffbcddb98bbfd7ae4b2e40d7e50af1",
+          "startedUtc": "2026-10-04T17:51:55.068Z",
+          "endedUtc": "2026-10-04T17:51:57.494Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136315068.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            4
+          ]
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "b6e79f794d656ee818130faeee1b90f176d33e12d7ce258ab36440fccc18fe48",
+          "startedUtc": "2026-10-04T17:55:02.762Z",
+          "endedUtc": "2026-10-04T17:55:09.647Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136502761.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            14
+          ]
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "10366eb2959ff4ffee5684ae87bfd66d5204ec01ee55ac1a8a78a38058b3bf00",
+          "startedUtc": "2026-10-04T17:55:54.293Z",
+          "endedUtc": "2026-10-04T17:56:01.266Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136554292.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            14
+          ]
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "10366eb2959ff4ffee5684ae87bfd66d5204ec01ee55ac1a8a78a38058b3bf00",
+          "startedUtc": "2026-10-04T17:56:04.279Z",
+          "endedUtc": "2026-10-04T17:56:07.633Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791136564279.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "9ed4773146afa993117207589245d50f4f6988e67d39a07aaed0aef58444c4fa",
+          "startedUtc": "2026-10-04T17:57:47.198Z",
+          "endedUtc": "2026-10-04T17:57:54.329Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136667198.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            15
+          ]
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "a912dbbf1314f2732175d578f71ee4822d9822c35b18d950b9edd4944464bf39",
+          "startedUtc": "2026-10-04T17:58:27.301Z",
+          "endedUtc": "2026-10-04T17:58:34.512Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136707301.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            15
+          ]
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:00:44.278Z",
+          "endedUtc": "2026-10-04T18:00:52.237Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791136844278.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            17
+          ]
+        },
+        {
+          "gate": "RegressionSetup",
+          "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:01:33.673Z",
+          "endedUtc": "2026-10-04T18:01:34.152Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/regressionsetup-1791136893673.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+          "testGroups": []
+        },
+        {
+          "gate": "Unit",
+          "command": "npm run test:unit",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:01:37.040Z",
+          "endedUtc": "2026-10-04T18:01:44.943Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/unit-1791136897040.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+          "testGroups": [
+            255,
+            12
+          ]
+        },
+        {
+          "gate": "Integration",
+          "command": "npm run test:integration",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:01:48.187Z",
+          "endedUtc": "2026-10-04T18:02:28.611Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/integration-1791136908186.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+          "testGroups": [
+            132
+          ]
+        },
+        {
+          "gate": "Migration",
+          "command": "npm run test:migration",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:32.064Z",
+          "endedUtc": "2026-10-04T18:02:40.706Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/migration-1791136952064.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+          "testGroups": [
+            27
+          ]
+        },
+        {
+          "gate": "Contract",
+          "command": "npm run test:contract",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:43.917Z",
+          "endedUtc": "2026-10-04T18:02:46.062Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/contract-1791136963916.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:49.167Z",
+          "endedUtc": "2026-10-04T18:02:52.430Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791136969167.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:02:55.432Z",
+          "endedUtc": "2026-10-04T18:03:03.488Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791136975432.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Build",
+          "command": "npm run build",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:03:06.780Z",
+          "endedUtc": "2026-10-04T18:03:18.511Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/build-1791136986779.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+          "testGroups": []
+        },
+        {
+          "gate": "E2E",
+          "command": "npm run test:e2e",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:03:57.844Z",
+          "endedUtc": "2026-10-04T18:05:45.112Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/e2e-1791137037844.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+          "testGroups": [
+            55
+          ]
+        },
+        {
+          "gate": "Https",
+          "command": "npm run test:e2e:https",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:07:01.606Z",
+          "endedUtc": "2026-10-04T18:07:29.757Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/https-1791137221605.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Https",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "SchemaAudit",
+          "command": "npm run test:ihfr:audit:assert-zero",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:08:23.638Z",
+          "endedUtc": "2026-10-04T18:08:24.587Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/schemaaudit-1791137303637.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -DatabaseMode Regression -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SchemaAudit','.mail-validation','test:ihfr:audit:assert-zero')",
+          "testGroups": []
+        },
+        {
+          "gate": "Smoke",
+          "command": "npm run mail:smoke",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:08:28.561Z",
+          "endedUtc": "2026-10-04T18:08:29.436Z",
+          "exitCode": 1,
+          "result": "BLOQUEIO_DE_SETUP",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smoke-1791137308560.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','Smoke','.mail-validation','mail:smoke')",
+          "testGroups": []
+        },
+        {
+          "gate": "CleanInstall",
+          "command": "node --import=tsx scripts/mail-clean-install.ts",
+          "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+          "startedUtc": "2026-10-04T18:08:11.041Z",
+          "endedUtc": "2026-10-04T18:09:45.316Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/cleaninstall-1791137291041.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate CleanInstall",
+          "testGroups": [
+            12
+          ]
+        }
+      ],
+      "manualSecurity": {
+        "startedUtc": "2026-10-04T18:06:16.161Z",
+        "endedUtc": "2026-10-04T18:06:21.998Z",
+        "snapshot": "3898722dd01c9b26c0e532b38f117fcd0323ec98111beedd6cfc83272479e595",
+        "productionAudit": {
+          "command": "npm audit --omit=dev --json",
+          "exitCode": 0,
+          "counts": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          }
+        },
+        "fullAudit": {
+          "command": "npm audit  --json",
+          "exitCode": 1,
+          "counts": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 10,
+            "critical": 0,
+            "total": 10
+          }
+        },
+        "affectedLockRecords": 18,
+        "affectedRecordsIdenticalToHead": true,
+        "bundleScan": {
+          "command": "rg -l <mail-secret-and-runtime-patterns> .next/static",
+          "exitCode": 1,
+          "matchingFiles": 0,
+          "result": "PASS"
+        },
+        "setup": {
+          "presence": {
+            "SMTP_HOST": false,
+            "SMTP_PORT": false,
+            "SMTP_SECURE": false,
+            "SMTP_REQUIRE_TLS": false,
+            "SMTP_USER": false,
+            "SMTP_APP_PASSWORD": false,
+            "MAIL_FROM": false,
+            "APP_PUBLIC_URL": false,
+            "MAIL_PAYLOAD_ENCRYPTION_KEYS": false,
+            "MAIL_PAYLOAD_ACTIVE_KEY_ID": false,
+            "MAIL_IDEMPOTENCY_KEY": false,
+            "MAIL_WORKER_SECRET": false,
+            "MAIL_SMOKE_CONFIRMATION": false,
+            "MAIL_SMOKE_RECIPIENT": false,
+            "MAIL_SMOKE_ALLOWED_RECIPIENT": false
+          },
+          "structure": false,
+          "confirmationReady": false,
+          "allowlistReady": false
+        },
+        "classification": "EVIDENCIA_IMPLEMENTACAO"
+      },
+      "staticReview": {
+        "checkedUtc": "2026-10-04T18:07:13.452Z",
+        "scopedFiles": 34,
+        "privateKeyLiterals": 0,
+        "publicSecretReferences": 0,
+        "nonemptyExampleSecrets": 0,
+        "brokenLocalDocumentationLinks": 0,
+        "attachmentsUnchanged": true,
+        "indexEmpty": true,
+        "result": "PASS",
+        "limits": "Static pattern checks and source review; not a complete repository-wide secret-history audit."
+      },
+      "commits": []
+    },
+    {
+      "classification": "EVIDENCIA_IMPLEMENTACAO",
+      "date": "2026-10-04",
+      "authorization": "Additional user instruction: prepare all local technical setup and secure Gmail collection",
+      "generatedUtc": "2026-10-04T19:07:36.269Z",
+      "functionalSnapshotSha256": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+      "gate": "BLOQUEIO_DE_SETUP",
+      "pendingGates": [
+        "SmtpVerify",
+        "Smoke"
+      ],
+      "privateSetup": {
+        "mechanism": ".env via existing dotenv/config",
+        "gitIgnored": true,
+        "tracked": false,
+        "internalCSPRNGKeysPrepared": true,
+        "independentPurposes": true,
+        "restrictedACL": true,
+        "localSyntheticOrigin": true,
+        "presence": {
+          "SMTP_HOST": true,
+          "SMTP_PORT": true,
+          "SMTP_SECURE": true,
+          "SMTP_REQUIRE_TLS": true,
+          "SMTP_USER": true,
+          "SMTP_APP_PASSWORD": true,
+          "MAIL_FROM": true,
+          "APP_PUBLIC_URL": true,
+          "MAIL_PAYLOAD_ENCRYPTION_KEYS": true,
+          "MAIL_PAYLOAD_ACTIVE_KEY_ID": true,
+          "MAIL_IDEMPOTENCY_KEY": true,
+          "MAIL_WORKER_SECRET": true,
+          "MAIL_SMOKE_CONFIRMATION": true,
+          "MAIL_SMOKE_RECIPIENT": true,
+          "MAIL_SMOKE_ALLOWED_RECIPIENT": true
+        },
+        "gmailCredentialFormatConfigured": true,
+        "gmailAuthentication": "FAIL",
+        "valuesRecorded": false
+      },
+      "finalGates": [
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:25:26.842Z",
+          "endedUtc": "2026-10-04T18:25:34.913Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791138326842.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            17
+          ]
+        },
+        {
+          "gate": "RegressionSetup",
+          "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:26:27.953Z",
+          "endedUtc": "2026-10-04T18:26:28.412Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/regressionsetup-1791138387953.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+          "testGroups": []
+        },
+        {
+          "gate": "Unit",
+          "command": "npm run test:unit",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:26:31.236Z",
+          "endedUtc": "2026-10-04T18:26:38.931Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/unit-1791138391235.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+          "testGroups": [
+            255,
+            12
+          ]
+        },
+        {
+          "gate": "Integration",
+          "command": "npm run test:integration",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:26:41.818Z",
+          "endedUtc": "2026-10-04T18:27:20.902Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/integration-1791138401818.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+          "testGroups": [
+            132
+          ]
+        },
+        {
+          "gate": "Migration",
+          "command": "npm run test:migration",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:27:24.010Z",
+          "endedUtc": "2026-10-04T18:27:32.176Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/migration-1791138444009.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+          "testGroups": [
+            27
+          ]
+        },
+        {
+          "gate": "Contract",
+          "command": "npm run test:contract",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:27:34.979Z",
+          "endedUtc": "2026-10-04T18:27:36.956Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/contract-1791138454979.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:27:39.814Z",
+          "endedUtc": "2026-10-04T18:27:41.894Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791138459813.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T19:00:51.641Z",
+          "endedUtc": "2026-10-04T19:03:14.549Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791140451641.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Build",
+          "command": "npm run build",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:31:07.978Z",
+          "endedUtc": "2026-10-04T18:31:17.730Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/build-1791138667977.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+          "testGroups": []
+        },
+        {
+          "gate": "E2E",
+          "command": "npm run test:e2e",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:31:20.863Z",
+          "endedUtc": "2026-10-04T18:33:02.419Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/e2e-1791138680863.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+          "testGroups": [
+            55
+          ]
+        },
+        {
+          "gate": "Https",
+          "command": "npm run test:e2e:https",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:33:05.407Z",
+          "endedUtc": "2026-10-04T18:33:32.179Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/https-1791138785406.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Https",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "CleanInstall",
+          "command": "node --import=tsx scripts/mail-clean-install.ts",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:33:35.039Z",
+          "endedUtc": "2026-10-04T18:35:07.362Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/cleaninstall-1791138815039.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate CleanInstall",
+          "testGroups": [
+            12
+          ]
+        },
+        {
+          "gate": "SchemaAudit",
+          "command": "npm run test:ihfr:audit:assert-zero",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:36:24.195Z",
+          "endedUtc": "2026-10-04T18:36:24.727Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/schemaaudit-1791138984195.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -DatabaseMode Regression -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SchemaAudit','.mail-validation','test:ihfr:audit:assert-zero')",
+          "testGroups": []
+        },
+        {
+          "gate": "SmtpVerify",
+          "command": "npm run mail:verify",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:50:09.226Z",
+          "endedUtc": "2026-10-04T18:50:12.568Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smtpverify-1791139809225.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SmtpVerify','.mail-validation','mail:verify')",
+          "testGroups": []
+        }
+      ],
+      "collectorHistory": [
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:18:40.668Z",
+          "endedUtc": "2026-10-04T18:18:49.126Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791137920667.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            17
+          ]
+        },
+        {
+          "gate": "RegressionSetup",
+          "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:19:40.207Z",
+          "endedUtc": "2026-10-04T18:19:40.678Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/regressionsetup-1791137980206.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+          "testGroups": []
+        },
+        {
+          "gate": "Unit",
+          "command": "npm run test:unit",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:19:43.637Z",
+          "endedUtc": "2026-10-04T18:19:51.598Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/unit-1791137983637.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+          "testGroups": [
+            255,
+            12
+          ]
+        },
+        {
+          "gate": "Integration",
+          "command": "npm run test:integration",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:19:54.704Z",
+          "endedUtc": "2026-10-04T18:20:34.273Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/integration-1791137994703.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+          "testGroups": [
+            132
+          ]
+        },
+        {
+          "gate": "Migration",
+          "command": "npm run test:migration",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:20:37.337Z",
+          "endedUtc": "2026-10-04T18:20:45.779Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/migration-1791138037337.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+          "testGroups": [
+            27
+          ]
+        },
+        {
+          "gate": "Contract",
+          "command": "npm run test:contract",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:20:48.809Z",
+          "endedUtc": "2026-10-04T18:20:50.908Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/contract-1791138048809.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:20:53.947Z",
+          "endedUtc": "2026-10-04T18:20:56.230Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791138053947.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:20:59.174Z",
+          "endedUtc": "2026-10-04T18:21:06.672Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791138059171.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Build",
+          "command": "npm run build",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:21:09.807Z",
+          "endedUtc": "2026-10-04T18:21:19.940Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/build-1791138069806.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+          "testGroups": []
+        },
+        {
+          "gate": "E2E",
+          "command": "npm run test:e2e",
+          "snapshot": "acbc044a9b28d0c278d3aeec655eaaf7b5936d13ff1632198e07ddcbb93c748a",
+          "startedUtc": "2026-10-04T18:22:11.633Z",
+          "endedUtc": "2026-10-04T18:23:54.570Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/e2e-1791138131632.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+          "testGroups": [
+            53
+          ]
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:25:26.842Z",
+          "endedUtc": "2026-10-04T18:25:34.913Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791138326842.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            17
+          ]
+        },
+        {
+          "gate": "RegressionSetup",
+          "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:26:27.953Z",
+          "endedUtc": "2026-10-04T18:26:28.412Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/regressionsetup-1791138387953.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+          "testGroups": []
+        },
+        {
+          "gate": "Unit",
+          "command": "npm run test:unit",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:26:31.236Z",
+          "endedUtc": "2026-10-04T18:26:38.931Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/unit-1791138391235.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+          "testGroups": [
+            255,
+            12
+          ]
+        },
+        {
+          "gate": "Integration",
+          "command": "npm run test:integration",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:26:41.818Z",
+          "endedUtc": "2026-10-04T18:27:20.902Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/integration-1791138401818.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+          "testGroups": [
+            132
+          ]
+        },
+        {
+          "gate": "Migration",
+          "command": "npm run test:migration",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:27:24.010Z",
+          "endedUtc": "2026-10-04T18:27:32.176Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/migration-1791138444009.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+          "testGroups": [
+            27
+          ]
+        },
+        {
+          "gate": "Contract",
+          "command": "npm run test:contract",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:27:34.979Z",
+          "endedUtc": "2026-10-04T18:27:36.956Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/contract-1791138454979.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:27:39.814Z",
+          "endedUtc": "2026-10-04T18:27:41.894Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791138459813.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:27:44.846Z",
+          "endedUtc": "2026-10-04T18:27:52.759Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791138464846.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:28:40.421Z",
+          "endedUtc": "2026-10-04T18:28:48.355Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791138520420.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Build",
+          "command": "npm run build",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:31:07.978Z",
+          "endedUtc": "2026-10-04T18:31:17.730Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/build-1791138667977.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+          "testGroups": []
+        },
+        {
+          "gate": "E2E",
+          "command": "npm run test:e2e",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:31:20.863Z",
+          "endedUtc": "2026-10-04T18:33:02.419Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/e2e-1791138680863.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+          "testGroups": [
+            55
+          ]
+        },
+        {
+          "gate": "Https",
+          "command": "npm run test:e2e:https",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:33:05.407Z",
+          "endedUtc": "2026-10-04T18:33:32.179Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/https-1791138785406.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Https",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "CleanInstall",
+          "command": "node --import=tsx scripts/mail-clean-install.ts",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:33:35.039Z",
+          "endedUtc": "2026-10-04T18:35:07.362Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/cleaninstall-1791138815039.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate CleanInstall",
+          "testGroups": [
+            12
+          ]
+        },
+        {
+          "gate": "SchemaAudit",
+          "command": "npm run test:ihfr:audit:assert-zero",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:36:24.195Z",
+          "endedUtc": "2026-10-04T18:36:24.727Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/schemaaudit-1791138984195.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -DatabaseMode Regression -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SchemaAudit','.mail-validation','test:ihfr:audit:assert-zero')",
+          "testGroups": []
+        },
+        {
+          "gate": "SmtpVerify",
+          "command": "npm run mail:verify",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:38:41.250Z",
+          "endedUtc": "2026-10-04T18:38:44.184Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smtpverify-1791139121250.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SmtpVerify','.mail-validation','mail:verify')",
+          "testGroups": []
+        },
+        {
+          "gate": "SmtpVerify",
+          "command": "npm run mail:verify",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T18:50:09.226Z",
+          "endedUtc": "2026-10-04T18:50:12.568Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smtpverify-1791139809225.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SmtpVerify','.mail-validation','mail:verify')",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+          "startedUtc": "2026-10-04T19:00:51.641Z",
+          "endedUtc": "2026-10-04T19:03:14.549Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791140451641.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        }
+      ],
+      "smtp": {
+        "diagnosticFailureClass": "AUTHENTICATION",
+        "realSmoke": "NAO_EXECUTADO",
+        "inboxObservation": "NOT_OBSERVED"
+      },
+      "manualSecurity": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T18:52:59.548Z",
+        "endedUtc": "2026-10-04T18:53:05.293Z",
+        "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+        "productionAudit": {
+          "command": "npm audit --omit=dev --json",
+          "exitCode": 0,
+          "counts": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          }
+        },
+        "fullAudit": {
+          "command": "npm audit --json",
+          "exitCode": 1,
+          "counts": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 10,
+            "critical": 0,
+            "total": 10
+          },
+          "classification": "PREEXISTING_DEV_FINDINGS"
+        },
+        "affectedLockRecords": 18,
+        "affectedRecordsIdenticalToHead": true,
+        "bundleScan": {
+          "command": "rg -l <mail-secret-and-runtime-patterns> .next/static",
+          "exitCode": 1,
+          "matchingFiles": 0,
+          "result": "PASS"
+        },
+        "setup": {
+          "presence": {
+            "SMTP_HOST": true,
+            "SMTP_PORT": true,
+            "SMTP_SECURE": true,
+            "SMTP_REQUIRE_TLS": true,
+            "SMTP_USER": true,
+            "SMTP_APP_PASSWORD": true,
+            "MAIL_FROM": true,
+            "APP_PUBLIC_URL": true,
+            "MAIL_PAYLOAD_ENCRYPTION_KEYS": true,
+            "MAIL_PAYLOAD_ACTIVE_KEY_ID": true,
+            "MAIL_IDEMPOTENCY_KEY": true,
+            "MAIL_WORKER_SECRET": true,
+            "MAIL_SMOKE_CONFIRMATION": true,
+            "MAIL_SMOKE_RECIPIENT": true,
+            "MAIL_SMOKE_ALLOWED_RECIPIENT": true
+          },
+          "structure": true,
+          "confirmationReady": true,
+          "allowlistReady": true,
+          "authentication": "FAIL_AUTHENTICATION",
+          "valuesRecorded": false
+        }
+      },
+      "staticReview": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "checkedUtc": "2026-10-04T18:56:42.589Z",
+        "snapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+        "attachmentsCompared": 8,
+        "attachmentsUnchanged": false,
+        "attachmentChecks": [
+          {
+            "file": "src/app/api/server/mail.zip",
+            "exists": true,
+            "unchanged": true
+          },
+          {
+            "file": "revisao-execucao-01-emails.zip",
+            "exists": true,
+            "unchanged": true
+          },
+          {
+            "file": "execucao-01-continuacao-emails-sol-ultra.md",
+            "exists": true,
+            "unchanged": true
+          },
+          {
+            "file": "execucao-01-emails-sol-ultra.md",
+            "exists": true,
+            "unchanged": true
+          },
+          {
+            "file": "docs/plans/active/contas-rascunhos-imagens.zip",
+            "exists": true,
+            "unchanged": true
+          },
+          {
+            "file": "imp006-final-stat.txt",
+            "exists": false,
+            "unchanged": false
+          },
+          {
+            "file": "imp006-final-status.txt",
+            "exists": false,
+            "unchanged": false
+          },
+          {
+            "file": "imp006-final.diff",
+            "exists": false,
+            "unchanged": false
+          }
+        ],
+        "indexEmpty": true,
+        "instructionsUnchanged": true,
+        "diffCheck": "PASS"
+      },
+      "closingPrivateCheck": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "checkedUtc": "2026-10-04T19:06:31.590Z",
+        "artifactsChecked": 88,
+        "documentsChecked": 11,
+        "matchingFiles": 0,
+        "brokenLocalLinks": 0,
+        "valuesRecorded": false,
+        "result": "PASS"
+      },
+      "privateAudit": {
+        "schemaVersion": 1,
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T19:01:29.239Z",
+        "status": "PASS",
+        "checks": {
+          "privateFile": {
+            "name": ".env",
+            "exists": true,
+            "ignored": true,
+            "tracked": false,
+            "staged": false,
+            "acl": {
+              "InheritanceProtected": true,
+              "AllowCurrentUser": true,
+              "AllowSystem": true,
+              "UnexpectedAllowPrincipalCount": 0,
+              "InheritedRuleCount": 0
+            }
+          },
+          "cryptographicSetup": {
+            "keyringValid": true,
+            "keyringEntryCount": 1,
+            "activeKeyValid": true,
+            "hmac32ByteCanonicalBase64": true,
+            "worker32ByteCanonicalBase64url": true,
+            "independentDecodedKeys": true,
+            "availableJwtAndPasswordComparisonValueCount": 2,
+            "reuseFindingCount": 0
+          },
+          "smtpStructure": {
+            "mailboxValidity": {
+              "SMTP_USER": true,
+              "MAIL_FROM": true,
+              "MAIL_SMOKE_RECIPIENT": true,
+              "MAIL_SMOKE_ALLOWED_RECIPIENT": true
+            },
+            "appPasswordPresent": true,
+            "appPasswordFormatValid": true,
+            "smtpDefaultsValid": true,
+            "mailFromMatchesUser": true,
+            "smokeRecipientMatchesAllowlist": true,
+            "smokeAcknowledgementPresent": true,
+            "publicUrlValid": true,
+            "authentication": "NOT_PERFORMED_BY_AUDITOR"
+          },
+          "privateFormCleanup": {
+            "recordedFormProcessAlive": false,
+            "configuredCredentialAfterPasswordOnlyUpdatePresent": true,
+            "temporaryMailFormCandidateCount": 0,
+            "unexpectedRootEnvironmentFileCount": 0,
+            "helperRetained": true,
+            "helperAndMetadataScannedWithoutSecretValues": true
+          },
+          "reportFile": {
+            "name": ".mail-validation/private-setup-audit-final.json",
+            "ignored": true,
+            "tracked": false,
+            "historicalIntermediateIgnored": true,
+            "historicalIntermediateTracked": false
+          },
+          "snapshotMatchesExpectedPrefix": true
+        },
+        "scopes": [
+          {
+            "name": "git-all-refs-and-reflog",
+            "objectsScanned": 3490,
+            "objectTypes": {
+              "commit": 257,
+              "tree": 1689,
+              "blob": 1544
+            },
+            "bytesScanned": 30913055,
+            "capturedBytes": 31093243,
+            "matchOccurrences": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "versioned-workspace",
+            "filesScanned": 663,
+            "bytesScanned": 13286397,
+            "matchOccurrences": 0,
+            "skippedCount": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "untracked-task-scope",
+            "filesScanned": 35,
+            "bytesScanned": 278880,
+            "matchOccurrences": 0,
+            "skippedCount": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "mail-validation-logs",
+            "filesScanned": 72,
+            "bytesScanned": 587079,
+            "matchOccurrences": 0,
+            "skippedCount": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "next-client-static",
+            "filesScanned": 72,
+            "bytesScanned": 5536930,
+            "matchOccurrences": 0,
+            "skippedCount": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "current-user-existing-psreadline-history",
+            "filesScanned": 1,
+            "bytesScanned": 10201,
+            "matchOccurrences": 0,
+            "skippedCount": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "private-form-artifacts",
+            "filesScanned": 4,
+            "bytesScanned": 16383,
+            "matchOccurrences": 0,
+            "skippedCount": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "private-form-temporary-candidates",
+            "filesScanned": 0,
+            "bytesScanned": 0,
+            "matchOccurrences": 0,
+            "skippedCount": 0,
+            "result": "PASS"
+          }
+        ],
+        "findings": [],
+        "limits": {
+          "maximumCapturedBytes": 268435456,
+          "matching": "CURRENT_LITERAL_SECRETS_AND_CASE_INSENSITIVE_CURRENT_MAILBOX_PII",
+          "gitObjects": "ALL_REFS_AND_REFLOG_REACHABLE_OBJECTS",
+          "privateAtRestExcluded": [
+            ".env"
+          ],
+          "compressedArchives": "RAW_BYTES_ONLY_NO_ARCHIVE_EXPANSION",
+          "smtpAccessed": false,
+          "databaseAccessed": false,
+          "testsExecuted": false,
+          "historyScope": "CURRENT_USER_CONFIGURED_AND_STANDARD_PSREADLINE_LOCATIONS_ONLY",
+          "reuseScope": "AVAILABLE_PROCESS_AND_LOCAL_ENV_JWT_PASSWORD_VALUES_ONLY",
+          "liveFiles": "CURRENT_READ_SNAPSHOT;NEW_WRITES_OR_CREDENTIAL_REPLACEMENT_REQUIRE_RECHECK",
+          "credentialSnapshot": "READ_ONCE_AT_AUDIT_START"
+        },
+        "auditCorrection": {
+          "priorReportPreserved": ".mail-validation/private-setup-audit-intermediate-20261004185742792.json",
+          "reason": "PRIOR_AUDITOR_FORMAT_REGEX_WAS_STRICTER_THAN_RUNTIME",
+          "currentPasswordFormatRule": "RAW_ASCII_ALPHANUMERIC_OR_SPACE_16_TO_32_AND_NORMALIZED_ASCII_ALPHANUMERIC_16"
+        },
+        "functionalSnapshotSha256": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+        "endedUtc": "2026-10-04T19:01:31.586Z"
+      },
+      "commits": []
+    },
+    {
+      "classification": "EVIDENCIA_IMPLEMENTACAO",
+      "phase": "gmail-authentication-diagnosis",
+      "generatedUtc": "2026-10-04T20:05:30.303Z",
+      "authorization": "User requested official-documentation investigation after Google account reports app passwords unavailable; preserve R1/private setup, do not implement architecture changes; subsequent user request authorized one existing-configuration SMTP verify retry without message or new secret",
+      "branch": "feat/mail-foundation",
+      "base": "3102b07a0a3f0f15e10d6d0646036a6ba7c8beb3",
+      "functionalSnapshotSha256": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+      "gate": "BLOQUEIO_DE_SETUP",
+      "priorTestsPreservedAtSnapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+      "runtimeReimplemented": false,
+      "internalKeysRegenerated": false,
+      "migrationsCreated": [],
+      "initialInspection": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "checkedUtc": "2026-10-04T19:37:35.377Z",
+        "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+        "head": "3102b07a0a3f0f15e10d6d0646036a6ba7c8beb3",
+        "branch": "feat/mail-foundation",
+        "indexEmpty": true,
+        "preservedFiles": [
+          {
+            "file": "src/app/api/server/mail.zip",
+            "present": true,
+            "matchesInitialHash": false
+          },
+          {
+            "file": "revisao-execucao-01-emails.zip",
+            "present": true,
+            "matchesInitialHash": true
+          },
+          {
+            "file": "execucao-01-continuacao-emails-sol-ultra.md",
+            "present": true,
+            "matchesInitialHash": true
+          },
+          {
+            "file": "execucao-01-emails-sol-ultra.md",
+            "present": true,
+            "matchesInitialHash": true
+          },
+          {
+            "file": "docs/plans/active/contas-rascunhos-imagens.zip",
+            "present": true,
+            "matchesInitialHash": true
+          },
+          {
+            "file": "imp006-final-stat.txt",
+            "present": true,
+            "matchesInitialHash": true
+          },
+          {
+            "file": "imp006-final-status.txt",
+            "present": true,
+            "matchesInitialHash": true
+          },
+          {
+            "file": "imp006-final.diff",
+            "present": true,
+            "matchesInitialHash": true
+          }
+        ],
+        "restorationPerformedByAgent": false
+      },
+      "precedence": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T20:04:32.554Z",
+        "endedUtc": "2026-10-04T20:04:32.962Z",
+        "rootPrivateFile": ".env",
+        "selectedFileIsRootPrivateFile": true,
+        "selectedFileMatchesRootMailFields": true,
+        "controlPresence": {
+          "DOTENV_CONFIG_PATH": {
+            "process": false,
+            "user": false,
+            "machine": false
+          },
+          "DOTENV_CONFIG_OVERRIDE": {
+            "process": false,
+            "user": false,
+            "machine": false
+          },
+          "DOTENV_CONFIG_ENCODING": {
+            "process": false,
+            "user": false,
+            "machine": false
+          },
+          "NODE_OPTIONS": {
+            "process": false,
+            "user": false,
+            "machine": false
+          }
+        },
+        "cwdIsRepositoryRoot": true,
+        "precedence": [
+          {
+            "name": "SMTP_HOST",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_PORT",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_SECURE",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_REQUIRE_TLS",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_USER",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_APP_PASSWORD",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_FROM",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "APP_PUBLIC_URL",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_PAYLOAD_ENCRYPTION_KEYS",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_PAYLOAD_ACTIVE_KEY_ID",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_IDEMPOTENCY_KEY",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_WORKER_SECRET",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_SMOKE_CONFIRMATION",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_SMOKE_RECIPIENT",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_SMOKE_ALLOWED_RECIPIENT",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          }
+        ],
+        "collectorEffective": [
+          {
+            "name": "SMTP_HOST",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_PORT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_SECURE",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_REQUIRE_TLS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_USER",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_APP_PASSWORD",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_FROM",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "APP_PUBLIC_URL",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ENCRYPTION_KEYS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ACTIVE_KEY_ID",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_IDEMPOTENCY_KEY",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_WORKER_SECRET",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_CONFIRMATION",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_RECIPIENT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_ALLOWED_RECIPIENT",
+            "matchesLatestFile": true
+          }
+        ],
+        "cliEffective": [
+          {
+            "name": "SMTP_HOST",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_PORT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_SECURE",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_REQUIRE_TLS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_USER",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_APP_PASSWORD",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_FROM",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "APP_PUBLIC_URL",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ENCRYPTION_KEYS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ACTIVE_KEY_ID",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_IDEMPOTENCY_KEY",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_WORKER_SECRET",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_CONFIRMATION",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_RECIPIENT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_ALLOWED_RECIPIENT",
+            "matchesLatestFile": true
+          }
+        ],
+        "staleProcessOverrides": [],
+        "stalePersistedOverrides": [],
+        "latestFileUsedByCollectorAndCli": true,
+        "mailbox": {
+          "formatValid": true,
+          "fourRolesMatch": true,
+          "personalGmailDomain": true,
+          "passwordAccountBinding": "NOT_DERIVABLE_FROM_APP_PASSWORD"
+        },
+        "appPassword": {
+          "present": true,
+          "rawContractFormatValid": true,
+          "normalizedContractFormatValid": true,
+          "matchesAnyAvailableJwt": false
+        },
+        "valuesRecorded": false,
+        "smtpConnected": false
+      },
+      "smtpDiagnosticHistory": [
+        {
+          "classification": "EVIDENCIA_IMPLEMENTACAO",
+          "startedUtc": "2026-10-04T19:39:22.149Z",
+          "endedUtc": "2026-10-04T19:39:24.148Z",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "result": "FAIL",
+          "failureClass": "AUTHENTICATION",
+          "serverDiagnostic": null,
+          "latestFileUsed": true,
+          "transport": "EXISTING_PROJECT_ADAPTER_VERIFY_ONLY",
+          "messageSent": false,
+          "valuesRecorded": false
+        },
+        {
+          "classification": "EVIDENCIA_IMPLEMENTACAO",
+          "startedUtc": "2026-10-04T19:40:10.720Z",
+          "endedUtc": "2026-10-04T19:40:12.174Z",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "result": "FAIL",
+          "failureClass": "AUTHENTICATION",
+          "serverDiagnostic": {
+            "code": "EAUTH",
+            "responseCode": 535,
+            "phase": "AUTH",
+            "reason": "CREDENTIALS_REJECTED",
+            "rawResponseRecorded": false
+          },
+          "latestFileUsed": true,
+          "transport": "EXISTING_PROJECT_ADAPTER_VERIFY_ONLY",
+          "messageSent": false,
+          "valuesRecorded": false
+        },
+        {
+          "classification": "EVIDENCIA_IMPLEMENTACAO",
+          "startedUtc": "2026-10-04T20:04:35.682Z",
+          "endedUtc": "2026-10-04T20:04:37.455Z",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "result": "FAIL",
+          "failureClass": "AUTHENTICATION",
+          "serverDiagnostic": {
+            "code": "EAUTH",
+            "responseCode": 535,
+            "phase": "AUTH",
+            "reason": "CREDENTIALS_REJECTED",
+            "rawResponseRecorded": false
+          },
+          "latestFileUsed": true,
+          "transport": "EXISTING_PROJECT_ADAPTER_VERIFY_ONLY",
+          "messageSent": false,
+          "valuesRecorded": false
+        }
+      ],
+      "smtpDiagnostic": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T20:04:35.682Z",
+        "endedUtc": "2026-10-04T20:04:37.455Z",
+        "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+        "result": "FAIL",
+        "failureClass": "AUTHENTICATION",
+        "serverDiagnostic": {
+          "code": "EAUTH",
+          "responseCode": 535,
+          "phase": "AUTH",
+          "reason": "CREDENTIALS_REJECTED",
+          "rawResponseRecorded": false
+        },
+        "latestFileUsed": true,
+        "transport": "EXISTING_PROJECT_ADAPTER_VERIFY_ONLY",
+        "messageSent": false,
+        "valuesRecorded": false
+      },
+      "googleAccountLocalCheck": {
+        "checkedUtc": "2026-10-04T19:46:25.2454078Z",
+        "googleAccountChecked": true,
+        "googleAccountMatchesConfigured": true,
+        "provenance": "USER_LOCAL_ENTRY_FROM_GOOGLE_PAGE",
+        "valuesRecorded": false
+      },
+      "accountMethodBlock": {
+        "classification": "FATO_DOCUMENTADO",
+        "recordedUtc": "2026-10-04T20:05:22.983Z",
+        "provenance": "USER_DIRECT_REPORT_FROM_AUTHENTICATED_GOOGLE_ACCOUNT_UI",
+        "reportedDate": "2026-10-04",
+        "message": "A configuração que você está procurando não está disponível para sua conta.",
+        "method": "GMAIL_SMTP_APP_PASSWORD",
+        "status": "BLOQUEIO_DE_SETUP",
+        "reason": "GOOGLE_APP_PASSWORDS_UNAVAILABLE",
+        "twoStepVerification": {
+          "reportedStatus": "ENABLED",
+          "provenance": "USER_REPLY_TO_SINGLE_ACCOUNT_STATUS_QUESTION"
+        },
+        "specificCause": "ADVANCED_PROTECTION_IS_SUFFICIENT_RESTRICTION_FOR_APP_PASSWORD_METHOD",
+        "advancedProtectionStatus": "ENABLED_USER_REPORTED",
+        "appPasswordFormClosed": true,
+        "newPasswordSavedByLastForm": false,
+        "furtherCredentialCollectionSuspended": true,
+        "furtherSmtpRetriesSuspended": true,
+        "architectureChangeAuthorized": false,
+        "architectureChangesImplemented": false,
+        "comparison": "specs/mail-foundation/research.md",
+        "valuesRecorded": false,
+        "advancedProtectionProvenance": "USER_REPLY_TO_SPECIFIC_ADVANCED_PROTECTION_STATUS_QUESTION",
+        "causeClassification": "INFERENCIA",
+        "causeSource": "https://support.google.com/accounts/answer/7539956?hl=pt-BR",
+        "causeLimit": "Does not establish the exclusive cause of the historical SMTP 535 response",
+        "recommendation": "Preserve account protection; another eligible explicitly authorized Gmail test mailbox preserves current architecture and contract",
+        "anotherMailboxAvailable": "NOT_REPORTED",
+        "anotherMailboxConfigured": false,
+        "anotherMailboxAuthorized": false,
+        "newSmtpAttemptPerformed": true,
+        "privateSetupChanged": false,
+        "oauthEligibility": "Sensitive Gmail access requires verified third-party app under this account policy; own unverified OAuth client is not a demonstrated workaround",
+        "messageEncodingCorrected": true,
+        "oneRetryAuthorization": {
+          "classification": "FATO_DOCUMENTADO",
+          "provenance": "SUBSEQUENT_EXPLICIT_USER_REQUEST",
+          "request": "vamos tentar logar novamente por favor",
+          "scope": "ONE_EXISTING_CONFIGURATION_VERIFY_ONLY_NO_MESSAGE_NO_NEW_SECRET_NO_ARCHITECTURE_CHANGE"
+        },
+        "authorizedRetry": {
+          "classification": "EVIDENCIA_IMPLEMENTACAO",
+          "startedUtc": "2026-10-04T20:04:35.682Z",
+          "endedUtc": "2026-10-04T20:04:37.455Z",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "result": "FAIL",
+          "failureClass": "AUTHENTICATION",
+          "serverDiagnostic": {
+            "code": "EAUTH",
+            "responseCode": 535,
+            "phase": "AUTH",
+            "reason": "CREDENTIALS_REJECTED",
+            "rawResponseRecorded": false
+          },
+          "latestFileUsed": true,
+          "transport": "EXISTING_PROJECT_ADAPTER_VERIFY_ONLY",
+          "messageSent": false,
+          "valuesRecorded": false
+        },
+        "retrySucceeded": false
+      },
+      "focalScopeReview": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "checkedUtc": "2026-10-04T19:59:32.610Z",
+        "sourcePathsChecked": 418,
+        "sourcePathsChangedSinceFocalManifest": 0,
+        "appPasswordFormClosed": true,
+        "newPasswordSavedByLastForm": false,
+        "localCodeReimplemented": false,
+        "valuesRecorded": false,
+        "reviewedUtc": "2026-10-04T20:05:22.984Z",
+        "priorContinuationsUnchanged": true,
+        "relativeReferencesChecked": 21,
+        "missingReferences": 0,
+        "gitDiffCheck": "PASS",
+        "indexEmpty": true,
+        "headUnchanged": true,
+        "mandatoryGateRemainsBlocked": true,
+        "jsonParses": true,
+        "architectureChangeImplemented": false,
+        "smtpRetried": true,
+        "privateConfigurationModified": false,
+        "retryAuthorization": "ONE_SUBSEQUENT_EXPLICIT_USER_REQUEST",
+        "retryResult": "FAIL",
+        "messageSent": false
+      },
+      "privateAudit": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T20:05:25.550Z",
+        "endedUtc": "2026-10-04T20:05:27.355Z",
+        "status": "PASS",
+        "checks": {
+          "ignored": true,
+          "tracked": false,
+          "staged": false,
+          "acl": {
+            "unexpectedAllowPrincipals": 0,
+            "inheritanceProtected": true
+          },
+          "independentKeys": true,
+          "privateConfigurationUnchangedDuringAudit": true
+        },
+        "scopes": [
+          {
+            "name": "versioned-workspace",
+            "filesScanned": 663,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "untracked-task-scope",
+            "filesScanned": 35,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "private-diagnostic-artifacts",
+            "filesScanned": 106,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "next-client-static",
+            "filesScanned": 72,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "standard-current-user-powershell-history",
+            "filesScanned": 1,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "git-refs-and-reflog",
+            "objectsScanned": 3486,
+            "bytesCaptured": 31265535,
+            "matchingContent": false,
+            "result": "PASS"
+          }
+        ],
+        "valuesRecorded": false,
+        "smtpConnected": false,
+        "limits": {
+          "matching": "CURRENT_LITERAL_SECRETS_AND_CASE_INSENSITIVE_MAILBOX",
+          "privateAtRestExcluded": ".env",
+          "archives": "RAW_BYTES;mail.zip module identity inspected separately",
+          "history": "STANDARD_CURRENT_USER_PSREADLINE_PATH",
+          "liveFiles": "READ_AT_RECORDED_TIME"
+        }
+      },
+      "snapshotProvenance": {
+        "classification": "INFERENCIA",
+        "changedPreexistingArchive": "src/app/api/server/mail.zip",
+        "archiveMatchesCurrentModules": 9,
+        "onlyCollectorPathWithMtimeAfterPriorR1": "src/app/api/server/mail.zip",
+        "limitation": "Modification times do not prove all historical source bytes unchanged; no collector algorithm change"
+      },
+      "finalGates": [],
+      "collectorHistory": [],
+      "realSmoke": "NAO_EXECUTADO",
+      "inboxObservation": "NOT_OBSERVED",
+      "commits": [],
+      "valuesRecorded": false
+    },
+    {
+      "classification": "EVIDENCIA_IMPLEMENTACAO",
+      "phase": "gmail-fresh-credential-setup",
+      "generatedUtc": "2026-10-04T20:35:57.348Z",
+      "startedUtc": "2026-10-04T20:13:15.749Z",
+      "authorization": "Subsequent user reports 2FA enabled and app passwords available; explicitly requests private window, new app password, SMTP diagnosis; previous rejected password must not be reused",
+      "accountAvailability": {
+        "classification": "FATO_DOCUMENTADO",
+        "provenance": "LATEST_USER_REQUEST",
+        "twoStepVerification": "ENABLED_USER_REPORTED",
+        "appPasswords": "AVAILABLE_USER_REPORTED",
+        "accountEligibilityIndependentlyObserved": false,
+        "causeOfAvailabilityChange": "NOT_DETERMINED"
+      },
+      "branch": "feat/mail-foundation",
+      "base": "3102b07a0a3f0f15e10d6d0646036a6ba7c8beb3",
+      "functionalSnapshotSha256": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+      "gate": "PASS",
+      "reason": "ALL_MANDATORY_GATES_AND_REVIEWS_PASSED",
+      "pendingGates": [],
+      "priorTestsPreservedAtSnapshot": "c09e78f8536a029b15be66434f19586f6e2b07c18d9126e73ad13bef734df797",
+      "sourcePathsChecked": 418,
+      "sourceChangesSinceFocalManifest": 0,
+      "privateUi": {
+        "processId": 17132,
+        "startedUtc": "2026-10-04T20:16:29.8143295Z",
+        "helper": ".mail-validation/setup-gmail-private.ps1",
+        "mode": "RequireFreshPassword",
+        "syntaxPassed": true,
+        "dryFormPassed": true,
+        "writerConfirmationPassed": true
+      },
+      "privateSetup": {
+        "configured": true,
+        "senderSet": true,
+        "appPasswordSet": true,
+        "googleAccountChecked": false,
+        "googleAccountMatchesConfigured": false,
+        "freshPasswordRequired": true,
+        "freshPasswordAccepted": true,
+        "protectedConfigurationPreserved": true
+      },
+      "privateSetupDiagnostics": {
+        "startupFailed": false,
+        "saveFailed": false,
+        "cancelled": false,
+        "windowShown": true,
+        "saveFailureType": null,
+        "saveFailureLine": null
+      },
+      "freshPasswordRequired": true,
+      "previousPasswordReusePreventedInLocalForm": true,
+      "atomicMailboxAndPasswordSave": true,
+      "syntaxCheck": "PASS",
+      "saveConfirmationCheck": {
+        "result": "PASS",
+        "bytesUnchanged": true,
+        "aclUnchanged": true
+      },
+      "syntheticFormCheck": {
+        "result": "PASS",
+        "writerStubbed": true,
+        "realPrivateConfigurationWritten": false
+      },
+      "initialFormAttempt": {
+        "configured": false,
+        "saveFailed": true,
+        "protectedConfigurationPreserved": true,
+        "cause": "NOT_DETERMINED",
+        "safeFailureDiagnosticsAdded": true,
+        "historyPreserved": true
+      },
+      "precedence": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T20:18:09.352Z",
+        "endedUtc": "2026-10-04T20:18:09.818Z",
+        "rootPrivateFile": ".env",
+        "selectedFileIsRootPrivateFile": true,
+        "selectedFileMatchesRootMailFields": true,
+        "controlPresence": {
+          "DOTENV_CONFIG_PATH": {
+            "process": false,
+            "user": false,
+            "machine": false
+          },
+          "DOTENV_CONFIG_OVERRIDE": {
+            "process": false,
+            "user": false,
+            "machine": false
+          },
+          "DOTENV_CONFIG_ENCODING": {
+            "process": false,
+            "user": false,
+            "machine": false
+          },
+          "NODE_OPTIONS": {
+            "process": false,
+            "user": false,
+            "machine": false
+          }
+        },
+        "cwdIsRepositoryRoot": true,
+        "precedence": [
+          {
+            "name": "SMTP_HOST",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_PORT",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_SECURE",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_REQUIRE_TLS",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_USER",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "SMTP_APP_PASSWORD",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_FROM",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "APP_PUBLIC_URL",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_PAYLOAD_ENCRYPTION_KEYS",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_PAYLOAD_ACTIVE_KEY_ID",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_IDEMPOTENCY_KEY",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_WORKER_SECRET",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_SMOKE_CONFIRMATION",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_SMOKE_RECIPIENT",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          },
+          {
+            "name": "MAIL_SMOKE_ALLOWED_RECIPIENT",
+            "filePresent": true,
+            "inheritedPresent": false,
+            "inheritedMatchesLatestFile": null,
+            "userPresent": false,
+            "userMatchesLatestFile": null,
+            "machinePresent": false,
+            "machineMatchesLatestFile": null
+          }
+        ],
+        "collectorEffective": [
+          {
+            "name": "SMTP_HOST",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_PORT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_SECURE",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_REQUIRE_TLS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_USER",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_APP_PASSWORD",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_FROM",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "APP_PUBLIC_URL",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ENCRYPTION_KEYS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ACTIVE_KEY_ID",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_IDEMPOTENCY_KEY",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_WORKER_SECRET",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_CONFIRMATION",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_RECIPIENT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_ALLOWED_RECIPIENT",
+            "matchesLatestFile": true
+          }
+        ],
+        "cliEffective": [
+          {
+            "name": "SMTP_HOST",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_PORT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_SECURE",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_REQUIRE_TLS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_USER",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "SMTP_APP_PASSWORD",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_FROM",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "APP_PUBLIC_URL",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ENCRYPTION_KEYS",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_PAYLOAD_ACTIVE_KEY_ID",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_IDEMPOTENCY_KEY",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_WORKER_SECRET",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_CONFIRMATION",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_RECIPIENT",
+            "matchesLatestFile": true
+          },
+          {
+            "name": "MAIL_SMOKE_ALLOWED_RECIPIENT",
+            "matchesLatestFile": true
+          }
+        ],
+        "staleProcessOverrides": [],
+        "stalePersistedOverrides": [],
+        "latestFileUsedByCollectorAndCli": true,
+        "mailbox": {
+          "formatValid": true,
+          "fourRolesMatch": true,
+          "personalGmailDomain": true,
+          "passwordAccountBinding": "NOT_DERIVABLE_FROM_APP_PASSWORD"
+        },
+        "appPassword": {
+          "present": true,
+          "rawContractFormatValid": true,
+          "normalizedContractFormatValid": true,
+          "matchesAnyAvailableJwt": false
+        },
+        "valuesRecorded": false,
+        "smtpConnected": false
+      },
+      "smtpDiagnostic": {
+        "gate": "SmtpVerify",
+        "command": "npm run mail:verify",
+        "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+        "startedUtc": "2026-10-04T20:18:17.545Z",
+        "endedUtc": "2026-10-04T20:18:19.704Z",
+        "exitCode": 0,
+        "result": "PASS",
+        "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+        "log": ".mail-validation\\smtpverify-1791145097543.log"
+      },
+      "privateAudit": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T20:35:52.681Z",
+        "endedUtc": "2026-10-04T20:35:54.405Z",
+        "status": "PASS",
+        "checks": {
+          "ignored": true,
+          "tracked": false,
+          "staged": false,
+          "acl": {
+            "unexpectedAllowPrincipals": 0,
+            "inheritanceProtected": true
+          },
+          "independentKeys": true,
+          "privateConfigurationUnchangedDuringAudit": true
+        },
+        "scopes": [
+          {
+            "name": "versioned-workspace",
+            "filesScanned": 694,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "untracked-task-scope",
+            "filesScanned": 4,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "private-diagnostic-artifacts",
+            "filesScanned": 147,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "next-client-static",
+            "filesScanned": 72,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "standard-current-user-powershell-history",
+            "filesScanned": 1,
+            "matchingFiles": 0,
+            "result": "PASS"
+          },
+          {
+            "name": "git-refs-and-reflog",
+            "objectsScanned": 3498,
+            "bytesCaptured": 31338688,
+            "matchingContent": false,
+            "result": "PASS"
+          }
+        ],
+        "valuesRecorded": false,
+        "smtpConnected": false,
+        "limits": {
+          "matching": "CURRENT_LITERAL_SECRETS_AND_CASE_INSENSITIVE_MAILBOX",
+          "privateAtRestExcluded": ".env",
+          "archives": "RAW_BYTES;mail.zip module identity inspected separately",
+          "history": "STANDARD_CURRENT_USER_PSREADLINE_PATH",
+          "liveFiles": "READ_AT_RECORDED_TIME"
+        }
+      },
+      "dependencySecurity": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "startedUtc": "2026-10-04T20:22:24.077Z",
+        "endedUtc": "2026-10-04T20:22:27.529Z",
+        "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+        "productionAudit": {
+          "command": "npm audit --omit=dev --json",
+          "exitCode": 0,
+          "counts": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          }
+        },
+        "fullAudit": {
+          "command": "npm audit --json",
+          "exitCode": 1,
+          "counts": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 10,
+            "critical": 0,
+            "total": 10
+          },
+          "classification": "PREEXISTING_DEV_FINDINGS"
+        },
+        "affectedLockRecords": 18,
+        "affectedRecordsIdenticalToBaseline": true,
+        "allAffectedRecordsDevOnly": true,
+        "valuesRecorded": false
+      },
+      "finalScopeReview": {
+        "classification": "EVIDENCIA_IMPLEMENTACAO",
+        "checkedUtc": "2026-10-04T20:35:49.884Z",
+        "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+        "result": "PASS",
+        "sourcePathsChecked": 418,
+        "sourceChangesSinceFocalManifest": 0,
+        "trackedChangesInScope": true,
+        "preservedOutsideScope": [
+          "AGENTS.md"
+        ],
+        "preservedOutsideScopeProvenance": "NEXT_DEV_MANAGED_AGENTS_BLOCK_VERIFIED_AGAINST_INSTALLED_GENERATOR;NOT_STAGED",
+        "attachmentsPreserved": true,
+        "attachments": [
+          {
+            "file": "src/app/api/server/mail.zip",
+            "present": true,
+            "matchesOriginalHash": false,
+            "matchesFocalManifest": true
+          },
+          {
+            "file": "revisao-execucao-01-emails.zip",
+            "present": true,
+            "matchesOriginalHash": true,
+            "matchesFocalManifest": false
+          },
+          {
+            "file": "execucao-01-continuacao-emails-sol-ultra.md",
+            "present": true,
+            "matchesOriginalHash": true,
+            "matchesFocalManifest": false
+          },
+          {
+            "file": "execucao-01-emails-sol-ultra.md",
+            "present": true,
+            "matchesOriginalHash": true,
+            "matchesFocalManifest": false
+          },
+          {
+            "file": "docs/plans/active/contas-rascunhos-imagens.zip",
+            "present": true,
+            "matchesOriginalHash": true,
+            "matchesFocalManifest": false
+          },
+          {
+            "file": "imp006-final-stat.txt",
+            "present": true,
+            "matchesOriginalHash": true,
+            "matchesFocalManifest": false
+          },
+          {
+            "file": "imp006-final-status.txt",
+            "present": true,
+            "matchesOriginalHash": true,
+            "matchesFocalManifest": false
+          },
+          {
+            "file": "imp006-final.diff",
+            "present": true,
+            "matchesOriginalHash": true,
+            "matchesFocalManifest": false
+          }
+        ],
+        "bundleScan": {
+          "result": "PASS",
+          "matchingFiles": 0
+        },
+        "gitDiffCheck": "PASS",
+        "documentsChecked": 10,
+        "relativeReferencesChecked": 27,
+        "missingReferences": 0,
+        "architectureChanged": false,
+        "migrationsCreatedDuringFreshSetup": [],
+        "valuesRecorded": false
+      },
+      "finalGates": [
+        {
+          "gate": "SmtpVerify",
+          "command": "npm run mail:verify",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:17.545Z",
+          "endedUtc": "2026-10-04T20:18:19.704Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smtpverify-1791145097543.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SmtpVerify','.mail-validation','mail:verify')",
+          "testGroups": []
+        },
+        {
+          "gate": "RegressionSetup",
+          "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:42.306Z",
+          "endedUtc": "2026-10-04T20:18:44.749Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/regressionsetup-1791145122305.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+          "testGroups": []
+        },
+        {
+          "gate": "Unit",
+          "command": "npm run test:unit",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:42.161Z",
+          "endedUtc": "2026-10-04T20:19:04.547Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/unit-1791145122160.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+          "testGroups": [
+            255,
+            12
+          ]
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:19:07.979Z",
+          "endedUtc": "2026-10-04T20:19:18.266Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791145147979.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            17
+          ]
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:35:07.654Z",
+          "endedUtc": "2026-10-04T20:35:14.892Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791146107653.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:19:43.312Z",
+          "endedUtc": "2026-10-04T20:20:01.045Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791145183312.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "CleanInstall",
+          "command": "node --import=tsx scripts/mail-clean-install.ts",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:42.220Z",
+          "endedUtc": "2026-10-04T20:20:25.322Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/cleaninstall-1791145122220.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate CleanInstall",
+          "testGroups": [
+            12
+          ]
+        },
+        {
+          "gate": "Integration",
+          "command": "npm run test:integration",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:19:43.472Z",
+          "endedUtc": "2026-10-04T20:20:28.789Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/integration-1791145183472.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+          "testGroups": [
+            132
+          ]
+        },
+        {
+          "gate": "Migration",
+          "command": "npm run test:migration",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:20:44.728Z",
+          "endedUtc": "2026-10-04T20:20:55.176Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/migration-1791145244728.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+          "testGroups": [
+            27
+          ]
+        },
+        {
+          "gate": "Contract",
+          "command": "npm run test:contract",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:21:47.892Z",
+          "endedUtc": "2026-10-04T20:21:54.864Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/contract-1791145307892.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "Build",
+          "command": "npm run build",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:22:13.900Z",
+          "endedUtc": "2026-10-04T20:23:23.425Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/build-1791145333900.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+          "testGroups": []
+        },
+        {
+          "gate": "E2E",
+          "command": "npm run test:e2e",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:23:16.840Z",
+          "endedUtc": "2026-10-04T20:25:20.688Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/e2e-1791145396839.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+          "testGroups": [
+            55
+          ]
+        },
+        {
+          "gate": "Https",
+          "command": "npm run test:e2e:https",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:25:53.093Z",
+          "endedUtc": "2026-10-04T20:26:20.838Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/https-1791145553093.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Https",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "SchemaAudit",
+          "command": "npm run test:ihfr:audit:assert-zero",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:26:33.640Z",
+          "endedUtc": "2026-10-04T20:26:34.278Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/schemaaudit-1791145593640.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -DatabaseMode Regression -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SchemaAudit','.mail-validation','test:ihfr:audit:assert-zero')",
+          "testGroups": []
+        },
+        {
+          "gate": "Smoke",
+          "command": "npm run mail:smoke",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:26:37.171Z",
+          "endedUtc": "2026-10-04T20:26:42.294Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smoke-1791145597170.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','Smoke','.mail-validation','mail:smoke')",
+          "testGroups": []
+        }
+      ],
+      "collectorHistory": [
+        {
+          "gate": "SmtpVerify",
+          "command": "npm run mail:verify",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:17.545Z",
+          "endedUtc": "2026-10-04T20:18:19.704Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smtpverify-1791145097543.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SmtpVerify','.mail-validation','mail:verify')",
+          "testGroups": []
+        },
+        {
+          "gate": "RegressionSetup",
+          "command": "node --import=tsx scripts/imp006-local-regression-setup.ts",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:42.306Z",
+          "endedUtc": "2026-10-04T20:18:44.749Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/regressionsetup-1791145122305.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate RegressionSetup",
+          "testGroups": []
+        },
+        {
+          "gate": "Unit",
+          "command": "npm run test:unit",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:42.161Z",
+          "endedUtc": "2026-10-04T20:19:04.547Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/unit-1791145122160.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Unit",
+          "testGroups": [
+            255,
+            12
+          ]
+        },
+        {
+          "gate": "R1",
+          "command": "npm run test:mail:r1",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:19:07.979Z",
+          "endedUtc": "2026-10-04T20:19:18.266Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/r1-1791145147979.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate R1",
+          "testGroups": [
+            17
+          ]
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:19:43.320Z",
+          "endedUtc": "2026-10-04T20:19:51.785Z",
+          "exitCode": 1,
+          "result": "FAIL",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791145183320.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Typecheck",
+          "command": "npm run typecheck",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:19:43.312Z",
+          "endedUtc": "2026-10-04T20:20:01.045Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/typecheck-1791145183312.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Typecheck",
+          "testGroups": []
+        },
+        {
+          "gate": "CleanInstall",
+          "command": "node --import=tsx scripts/mail-clean-install.ts",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:18:42.220Z",
+          "endedUtc": "2026-10-04T20:20:25.322Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/cleaninstall-1791145122220.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate CleanInstall",
+          "testGroups": [
+            12
+          ]
+        },
+        {
+          "gate": "Integration",
+          "command": "npm run test:integration",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:19:43.472Z",
+          "endedUtc": "2026-10-04T20:20:28.789Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/integration-1791145183472.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Integration",
+          "testGroups": [
+            132
+          ]
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:20:44.625Z",
+          "endedUtc": "2026-10-04T20:20:52.643Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791145244624.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Migration",
+          "command": "npm run test:migration",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:20:44.728Z",
+          "endedUtc": "2026-10-04T20:20:55.176Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/migration-1791145244728.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Migration",
+          "testGroups": [
+            27
+          ]
+        },
+        {
+          "gate": "Contract",
+          "command": "npm run test:contract",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:21:47.892Z",
+          "endedUtc": "2026-10-04T20:21:54.864Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/contract-1791145307892.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Contract",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "Build",
+          "command": "npm run build",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:22:13.900Z",
+          "endedUtc": "2026-10-04T20:23:23.425Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/build-1791145333900.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Build",
+          "testGroups": []
+        },
+        {
+          "gate": "E2E",
+          "command": "npm run test:e2e",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:23:16.840Z",
+          "endedUtc": "2026-10-04T20:25:20.688Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/e2e-1791145396839.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate E2E",
+          "testGroups": [
+            55
+          ]
+        },
+        {
+          "gate": "Https",
+          "command": "npm run test:e2e:https",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:25:53.093Z",
+          "endedUtc": "2026-10-04T20:26:20.838Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/https-1791145553093.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Https",
+          "testGroups": [
+            2
+          ]
+        },
+        {
+          "gate": "SchemaAudit",
+          "command": "npm run test:ihfr:audit:assert-zero",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:26:33.640Z",
+          "endedUtc": "2026-10-04T20:26:34.278Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/schemaaudit-1791145593640.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -DatabaseMode Regression -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','SchemaAudit','.mail-validation','test:ihfr:audit:assert-zero')",
+          "testGroups": []
+        },
+        {
+          "gate": "Smoke",
+          "command": "npm run mail:smoke",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:26:37.171Z",
+          "endedUtc": "2026-10-04T20:26:42.294Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/smoke-1791145597170.log",
+          "invocation": "./scripts/imp006-local-postgresql.ps1 -Action Run -Executable node -CommandArguments @('--import=tsx','scripts/mail-gate-runner.ts','Smoke','.mail-validation','mail:smoke')",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:27:24.829Z",
+          "endedUtc": "2026-10-04T20:27:32.110Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791145644829.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:32:46.407Z",
+          "endedUtc": "2026-10-04T20:32:53.719Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791145966407.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        },
+        {
+          "gate": "Lint",
+          "command": "npm run lint",
+          "snapshot": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+          "startedUtc": "2026-10-04T20:35:07.654Z",
+          "endedUtc": "2026-10-04T20:35:14.892Z",
+          "exitCode": 0,
+          "result": "PASS",
+          "environment": "Windows/Node24.19/owned-loopback-PostgreSQL17",
+          "log": ".mail-validation/lint-1791146107653.log",
+          "invocation": "./scripts/mail-validation.ps1 -Gate Lint",
+          "testGroups": []
+        }
+      ],
+      "runtimeReimplemented": false,
+      "internalKeysRegenerated": false,
+      "migrationsCreated": [],
+      "realSmoke": "PASS",
+      "inboxObservation": "OBSERVED_USER_REPORTED",
+      "inboxEvidence": {
+        "classification": "FATO_DOCUMENTADO",
+        "recordedUtc": "2026-10-04T20:30:32.951Z",
+        "provenance": "USER_EXPLICIT_REPLY_TO_INBOX_RECEIPT_QUESTION",
+        "question": "a mensagem chegou?",
+        "answer": "Sim",
+        "received": true,
+        "smtpAcceptanceRecordedSeparately": true,
+        "valuesRecorded": false
+      },
+      "commits": [
+        {
+          "hash": "a56cc9ea1cd23ee339d3a6c5b0154a07dd1ff917",
+          "title": "feat(mail): add encrypted outbox and lease-fenced Gmail worker",
+          "scope": "foundation, R1, additive migration, contracts, scripts and tests",
+          "gate": "PASS",
+          "localOnly": true
+        }
+      ],
+      "valuesRecorded": false
+    }
+  ],
+  "currentAcceptance": {
+    "classification": "EVIDENCIA_IMPLEMENTACAO",
+    "phase": "gmail-fresh-credential-setup",
+    "gate": "PASS",
+    "functionalSnapshotSha256": "aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8",
+    "mandatoryGatesPassed": 15,
+    "smtpDiagnostic": "PASS",
+    "realSmoke": "PASS",
+    "smtpAccepted": 1,
+    "inboxObservation": "OBSERVED_USER_REPORTED",
+    "inboxProvenance": "USER_EXPLICIT_REPLY_TO_INBOX_RECEIPT_QUESTION",
+    "recordedCommitHashes": [
+      "a56cc9ea1cd23ee339d3a6c5b0154a07dd1ff917"
+    ],
+    "documentationCommitLookup": "git log -1 --format=%H --grep='^docs(mail): record R1 validation and Gmail smoke acceptance$'",
+    "historicalResultsPreserved": true,
+    "valuesRecorded": false
+  }
+}

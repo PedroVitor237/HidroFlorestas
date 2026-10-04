@@ -33,7 +33,7 @@
 
 - [x] T015 Integrar testes nos scripts reais em package.json e rodar regressão/migrations/E2E/HTTPS/typecheck/lint/build/npm ci; registrar evidências em specs/mail-foundation/implementation-evidence.md.
 - [x] T016 Revisar segurança/consistência/snapshot e gate em specs/mail-foundation/implementation-evidence.md (resultado global vigente: PASS no snapshot aedd43d9, incluindo smoke real e confirmação de recebimento).
-- [ ] T017 Somente se gate integral PASS, criar commits locais atômicos e registrar hashes em specs/mail-foundation/implementation-evidence.md.
+- [x] T017 Somente se gate integral PASS, criar commits locais atômicos e registrar hashes em specs/mail-foundation/implementation-evidence.md (infraestrutura commitada após aceite; consolidação operacional/evidências no commit deste fechamento).
 
 ## Dependencies & strategy
 
@@ -75,3 +75,5 @@ Retomada posterior: usuário informou Senhas de app disponível na conta selecio
 ## Fechamento vigente — 2026-10-04
 
 T025 e T014 concluídas no snapshot `aedd43d949cdff51f749a99be541ccd8fece0286d7d03ae6fdf5fc40288ad6a8`: nova senha privada diferente da recusada, SmtpVerify PASS, 15 gates reexecutados PASS e smoke real com uma aceitação SMTP. Recebimento confirmado pelo usuário com “Sim”. Privacidade/bundle/segurança/escopo PASS. As pendências e proibições descritas nas etapas cronológicas anteriores são históricas, preservadas. T017 liberada pelo gate integral, com execução/registro dos commits locais a seguir; nenhuma operação remota autorizada.
+
+T017 concluída após aceite integral: infraestrutura, migration, R1, contratos e testes já commitados; consolidação operacional/histórico neste commit de documentação. Hashes e conferência em implementation-evidence.md, com hash do próprio fechamento consultável pelo Git para evitar autorreferência. Nenhum item desta Execução 1 permanece aberto; pendências de produto/operação para a Execução 2 estão explicitamente fora do recorte.
