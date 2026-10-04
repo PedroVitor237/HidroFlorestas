@@ -110,6 +110,11 @@ async function main() {
           for (const file of files) await database.query(await readFile(file, "utf8"));
         }
         await verifyOwnedSchema(database, name, alreadyExists);
+        if (name === "imp006_regression_v2_test") {
+          // Only this marker-verified synthetic local database; no remote/application migration.
+          const installed = await database.query("SELECT to_regclass('public.\"MailOutbox\"') IS NOT NULL AS present");
+          if (!installed.rows[0].present) await database.query(await readFile("prisma/migrations/20261004000100_mail_foundation/migration.sql", "utf8"));
+        }
         if (!alreadyExists && name === "imp006_regression_v2_test") await database.query(`COMMENT ON SCHEMA public IS '${marker}'`);
       } finally { await database.end(); }
       if (!alreadyExists) await admin.query(`COMMENT ON DATABASE "${name}" IS '${marker}'`);

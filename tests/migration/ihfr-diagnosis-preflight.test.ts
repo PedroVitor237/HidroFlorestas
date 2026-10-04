@@ -37,7 +37,10 @@ test("IMP-006 migration keeps its published slot in the integrated IMP-009 chain
   assert.ok(migrations.indexOf(administrationMigration) < migrations.indexOf(ihfrMigration));
   assert.ok(migrations.indexOf(ihfrMigration) < migrations.indexOf(legacyRemovalMigration));
   assert.ok(migrations.indexOf(legacyRemovalMigration) < migrations.indexOf(lifecycleReferenceMigration));
-  assert.equal(migrations.at(-1), lifecycleReferenceMigration);
+  const mailFoundationMigration = "20261004000100_mail_foundation";
+  assert.equal(existsSync(`prisma/migrations/${mailFoundationMigration}/migration.sql`), true);
+  assert.ok(migrations.indexOf(lifecycleReferenceMigration) < migrations.indexOf(mailFoundationMigration));
+  assert.equal(migrations.at(-1), mailFoundationMigration);
 });
 
 test("legacy, IMP-005 and additive IMP-006 models coexist", () => {

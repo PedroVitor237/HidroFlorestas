@@ -19,6 +19,8 @@ model User {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   revision  Int        @default(0)
+  emailVerifiedAt DateTime? @db.Timestamptz(3)
+  credentialVersion Int @default(0)
 
   laboratoryRooms                  LaboratoryRoom[]
   researchersLinked                ResearchersLinked[]
@@ -30,6 +32,91 @@ model User {
   experimentalIHFRLifecycleEvents  IHFRDiagnosisLifecycleEvent[]     @relation("ExperimentalIHFRLifecycleActor")
   administrativeActions            AdministrativeAuditEvent[]        @relation("AdministrativeActor")
   administrativeChanges            AdministrativeAuditEvent[]        @relation("AdministrativeTarget")
+  accountEmailChallenges           AccountEmailChallenge[]
+}
+
+enum AccountEmailPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum MailTemplate {
+  EMAIL_VERIFICATION_V1
+  PASSWORD_RESET_V1
+}
+
+enum MailOutboxStatus {
+  PENDING
+  PROCESSING
+  SENT
+  DEAD
+  EXPIRED
+  CANCELLED
+}
+
+enum MailFailureClass {
+  CONFIGURATION
+  AUTHENTICATION
+  TLS
+  CONNECTION
+  TIMEOUT
+  TEMPORARY
+  PERMANENT
+  PAYLOAD
+  UNKNOWN
+}
+
+model AccountEmailChallenge {
+  id String @id @default(uuid())
+  userId String
+  purpose AccountEmailPurpose
+  emailBindingMac String @db.VarChar(64)
+  proofDigest String @db.VarChar(64)
+  proofKeyId String @db.VarChar(64)
+  expiresAt DateTime @db.Timestamptz(3)
+  attemptCount Int @default(0)
+  maxAttempts Int
+  consumedAt DateTime? @db.Timestamptz(3)
+  invalidatedAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  messages MailOutbox[]
+  @@index([expiresAt])
+}
+
+model MailOutbox {
+  id String @id @default(uuid())
+  idempotencyKey String @unique @db.VarChar(128)
+  contentMac String @db.VarChar(64)
+  template MailTemplate
+  encryptedPayload Json?
+  challengeId String?
+  status MailOutboxStatus @default(PENDING)
+  attempts Int @default(0)
+  maxAttempts Int @default(5)
+  availableAt DateTime @db.Timestamptz(3)
+  expiresAt DateTime @db.Timestamptz(3)
+  claimToken String?
+  leaseUntil DateTime? @db.Timestamptz(3)
+  lastError MailFailureClass?
+  acceptedAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  challenge AccountEmailChallenge? @relation(fields: [challengeId], references: [id], onDelete: Restrict)
+  @@index([status, availableAt])
+  @@index([leaseUntil])
+  @@index([expiresAt])
+  @@index([challengeId])
+}
+
+model MailRateLimitBucket {
+  subjectMac String @db.VarChar(64)
+  action String @db.VarChar(64)
+  windowStart DateTime @db.Timestamptz(3)
+  windowEnd DateTime @db.Timestamptz(3)
+  count Int
+  @@id([subjectMac, action, windowStart])
+  @@index([windowEnd])
 }
 
 enum UserRole {

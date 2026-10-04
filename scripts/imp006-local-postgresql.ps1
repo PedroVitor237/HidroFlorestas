@@ -68,8 +68,12 @@ function Start-Cluster {
   if (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) {
     throw 'Dedicated PostgreSQL port is occupied by another process.'
   }
-  & $control -D $data -o "-h 127.0.0.1 -p $port" -l (Join-Path $root 'postgresql.log') -w start
-  if ($LASTEXITCODE -ne 0 -or -not (Test-Running)) { throw 'PostgreSQL did not become ready.' }
+  # Detach the daemon's inherited handles from validation output pipelines.
+  $startupLog = Join-Path $root 'postgresql.log'
+  $startup = Start-Process -FilePath $control -ArgumentList @('-D', ('"' + $data + '"'), '-o', ('"-h 127.0.0.1 -p ' + $port + '"'), '-l', ('"' + $startupLog + '"'), '-w', 'start') -WindowStyle Hidden -PassThru
+  # Start-Process -Wait waits for descendants too, including the persistent daemon.
+  if (-not $startup.WaitForExit(30000)) { throw 'PostgreSQL control command did not finish within 30 seconds.' }
+  if ($startup.ExitCode -ne 0 -or -not (Test-Running)) { throw 'PostgreSQL did not become ready.' }
   Write-Output 'IMP-006 PostgreSQL started on loopback.'
 }
 
