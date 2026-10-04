@@ -64,6 +64,8 @@ IDs e estados preservados. A etapa de commits de T028 ocorre após Gate A e ante
 
 - [ ] T028 Criar commits candidatos coerentes após Gate A, e fechar specs/012-account-verification-recovery/handoff.md e estado Gate B em docs/operations/account-homologation-runbook.md.
 
+Parte de commits candidatos de T028 executada: `d341fe402323ddfda705b8546e9aa55886815502`, após Gate A; handoff local e bloqueios registrados. O item continua aberto pelo fechamento dependente de T024/T025/Gate B. Push/deploy/PR não executados. Etapas externas mínimas estão na [evidência](implementation-evidence.md); não representam pedido de nova aprovação das políticas/destinos já confirmados.
+
 ## Evidência de implementação e verificações focais
 
 Os itens marcados cobrem o código/artefatos implementados e as verificações focais, não aceite final do candidato. Execuções em 2026-10-04: unitários 273 PASS (incluem contratos novos e revisão independente de sessões); provas/mail 5 PASS; contrato HTTP 4 PASS; auditoria independente reportou integração de contas 22/22 PASS e migration 6/6 PASS. Unitários de guard local 2 PASS e parser UI 3 PASS. O focal UI12 passou 7/7, snapshot `36f50445eb0fdc925a9781ac8575676fe2659c3ea479dbfcc6155da174413f25`, de 22:22:18.859 a 22:22:55.634 UTC: jornadas reais locais de verificação/reset/troca, entrega pelo worker com transporte sintético, revogação em outro contexto, recuperação antes de verificar e privacidade de URL/GET/storage.

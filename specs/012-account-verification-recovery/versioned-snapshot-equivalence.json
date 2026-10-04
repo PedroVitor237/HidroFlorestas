@@ -1,11 +1,11 @@
 {
   "classification": "EVIDENCIA_IMPLEMENTACAO",
   "result": "PASS",
-  "recordedUtc": "2026-10-04T22:47:46.589Z",
+  "recordedUtc": "2026-10-04T22:49:51.587Z",
   "sourceFingerprint": "cc77f24e65c66fbe2b56e248698ea2b710400d92490cfa352ba6fe5fc651dbaa",
   "functionalFiles": 473,
-  "checkedAgainst": "INDEX",
-  "gitHead": "80ff1cfbe7799fccdde5be923530e3a6edf62010",
+  "checkedAgainst": "HEAD",
+  "gitHead": "d341fe402323ddfda705b8546e9aa55886815502",
   "method": "Compare every functional working-tree file both as exact raw bytes and through Git clean filters (git hash-object --stdin-paths, with/without --no-filters, never -w) against index/HEAD blob OIDs. This accounts for tracked CRLF preserved by Git as well as LF-normalized files; raw-byte fingerprint remains unchanged",
   "findings": []
 }

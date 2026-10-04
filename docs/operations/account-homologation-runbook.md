@@ -5,6 +5,14 @@ Não existe URL funcional de homologação comprovada nesta etapa. O checkpoint
 [aprovado](../../specs/012-account-verification-recovery/remote-checkpoint.md)
 define destinos, políticas e limites; aprovação não prova provisionamento.
 
+Candidato funcional local `d341fe402323ddfda705b8546e9aa55886815502`, com 15
+gates PASS e manifesto de 473 arquivos. Nenhum recurso remoto foi criado.
+Bloqueios observados: API Vercel não estabelece TCP desta máquina, login Neon
+aguarda navegador, configuração privada de testadores/scheduler não salva e
+supressão de deploy Git no projeto anterior não comprovada (leitura 403).
+Consultar [evidências](../../specs/012-account-verification-recovery/implementation-evidence.md)
+antes de retomar as etapas; nenhuma nova autorização de políticas é necessária.
+
 ## Isolamento e configuração
 
 Branch: `feat/account-verification-recovery`. Base da fundação:

@@ -226,7 +226,22 @@ bcrypt, ausência de writers de senha fora do serviço, constraints e SQL R1.
 Uma segunda leitura independente confirmou o fechamento dos achados do
 scheduler, inclusive pausa por ID próprio quando a configuração remota mudou.
 
-## Homologação e aceites separados
+## Candidato versionado
+
+Commit funcional local: `d341fe402323ddfda705b8546e9aa55886815502`
+(`feat(auth): add verified accounts and credential revocation`), descendente
+direto da base `80ff1cfbe7799fccdde5be923530e3a6edf62010`. Criado somente após
+os 15 gates locais PASS. Conferência pós-commit: todos os 473 arquivos
+funcionais equivalentes ao HEAD e fingerprint `cc77f24e…1dbaa` preservado;
+nenhum hook alterou fonte funcional. A atualização posterior trata somente
+de documentação para registrar este SHA, sem amend ou autoatribuição de seu próprio SHA.
+
+Push, deployment e PR não foram executados. O index será entregue limpo;
+`AGENTS.md` do worktree permanece modificado pelo Next e fora do candidato.
+O original conserva seu HEAD e o status inicial, inclusive todos os anexos e
+alterações preexistentes. Não houve merge, force-push ou mudança em produção.
+
+## Estado remoto
 
 Destinos aprovados: GitHub somente a nova branch, Vercel projeto separado na
 equipe `thalesvalente`, Neon novo vazio e cron-job.org a cada 60 s. Nenhuma
@@ -237,6 +252,28 @@ Logins oficiais Vercel/Neon foram preparados, assim como janela privada para
 caixas autorizadas e credencial do scheduler. Ausência de autenticação/configuração
 privada é precondição externa; não pedir credenciais pelo chat. Provisionamento,
 push e deploy dependem de GATE A e dos acessos reais aos destinos.
+
+`EVIDENCIA_IMPLEMENTACAO`: diagnóstico em 2026-10-04 22:48:48.350 UTC
+demonstrou que `api.vercel.com:443` não estabelece TCP nesta máquina, antes
+do TLS. Node retorna `UND_ERR_CONNECT_TIMEOUT`; Windows também expira.
+DNS local coincide com duas consultas públicas independentes e o endereço
+corroborado com SNI oficial reproduz o timeout. CA do sistema e preferência
+IPv4 não resolveram; nenhuma verificação TLS foi desligada. A descoberta
+OAuth de Vercel e Neon responde normalmente; os endpoints de device/token
+Vercel dependem do host inacessível. `INFERENCIA`: esse bloqueio explica o
+`fetch failed` do login, sem atribuir causa específica a firewall/gateway/provedor.
+O [JSON](validation-results.json) contém o diagnóstico redigido.
+
+Login Neon existente escuta callback local e ainda aguarda conclusão no
+navegador. Configuração privada de caixas autorizadas e chave administrativa
+do cron-job.org não foi salva. Etapa mínima: restabelecer conectividade
+autorizada ao endpoint Vercel, concluir os logins oficiais e salvar o formulário
+privado. A supressão de deploy da integração anterior também precisa ser
+comprovada antes do push. Nenhuma credencial deve ser enviada pelo chat.
+
+Projeto Vercel, banco lógico planejado `accounts_homologation`/owner
+`accounts_owner` e job cron-job.org **não foram criados**. Nenhum deployment ID,
+SHA implantado, job ID ou invocação automática existe para esta feature.
 
 O preflight observou uma integração Vercel do repositório em outra equipe:
 `pedrovitor237s-projects/hidro-florestas`. O acesso somente leitura respondeu

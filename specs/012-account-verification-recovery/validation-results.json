@@ -3,7 +3,7 @@
   "classification": "EVIDENCIA_IMPLEMENTACAO",
   "feature": "012-account-verification-recovery",
   "status": "VALIDADO_LOCALMENTE; HOMOLOGACAO_PENDENTE",
-  "recordedUtc": "2026-10-04T22:46:31.097Z",
+  "recordedUtc": "2026-10-04T22:50:51.494Z",
   "baseCommit": "80ff1cfbe7799fccdde5be923530e3a6edf62010",
   "foundationFunctionalCommit": "a56cc9ea1cd23ee339d3a6c5b0154a07dd1ff917",
   "branch": "feat/account-verification-recovery",
@@ -256,7 +256,12 @@
   },
   "security": {
     "independentLocalReview": "PASS; no material open finding in account/session contracts",
-    "privateValuesAndClientBundleScan": "See implementation-evidence.md for exact scan result",
+    "privateValuesAndClientBundleScan": {
+      "result": "PASS",
+      "candidateFiles": 108,
+      "bundleFiles": 42,
+      "scope": "Before functional candidate commit; private values known from isolated configuration and diff review; not a complete vulnerability scan"
+    },
     "dependencyAudit": {
       "runtime": {
         "info": 0,
@@ -314,7 +319,7 @@
       "passwordRecovery": "NAO_EXECUTADO"
     },
     "blockers": [
-      "Vercel CLI login reported TypeError: fetch failed; API endpoint connectivity investigation pending",
+      "api.vercel.com:443 unreachable before TCP/TLS; Node UND_ERR_CONNECT_TIMEOUT and Windows timeout reproduced; DNS corroborated; exact firewall/gateway/provider cause undetermined",
       "Official Vercel/Neon CLI authentication not completed",
       "Private tester allowlist and cron-job.org administration credential not saved",
       "Existing Vercel project in another team returned 403; Git-push deployment suppression not proved for its Root Directory/custom configuration"
@@ -1435,8 +1440,8 @@
       "log": "schemaaudit-1791153943575.log"
     }
   ],
-  "functionalCandidateCommit": null,
-  "headAtEvidenceRecording": "80ff1cfbe7799fccdde5be923530e3a6edf62010",
+  "functionalCandidateCommit": "d341fe402323ddfda705b8546e9aa55886815502",
+  "headAtEvidenceRecording": "d341fe402323ddfda705b8546e9aa55886815502",
   "additionalValidations": {
     "schedulerSecurityExercise": {
       "SchemaVersion": 1,
@@ -1455,6 +1460,154 @@
       "Scope": "Helper definitions only; synthetic jobs and ACLs; no actual credentials, API calls or entry point",
       "SourceSha256": "71e7c132cb7ae3ff021ca3a041416614a0d866aa22089523260f397e4e7fa2f2",
       "PrivateTestSha256": "3c0feeaacb506db44bd6426fa9721f8cdcc73c17517714090939fddd72a506ed"
+    }
+  },
+  "remoteAccessDiagnostic": {
+    "schemaVersion": 1,
+    "classification": "EVIDENCIA_IMPLEMENTACAO",
+    "recordedUtc": "2026-10-04T22:48:48.350Z",
+    "sourceFingerprint": "cc77f24e65c66fbe2b56e248698ea2b710400d92490cfa352ba6fe5fc651dbaa",
+    "runtime": {
+      "node": "24.19.0",
+      "vercelCli": "62.2.0",
+      "neonCli": "8.0.7"
+    },
+    "guard": {
+      "methods": [
+        "GET"
+      ],
+      "authenticatedRequests": false,
+      "loginsStarted": false,
+      "remoteMutation": false,
+      "systemDnsChanged": false,
+      "tlsVerificationDisabled": false,
+      "versionedFilesChanged": false,
+      "helpersChanged": false
+    },
+    "proxy": {
+      "http": false,
+      "https": false,
+      "all": false,
+      "windowsSystem": "DIRECT"
+    },
+    "certificateBundle": {
+      "configured": true,
+      "exists": true
+    },
+    "requests": [
+      {
+        "host": "vercel.com",
+        "path": "/",
+        "status": 200,
+        "tls": "validated",
+        "modes": [
+          "default",
+          "system-ca",
+          "ipv4-first",
+          "windows"
+        ]
+      },
+      {
+        "host": "vercel.com",
+        "path": "/.well-known/openid-configuration",
+        "status": 200,
+        "tls": "validated",
+        "oauthDeviceHost": "api.vercel.com",
+        "oauthTokenHost": "api.vercel.com"
+      },
+      {
+        "host": "api.vercel.com",
+        "path": "/",
+        "code": "UND_ERR_CONNECT_TIMEOUT",
+        "modes": [
+          "default",
+          "system-ca",
+          "ipv4-first"
+        ]
+      },
+      {
+        "host": "api.vercel.com",
+        "path": "/",
+        "code": "PROBE_TIMEOUT",
+        "mode": "explicit-corroborated-ip-official-sni",
+        "timeoutMs": 12000
+      },
+      {
+        "host": "api.vercel.com",
+        "path": "/",
+        "code": "PROBE_TIMEOUT",
+        "mode": "node-https-stage-probe",
+        "tcpConnected": false,
+        "tlsEstablished": false,
+        "timeoutMs": 12000
+      },
+      {
+        "host": "api.vercel.com",
+        "path": "/",
+        "code": "WebException",
+        "mode": "windows",
+        "httpStatus": null
+      },
+      {
+        "host": "console.neon.tech",
+        "path": "/",
+        "status": 302,
+        "tls": "validated",
+        "modes": [
+          "default",
+          "system-ca",
+          "ipv4-first"
+        ]
+      },
+      {
+        "host": "console.neon.tech",
+        "path": "/api/v2/",
+        "status": 401,
+        "tls": "validated",
+        "modes": [
+          "default",
+          "system-ca",
+          "ipv4-first"
+        ]
+      },
+      {
+        "host": "oauth2.neon.tech",
+        "path": "/.well-known/openid-configuration",
+        "status": 200,
+        "tls": "validated",
+        "issuerHost": "oauth2.neon.tech",
+        "authorizationHost": "oauth2.neon.tech",
+        "tokenHost": "oauth2.neon.tech"
+      }
+    ],
+    "dns": {
+      "host": "api.vercel.com",
+      "localIpv4": 1,
+      "localIpv6": 0,
+      "google": {
+        "status": 200,
+        "dnsStatus": 0,
+        "answers": 1
+      },
+      "cloudflare": {
+        "status": 200,
+        "dnsStatus": 0,
+        "answers": 1
+      },
+      "corroborated": 1,
+      "localMatchesBothPublic": true
+    },
+    "existingNeonLogin": {
+      "callbackListening": true,
+      "callbackUsesEphemeralLoopbackPort": true,
+      "authenticationCompletionVerified": false
+    },
+    "conclusion": {
+      "observed": "api.vercel.com TCP connection does not establish from this environment; other required public discovery hosts validate TLS successfully.",
+      "loginAttributionClassification": "INFERENCIA",
+      "loginAttribution": "The Vercel CLI discovery points OAuth device/token requests to the unreachable API host, explaining the recorded generic fetch failure without proving its omitted stack.",
+      "safeFlagCorrectionFound": false,
+      "nextStep": "Restore approved network access to api.vercel.com:443; coordinate a single Vercel login afterward. Continue the existing Neon browser flow without a duplicate login."
     }
   }
 }
