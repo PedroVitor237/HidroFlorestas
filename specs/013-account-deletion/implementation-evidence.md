@@ -76,3 +76,17 @@ em 1519 ms após READY. Não houve disparo manual autenticado para essa evidênc
 `PENDENCIA_DE_DECISAO`: aprovação pelo titular da jornada real na homologação,
 solicitada nesta conversa, exclusivamente em conta de teste que possa ser removida
 permanentemente. Testes automatizados não substituem essa aprovação.
+
+## Publicação Git solicitada — 2026-10-05
+
+`DECISAO_CONFIRMADA`: após ser informado de que os commits estavam locais e o
+push pendente, o usuário solicitou explicitamente “faca o push” nesta conversa.
+Destino conferido: `origin` = `PedroVitor237/HidroFlorestas`, exclusivamente
+`feat/account-deletion`; sem merge, force-push ou mudança de outra branch.
+
+`EVIDENCIA_IMPLEMENTACAO`: acrescentada configuração
+`git.deploymentEnabled["feat/account-deletion"]=false` em `vercel.json`, conservando
+a proteção existente da Fase 2. A [documentação oficial da Vercel](https://vercel.com/docs/project-configuration/git-configuration)
+define esse bloqueio de deploy por branch. A integração histórica continua sem
+acesso para inspeção; sua configuração remota não foi alterada. A solicitação
+de push não aprova a jornada real nem encerra os gates de homologação.
