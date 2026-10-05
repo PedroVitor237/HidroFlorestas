@@ -98,3 +98,13 @@ arquivos funcionais permanecem idênticos ao candidato validado, sem repetir
 gates não afetados. Finalizar correção privada de destinatários antes de atualizar
 a allowlist remota/publicar; depois configurar scheduler, observar execuções
 automáticas/backlog e executar jornadas com recebimento/aprovação humanos.
+
+## Continuação operacional vigente — 2026-10-05
+
+T024 concluída: candidato `116afb0` publicado; scheduler GET autenticado sem corpo
+operacional, conforme o contrato existente. Pester 17/17 PASS e apenas o script
+de scheduler mudou; banco, aplicação e regressão preservados. Duas chamadas
+automáticas e recuperação de fila comprovadas. Usuário confirmou cadastro,
+verificação, login/logout, troca e aviso; relato de reset ainda diverge da
+evidência técnica, e reenvio/substituição permanecem pendentes. T025/T028 abertos.
+A solicitação posterior de exclusão de conta terá branch/spec próprias.

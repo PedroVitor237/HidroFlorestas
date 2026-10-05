@@ -55,7 +55,7 @@ Objetivo/teste independente: senha atual obrigatória, versão incrementada, not
 Objetivo/teste independente: URL estável autorizada, bancos próprios, e-mails automáticos e duas jornadas reais. Preparação documental/configuração de T023 pode avançar em paralelo antes do Gate A; publicação T024 exige candidato já verificado e a etapa de commits de T028.
 
 - [x] T023 [P] [US4] Preparar runbook/config/scheduler/destinos em docs/operations/account-homologation-runbook.md, .env.accounts.example e specs/012-account-verification-recovery/remote-checkpoint.md.
-- [ ] T024 [US4] Publicar candidato após Gate A e configurar banco/secrets/worker nos destinos autorizados, registrando specs/012-account-verification-recovery/implementation-evidence.md.
+- [x] T024 [US4] Publicar candidato após Gate A e configurar banco/secrets/worker nos destinos autorizados, registrando specs/012-account-verification-recovery/implementation-evidence.md.
 - [ ] T025 [US4] Comprovar duas invocações automáticas, recuperação backlog e jornadas reais na evidência da feature.
 
 ## Phase 8: Commits e handoff
@@ -94,3 +94,12 @@ Após contratos fechados: implementação own backend/schema/testes; policy_audi
 ## Implementation Strategy
 
 Validar incremento US1 local, depois reset/troca e regressão completa. Persistir até jornada integral Gate B; qualquer bloqueio externo é documentado sem declarar conclusão integral. Gate A não depende de autorização redundante de commits; Gate B depende do checkpoint já aprovado e dos recursos concretos.
+
+## Estado vigente após publicação — 2026-10-05
+
+T024 concluída; `116afb0` publicado no deployment `dpl_DaJfyeRpMz9AUTWe8t7fVqzv4WeL`.
+GET sem corpo corrigiu as falhas 400; Pester 17/17 PASS, chamadas automáticas
+200 e recuperação da fila comprovadas. Cadastro/verificação/login/logout/troca
+e aviso confirmados pelo usuário. T025/T028 permanecem abertos: reenvio/código
+substituído pendentes; relato humano de reset por link ainda sem envio/consumo
+observados. Não declarar Gate B. Registros anteriores preservam seus horários.

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "classification": "EVIDENCIA_IMPLEMENTACAO",
-  "sourceFingerprint": "306a64d0a477d446440101870d9f8533e1893e8bfb69ad8942d6e478fc075b31",
+  "sourceFingerprint": "3f5fddf17be527c5a6f4b7750672349eca54f460ae861695a62021c3dcc6cda0",
   "fingerprintAlgorithm": "SHA256(JSON.stringify(sorted unique [{path,sha256}])); individual SHA256 of raw working-tree bytes",
   "files": [
     {
@@ -130,7 +130,7 @@
     },
     {
       "path": "scripts/accounts-homologation-scheduler.ps1",
-      "sha256": "15cb7992c2827eae3de35d2efdd601ff0b336ea311d723d2f7c4137386ad206b"
+      "sha256": "cc20f2d9d41c2aeff75c3faf00457eebfd32ffa7d281548f5af2942cdd72cd7c"
     },
     {
       "path": "scripts/accounts-local-postgresql.ps1",

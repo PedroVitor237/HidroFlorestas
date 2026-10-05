@@ -8,7 +8,8 @@ Data de referência: 2026-10-04, America/Sao_Paulo.
 vínculo anterior com `thalesvalente`; os registros anteriores são históricos.
 
 Estado: `DECISAO_CONFIRMADA` para políticas e destinos aprovados abaixo;
-provisionamento e jornadas ainda não executados. Origem do requisito de checkpoint:
+provisionamento executado; homologação publicada, envio automático comprovado e
+aceites restantes discriminados na evidência. O texto proposto abaixo é histórico. Origem do requisito de checkpoint:
 `execucao-02-contas-e-homologacao-sol-ultra.md`, seções 5.2, 6, 11 e 14,
 explicitamente invocado pelo usuário. Nenhuma escrita remota foi realizada antes
 da aprovação.
@@ -159,3 +160,14 @@ homologação. Nenhuma alteração do projeto existente está autorizada.
 `PENDENCIA_DE_DECISAO`: caixas autorizadas a identificar exclusivamente no formulário
 local privado preparado. Credencial cron-job.org somente pelo campo mascarado;
 nunca pelo chat. Login confirmado não prova provisionamento nem Gate B.
+
+## Reconciliação técnica do acionamento — 2026-10-05
+
+`EVIDENCIA_IMPLEMENTACAO`: POST com `{}` e POST vazio retornaram 400 no
+deployment. O adaptador Next Node fornece stream de corpo no POST vazio;
+o contrato máquina herdado recusa qualquer stream e já suporta GET. Job
+próprio corrigido para GET HTTPS autenticado, sem corpo/query, conservando
+a cadência, segredo, destino e limites aprovados. Não alterou endpoint nem
+política de contas. Duas chamadas automáticas 200 e recuperação de fila
+comprovadas; job permanece ativo. Lista corrigida de duas caixas salva somente
+no mecanismo privado. Gate B não equivale à aprovação deste checkpoint.

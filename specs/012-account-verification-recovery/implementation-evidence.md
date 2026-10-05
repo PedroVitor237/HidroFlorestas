@@ -1,7 +1,7 @@
 # Evidências da implementação de contas
 
-Estado deste registro: `VALIDADO_LOCALMENTE; GATE_A_PASS;
-HOMOLOGACAO_BLOQUEADA`. Resultados finais estão consolidados em
+Estado deste registro: `VALIDADO_LOCALMENTE; HOMOLOGACAO_PUBLICADA; ENVIO_AUTOMATICO_VERIFICADO; GATE_B_PENDENTE`.
+Os registros abaixo preservam os estados históricos; o estado vigente está na última continuação. Resultados finais estão consolidados em
 [validation-results.json](validation-results.json). Aprovação de políticas e
 destinos não equivale à aprovação de jornadas.
 
@@ -351,3 +351,54 @@ allowlist atualizada no projeto novo e escopo das 27 variáveis novamente
 verificado. Job cron-job.org próprio `8586345` criado **desabilitado**, com
 cadência de 60 s, POST autenticado e armazenamento de respostas desativado.
 Ainda não conta como invocação automática ou entrega de e-mail.
+
+## Homologação publicada e correção do acionamento — 2026-10-05
+
+`EVIDENCIA_IMPLEMENTACAO`: URL acessível sem login Vercel:
+https://hidroflorestas-accounts-homologatio.vercel.app. Deployment READY
+`dpl_DaJfyeRpMz9AUTWe8t7fVqzv4WeL`, candidato `116afb0dc19fc1013715058b6c162cdef84ffc04`,
+fingerprint `3f5fddf17be527c5a6f4b7750672349eca54f460ae861695a62021c3dcc6cda0`. Upload CLI direto,
+fora do contexto Git, para o projeto/equipe próprios, sem conexão Git.
+Arquivo exportado conferido contra os 473 blobs versionados; 445 exigem os
+filtros CRLF/LF do Git. Seu hash é distinto do fingerprint de bytes do worktree
+e ambos estão registrados no JSON. Preflight de 743 arquivos sem segredo ou
+caminho privado; sete verificações HTTPS PASS no deployment atual.
+
+O POST inicial com `{}` foi um erro de configuração e retornou 400. POST vazio
+também retornou 400 porque o adaptador Node da versão instalada do Next fornece
+stream de corpo nesse método. O contrato da Fase 1 já aceita GET/POST sem corpo;
+o job próprio `8586345` foi pausado e corrigido para **GET autenticado, sem
+corpo/query**, com Bearer privado, intervalo de 60 s e timeout de 30 s.
+Não houve alteração do endpoint, da Fase 1 ou de seus controles. Correção
+versionada no candidato `116afb0`: Pester 17/17 PASS, incluindo recusa de POST
+e de body `{}`; equivalência com INDEX de 473 inputs PASS. Nenhum gate não
+afetado foi repetido. Commits `d341fe4` e `3858c51` preservados.
+
+Histórico observado: 12 chamadas automáticas HTTP 200 após a
+correção. Primeiras duas: IDs `8586345-5-9-7` e `8586345-5-9-8`, às 21:13:15 e
+21:14:18 UTC (18:13:15 e 18:14:18 em Brasília), durações 4.789 ms e 1.171 ms.
+Fila pendente desde 21:03:20.359 UTC recuperada automaticamente após a pausa:
+SMTP aceitou a verificação às 21:13:20.024 UTC, na primeira tentativa.
+Aviso de troca de senha aceito automaticamente às 21:17:18.366 UTC.
+Leitura do banco foi somente de estados/timestamps/contagens, sem dados pessoais,
+senhas, proofs ou payloads. Nenhum despacho manual substituiu o scheduler.
+
+`DECISAO_CONFIRMADA`: o usuário respondeu nesta conversa em 2026-10-05
+“Tudo isso funcionou” ao roteiro de recebimento do código, confirmação,
+login/logout, troca autenticada e aviso. Logs confirmam confirmação 200,
+troca 200, sessão anterior 401, login 200 e logout 200.
+
+`PENDENCIA_DE_DECISAO` / verificação: o usuário também relatou sucesso no
+roteiro de recuperação, mas a observação do banco/logs ainda não contém envio
+ou consumo de PASSWORD_RESET. A divergência foi apresentada ao usuário, com
+pergunta sobre o fluxo `/forgot-password`. Não atribuir esse relato ao teste
+remoto de reset sem resolver a divergência. Reenvio controlado e rejeição do
+código substituído também permanecem pendentes. Gate B e T025/T028 continuam
+abertos. O job e a homologação permanecem operacionais; contas não removidas.
+
+T024 concluída: destino, allowlist corrigida de duas caixas, 27 variáveis
+cifradas no escopo próprio, banco isolado e 11 migrations, candidato publicado
+e scheduler operacional. Push não executado: risco da integração histórica
+ainda não comprovado. Nenhum merge, force-push ou alteração de produção/juniors.
+Nova solicitação do usuário de implementar exclusão de conta será uma feature
+separada, sem alterar esta homologação antes de suas próprias verificações.
