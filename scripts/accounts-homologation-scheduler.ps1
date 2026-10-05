@@ -11,11 +11,11 @@ function Assert-PrivateSchedulerPath([string]$Path,[string]$CurrentSid,[bool]$Di
 }
 function Get-AuthorizedSchedulerTarget($Deployment) {
   try { $origin = [uri]$Deployment.url } catch { throw 'Invalid private deployment URL.' }
-  if ($Deployment.projectName -ne 'hidroflorestas-accounts-homologation' -or $Deployment.teamId -ne 'team_UKFNrfWtsO9TmGSRLCGcTME4' -or -not $origin.IsAbsoluteUri -or $origin.Scheme -ne 'https' -or $origin.Host -ne 'hidroflorestas-accounts-homologation.vercel.app' -or $origin.Port -ne 443 -or $origin.PathAndQuery -ne '/' -or $origin.UserInfo -or $origin.Fragment) { throw 'Stable authorized homologation URL differs from the deployment record.' }
-  return 'https://hidroflorestas-accounts-homologation.vercel.app/api/internal/mail/process'
+  if ($Deployment.projectName -ne 'hidroflorestas-accounts-homologation' -or $Deployment.teamId -ne 'team_YqedIK09zOGFeZ8M84kra0oM' -or -not $origin.IsAbsoluteUri -or $origin.Scheme -ne 'https' -or $origin.Host -ne 'hidroflorestas-accounts-homologatio.vercel.app' -or $origin.Port -ne 443 -or $origin.PathAndQuery -ne '/' -or $origin.UserInfo -or $origin.Fragment) { throw 'Stable authorized homologation URL differs from the deployment record.' }
+  return 'https://hidroflorestas-accounts-homologatio.vercel.app/api/internal/mail/process'
 }
 function Assert-SchedulerConfiguration($Job,[string]$ExpectedAuthorization) {
-  if (-not $ExpectedAuthorization -or $Job.url -ne 'https://hidroflorestas-accounts-homologation.vercel.app/api/internal/mail/process' -or $Job.title -ne 'HidroFlorestas accounts homologation worker' -or $Job.requestMethod -ne 1 -or $Job.requestTimeout -ne 30 -or $Job.saveResponses -isnot [bool] -or $Job.saveResponses -or $Job.redirectSuccess -isnot [bool] -or $Job.redirectSuccess -or $Job.auth.enable -isnot [bool] -or $Job.auth.enable) { throw 'Remote scheduler request configuration differs; enable refused.' }
+  if (-not $ExpectedAuthorization -or $Job.url -ne 'https://hidroflorestas-accounts-homologatio.vercel.app/api/internal/mail/process' -or $Job.title -ne 'HidroFlorestas accounts homologation worker' -or $Job.requestMethod -ne 1 -or $Job.requestTimeout -ne 30 -or $Job.saveResponses -isnot [bool] -or $Job.saveResponses -or $Job.redirectSuccess -isnot [bool] -or $Job.redirectSuccess -or $Job.auth.enable -isnot [bool] -or $Job.auth.enable) { throw 'Remote scheduler request configuration differs; enable refused.' }
   if ($Job.schedule.timezone -cne 'UTC' -or $Job.schedule.expiresAt -ne 0) { throw 'Remote scheduler schedule differs; enable refused.' }
   foreach ($dimension in @('hours','mdays','minutes','months','wdays')) {
     $values = @($Job.schedule.$dimension)
@@ -80,7 +80,7 @@ if ($Action -eq 'CreateDisabled') {
   [ordered]@{Action=$Action;JobId=$createdJobId;Enabled=$false;CadenceSeconds=60} | ConvertTo-Json
 } else {
   $record=Get-Content -LiteralPath $recordPath -Encoding UTF8 -Raw | ConvertFrom-Json
-  if ($record.marker -ne $marker -or $record.url -ne 'https://hidroflorestas-accounts-homologation.vercel.app/api/internal/mail/process') { throw 'Recorded scheduler identity differs.' }
+  if ($record.marker -ne $marker -or $record.url -ne 'https://hidroflorestas-accounts-homologatio.vercel.app/api/internal/mail/process') { throw 'Recorded scheduler identity differs.' }
   $recordedJobId = Get-VerifiedSchedulerJobId $record.jobId
   $path='jobs/'+$recordedJobId
   $details=(Invoke-Scheduler 'GET' $path).jobDetails
