@@ -4,7 +4,7 @@ export type TemplateName = "email-verification-v1" | "password-reset-v1" | "pass
 export type MailContent = { template: "email-verification-v1"; name: string; code: string }
   | { template: "password-reset-v1"; name: string; token: string }
   | { template: "password-changed-v1"; name: string };
-export type EnqueueMailInput = { idempotencyKey: string; recipient: string; content: MailContent; expiresAt: Date; challengeId?: string };
+export type EnqueueMailInput = { idempotencyKey: string; recipient: string; content: MailContent; expiresAt: Date; challengeId?: string; accountUserId?: string };
 export type ProtectedMailPayload = { recipient: string; content: MailContent; publicUrl: string };
 export type RenderedMail = { subject: string; html: string; text: string };
 export type MailTransport = { send: (input: { outboxId: string; recipient: string; message: RenderedMail; expiresAt: Date; deadlineAt: Date }) => Promise<void> };
@@ -46,7 +46,8 @@ export function validatePublicUrl(value: unknown): string {
 
 export function validateEnqueue(input: EnqueueMailInput, now: Date, allowExpired = false) {
   if (!input || typeof input !== "object") throw new MailError("INVALID_INPUT");
-  exactKeys(input, ["idempotencyKey", "recipient", "content", "expiresAt", "challengeId"]);
+  exactKeys(input, ["idempotencyKey", "recipient", "content", "expiresAt", "challengeId", "accountUserId"]);
+  if (input.accountUserId !== undefined && !/^[0-9a-f-]{36}$/.test(input.accountUserId)) throw new MailError("INVALID_INPUT");
   if (!/^[A-Za-z0-9_-]{16,128}$/.test(input.idempotencyKey) || (input.challengeId !== undefined && !/^[0-9a-f-]{36}$/.test(input.challengeId))) throw new MailError("INVALID_INPUT");
   validateMailbox(input.recipient);
   validateContent(input.content);

@@ -9,6 +9,7 @@ import { enqueueMail, cancelChallengeMail, consumeMailRateLimit, type AccountRat
 import { AccountError, exactObject, normalizeEmail, parseSignup, requireIdempotencyKey, validatePasswordConfirmation, UUID_PATTERN, type VerificationState } from "./contracts";
 import { readAccountPolicy, type AccountPolicy } from "./policy";
 import { accountMac, emailBinding, generateResetToken, generateVerificationCode, resetDigest, safeDigestEqual, verificationDigest } from "./proof";
+import { AccountDeletionError, DELETION_BLOCKER_LABELS, parseAccountDeletionInput, type AccountDeletionState, type DeletionBlocker } from "./deletion.contracts";
 
 type Tx = Prisma.TransactionClient;
 type Result<T> = { value: T } | { error: AccountError };
@@ -267,7 +268,7 @@ export class AccountService {
   private async passwordChanged(tx: Tx, user: User, hash: string, policy: AccountPolicy, now: Date) {
     const updated = await tx.user.update({ where: { id: user.id }, data: { password: hash, credentialVersion: { increment: 1 } } });
     await this.invalidate(tx, user.id, undefined, now);
-    await enqueueMail(tx, { idempotencyKey: accountMac(policy.protection, ["password-changed", user.id, updated.credentialVersion]), recipient: user.email.trim(), content: { template: "password-changed-v1", name: user.firstName }, expiresAt: new Date(now.getTime() + 86_400_000) }, policy.mail, now);
+    await enqueueMail(tx, { accountUserId: user.id, idempotencyKey: accountMac(policy.protection, ["password-changed", user.id, updated.credentialVersion]), recipient: user.email.trim(), content: { template: "password-changed-v1", name: user.firstName }, expiresAt: new Date(now.getTime() + 86_400_000) }, policy.mail, now);
     await this.deps.beforeCommit?.();
   }
 
@@ -313,6 +314,81 @@ export class AccountService {
       await this.passwordChanged(tx, user, hash, policy, now);
       return { value: undefined };
     });
+  }
+  private async deletionUser(tx: Tx, token: string | undefined, lock = false): Promise<User> {
+    const payload = token ? verifySessionToken(token) : null;
+    if (!payload) throw new AccountDeletionError("UNAUTHENTICATED");
+    const user = lock ? await this.lockedUser(tx, payload.userId) : await tx.user.findUnique({ where: { id: payload.userId } });
+    if (!user || user.status !== "ACTIVE" || user.credentialVersion !== (payload.credentialVersion ?? 0)
+      || ((payload.purpose ?? "session") === "session" && user.verificationRequired && !user.emailVerifiedAt)) throw new AccountDeletionError("UNAUTHENTICATED");
+    return user;
+  }
+
+  private async deletionBlockers(tx: Tx, user: User): Promise<DeletionBlocker[]> {
+    const checks: Array<[DeletionBlocker["code"], Promise<number>]> = [
+      ["LABORATORIES", tx.laboratoryRoom.count({ where: { userId: user.id } })],
+      ["MEMBERSHIPS", tx.researchersLinked.count({ where: { userId: user.id } })],
+      ["AREAS", tx.collectionArea.count({ where: { userId: user.id } })],
+      ["COLLECTIONS", tx.collectionData.count({ where: { userId: user.id } })],
+      ["MEASUREMENTS", tx.environmentalMeasurementSet.count({ where: { userId: user.id } })],
+      ["IHFR_INPUTS", tx.experimentalIHFRInputSupplement.count({ where: { createdByUserId: user.id } })],
+      ["IHFR_OPERATIONS", tx.iHFRDiagnosisOperation.count({ where: { actorUserId: user.id } })],
+      ["IHFR_HISTORY", tx.iHFRDiagnosisLifecycleEvent.count({ where: { actorUserId: user.id } })],
+      ["ADMINISTRATIVE_HISTORY", tx.administrativeAuditEvent.count({ where: { OR: [{ actorUserId: user.id }, { targetUserId: user.id }] } })],
+    ];
+    const counts = await Promise.all(checks.map(async ([code, count]) => ({ code, label: DELETION_BLOCKER_LABELS[code], count: await count })));
+    const blockers: DeletionBlocker[] = counts.filter(item => item.count > 0);
+    if (user.role === "ADMIN" && await tx.user.count({ where: { role: "ADMIN", status: "ACTIVE" } }) <= 1) {
+      blockers.push({ code: "LAST_ACTIVE_ADMIN", label: DELETION_BLOCKER_LABELS.LAST_ACTIVE_ADMIN, count: 1 });
+    }
+    return blockers;
+  }
+
+  async deletionState(token: string | undefined): Promise<AccountDeletionState> {
+    return this.db.$transaction(async tx => {
+      const user = await this.deletionUser(tx, token), blockers = await this.deletionBlockers(tx, user);
+      const purpose = token ? verifySessionToken(token)?.purpose : undefined;
+      return { success: true, canDelete: blockers.length === 0, blockers, returnTo: purpose === "email-verification" ? "/verify-email" : user.role === "ADMIN" ? "/admin" : "/workspace" };
+    });
+  }
+
+  async deleteAccount(token: string | undefined, input: unknown, origin: string): Promise<void> {
+    const body = parseAccountDeletionInput(input);
+    const candidate = await this.db.$transaction(tx => this.deletionUser(tx, token));
+    const policy = this.policy();
+    if (!await this.globalGate(policy)) throw new AccountDeletionError("RATE_LIMITED", [], this.retry(this.deps.now?.() ?? new Date()));
+    const allowed = await this.transaction(async tx => {
+      const now = await this.time(tx);
+      return { value: await this.limit(tx, policy, "delete-account", candidate.id, origin, 5, now) };
+    });
+    if (!allowed) throw new AccountDeletionError("RATE_LIMITED", [], this.retry(this.deps.now?.() ?? new Date()));
+    if (!await (this.deps.comparePassword ?? bcrypt.compare)(body.currentPassword, candidate.password)) throw new AccountDeletionError("INVALID_CREDENTIALS");
+    try {
+      await this.db.$transaction(async tx => {
+        // Match signup/reset lock order. No password computation or SMTP under these locks.
+        await this.identityLock(tx, candidate.emailCanonical ?? candidate.email.trim().toLowerCase());
+        const user = await this.deletionUser(tx, token, true);
+        if (user.password !== candidate.password || user.credentialVersion !== candidate.credentialVersion || user.email !== candidate.email) throw new AccountDeletionError("CONCURRENT_CHANGE", [], 60);
+        const blockers = await this.deletionBlockers(tx, user);
+        if (blockers.length) throw new AccountDeletionError("ACCOUNT_LINKED", blockers);
+        // Legacy notices have no trustworthy owner. Let the existing worker finish
+        // them before deletion; never decrypt another account's queued message.
+        if (await tx.mailOutbox.findFirst({ where: { accountUserId: null, template: "PASSWORD_CHANGED_V1", status: { in: ["PENDING", "PROCESSING"] } }, select: { id: true } })) throw new AccountDeletionError("MAIL_CLEANUP_PENDING", [], 60);
+        const challenges = await tx.accountEmailChallenge.findMany({ where: { userId: user.id }, select: { id: true } });
+        const ids = challenges.map(row => row.id);
+        await tx.mailOutbox.deleteMany({ where: { OR: [{ accountUserId: user.id }, { challengeId: { in: ids } }] } });
+        await tx.accountRequest.deleteMany({ where: { OR: [{ userId: user.id }, { challengeId: { in: ids } }] } });
+        await tx.accountEmailChallenge.deleteMany({ where: { userId: user.id } });
+        await tx.user.delete({ where: { id: user.id } });
+        await this.deps.beforeCommit?.();
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 20_000, maxWait: 20_000 });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2003") throw new AccountDeletionError("ACCOUNT_LINKED", [{ code: "OTHER_LINKS", label: DELETION_BLOCKER_LABELS.OTHER_LINKS, count: null }]);
+        if (error.code === "P2034") throw new AccountDeletionError("CONCURRENT_CHANGE", [], 60);
+      }
+      throw error;
+    }
   }
 }
 

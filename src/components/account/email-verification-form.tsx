@@ -96,6 +96,7 @@ export function EmailVerificationForm() {
   }
 
   return <AccountShell title="Confirme seu e-mail" description="Digite o código de seis dígitos recebido por e-mail para continuar.">
+    {!sessionExpired && state ? <Link href="/delete-account" className="mb-5 inline-block text-sm text-red-700 underline">Excluir minha conta</Link> : null}
     {loading ? <p role="status">Consultando sua verificação…</p> : null}
     {error ? <p ref={errorRef} tabIndex={-1} role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-red-800">{error}</p> : null}
     {sessionExpired ? <p className="mb-5">Entre com seu e-mail e senha para retomar a verificação. <Link href="/login" className="font-semibold text-amber-800 underline">Ir para o login</Link></p> : null}

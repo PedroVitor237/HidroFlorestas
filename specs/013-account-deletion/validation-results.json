@@ -1,0 +1,21 @@
+{
+  "feature": "013-account-deletion",
+  "branch": "feat/account-deletion",
+  "baseCommit": "40190f751390e2115220944d93fca36e1d96044e",
+  "status": "CANDIDATO_LOCAL_VALIDADO_HOMOLOGACAO_PENDENTE",
+  "local": {
+    "unit": {"result": "PASS", "passed": 283},
+    "mailUnit": {"result": "PASS", "passed": 17},
+    "integration": {"result": "PASS", "passed": 170, "postgresql": true},
+    "migration": {"result": "PASS", "passed": 35},
+    "contract": {"result": "PASS", "passed": 6},
+    "browser": {"result": "PASS", "passed": 3, "ownedDisposableSchema": true},
+    "r1": {"result": "PASS", "coverage": "existing fence cases and deletion before fence/during authorized transport"},
+    "typecheck": {"result": "PASS"},
+    "build": {"result": "PASS"},
+    "lint": {"result": "PASS", "errors": 0, "preexistingWarnings": 3}
+  },
+  "preservation": {"phase1": true, "phase2Commits": ["d341fe4", "3858c51"], "juniorsEnvironment": true, "realAccountsDeleted": false},
+  "remote": {"published": false, "humanJourney": "PENDING", "gitPush": "BLOCKED_HISTORICAL_INTEGRATION_RISK"},
+  "finalGate": "PENDING_HOMOLOGATION_AND_REAL_JOURNEY"
+}
