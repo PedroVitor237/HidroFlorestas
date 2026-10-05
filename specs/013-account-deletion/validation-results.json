@@ -31,7 +31,10 @@
     "upload": {"result": "PASS", "files": 766, "committedFunctionalBlobMatches": 486, "gitCleanFilterMatches": 458, "secretFindings": 0, "gitContextIncluded": false},
     "scheduler": {"jobId": 8586345, "enabled": true, "cadenceSeconds": 60, "configurationChanged": false, "automaticExecutionsAfterReady": 1, "httpStatus": 200, "executionUtc": "2026-10-05T21:56:18Z", "durationMs": 1519},
     "humanJourney": "PENDING",
-    "gitPush": "BLOCKED_HISTORICAL_INTEGRATION_RISK"
+    "gitPush": "PUSHED",
+    "gitRemote": "https://github.com/PedroVitor237/HidroFlorestas.git",
+    "gitBranch": "feat/account-deletion",
+    "gitDeploymentProtection": "DISABLED_FOR_THIS_BRANCH"
   },
   "finalGate": "PENDING_HOMOLOGATION_AND_REAL_JOURNEY"
 }

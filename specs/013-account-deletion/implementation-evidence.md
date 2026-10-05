@@ -90,3 +90,10 @@ a proteção existente da Fase 2. A [documentação oficial da Vercel](https://v
 define esse bloqueio de deploy por branch. A integração histórica continua sem
 acesso para inspeção; sua configuração remota não foi alterada. A solicitação
 de push não aprova a jornada real nem encerra os gates de homologação.
+
+`EVIDENCIA_IMPLEMENTACAO`: `git push --set-upstream origin feat/account-deletion`
+concluiu com sucesso e criou somente essa branch remota. `git ls-remote` confirmou
+o commit `8597b6d` igual ao HEAD local nesse envio, incluindo `38811a1`, `24c6be6`
+e a proteção operacional adicional. O status Git ficou limpo. Este registro
+substitui o bloqueio de publicação Git anterior para esta branch; o candidato
+de homologação e a aprovação humana pendente continuam como registrados.
