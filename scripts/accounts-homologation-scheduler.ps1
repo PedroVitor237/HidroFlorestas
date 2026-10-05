@@ -15,7 +15,9 @@ function Get-AuthorizedSchedulerTarget($Deployment) {
   return 'https://hidroflorestas-accounts-homologatio.vercel.app/api/internal/mail/process'
 }
 function Assert-SchedulerConfiguration($Job,[string]$ExpectedAuthorization) {
-  if (-not $ExpectedAuthorization -or $Job.url -ne 'https://hidroflorestas-accounts-homologatio.vercel.app/api/internal/mail/process' -or $Job.title -ne 'HidroFlorestas accounts homologation worker' -or $Job.requestMethod -ne 1 -or $Job.requestTimeout -ne 30 -or $Job.saveResponses -isnot [bool] -or $Job.saveResponses -or $Job.redirectSuccess -isnot [bool] -or $Job.redirectSuccess -or $Job.auth.enable -isnot [bool] -or $Job.auth.enable) { throw 'Remote scheduler request configuration differs; enable refused.' }
+  # GET is supported by the mail contract and has no body stream in Next's Node adapter.
+  # Empty POST still exposes a stream there and is rejected by the no-body guard.
+  if (-not $ExpectedAuthorization -or $Job.url -ne 'https://hidroflorestas-accounts-homologatio.vercel.app/api/internal/mail/process' -or $Job.title -ne 'HidroFlorestas accounts homologation worker' -or $Job.requestMethod -ne 0 -or $Job.requestTimeout -ne 30 -or $Job.saveResponses -isnot [bool] -or $Job.saveResponses -or $Job.redirectSuccess -isnot [bool] -or $Job.redirectSuccess -or $Job.auth.enable -isnot [bool] -or $Job.auth.enable) { throw 'Remote scheduler request configuration differs; enable refused.' }
   if ($Job.schedule.timezone -cne 'UTC' -or $Job.schedule.expiresAt -ne 0) { throw 'Remote scheduler schedule differs; enable refused.' }
   foreach ($dimension in @('hours','mdays','minutes','months','wdays')) {
     $values = @($Job.schedule.$dimension)
@@ -23,7 +25,7 @@ function Assert-SchedulerConfiguration($Job,[string]$ExpectedAuthorization) {
   }
   $requestHeaders = $Job.extendedData.headers
   $headerNames = if ($requestHeaders -is [Collections.IDictionary]) { @($requestHeaders.Keys) } else { @($requestHeaders.PSObject.Properties.Name) }
-  if ($headerNames.Count -ne 2 -or @($headerNames | Where-Object { $_ -notin @('Authorization','Content-Type') }).Count -or $requestHeaders.Authorization -cne $ExpectedAuthorization -or $requestHeaders.'Content-Type' -cne 'application/json' -or $Job.extendedData.body -cne '{}') { throw 'Remote scheduler private request differs; enable refused.' }
+  if ($headerNames.Count -ne 2 -or @($headerNames | Where-Object { $_ -notin @('Authorization','Content-Type') }).Count -or $requestHeaders.Authorization -cne $ExpectedAuthorization -or $requestHeaders.'Content-Type' -cne 'application/json' -or $Job.extendedData.body -cne '') { throw 'Remote scheduler private request differs; enable refused.' }
   $notification = $Job.notification
   if ($notification.onFailure -isnot [bool] -or -not $notification.onFailure -or $notification.onFailureCount -ne 3 -or $notification.onDisable -isnot [bool] -or -not $notification.onDisable -or $notification.onSuccess -isnot [bool] -or $notification.onSuccess -or $notification.onSslCertExpiry -isnot [bool] -or -not $notification.onSslCertExpiry -or $notification.mode -ne 2 -or @($notification.selectedChannels).Count -ne 1 -or $notification.selectedChannels[0] -ne 0) { throw 'Remote scheduler notifications differ; enable refused.' }
 }
@@ -70,9 +72,9 @@ if ($Action -eq 'CreateDisabled') {
   $target = Get-AuthorizedSchedulerTarget $deployment
   $worker = Read-PrivateWorkerCredential
   $result = Invoke-Scheduler 'PUT' 'jobs' @{job=@{
-    title='HidroFlorestas accounts homologation worker';url=$target;enabled=$false;saveResponses=$false;requestMethod=1;requestTimeout=30;redirectSuccess=$false
+    title='HidroFlorestas accounts homologation worker';url=$target;enabled=$false;saveResponses=$false;requestMethod=0;requestTimeout=30;redirectSuccess=$false
     schedule=@{timezone='UTC';expiresAt=0;hours=@(-1);mdays=@(-1);minutes=@(-1);months=@(-1);wdays=@(-1)}
-    extendedData=@{headers=@{Authorization='Bearer '+$worker.GetNetworkCredential().Password;'Content-Type'='application/json'};body='{}'}
+    extendedData=@{headers=@{Authorization='Bearer '+$worker.GetNetworkCredential().Password;'Content-Type'='application/json'};body=''}
     notification=@{onFailure=$true;onFailureCount=3;onDisable=$true;onSuccess=$false;onSslCertExpiry=$true;mode=2;selectedChannels=@(0)}
   }}
   $createdJobId = Get-VerifiedSchedulerJobId $result.jobId
