@@ -2,7 +2,9 @@
   "feature": "013-account-deletion",
   "branch": "feat/account-deletion",
   "baseCommit": "40190f751390e2115220944d93fca36e1d96044e",
-  "status": "CANDIDATO_LOCAL_VALIDADO_HOMOLOGACAO_PENDENTE",
+  "status": "EM_HOMOLOGACAO_JORNADA_REAL_PENDENTE",
+  "candidateCommit": "38811a16058a78d51f3422cbf28f8c586e7cc8b8",
+  "functionalFingerprint": "91b7b986811991510bb8c847ffbfceb2c6d17d8deea434629741b544bb7b76a3",
   "local": {
     "unit": {"result": "PASS", "passed": 283},
     "mailUnit": {"result": "PASS", "passed": 17},
@@ -16,6 +18,20 @@
     "lint": {"result": "PASS", "errors": 0, "preexistingWarnings": 3}
   },
   "preservation": {"phase1": true, "phase2Commits": ["d341fe4", "3858c51"], "juniorsEnvironment": true, "realAccountsDeleted": false},
-  "remote": {"published": false, "humanJourney": "PENDING", "gitPush": "BLOCKED_HISTORICAL_INTEGRATION_RISK"},
+  "remote": {
+    "published": true,
+    "deploymentId": "dpl_73P3jueQ2VWokPRTm8zamETNUN1q",
+    "deploymentState": "READY",
+    "origin": "https://hidroflorestas-accounts-homologatio.vercel.app",
+    "projectId": "prj_OHzoR4hZ4MOrg2HOBvbZmiADrwaz",
+    "teamId": "team_YqedIK09zOGFeZ8M84kra0oM",
+    "httpsPreflight": {"result": "PASS", "passed": 10, "recordedUtc": "2026-10-05T21:55:59.453Z", "authenticatedDeletes": 0},
+    "migration": {"result": "PASS", "completed": 12, "failed": 0, "existingChecksumsPreserved": true, "lineEndingBridges": 2},
+    "preservation": {"result": "PASS", "existingAccountCount": 1, "scientificAndAdministrativeCountsPreserved": true, "realAccountsDeletedByAgent": false},
+    "upload": {"result": "PASS", "files": 766, "committedFunctionalBlobMatches": 486, "gitCleanFilterMatches": 458, "secretFindings": 0, "gitContextIncluded": false},
+    "scheduler": {"jobId": 8586345, "enabled": true, "cadenceSeconds": 60, "configurationChanged": false, "automaticExecutionsAfterReady": 1, "httpStatus": 200, "executionUtc": "2026-10-05T21:56:18Z", "durationMs": 1519},
+    "humanJourney": "PENDING",
+    "gitPush": "BLOCKED_HISTORICAL_INTEGRATION_RISK"
+  },
   "finalGate": "PENDING_HOMOLOGATION_AND_REAL_JOURNEY"
 }

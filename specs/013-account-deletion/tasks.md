@@ -40,7 +40,9 @@ intacta; concorrência não deixa zero admins, vínculos órfãos ou exclusão p
 
 - [x] T016 Cobrir navegador/teclado/mobile e restrita em tests/e2e/account-deletion.spec.ts usando banco descartável próprio.
 - [x] T017 Validar unit/integration/migration/contracts/R1/type/lint/build e registrar specs/013-account-deletion/validation-results.json.
-- [ ] T018 Conferir diff/segredos/ancestralidade, commits candidatos e handoff em specs/013-account-deletion/implementation-evidence.md.
+- [x] T018 Conferir diff/segredos/ancestralidade, commits candidatos e handoff em specs/013-account-deletion/implementation-evidence.md.
+- [x] T019 Publicar candidato validado e migration aditiva somente nos recursos de homologação já autorizados; conferir preservação e checks HTTPS.
+- [ ] T020 Obter aprovação da jornada real de exclusão pelo titular em conta de teste descartável; corroborar tecnicamente sem registrar dados privados.
 
 ## Dependencies & Execution Order
 
