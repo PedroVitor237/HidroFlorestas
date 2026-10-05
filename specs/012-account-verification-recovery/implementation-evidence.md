@@ -294,3 +294,60 @@ humana da Fase 2 está atribuída à aprovação do checkpoint.
 Runbook: [account-homologation-runbook.md](../../docs/operations/account-homologation-runbook.md).
 Roteiro/equipe: [handoff.md](handoff.md). Rollout em produção permanece fora do
 escopo, exige preflight real de colisões/coorte/administradores e decisão própria.
+
+## Retomada com vínculos novos — 2026-10-05
+
+`DECISAO_CONFIRMADA`: o usuário instruiu remover o vínculo com `thalesvalente`
+e usar somente os vínculos novos confirmados. O conector Vercel antigo foi
+desinstalado pela ferramenta Plugin Management; execução prossegue pela CLI
+oficial autorizada. GET de identidade/teams confirmou equipe
+`hidrofloresta-8598`, ID `team_YqedIK09zOGFeZ8M84kra0oM`, membership OWNER,
+plano Hobby. Neon `me`/orgs confirmou organização `HidroFloresta`,
+`org-autumn-meadow-54690835`, plano free. Nenhum login ou segredo foi publicado.
+
+`EVIDENCIA_IMPLEMENTACAO`: projeto Vercel próprio
+`prj_OHzoR4hZ4MOrg2HOBvbZmiADrwaz` criado sem Git, separado de `hidro-florestas`
+existente. Alias verificado e reservado pela API:
+`https://hidroflorestas-accounts-homologatio.vercel.app`. Ainda não há
+deployment funcional ou aprovação de jornadas. Neon projeto novo
+`lingering-dream-37087260`, PostgreSQL 17, aws-sa-east-1, compute 0,25 CU,
+banco `accounts_homologation`/papel `accounts_owner`. Bootstrap formal remoto
+PASS: 11 migrations concluídas, zero falhas, fresh=true, zero contas importadas.
+Aplicação usará endpoint pooled; bootstrap usou endpoint direto, com TLS e
+identidade conferidos. Conexões dos bancos antigos permaneceram intocadas.
+
+Chaves de JWT, outbox, idempotência, worker e prova/request geradas exclusivamente
+para homologação. Somente sete campos SMTP autorizados foram reutilizados;
+não houve cópia integral do ambiente. Configuração e autenticação SMTP PASS,
+zero mensagens reais enviadas. API Vercel verificou 27 variáveis encrypted
+somente no target production do projeto isolado, sem herança preview.
+
+Delta funcional único frente ao candidato preservado: constantes de equipe e
+origem HTTPS no guard `scripts/accounts-homologation-scheduler.ps1`.
+Fingerprint atual `306a64d0a477d446440101870d9f8533e1893e8bfb69ad8942d6e478fc075b31`,
+473 arquivos; todos os demais arquivos funcionais byte-idênticos ao fechamento.
+Pester focal 17/17 PASS, sem ler credenciais reais nem chamar API. A matriz
+anterior de 15 gates mantém seus snapshots/contagens históricos; nenhum gate
+não afetado foi repetido ou atribuído artificialmente ao delta novo.
+Equivalência de todos os inputs funcionais com o INDEX PASS antes do commit
+`6446280a26a6ac9c6064eb2ab5aee5000207374f`. Commits `d341fe4` e `3858c51`
+permanecem ancestrais intactos.
+
+O usuário pediu reabrir a configuração privada para corrigir um destinatário.
+Formulário foi reaberto com caixas existentes e chave do cron-job.org mascarada,
+sem pedir reenvio de credencial. Publicação/envios aguardam novo Save posterior
+ao pedido; não usar a lista incorreta. Scheduler permanece sem job criado e
+nenhuma chamada automática/jornada real foi atribuída a estes preflights.
+
+GitHub ainda retorna o status histórico em `pedrovitor237s-projects/hidro-florestas`;
+a leitura desse escopo continua 403. O projeto existente acessível na equipe nova
+tem RootDirectory nulo, mas vincula `HidroFlorestaStartup/HidroFlorestas`, diferente
+do origin autorizado `PedroVitor237/HidroFlorestas`. Isso não comprova equivalência
+nem autoriza alterar origin/projetos antigos. Push fica pendente; upload CLI
+separado não precisa dele. Não houve merge, force-push ou alteração de produção.
+
+Continuação da retomada: correção dos dois destinatários salva privadamente;
+allowlist atualizada no projeto novo e escopo das 27 variáveis novamente
+verificado. Job cron-job.org próprio `8586345` criado **desabilitado**, com
+cadência de 60 s, POST autenticado e armazenamento de respostas desativado.
+Ainda não conta como invocação automática ou entrega de e-mail.

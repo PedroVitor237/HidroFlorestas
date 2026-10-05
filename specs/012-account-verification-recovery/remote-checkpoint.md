@@ -2,6 +2,11 @@
 
 Data de referência: 2026-10-04, America/Sao_Paulo.
 
+**Destino vigente desde 2026-10-05:** equipe Vercel `hidrofloresta-8598`
+(`team_YqedIK09zOGFeZ8M84kra0oM`) e organização Neon `HidroFloresta`
+(`org-autumn-meadow-54690835`). A seção de atualização ao final substitui o
+vínculo anterior com `thalesvalente`; os registros anteriores são históricos.
+
 Estado: `DECISAO_CONFIRMADA` para políticas e destinos aprovados abaixo;
 provisionamento e jornadas ainda não executados. Origem do requisito de checkpoint:
 `execucao-02-contas-e-homologacao-sol-ultra.md`, seções 5.2, 6, 11 e 14,
@@ -114,3 +119,43 @@ operador/owner quando designado. Autenticação humana poderá ser necessária o
 não houver sessão; isso é precondição de execução, não autorização para pedir
 credenciais pelo chat. IDs, URL efetiva, migrações e resultados serão registrados
 como evidência após sua execução, sem transformar aprovação em resultado.
+
+## Atualização dos vínculos — 2026-10-05
+
+`DECISAO_CONFIRMADA`: origem é a instrução do usuário nesta conversa:
+“desestabeleca o vinculo com thalesvalente. Agora usaremos somente esses vinculos novos”.
+Substitui somente os vínculos de administração/destino; preserva políticas,
+projeto novo `hidroflorestas-accounts-homologation`, banco `accounts_homologation`,
+cron-job.org e limites sem contratação paga aprovados em 2026-10-04.
+
+`EVIDENCIA_IMPLEMENTACAO`: Neon `me` confirmou a identidade pela API; organização
+`org-autumn-meadow-54690835`, nome `HidroFloresta`, plano `free`. Projeto existente
+`late-poetry-24969502` não corresponde aos fingerprints de endpoints antigos;
+nenhum dado existente foi conectado, migrado ou copiado. Provisionar projeto
+**novo vazio**, PostgreSQL 17, papel `accounts_owner`, região `aws-sa-east-1`,
+compute 0,25 CU e banco lógico próprio. Conferir identidade/vazio pelo bootstrap.
+
+`EVIDENCIA_IMPLEMENTACAO`: autorização oficial Vercel CLI concluída; GET `/v2/user`
+confirmou identidade e GET `/v2/teams` confirmou membership `OWNER` exclusivamente
+na equipe `hidrofloresta-8598`, ID `team_YqedIK09zOGFeZ8M84kra0oM`, plano `hobby`.
+O conector anterior autenticado em `thalesvalente` foi desinstalado, conforme
+resultado da ferramenta Plugin Management; não usar esse conector nesta execução.
+
+`EVIDENCIA_IMPLEMENTACAO`: projeto existente `hidro-florestas`
+(`prj_6SMfmq3wz4xUwEIqEVxZPwY8FNQV`) na equipe nova respondeu ao GET, tem
+RootDirectory nulo, framework Next.js e vínculo Git `HidroFlorestaStartup/HidroFlorestas`
+com productionBranch `main`. Isso não comprova que seja o projeto da integração
+histórica `pedrovitor237s-projects`, que respondeu 403. Preservar ambos.
+
+`RECOMENDACAO` operacional dentro do escopo de homologação: criar projeto
+**separado** na equipe nova e publicar o candidato por upload direto da CLI,
+com vínculo local explícito aos IDs próprios e **sem conectar integração Git**.
+A [documentação oficial](https://vercel.com/docs/deployments) confirma deployment
+CLI com ou sem conexão Git. Manter o push de `feat/account-verification-recovery`
+pendente até comprovar isolamento da integração histórica; não executar push
+experimental. O target chamado production será somente do projeto novo de
+homologação. Nenhuma alteração do projeto existente está autorizada.
+
+`PENDENCIA_DE_DECISAO`: caixas autorizadas a identificar exclusivamente no formulário
+local privado preparado. Credencial cron-job.org somente pelo campo mascarado;
+nunca pelo chat. Login confirmado não prova provisionamento nem Gate B.

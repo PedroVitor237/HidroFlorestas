@@ -66,6 +66,15 @@ IDs e estados preservados. A etapa de commits de T028 ocorre após Gate A e ante
 
 Parte de commits candidatos de T028 executada: `d341fe402323ddfda705b8546e9aa55886815502`, após Gate A; handoff local e bloqueios registrados. O item continua aberto pelo fechamento dependente de T024/T025/Gate B. Push/deploy/PR não executados. Etapas externas mínimas estão na [evidência](implementation-evidence.md); não representam pedido de nova aprovação das políticas/destinos já confirmados.
 
+Retomada em 2026-10-05: vínculos novos aprovados explicitamente pelo usuário,
+conector antigo removido; projetos isolados Vercel/Neon criados, bootstrap
+remoto 11/11 sem falhas/contas importadas e 27 variáveis encrypted production-only
+verificadas. Delta único de destino do scheduler validado por 17/17 testes,
+commit candidato `6446280a26a6ac9c6064eb2ab5aee5000207374f`; commits anteriores
+preservados e gates não afetados não repetidos. T024 segue parcial: correção
+privada dos destinatários, deployment e agendamento ainda pendentes. T025/T028
+continuam abertos; não existe aceite Gate B.
+
 ## Evidência de implementação e verificações focais
 
 Os itens marcados cobrem o código/artefatos implementados e as verificações focais, não aceite final do candidato. Execuções em 2026-10-04: unitários 273 PASS (incluem contratos novos e revisão independente de sessões); provas/mail 5 PASS; contrato HTTP 4 PASS; auditoria independente reportou integração de contas 22/22 PASS e migration 6/6 PASS. Unitários de guard local 2 PASS e parser UI 3 PASS. O focal UI12 passou 7/7, snapshot `36f50445eb0fdc925a9781ac8575676fe2659c3ea479dbfcc6155da174413f25`, de 22:22:18.859 a 22:22:55.634 UTC: jornadas reais locais de verificação/reset/troca, entrega pelo worker com transporte sintético, revogação em outro contexto, recuperação antes de verificar e privacidade de URL/GET/storage.

@@ -81,3 +81,20 @@ O preflight de publicação observou status Vercel no projeto existente, fora da
 O acesso somente leitura ao projeto antigo respondeu 403. A documentação oficial situa vercel.json na raiz do projeto/app, e não comprova leitura universal da raiz do repositório. Portanto, a recomendação de preflight é manter o push pendente desse controle ou de resolução explícita do risco material; o Gate A não substitui essa comprovação.
 
 Verificações anteriores ao fechamento: unitários existentes e novos 273 PASS, provas/mail 5 PASS, contrato HTTP 4 PASS. UI12 integrada passou 7/7 no snapshot anterior à configuração Git. Auditoria independente confirmou no fingerprint `2df65d3ea2fff2e9f7579d18de5f0f36d5c6500a426524f14822af8cd7bee228`: Integration 157/157 PASS (25 cenários de contas), Migration 33/33 PASS (seis novos), Contract 6/6 PASS, R1 17/17 PASS e bootstrap/setup de 11 migrations sem falha, checksums iguais. Não substituem a matriz completa na [evidência consolidada](implementation-evidence.md), nem comprovam HTTPS ou Gate B. [Quickstart](quickstart.md), [handoff](handoff.md), [runbook](../../docs/operations/account-homologation-runbook.md) e [.env.accounts.example](../../.env.accounts.example) usam os caminhos reais desta fase.
+
+## Retomada operacional — 2026-10-05
+
+T024 avança com vínculos novos expressamente autorizados pelo usuário:
+Vercel `hidrofloresta-8598`, Neon organização `HidroFloresta`. Login por API,
+projetos separados, bootstrap remoto de 11 migrations, chaves próprias e
+27 variáveis cifradas production-only concluídos. Conector `thalesvalente`
+removido; nenhum projeto anterior foi alterado. Deploy será upload CLI direto,
+sem conexão Git; push permanece pendente da integração histórica.
+
+O alias estável efetivamente reservado pela API é
+`https://hidroflorestas-accounts-homologatio.vercel.app`. Atualização limitada
+ao guard do scheduler para equipe/origem exatas: Pester 17/17 PASS; demais
+arquivos funcionais permanecem idênticos ao candidato validado, sem repetir
+gates não afetados. Finalizar correção privada de destinatários antes de atualizar
+a allowlist remota/publicar; depois configurar scheduler, observar execuções
+automáticas/backlog e executar jornadas com recebimento/aprovação humanos.

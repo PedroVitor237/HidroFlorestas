@@ -1,15 +1,22 @@
 # Operação de contas e homologação
 
-Estado deste registro: `VALIDADO_LOCALMENTE; GATE_A_PASS; HOMOLOGACAO_BLOQUEADA`.
-Não existe URL funcional de homologação comprovada nesta etapa. O checkpoint
+Estado deste registro: `VALIDADO_LOCALMENTE; GATE_A_PASS; HOMOLOGACAO_EM_CONFIGURACAO; GATE_B_PENDENTE`.
+Não existe deployment funcional aprovado nesta etapa. O checkpoint
 [aprovado](../../specs/012-account-verification-recovery/remote-checkpoint.md)
 define destinos, políticas e limites; aprovação não prova provisionamento.
 
-Candidato funcional local `d341fe402323ddfda705b8546e9aa55886815502`, com 15
-gates PASS e manifesto de 473 arquivos. Nenhum recurso remoto foi criado.
-Bloqueios observados: API Vercel não estabelece TCP desta máquina, login Neon
-aguarda navegador, configuração privada de testadores/scheduler não salva e
-supressão de deploy Git no projeto anterior não comprovada (leitura 403).
+Candidato original `d341fe402323ddfda705b8546e9aa55886815502` preservado, com 15
+gates PASS no snapshot original. Retomada em 2026-10-05: autorizações oficiais
+Neon/Vercel confirmadas por API; conector antigo removido; Vercel projeto próprio
+`prj_OHzoR4hZ4MOrg2HOBvbZmiADrwaz`, equipe `team_YqedIK09zOGFeZ8M84kra0oM`,
+sem Git; Neon projeto próprio `lingering-dream-37087260`, 11 migrations sem falhas
+e zero contas importadas. SMTP autenticado e 27 variáveis cifradas configuradas
+exclusivamente no target production desse projeto. Origem estável reservada
+`https://hidroflorestas-accounts-homologatio.vercel.app`; ainda não é uma aplicação
+publicada. A única mudança funcional é o destino exato do scheduler, validada
+por 17/17 testes focais; nenhum gate não afetado foi repetido. A correção dos
+destinatários no formulário privado, deployment, scheduler e jornadas reais
+continuam pendentes. Push segue pendente da integração histórica (leitura 403).
 Consultar [evidências](../../specs/012-account-verification-recovery/implementation-evidence.md)
 antes de retomar as etapas; nenhuma nova autorização de políticas é necessária.
 
@@ -114,7 +121,9 @@ escapes que dotenv não desfaz. Validar a configuração sem imprimir seus valor
 
 Destinos autorizados: GitHub `PedroVitor237/HidroFlorestas`, somente branch nova;
 Vercel projeto separado `hidroflorestas-accounts-homologation` na equipe
-`thalesvalente`; Neon projeto vazio de mesmo nome e banco
+`hidrofloresta-8598` (`team_YqedIK09zOGFeZ8M84kra0oM`), conforme substituição
+explicitamente autorizada pelo usuário em 2026-10-05; Neon organização
+`HidroFloresta` (`org-autumn-meadow-54690835`), projeto vazio de mesmo nome e banco
 `accounts_homologation`; cron-job.org a cada 60 segundos.
 
 O target Vercel chamado `production` pertence somente ao projeto isolado de
