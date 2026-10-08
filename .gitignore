@@ -81,3 +81,9 @@ prisma/migrations/*
 !prisma/migrations/20260919000100_user_administration/migration.sql
 !prisma/migrations/20260920000100_remove_legacy_is_admin/
 !prisma/migrations/20260920000100_remove_legacy_is_admin/migration.sql
+
+# Mail foundation: additive migration and synthetic configuration example.
+!prisma/migrations/20261004000100_mail_foundation/
+!prisma/migrations/20261004000100_mail_foundation/migration.sql
+!.env.mail.example
+/.mail-validation/
