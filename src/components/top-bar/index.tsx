@@ -19,7 +19,7 @@ export default function TopBar(props: Props) {
   return (
     <div className={`w-full top-0 sticky bg-white px-4 py-3 items-center justify-between gap-3 border-b border-gray-200 ${showLogout ? "flex" : "hidden md:flex"}`}>
       <Image src={Logo} alt="Logo HidroFlorestas" width={180} className="h-auto w-32 shrink-0 md:w-44" />
-      <div className="flex min-w-0 items-center justify-between gap-3 md:gap-8">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-3 md:gap-8">
         {showLinks && (
           <div className="hidden gap-4 md:flex">
             <a href="#" className="text-gray-500 hover:text-blue-500 underline">
@@ -45,6 +45,12 @@ export default function TopBar(props: Props) {
               lyrics={`${user?.firstName.charAt(0)}${user?.lastName.charAt(0)}`}
             />
           </div>
+        )}
+        {showLogout && (
+          <Link href="/delete-account" className="inline-flex min-h-11 items-center rounded-xl px-2 text-sm font-semibold text-red-700 underline focus-visible:outline-2 focus-visible:outline-red-700">Excluir conta</Link>
+        )}
+        {showLogout && (
+          <Link href="/change-password" className="inline-flex min-h-11 shrink-0 items-center rounded-xl px-2 text-sm font-semibold text-gray-700 underline focus-visible:outline-2 focus-visible:outline-green-700">Alterar senha</Link>
         )}
         {showLogout && (
           <Link href="/logout" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-gray-300 px-4 text-sm font-semibold text-gray-700 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-green-700">

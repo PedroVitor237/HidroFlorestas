@@ -3,6 +3,7 @@ import type {
   AuthFailure,
   PublicUserDto,
 } from "@/types/auth.type";
+import { normalizeEmail } from "../accounts/contracts";
 
 export type SignInInput = {
   email: string;
@@ -21,8 +22,6 @@ export const PUBLIC_AUTH_MESSAGES = {
   unauthenticated: "Não autenticado. Faça login novamente.",
   internalError: "Não foi possível concluir a solicitação.",
 } as const;
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function failure(code: AuthFailure["code"], message: string): AuthFailure {
   return { success: false, code, message };
@@ -68,8 +67,9 @@ export function parseSignInInput(input: unknown): ParseSignInResult {
     return { success: false, failure: invalidRequestFailure() };
   }
 
-  const email = value.email.trim();
-  if (!EMAIL_PATTERN.test(email) || value.password.trim().length === 0) {
+  let email: string;
+  try { email = normalizeEmail(value.email).factual; } catch { return { success: false, failure: invalidRequestFailure() }; }
+  if (value.password.trim().length === 0 || value.password.length > 4096) {
     return { success: false, failure: invalidRequestFailure() };
   }
 
@@ -89,6 +89,6 @@ export function serializePublicUser(source: PublicUserSource): PublicUserDto {
 
 export function authenticatedDestination(
   role: "USER" | "ADMIN" | "DEVELOPER" | "MODERATOR",
-): AuthenticatedDestination {
+): Exclude<AuthenticatedDestination, "/verify-email"> {
   return role === "ADMIN" ? "/admin" : "/workspace";
 }

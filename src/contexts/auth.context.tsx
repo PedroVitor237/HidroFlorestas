@@ -41,8 +41,9 @@ type AuthContextType = {
     user: PublicUserDto | null;
     fetchUserData: (options?: FetchOptions) => Promise<void>;
     signIn: (data: SignInData) => Promise<AuthActionResult>;
-    signUp: (data: SignUpData) => Promise<boolean>;
+    signUp: (data: SignUpData, idempotencyKey: string) => Promise<AuthActionResult>;
     logout: () => Promise<AuthActionResult>;
+    clearAuthenticatedUser: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -138,21 +139,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 result?.success !== true ||
                 !("user" in result)
             ) {
-                const message =
-                    result?.success === false &&
-                    (result.code === "INVALID_CREDENTIALS" ||
-                        result.code === "INVALID_REQUEST")
-                        ? result.message
-                        : result?.success === false && result.code === "INTERNAL_ERROR"
-                          ? result.message
-                          : INVALID_RESPONSE_MESSAGE;
+                const message = result?.success === false ? result.message : INVALID_RESPONSE_MESSAGE;
                 toast.error(message, { id: "login" });
                 return { success: false, message };
             }
 
-            setUser(result.user);
-            toast.success("Login realizado com sucesso!", { id: "login" });
+            setUser(result.destination === "/verify-email" ? null : result.user);
+            toast.success(result.destination === "/verify-email" ? "Confirme seu e-mail para continuar." : "Login realizado com sucesso!", { id: "login" });
             router.push(result.destination ?? "/workspace");
+            router.refresh();
             return { success: true };
         } catch {
             toast.error(CONNECTION_FAILURE_MESSAGE, { id: "login" });
@@ -160,32 +155,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [router]);
 
-    async function signUp(data: SignUpData) {
+    async function signUp(data: SignUpData, idempotencyKey: string): Promise<AuthActionResult> {
         toast.loading("Criando conta...", { id: "signup" });
 
         try {
             const response = await fetch("/api/auth/sign-up", {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
                 body: JSON.stringify(data),
             });
-            const result: unknown = await response.json();
+            const result = await readAuthEnvelope(response);
 
-            if (!response.ok) {
-                toast.error(publicMessage(result, "Erro ao criar conta"), {
+            if (!response.ok || result?.success !== true || !("user" in result)) {
+                const message = publicMessage(result, "Não foi possível criar a conta. Tente novamente.");
+                toast.error(message, {
                     id: "signup",
                 });
-                return false;
+                return { success: false, message };
             }
 
-            toast.success("Conta criada com sucesso!", { id: "signup" });
-            await fetchUserData({ force: true });
-            router.push("/workspace");
-            return true;
+            setUser(result.destination === "/verify-email" ? null : result.user);
+            toast.success("Solicitação recebida. Confira seu e-mail.", { id: "signup" });
+            router.push(result.destination ?? "/verify-email");
+            router.refresh();
+            return { success: true };
         } catch {
             toast.error(CONNECTION_FAILURE_MESSAGE, { id: "signup" });
-            return false;
+            return { success: false, message: CONNECTION_FAILURE_MESSAGE };
         }
     }
 
@@ -222,7 +219,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <AuthContext.Provider
-            value={{ user, fetchUserData, signIn, signUp, logout }}
+            value={{ user, fetchUserData, signIn, signUp, logout, clearAuthenticatedUser: () => setUser(null) }}
         >
             {children}
         </AuthContext.Provider>

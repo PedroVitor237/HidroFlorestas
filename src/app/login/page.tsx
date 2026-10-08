@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
 
@@ -18,7 +18,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  async function handleLogin() {
+  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     if (loading) return;
 
     if (!email.trim() || !password.trim()) {
@@ -74,7 +75,7 @@ export default function LoginPage() {
 
       {/* Conteúdo */}
       <main className="flex min-h-[calc(100vh-100px)] items-center justify-center p-6">
-        <div className="w-full max-w-[500px] rounded-[20px] bg-white p-8 shadow-[0px_4px_18px_-3px_rgba(0,0,0,0.25)] md:p-10">
+        <form onSubmit={handleLogin} aria-busy={loading} className="w-full max-w-[500px] rounded-[20px] bg-white p-8 shadow-[0px_4px_18px_-3px_rgba(0,0,0,0.25)] md:p-10">
           {/* Logo */}
           <div className="flex justify-center">
             <Image
@@ -148,6 +149,7 @@ export default function LoginPage() {
 
               <button
                 type="button"
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 onClick={() => setShowPassword(!showPassword)}
                 className="cursor-pointer text-[#858585]"
               >
@@ -176,7 +178,7 @@ export default function LoginPage() {
             </label>
 
             <Link
-              href="#"
+              href="/forgot-password"
               className="text-sm font-medium text-amber-700 underline"
             >
               Esqueceu sua senha?
@@ -191,8 +193,7 @@ export default function LoginPage() {
 
           {/* Botão */}
           <button
-            type="button"
-            onClick={handleLogin}
+            type="submit"
             disabled={loading}
             className="
               mt-8
@@ -223,7 +224,7 @@ export default function LoginPage() {
               Cadastrar-se
             </Link>
           </div>
-        </div>
+        </form>
       </main>
     </div>
   );

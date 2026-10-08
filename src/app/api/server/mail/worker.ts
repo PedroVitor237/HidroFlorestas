@@ -53,7 +53,8 @@ function checkedPayload(value: unknown, row: MailOutbox): ProtectedMailPayload {
   if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).sort().join() !== "content,publicUrl,recipient") throw new MailError("PAYLOAD");
   const payload = value as ProtectedMailPayload;
   validateMailbox(payload.recipient); validateContent(payload.content); validatePublicUrl(payload.publicUrl);
-  if ((row.template === "EMAIL_VERIFICATION_V1") !== (payload.content.template === "email-verification-v1")) throw new MailError("PAYLOAD");
+  const template = { EMAIL_VERIFICATION_V1: "email-verification-v1", PASSWORD_RESET_V1: "password-reset-v1", PASSWORD_CHANGED_V1: "password-changed-v1" }[row.template];
+  if (template !== payload.content.template) throw new MailError("PAYLOAD");
   return payload;
 }
 

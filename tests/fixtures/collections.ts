@@ -119,7 +119,7 @@ export function createCollectionFixtureActions(
               password: passwordHash,
               status: "ACTIVE",
               role: "USER",
-
+              verificationRequired: false,
             },
           });
         }

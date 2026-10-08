@@ -14,7 +14,11 @@ export function renderMail(content: MailContent, expiresAt: Date, publicUrl: str
   if (content.template === "email-verification-v1") {
     return { subject, text: `${greeting}\n\nSeu código de verificação é: ${content.code}\nVálido até ${validity} (UTC).\n\n${ignore}`, html: `<html lang="pt-BR"><body><span style="display:none">${preheader}</span><p>${escapeHtml(greeting)}</p><p>Seu código de verificação é:</p><p><strong>${content.code}</strong></p><p>Válido até ${validity} (UTC).</p><p>${ignore}</p></body></html>` };
   }
-  // The future reset page must capture/remove the fragment before third-party content.
+  if (content.template === "password-changed-v1") {
+    const text = "A senha da sua conta HidroFlorestas foi alterada. As sessões anteriores foram encerradas. Se você não fez esta alteração, solicite a recuperação de senha pela página de login.";
+    return { subject: "Sua senha foi alterada — HidroFlorestas", text: `${greeting}\n\n${text}`, html: `<html lang="pt-BR"><body><p>${escapeHtml(greeting)}</p><p>${text}</p></body></html>` };
+  }
+  // The reset page captures/removes the fragment before third-party content.
   const url = new URL("/reset-password", origin);
   url.hash = `token=${content.token}`;
   return { subject, text: `${greeting}\n\nPara recuperar sua senha, acesse:\n${url.href}\nVálido até ${validity} (UTC).\n\n${ignore}`, html: `<html lang="pt-BR"><body><span style="display:none">${preheader}</span><p>${escapeHtml(greeting)}</p><p><a href="${escapeHtml(url.href)}">Recuperar minha senha</a></p><p>Válido até ${validity} (UTC).</p><p>${ignore}</p></body></html>` };

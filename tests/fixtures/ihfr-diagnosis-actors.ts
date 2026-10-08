@@ -27,6 +27,10 @@ export async function insertIHFRActorFixtures(client: PoolClient) {
       ($6,'revoked@imp006.test.invalid','Revoked','IMP006','fixture','USER','','ACTIVE',now(),now())`,
     Object.values(IHFR_ACTORS),
   );
+  // These synthetic actors represent the explicitly preserved pre-rollout cohort.
+  // Migration-only scenarios can still exercise the older schema without this field.
+  const accountsSchema = await client.query("SELECT 1 FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='User' AND column_name='verificationRequired'");
+  if (accountsSchema.rowCount) await client.query('UPDATE "User" SET "verificationRequired"=false WHERE id=ANY($1::text[])', [Object.values(IHFR_ACTORS)]);
   await client.query(
     `INSERT INTO "LaboratoryRoom" (id,name,"userId","isActive","accessCode","createdAt","updatedAt") VALUES
       ($1,'IMP-006 active laboratory',$3,true,'imp006-active',now(),now()),

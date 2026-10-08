@@ -87,3 +87,11 @@ prisma/migrations/*
 !prisma/migrations/20261004000100_mail_foundation/migration.sql
 !.env.mail.example
 /.mail-validation/
+/.accounts-validation/
+!.env.accounts.example
+!prisma/migrations/20261004000200_account_verification_recovery/
+!prisma/migrations/20261004000200_account_verification_recovery/migration.sql
+!prisma/migrations/20261004000300_account_rate_limit_actions/
+!prisma/migrations/20261004000300_account_rate_limit_actions/migration.sql
+!prisma/migrations/20261005000100_account_deletion_mail_ownership/
+!prisma/migrations/20261005000100_account_deletion_mail_ownership/migration.sql

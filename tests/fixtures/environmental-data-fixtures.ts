@@ -124,7 +124,7 @@ export function createEnvironmentalFixtureActions(
               password: passwordHash,
               status: "ACTIVE",
               role: "USER",
-
+              verificationRequired: false,
             },
           });
         }

@@ -1,6 +1,8 @@
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Client } from "pg";
+import { localPostgresqlContext } from "../src/app/api/server/lib/local-postgresql-context";
+import { setupAccountsDatabases } from "./accounts-database-setup";
 import {
   migrationPath, collectionMigrationPath, environmentalMigrationPath,
   userAdministrationMigrationPath, ihfrDiagnosisMigrationPath, removeLegacyIsAdminMigrationPath,
@@ -81,6 +83,7 @@ async function verifyOwnedSchema(client: Client, name: typeof names[number], exi
 }
 
 async function main() {
+  if (localPostgresqlContext().accounts) { await setupAccountsDatabases(); return; }
   if (process.env.IMP006_LOCAL_POSTGRESQL !== "1" || process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST") throw new Error("Owned local PostgreSQL guard required");
   const url = new URL(process.env.TEST_DATABASE_URL ?? "");
   if (url.hostname !== "127.0.0.1" || url.port !== "55426" || url.pathname !== "/postgres") throw new Error("Regression setup requires the owned cluster's administrative database");

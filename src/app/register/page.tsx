@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 
 import LogoHF from "@/assets/logo/logo-hf.png";
@@ -21,8 +21,11 @@ export default function RegisterPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const requestKey = useRef<string | null>(null);
 
-  async function handleRegister() {
+  async function handleRegister(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     if (loading) return;
 
     if (
@@ -31,18 +34,22 @@ export default function RegisterPage() {
       !email.trim() ||
       !password.trim()
     ) {
+      setErrorMessage("Preencha seu nome, sobrenome, e-mail e senha.");
       return;
     }
 
     setLoading(true);
+    setErrorMessage("");
+    requestKey.current ??= crypto.randomUUID();
 
     try {
-      await signUp({
+      const result = await signUp({
         firstName,
         lastName,
         email,
         password,
-      });
+      }, requestKey.current);
+      if (!result.success) setErrorMessage(result.message);
     } finally {
       setLoading(false);
     }
@@ -65,6 +72,7 @@ export default function RegisterPage() {
               src={RegisterBackground}
               alt="Background"
               fill
+              sizes="(min-width: 768px) 55vw, 0px"
               priority
               className="object-cover object-center"
             />
@@ -93,7 +101,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Formulário */}
-          <div className="w-full md:w-[45%] bg-white p-8 md:p-12">
+          <form onSubmit={handleRegister} onChange={event => { const target = event.target; if (target instanceof HTMLInputElement && ["firstName", "lastName", "email", "password"].includes(target.name)) { requestKey.current = null; setErrorMessage(""); } }} className="w-full md:w-[45%] bg-white p-8 md:p-12" aria-busy={loading}>
             <div className="flex justify-center">
               <Image src={LogoHF} alt="HidroFlorestas" width={200} />
             </div>
@@ -110,7 +118,7 @@ export default function RegisterPage() {
 
             {/* Nome */}
             <div className="mt-8">
-              <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+              <label htmlFor="first-name" className="mb-2 block text-[18px] font-bold text-[#A1640B]">
                 Nome
               </label>
 
@@ -119,6 +127,11 @@ export default function RegisterPage() {
 
                 <input
                   type="text"
+                  id="first-name"
+                  name="firstName"
+                  autoComplete="given-name"
+                  disabled={loading}
+                  required
                   placeholder="Seu nome"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -129,7 +142,7 @@ export default function RegisterPage() {
 
             {/* Sobrenome */}
             <div className="mt-5">
-              <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+              <label htmlFor="last-name" className="mb-2 block text-[18px] font-bold text-[#A1640B]">
                 Sobrenome
               </label>
 
@@ -138,6 +151,11 @@ export default function RegisterPage() {
 
                 <input
                   type="text"
+                  id="last-name"
+                  name="lastName"
+                  autoComplete="family-name"
+                  disabled={loading}
+                  required
                   placeholder="Seu sobrenome"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
@@ -148,7 +166,7 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div className="mt-5">
-              <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+              <label htmlFor="register-email" className="mb-2 block text-[18px] font-bold text-[#A1640B]">
                 E-mail
               </label>
 
@@ -157,6 +175,11 @@ export default function RegisterPage() {
 
                 <input
                   type="email"
+                  id="register-email"
+                  name="email"
+                  autoComplete="email"
+                  disabled={loading}
+                  required
                   placeholder="seu@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -167,7 +190,7 @@ export default function RegisterPage() {
 
             {/* Senha */}
             <div className="mt-5">
-              <label className="mb-2 block text-[18px] font-bold text-[#A1640B]">
+              <label htmlFor="register-password" className="mb-2 block text-[18px] font-bold text-[#A1640B]">
                 Senha
               </label>
 
@@ -176,6 +199,12 @@ export default function RegisterPage() {
 
                 <input
                   type={showPassword ? "text" : "password"}
+                  id="register-password"
+                  name="password"
+                  autoComplete="new-password"
+                  disabled={loading}
+                  required
+                  aria-describedby="register-password-help"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -184,6 +213,7 @@ export default function RegisterPage() {
 
                 <button
                   type="button"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   onClick={() => setShowPassword(!showPassword)}
                   className="cursor-pointer text-[#858585]"
                 >
@@ -205,10 +235,12 @@ export default function RegisterPage() {
               </label>
             </div>
 
+            <p id="register-password-help" className="mt-3 text-sm text-[#3E3E3E]">Use uma frase de pelo menos 15 caracteres. Sua senha será preservada como digitada.</p>
+            {errorMessage ? <p role="alert" className="mt-4 text-sm text-red-700">{errorMessage}</p> : null}
+
             {/* Botão */}
             <button
-              type="button"
-              onClick={handleRegister}
+              type="submit"
               disabled={loading}
               className="
                 mt-8
@@ -237,7 +269,7 @@ export default function RegisterPage() {
                 Entrar na minha conta
               </Link>
             </div>
-          </div>
+          </form>
         </div>
       </main>
     </div>

@@ -8,7 +8,7 @@ async function main() {
   const directory = await mkdtemp(join(tmpdir(), "hidro-mail-clean-"));
   const tracked = execFileSync("git", ["ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean);
   const untracked = execFileSync("git", ["ls-files", "--others", "--exclude-standard", "-z"], { encoding: "utf8" }).split("\0").filter((file) =>
-    /^(src\/app\/api\/(server\/mail\/|internal\/mail\/)|tests\/(mail\/|integration\/mail-|migration\/mail-)|scripts\/mail-|specs\/mail-foundation\/|docs\/operations\/mail-|prisma\/migrations\/20261004000100_mail_foundation\/|\.specify\/feature\.json$|\.env\.mail\.example$)/.test(file));
+    /^(src\/|tests\/|scripts\/|specs\/|docs\/operations\/|prisma\/|\.specify\/feature\.json$|\.env\.(?:mail|accounts)\.example$)/.test(file) && !/\.(?:zip|log|clixml)$/i.test(file));
   const paths = [...new Set([...tracked, ...untracked])].sort();
   const digest = createHash("sha256");
   for (const file of paths) {

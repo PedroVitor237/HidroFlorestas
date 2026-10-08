@@ -23,19 +23,21 @@ describe("session policy", () => {
     assert.equal(readJwtSecret({ JWT_SECRET: SECRET }), SECRET);
   });
 
-  it("signs a minimal HS256 token valid for seven days", () => {
+  it("signs a purpose/version-bound HS256 token valid for seven days", () => {
     const token = signSessionToken("user-1", SECRET);
     const decoded = jwt.decode(token, { complete: true });
 
     assert.ok(decoded && typeof decoded !== "string");
     assert.equal(decoded.header.alg, "HS256");
-    assert.deepEqual(verifySessionToken(token, SECRET), { userId: "user-1" });
+    assert.deepEqual(verifySessionToken(token, SECRET), { userId: "user-1", credentialVersion: 0, purpose: "session" });
 
     const payload = decoded.payload;
     assert.ok(typeof payload === "object");
     assert.equal(payload.userId, "user-1");
     assert.equal(payload.exp! - payload.iat!, AUTH_SESSION_TTL_SECONDS);
-    assert.deepEqual(Object.keys(payload).sort(), ["exp", "iat", "userId"]);
+    assert.equal(payload.iss, "hidroflorestas");
+    assert.equal(payload.aud, "hidroflorestas-session");
+    assert.deepEqual(Object.keys(payload).sort(), ["aud", "credentialVersion", "exp", "iat", "iss", "purpose", "userId"]);
   });
 
   it("rejects tampered, expired, invalid-payload, and non-HS256 tokens", () => {

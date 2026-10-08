@@ -16,7 +16,7 @@ async function main() {
   const npmCli = join(dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js");
   const startedUtc = new Date().toISOString();
   const snapshot = await mailSnapshotFingerprint();
-  const args = script === "regression-setup" ? ["--import=tsx", "scripts/imp006-local-regression-setup.ts"] : script === "clean-install" ? ["--import=tsx", "scripts/mail-clean-install.ts"] : [npmCli, "run", script];
+  const args = script === "regression-setup" ? ["--import=tsx", "scripts/imp006-local-regression-setup.ts"] : script === "clean-install" ? ["--import=tsx", "scripts/mail-clean-install.ts"] : script === "accounts-bootstrap" ? ["--import=tsx", "scripts/imp006-clean-bootstrap.ts", "--with-versioned-baseline"] : [npmCli, "run", script];
   const env = { ...process.env };
   if (script === "build") Object.assign(env, { NODE_ENV: "production" });
   const child = spawn(process.execPath, args, { env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
@@ -34,7 +34,7 @@ async function main() {
   const exitCode = await new Promise<number>((resolve, reject) => { child.once("error", reject); child.once("close", (code) => resolve(code ?? 1)); });
   await new Promise<void>((resolve) => output.end(resolve));
   const result = !exitCode ? "PASS" : gate === "Smoke" && (await readFile(outputFile, "utf8")).includes("Gmail smoke BLOQUEIO_DE_SETUP:") ? "BLOQUEIO_DE_SETUP" : "FAIL";
-  const record = { gate, command: script === "regression-setup" ? "node --import=tsx scripts/imp006-local-regression-setup.ts" : script === "clean-install" ? "node --import=tsx scripts/mail-clean-install.ts" : `npm run ${script}`, snapshot, startedUtc, endedUtc: new Date().toISOString(), exitCode, result, environment: "Windows/Node24.19/owned-loopback-PostgreSQL17", log: outputFile };
+  const record = { gate, command: script === "regression-setup" ? "node --import=tsx scripts/imp006-local-regression-setup.ts" : script === "clean-install" ? "node --import=tsx scripts/mail-clean-install.ts" : script === "accounts-bootstrap" ? "node --import=tsx scripts/imp006-clean-bootstrap.ts --with-versioned-baseline" : `npm run ${script}`, snapshot, startedUtc, endedUtc: new Date().toISOString(), exitCode, result, environment: "Windows/Node24.19/owned-loopback-PostgreSQL17", log: outputFile };
   await appendFile(join(outputRoot, "results.jsonl"), JSON.stringify(record) + "\n");
   process.stdout.write(JSON.stringify(record) + "\n");
   const lines = (await readFile(outputFile, "utf8")).trimEnd().split(/\r?\n/);
