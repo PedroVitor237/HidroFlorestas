@@ -40,7 +40,7 @@ describe("collection form state", () => {
   });
 
   it("keeps invalid temporal input editable with a comprehensible error", () => {
-    const empty = reviewCollectionAttempt(createCollectionAttempt(context, () => "key"));
+    const empty = reviewCollectionAttempt(updateCollectionOccurrence(createCollectionAttempt(context, () => "key"), ""));
     assert.equal(empty.phase, "editing");
     assert.match(empty.error ?? "", /data.*horário.*fuso/i);
 
@@ -103,7 +103,8 @@ describe("collection form state", () => {
     const next = startNewCollectionAttempt(failed, () => "new-key");
     assert.equal(next.phase, "editing");
     assert.equal(next.idempotencyKey, "new-key");
-    assert.equal(next.occurredAt, "");
+    assert.ok(next.occurredAt);
+    assert.equal(next.useDeviceTimeZone, true);
     assert.deepEqual(next.context, context);
   });
 

@@ -1,3 +1,4 @@
+import { formatCollectionOccurrence } from "@/lib/collection-date-time";
 import Link from "next/link";
 import { ArrowLeft, ClipboardList } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
@@ -101,7 +102,7 @@ export async function EnvironmentalDataPage({
           </div>
           <div>
             <dt className="text-slate-500">Ocorrência em campo</dt>
-            <dd>{collection.occurredAt}</dd>
+            <dd>{formatCollectionOccurrence(collection.occurredAt)}</dd>
           </div>
         </dl>
       </section>

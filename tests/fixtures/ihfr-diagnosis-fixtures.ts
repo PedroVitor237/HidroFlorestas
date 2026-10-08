@@ -1,4 +1,5 @@
 import type { PoolClient } from "pg";
+import { readFile } from "node:fs/promises";
 import { insertIHFRActorFixtures } from "./ihfr-diagnosis-actors";
 import { insertIHFRContextFixtures } from "./ihfr-diagnosis-contexts";
 import { insertIHFRDomainFixtures } from "./ihfr-diagnosis-domain";
@@ -12,6 +13,10 @@ export async function setupIHFRDiagnosisFixtures(client: PoolClient) {
   await applyIHFRDiagnosisMigration(client);
   await applyRemoveLegacyIsAdminMigration(client);
   await applyIHFRLifecycleReferenceMigration(client);
+  await client.query(await readFile("prisma/migrations/20261004000100_mail_foundation/migration.sql", "utf8"));
+  await client.query(await readFile("prisma/migrations/20261004000200_account_verification_recovery/migration.sql", "utf8"));
+  await client.query(await readFile("prisma/migrations/20261004000300_account_rate_limit_actions/migration.sql", "utf8"));
+  await client.query(await readFile("prisma/migrations/20261005000100_account_deletion_mail_ownership/migration.sql", "utf8"));
   await client.query("BEGIN");
   try {
     await insertIHFRActorFixtures(client);

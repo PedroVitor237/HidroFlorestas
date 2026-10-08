@@ -30,8 +30,8 @@ function dependencies(
   };
 }
 
-describe("AuthService.signUp", () => {
-  it("creates an ACTIVE account with a hash and authenticates the same password immediately", async () => {
+describe("AuthService legacy repository adapter (explicit test injection)", () => {
+  it("preserves ACTIVE/hash/public projection for the injected historical adapter; production uses atomic AccountService", async () => {
     const password = "participant-password";
     let created: {
       id: string;

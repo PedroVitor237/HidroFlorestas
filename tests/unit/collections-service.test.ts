@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { parseCollectionInput } from "../../src/app/api/server/collections/collection.contracts";
+import { localOccurrenceToRfc3339, formatCollectionOccurrence } from "../../src/lib/collection-date-time";
 import { AreaAccessError, type ContextRole } from "../../src/app/api/server/areas/area.authorization";
 import {
   CollectionsService,
@@ -225,6 +227,27 @@ describe("collections service detail", () => {
       });
       await assert.rejects(() => service.detail(ids.user, ids.laboratory, ids.area, ids.collection));
       assert.equal(lookedUp, false);
+    }
+  });
+});
+
+
+describe("friendly collection input through existing persistence service", () => {
+  it("persists and reloads the same millisecond instant and declared offset in three zones", async () => {
+    for (const [local, offset] of [
+      ["2026-09-15T09:00:00.123", "-03:00"],
+      ["2026-09-15T12:00:00.123", "+00:00"],
+      ["2026-09-15T17:45:00.123", "+05:45"],
+    ]) {
+      const parsed = parseCollectionInput({ occurredAt: localOccurrenceToRfc3339(local, offset) }, () => new Date("2026-10-01"));
+      const records: CollectionRecord[] = [];
+      const { service } = harness({ records });
+      await service.create({ ...command, occurrence: parsed });
+      assert.equal(records[0].occurredAt.toISOString(), "2026-09-15T12:00:00.123Z");
+      assert.equal(records[0].occurrenceOffset, offset);
+      const result = await service.detail(ids.user, ids.laboratory, ids.area, ids.collection);
+      assert.equal(result.collection.occurredAt, parsed.occurredAt);
+      assert.match(formatCollectionOccurrence(result.collection.occurredAt), /15\/09\/2026/);
     }
   });
 });

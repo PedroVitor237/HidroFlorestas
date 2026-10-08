@@ -1,6 +1,8 @@
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Client } from "pg";
+import { localPostgresqlContext } from "../src/app/api/server/lib/local-postgresql-context";
+import { setupAccountsDatabases } from "./accounts-database-setup";
 import {
   migrationPath, collectionMigrationPath, environmentalMigrationPath,
   userAdministrationMigrationPath, ihfrDiagnosisMigrationPath, removeLegacyIsAdminMigrationPath,
@@ -81,6 +83,7 @@ async function verifyOwnedSchema(client: Client, name: typeof names[number], exi
 }
 
 async function main() {
+  if (localPostgresqlContext().accounts) { await setupAccountsDatabases(); return; }
   if (process.env.IMP006_LOCAL_POSTGRESQL !== "1" || process.env.TEST_DATABASE_CONFIRMATION !== "HIDROFLORESTAS_AUTH_TEST") throw new Error("Owned local PostgreSQL guard required");
   const url = new URL(process.env.TEST_DATABASE_URL ?? "");
   if (url.hostname !== "127.0.0.1" || url.port !== "55426" || url.pathname !== "/postgres") throw new Error("Regression setup requires the owned cluster's administrative database");
@@ -110,6 +113,11 @@ async function main() {
           for (const file of files) await database.query(await readFile(file, "utf8"));
         }
         await verifyOwnedSchema(database, name, alreadyExists);
+        if (name === "imp006_regression_v2_test") {
+          // Only this marker-verified synthetic local database; no remote/application migration.
+          const installed = await database.query("SELECT to_regclass('public.\"MailOutbox\"') IS NOT NULL AS present");
+          if (!installed.rows[0].present) await database.query(await readFile("prisma/migrations/20261004000100_mail_foundation/migration.sql", "utf8"));
+        }
         if (!alreadyExists && name === "imp006_regression_v2_test") await database.query(`COMMENT ON SCHEMA public IS '${marker}'`);
       } finally { await database.end(); }
       if (!alreadyExists) await admin.query(`COMMENT ON DATABASE "${name}" IS '${marker}'`);

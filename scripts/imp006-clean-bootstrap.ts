@@ -1,11 +1,13 @@
 import { randomBytes, createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { Client } from "pg";
 import { describeImp006Error, runImp006Gate } from "./imp006-gate-diagnostics";
+import { localPostgresqlContext } from "../src/app/api/server/lib/local-postgresql-context";
 
-const clusterMarker = "hidroflorestas:imp006-local-postgresql:v1";
+const context = localPostgresqlContext();
+const clusterMarker = context.clusterMarker;
 const databaseMarker = "hidroflorestas:imp006-clean-bootstrap:v1";
 
 function assertOwnedLocalCluster(): URL {
@@ -13,16 +15,16 @@ function assertOwnedLocalCluster(): URL {
     throw new Error("Owned local PostgreSQL confirmation is required");
   }
   const url = new URL(process.env.TEST_DATABASE_URL ?? "");
-  if (url.hostname !== "127.0.0.1" || url.port !== "55426" || url.pathname !== "/postgres") {
+  if (url.hostname !== "127.0.0.1" || url.port !== context.port || url.pathname !== "/postgres") {
     throw new Error("Clean bootstrap requires the owned local cluster administration database");
   }
   return url;
 }
 
 async function assertClusterMarker() {
-  const root = join(process.env.LOCALAPPDATA ?? "", "HidroFlorestas", "imp006-postgresql");
+  const root = join(process.env.LOCALAPPDATA ?? "", "HidroFlorestas", context.directory);
   const saved = JSON.parse((await readFile(join(root, "cluster-owner.json"), "utf8")).replace(/^\uFEFF/, "")) as { marker?: string; root?: string; port?: number };
-  if (saved.marker !== clusterMarker || saved.root?.toLowerCase() !== root.toLowerCase() || saved.port !== 55426) {
+  if (saved.marker !== clusterMarker || saved.root?.toLowerCase() !== root.toLowerCase() || saved.port !== Number(context.port)) {
     throw new Error("Local PostgreSQL ownership marker mismatch");
   }
 }
@@ -38,8 +40,9 @@ async function main() {
   const quoteName = `"${name}"`; // name is generated from a fixed prefix and hex only.
   const databaseUrl = new URL(administrativeUrl);
   databaseUrl.pathname = `/${name}`;
-  const versionedMigrations = execFileSync("git", ["ls-files", "--", "prisma/migrations"], { encoding: "utf8" })
-    .split(/\r?\n/).filter((path) => /\/migration\.sql$/.test(path));
+  const versionedMigrations = context.accounts
+    ? (await readdir("prisma/migrations", { withFileTypes: true })).filter((entry) => entry.isDirectory() && /^\d{14}_[a-z0-9_]+$/.test(entry.name)).map((entry) => `prisma/migrations/${entry.name}/migration.sql`).sort()
+    : execFileSync("git", ["ls-files", "--", "prisma/migrations"], { encoding: "utf8" }).split(/\r?\n/).filter((path) => /\/migration\.sql$/.test(path));
   if (versionedMigrations.length === 0) throw new Error("No versioned Prisma migrations found");
   const firstMigration = versionedMigrations[0];
   const firstMigrationName = firstMigration?.split("/")[2];
@@ -50,7 +53,7 @@ async function main() {
   if (firstMigrationSql !== 'CREATE UNIQUE INDEX "LaboratoryRoom_accessCode_key" ON "LaboratoryRoom"("accessCode");') {
     throw new Error("First versioned migration SQL has changed; fresh-install baseline requires review");
   }
-  const fingerprint = createHash("sha256").update(`127.0.0.1:55426/${name}`).digest("hex").slice(0, 12);
+  const fingerprint = createHash("sha256").update(`127.0.0.1:${context.port}/${name}`).digest("hex").slice(0, 12);
   const admin = new Client({ connectionString: administrativeUrl.toString() });
   let created = false;
   let primaryError: unknown;

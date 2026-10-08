@@ -1,0 +1,27 @@
+# Contratos para Execução 2
+
+Classificação do comportamento observado: `EVIDENCIA_IMPLEMENTACAO`. Lote, lease, prazo e margem são escolhas técnicas locais classificadas como `RECOMENDACAO`, autorizadas neste recorte; não representam aprovação de política de contas pela equipe.
+
+`enqueueMail(tx: Prisma.TransactionClient, input, protection, now)` participa da transação do produtor. Entrada fechada: chave opaca (16–128 caracteres), recipient mailbox simples, template `email-verification-v1` + name/code textual de 6 dígitos OU `password-reset-v1` + name/token base64url, expiresAt explícito e challengeId opcional. Retorno apenas `{id, reused}`. Nenhuma prova/recipient sai em DTO.
+
+Chave + conteúdo (incluindo recipient, template, origem confiável e validade) iguais recuperam o id mesmo após a limpeza do payload, enquanto os metadados estiverem retidos. O purge de estados terminais após 7 dias encerra essa garantia de idempotência; a mesma chave poderá criar nova intenção depois da remoção da linha. Divergência gera `IDEMPOTENCY_CONFLICT`. Keyring de cifra pode rotacionar; segredo HMAC idempotente permanece estável até expirar metadados.
+
+`cancelChallengeMail(tx, challengeId, now)` cancela intenções ativas e apaga conteúdo na mesma transação em que o futuro produtor invalida o desafio. Claim e a autorização final de envio verificam consumedAt/invalidatedAt/expiração. Existe uma janela entre essa autorização e o efeito SMTP: cancelamento posterior pode ocorrer antes ou durante o envio e não consegue impedir ou desfazer todo efeito externo. A atualização condicional do resultado não reabre uma intenção cancelada.
+
+`consumeMailRateLimit(tx, {subjectMac, action, windowStart, windowEnd, limit})` incrementa condicionalmente; retorno `{allowed}`. Caller define política aprovada futura e HMAC de sujeito; não aceita PII como chave.
+
+`POST/GET /api/internal/mail/process`: `Authorization: Bearer <MAIL_WORKER_SECRET>`, sem parâmetros de query/body. Lote/concorrência server-side fixos. Segredo ausente → 503; errado/ausente no header → 401; query/body → 400. Resposta apenas contadores redigidos, Cache-Control no-store. Não é API de envio arbitrário. Segredo nunca em URL.
+
+Erros técnicos fechados: CONFIGURATION, AUTHENTICATION, TLS, CONNECTION, TIMEOUT, TEMPORARY, PERMANENT, PAYLOAD, UNKNOWN. Logs usam id opaco, template, tentativa/contadores/classe; nunca mensagem/response crua do provedor.
+
+`MailTransport.send({outboxId, recipient, message, expiresAt, deadlineAt})` é interface interna, sem DTO público. `expiresAt` permanece a validade absoluta efetiva da prova: o menor entre a validade da outbox e a do challenge associado, quando presente; também é usado na renderização. `deadlineAt` é um prazo operacional absoluto independente, derivado dos orçamentos restantes abaixo, sem alterar nem prolongar essa validade. O adaptador limita a chamada a `min(início do adaptador + 15 s, expiresAt, deadlineAt)` e encerra o socket quando vence.
+
+Antes do transporte, o worker executa `UPDATE` condicional com relógio fresco do banco (`clock_timestamp()` em runtime), exigindo status PROCESSING, claimToken atual, lease com pelo menos 15 s + 2 s restantes e prova/challenge vigente. O SELECT anterior serve somente para recusa antecipada. O UPDATE confirma antes do SMTP e retorna lease, validade efetiva e `fencedAt` do banco. Depois do await e da renderização com essa validade efetiva, o worker lê UTC local e `performance.now()` novamente. Desconta conservadoramente todo tempo monotônico desde antes da consulta, incluindo espera/retomada e renderização, dos orçamentos devolvidos pelo banco.
+
+Com `elapsed` monotônico e `agora` UTC local, calcula `leaseBudget = min(leaseUntil − agora, leaseUntil − fencedAt − elapsed)` e `proofBudget = min(expiresAt − agora, expiresAt − fencedAt − elapsed)`. Recusa tempo monotônico inválido, leaseBudget menor que 17 s ou proofBudget esgotado; não há outro await antes de chamar o transporte. `deadlineAt = agora + min(15 s, leaseBudget − 2 s, proofBudget)`. Um relógio local atrasado não aumenta o orçamento calculado a partir do banco. Não renova lease nem estende prova. O item recusado permanece recuperável depois do vencimento da lease, se ainda houver validade e tentativas; a manutenção aplica os estados terminais quando esses limites acabarem. Nenhuma transação ou lock de banco atravessa SMTP.
+
+A margem técnica de 2 s reserva tempo para fechamento do socket e persistência do resultado; não garante execução durante pausa ilimitada do processo/event loop. Recomenda-se sincronizar os relógios do banco e da aplicação em UTC na operação; o orçamento pré-envio combina tempo do banco, decurso monotônico e UTC local, sem presumir igualdade absoluta entre esses relógios. O resultado final continua condicionado à posse/lease/validade vigentes. Perda de resposta após aceitação SMTP pode repetir o efeito externo no retry (`at-least-once`, limitado por validade e tentativas); não há garantia de exatamente uma vez, entrega ou inbox.
+
+Templates não aceitam HTML/headers/anexos/URLs do produtor. Configuração, cifra, persistência, worker e transporte têm import `server-only`; CLI/tests específicos usam condição `react-server`, sem fake no runtime.
+
+Identidade: preservar string atual, pontos e aliases. Não usar normalização proposta para lookup/criação enquanto não houver decisão e preflight de colisões. Preparar HMAC de binding/prova é responsabilidade futura, sem geração/consumo nesta execução.

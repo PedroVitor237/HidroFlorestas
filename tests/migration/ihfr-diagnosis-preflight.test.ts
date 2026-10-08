@@ -22,7 +22,7 @@ const migrationDirectory =
 const lifecycleReferenceMigrationDirectory =
   "prisma/migrations/20260926000100_ihfr_lifecycle_reference_integrity";
 
-test("IMP-006 migration keeps its published slot in the integrated IMP-009 chain", () => {
+test("IMP-006 migration keeps its published slot before the additive account chain", () => {
   const migrations = readdirSync("prisma/migrations", { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
@@ -37,7 +37,16 @@ test("IMP-006 migration keeps its published slot in the integrated IMP-009 chain
   assert.ok(migrations.indexOf(administrationMigration) < migrations.indexOf(ihfrMigration));
   assert.ok(migrations.indexOf(ihfrMigration) < migrations.indexOf(legacyRemovalMigration));
   assert.ok(migrations.indexOf(legacyRemovalMigration) < migrations.indexOf(lifecycleReferenceMigration));
-  assert.equal(migrations.at(-1), lifecycleReferenceMigration);
+  const mailFoundationMigration = "20261004000100_mail_foundation";
+  assert.equal(existsSync(`prisma/migrations/${mailFoundationMigration}/migration.sql`), true);
+  assert.ok(migrations.indexOf(lifecycleReferenceMigration) < migrations.indexOf(mailFoundationMigration));
+  assert.deepEqual(migrations.slice(-4), [
+    mailFoundationMigration,
+    "20261004000200_account_verification_recovery",
+    "20261004000300_account_rate_limit_actions",
+    "20261005000100_account_deletion_mail_ownership",
+  ]);
+  for (const name of migrations.slice(-3)) assert.equal(existsSync(`prisma/migrations/${name}/migration.sql`), true);
 });
 
 test("legacy, IMP-005 and additive IMP-006 models coexist", () => {

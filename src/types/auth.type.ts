@@ -8,7 +8,13 @@ export type AuthFailureCode =
   | "INVALID_REQUEST"
   | "INVALID_CREDENTIALS"
   | "UNAUTHENTICATED"
-  | "INTERNAL_ERROR";
+  | "INTERNAL_ERROR"
+  | "INVALID_PROOF"
+  | "RATE_LIMITED"
+  | "ACCOUNT_EXISTS"
+  | "IDEMPOTENCY_CONFLICT"
+  | "PROVIDER_UNAVAILABLE"
+  | "FORBIDDEN";
 
 export type AuthSuccess = {
   success: true;
@@ -16,7 +22,7 @@ export type AuthSuccess = {
   destination?: AuthenticatedDestination;
 };
 
-export type AuthenticatedDestination = "/admin" | "/workspace";
+export type AuthenticatedDestination = "/admin" | "/workspace" | "/verify-email";
 
 export type LogoutSuccess = {
   success: true;
@@ -26,6 +32,7 @@ export type AuthFailure = {
   success: false;
   code: AuthFailureCode;
   message: string;
+  retryAfterSeconds?: number;
 };
 
 export type AuthEnvelope = AuthSuccess | LogoutSuccess | AuthFailure;
@@ -35,6 +42,12 @@ const AUTH_FAILURE_CODES = new Set<AuthFailureCode>([
   "INVALID_CREDENTIALS",
   "UNAUTHENTICATED",
   "INTERNAL_ERROR",
+  "INVALID_PROOF",
+  "RATE_LIMITED",
+  "ACCOUNT_EXISTS",
+  "IDEMPOTENCY_CONFLICT",
+  "PROVIDER_UNAVAILABLE",
+  "FORBIDDEN",
 ]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -91,7 +104,7 @@ export function parseAuthEnvelope(value: unknown): AuthEnvelope | null {
     if (!user) return null;
 
     if (hasDestination) {
-      if (value.destination !== "/admin" && value.destination !== "/workspace") {
+      if (value.destination !== "/admin" && value.destination !== "/workspace" && value.destination !== "/verify-email") {
         return null;
       }
       return { success: true, user, destination: value.destination };
@@ -101,7 +114,8 @@ export function parseAuthEnvelope(value: unknown): AuthEnvelope | null {
   }
 
   if (
-    !hasExactKeys(value, ["success", "code", "message"]) ||
+    (!hasExactKeys(value, ["success", "code", "message"]) &&
+      !hasExactKeys(value, ["success", "code", "message", "retryAfterSeconds"])) ||
     typeof value.code !== "string" ||
     !AUTH_FAILURE_CODES.has(value.code as AuthFailureCode) ||
     typeof value.message !== "string"
@@ -109,9 +123,13 @@ export function parseAuthEnvelope(value: unknown): AuthEnvelope | null {
     return null;
   }
 
+  if ("retryAfterSeconds" in value &&
+      (typeof value.retryAfterSeconds !== "number" || !Number.isFinite(value.retryAfterSeconds) || value.retryAfterSeconds < 0)) return null;
+
   return {
     success: false,
     code: value.code as AuthFailureCode,
     message: value.message,
+    ...(typeof value.retryAfterSeconds === "number" ? { retryAfterSeconds: value.retryAfterSeconds } : {}),
   };
 }

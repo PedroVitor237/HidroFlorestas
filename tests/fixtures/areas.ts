@@ -37,7 +37,7 @@ export async function setupAreaFixtures(environment: Record<string, string | und
     await prisma.$transaction(async (tx) => {
       // create, never upsert: an unexpected collision must not overwrite a record.
       for (const [i, id] of AREA_FIXTURES.userIds.entries()) {
-        await tx.user.create({ data: { id, email: areaFixtureEmail(i), firstName: ["Owner", "Admin", "Member", "Outsider"][i], lastName: "IMP003", password, status: "ACTIVE", role: "USER", } });
+        await tx.user.create({ data: { id, email: areaFixtureEmail(i), firstName: ["Owner", "Admin", "Member", "Outsider"][i], lastName: "IMP003", password, status: "ACTIVE", role: "USER", verificationRequired: false } });
       }
       for (const [i, id] of AREA_FIXTURES.laboratoryIds.entries()) {
         const owner = AREA_FIXTURES.userIds[i === 2 ? 3 : 0];

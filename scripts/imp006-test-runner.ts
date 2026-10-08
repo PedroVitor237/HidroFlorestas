@@ -16,7 +16,7 @@ async function main() {
   const preflightStarted = Date.now();
   const verified = await readOnlyImp006Preflight(env);
   process.stdout.write(`IMP-006 read-only preflight passed: target ${verified.fingerprint}, schema ${verified.schema}, duration_ms=${Date.now() - preflightStarted}. Tests may write to isolated schemas.\n`);
-  const result = await runImp006Gate(suite, ["--import=tsx", "--test", "--test-concurrency=1", pattern], env,
+  const result = await runImp006Gate(suite, [...(suite === "integration" ? ["--conditions=react-server"] : []), "--import=tsx", "--test", "--test-concurrency=1", pattern], env,
     { fingerprint: verified.fingerprint, schema: verified.schema, attempt: 1 });
   if (result.exitCode !== 0) process.exitCode = result.exitCode;
 }

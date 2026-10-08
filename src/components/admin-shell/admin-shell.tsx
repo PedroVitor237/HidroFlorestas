@@ -8,11 +8,14 @@ import {
   LogOut,
   ShieldCheck,
   Users,
+  KeyRound,
 } from "lucide-react";
 
 const adminLinks = [
   { href: "/admin", label: "Visão geral", icon: LayoutDashboard },
   { href: "/admin/users", label: "Usuários", icon: Users },
+  { href: "/change-password", label: "Alterar senha", icon: KeyRound },
+  { href: "/delete-account", label: "Excluir minha conta", icon: KeyRound },
 ] as const;
 
 function isCurrentRoute(pathname: string, href: string) {

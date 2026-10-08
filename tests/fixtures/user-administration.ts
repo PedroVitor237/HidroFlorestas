@@ -16,8 +16,8 @@ export async function setupAdministrationFixtures(db: PrismaClient, count = 54) 
     const status: UserStatus = index === 4 ? "BLOCKED" : "ACTIVE";
     await db.user.upsert({
       where: { id: administrationFixtureId(index) },
-      create: { id: administrationFixtureId(index), email: `imp009-${index}@test.invalid`, firstName: `Fixture${String(index).padStart(2, "0")}`, lastName: "IMP009", password: "not-a-login-password", role, status },
-      update: { role, status, revision: 0 },
+      create: { id: administrationFixtureId(index), email: `imp009-${index}@test.invalid`, firstName: `Fixture${String(index).padStart(2, "0")}`, lastName: "IMP009", password: "not-a-login-password", role, status, verificationRequired: false },
+      update: { role, status, revision: 0, verificationRequired: false },
     });
   }
 }

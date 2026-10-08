@@ -1,3 +1,4 @@
+import { fillCollectionOccurrence } from "./support/collection-occurrence";
 import { expect, test, type Page, type Response } from "@playwright/test";
 import type { PublicDiagnosis } from "../../src/types/ihfr-diagnosis.type";
 import {
@@ -142,7 +143,7 @@ test("login creates laboratory, area, collection, measurement and IHFR through t
   let collectionId = "";
   await phase("collection", async () => {
     await page.getByRole("link", { name: "Registrar coleta" }).click();
-    await page.getByLabel("Ocorrência em campo").fill("2026-09-20T12:00:00-03:00");
+    await fillCollectionOccurrence(page, "2026-09-20T12:00:00-03:00");
     await page.getByRole("button", { name: "Revisar coleta" }).click();
     const path = `/api/laboratories/${laboratoryId}/areas/${areaId}/collections`;
     const created = await postResponse(page, path, () => page.getByRole("button", { name: "Confirmar coleta" }).click(), 201);
